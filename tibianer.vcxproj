@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <ProjectGuid>{9A37132E-C20D-45A1-96F5-E630D2579985}</ProjectGuid>
+    <RootNamespace>tibianer</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <AdditionalIncludeDirectories>Z:\Code\!libraries\boost_1_78_0;Z:\Code\!libraries\tomlplusplus-3.0.0\include;Z:\Code\!libraries\fmt-8.1.1\include;Z:\Code\!libraries\sol2-3.2.2\include;Z:\Code\!libraries\pugixml-1.11\src;Z:\Code\!libraries\luajit-2.0.5\src;Z:\Code\!libraries\SFML-2.5.1\include;Z:\Code\!libraries\Thor-2.0\include;Z:\Code\tibianer\tibianer\;Z:\Code\tibianer\tibianer\boost_zlib;Z:\Code\tibianer\tibianer\boost_base64;Z:\Code\tibianer\tibianer\pugixml;Z:\Code\tibianer\tibianer\imgui;Z:\Code\tibianer\tibianer\imgui-sfml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>opengl32.lib;openal32.lib;freetype.lib;ogg.lib;vorbis.lib;vorbisenc.lib;vorbisfile.lib;flac.lib;sfml-audio.lib;sfml-graphics.lib;sfml-main.lib;sfml-network.lib;sfml-system.lib;sfml-window.lib;thor.lib;fmt.lib;pugixml.lib;lua51.lib;libboost_iostreams-vc143-mt-x32-1_78.lib;libboost_zlib-vc143-mt-x32-1_78.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>Z:\Code\!libraries\boost_1_78_0\stage\lib;Z:\Code\!libraries\SFML-2.5.1\lib;Z:\Code\!libraries\Thor-2.0\lib;Z:\Code\!libraries\fmt-8.1.1\lib;Z:\Code\!libraries\pugixml-1.11\lib;Z:\Code\!libraries\luajit-2.0.5\src;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <AdditionalIncludeDirectories>D:\Code\!libraries\boost_1_73_0;D:\Code\!libraries\fmt-6.2.1\include;D:\Code\!libraries\sol2-3.0.3\include;D:\Code\!libraries\SFML\include;D:\Code\!libraries\Thor\include;D:\Code\!libraries\Thor\extlibs\aurora\include;D:\Code\tibianer\tibianer\;D:\Code\tibianer\tibianer\boost_zlib;D:\Code\tibianer\tibianer\boost_base64;D:\Code\tibianer\tibianer\pugixml;D:\Code\tibianer\tibianer\imgui;D:\Code\tibianer\tibianer\imgui-sfml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>opengl32.lib;openal32.lib;freetype.lib;ogg.lib;vorbis.lib;vorbisenc.lib;vorbisfile.lib;flac.lib;sfml-audio.lib;sfml-graphics.lib;sfml-main.lib;sfml-network.lib;sfml-system.lib;sfml-window.lib;thor.lib;libboost_iostreams-vc142-mt-x32-1_73.lib;libboost_zlib-vc142-mt-x32-1_73.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\Code\!libraries\SFML\lib;D:\Code\!libraries\Thor\lib;D:\Code\!libraries\boost_1_73_0\lib32-msvc-14.2;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="imgui-sfml\imgui-SFML.cpp" />
+    <ClCompile Include="imgui\imgui.cpp" />
+    <ClCompile Include="imgui\imgui_demo.cpp" />
+    <ClCompile Include="imgui\imgui_draw.cpp" />
+    <ClCompile Include="imgui\imgui_tables.cpp" />
+    <ClCompile Include="imgui\imgui_widgets.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="tb\Animation.cpp" />
+    <ClCompile Include="tb\BitmapFont.cpp" />
+    <ClCompile Include="tb\BitmapFontText.cpp" />
+    <ClCompile Include="tb\Container.cpp" />
+    <ClCompile Include="tb\Creature.cpp" />
+    <ClCompile Include="tb\Entity.cpp" />
+    <ClCompile Include="tb\ErrorWindow.cpp" />
+    <ClCompile Include="tb\FloatingText.cpp" />
+    <ClCompile Include="tb\Game.cpp" />
+    <ClCompile Include="tb\GameText.cpp" />
+    <ClCompile Include="tb\Light.cpp" />
+    <ClCompile Include="tb\Map.cpp" />
+    <ClCompile Include="tb\MenuBar.cpp" />
+    <ClCompile Include="tb\Object.cpp" />
+    <ClCompile Include="tb\Projectile.cpp" />
+    <ClCompile Include="tb\Sprite.cpp" />
+    <ClCompile Include="tb\SpriteBatch.cpp" />
+    <ClCompile Include="tb\SpriteData.cpp" />
+    <ClCompile Include="tb\SpriteDataWindow.cpp" />
+    <ClCompile Include="tb\SpriteEditorWindow.cpp" />
+    <ClCompile Include="tb\StatusBar.cpp" />
+    <ClCompile Include="tb\Thing.cpp" />
+    <ClCompile Include="tb\Tile.cpp" />
+    <ClCompile Include="tb\TileMap.cpp" />
+    <ClCompile Include="tb\Utility.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="boost_base64\boost_base64.hpp" />
+    <ClInclude Include="boost_zlib\boost_zlib.hpp" />
+    <ClInclude Include="imgui-sfml\imconfig-SFML.h" />
+    <ClInclude Include="imgui-sfml\imgui-SFML.h" />
+    <ClInclude Include="imgui-sfml\imgui-SFML_export.h" />
+    <ClInclude Include="imgui\imconfig.h" />
+    <ClInclude Include="imgui\imgui.h" />
+    <ClInclude Include="imgui\imgui_internal.h" />
+    <ClInclude Include="imgui\imstb_rectpack.h" />
+    <ClInclude Include="imgui\imstb_textedit.h" />
+    <ClInclude Include="imgui\imstb_truetype.h" />
+    <ClInclude Include="pugixml\pugixml.hpp" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="tb\Animation.h" />
+    <ClInclude Include="tb\BitmapFont.h" />
+    <ClInclude Include="tb\BitmapFontText.h" />
+    <ClInclude Include="tb\Constants.h" />
+    <ClInclude Include="tb\Container.h" />
+    <ClInclude Include="tb\Creature.h" />
+    <ClInclude Include="tb\Entity.h" />
+    <ClInclude Include="tb\ErrorWindow.h" />
+    <ClInclude Include="tb\FloatingText.h" />
+    <ClInclude Include="tb\Game.h" />
+    <ClInclude Include="tb\GameText.h" />
+    <ClInclude Include="tb\Light.h" />
+    <ClInclude Include="tb\Map-backup.hpp" />
+    <ClInclude Include="tb\Map.h" />
+    <ClInclude Include="tb\MenuBar.h" />
+    <ClInclude Include="tb\Object.h" />
+    <ClInclude Include="tb\Projectile.h" />
+    <ClInclude Include="tb\Sprite.h" />
+    <ClInclude Include="tb\SpriteBatch.h" />
+    <ClInclude Include="tb\SpriteData.h" />
+    <ClInclude Include="tb\SpriteDataWindow.h" />
+    <ClInclude Include="tb\SpriteEditorWindow.h" />
+    <ClInclude Include="tb\StatusBar.h" />
+    <ClInclude Include="tb\Thing.h" />
+    <ClInclude Include="tb\Tile.h" />
+    <ClInclude Include="tb\TileMap.h" />
+    <ClInclude Include="tb\Utility.h" />
+    <ClInclude Include="utility.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="resource.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

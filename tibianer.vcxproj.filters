@@ -1,0 +1,272 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\imgui">
+      <UniqueIdentifier>{b0e1e21e-c075-4e78-a80e-e907986dd8e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\imgui">
+      <UniqueIdentifier>{8559d6b5-bbe4-4484-bc72-5c1062a6da1e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\boost_base64">
+      <UniqueIdentifier>{2e334a96-6ae8-42de-8b67-04c986a39dd1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\boost_zlib">
+      <UniqueIdentifier>{3fea864d-c668-40f0-a6ea-ca952298dd48}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\pugixml">
+      <UniqueIdentifier>{9b61b79e-9797-4695-86b2-845b995ce6c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\imgui-sfml">
+      <UniqueIdentifier>{beee34fa-6efa-4cd2-9ccb-22e8ffedb566}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\imgui-sfml">
+      <UniqueIdentifier>{7d259cfa-1ab9-476c-80a8-1cff339373ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\tb">
+      <UniqueIdentifier>{78a10d63-a7d6-4cfd-bb4d-6f17415f7f52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\tb">
+      <UniqueIdentifier>{50fb8739-649b-42e5-986f-48259fd6bd55}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_demo.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_draw.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_widgets.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_tables.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui-sfml\imgui-SFML.cpp">
+      <Filter>Source Files\imgui-sfml</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\Tile.cpp">
+      <Filter>Source Files\tb</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\TileMap.cpp">
+      <Filter>Source Files\tb</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\Utility.cpp">
+      <Filter>Source Files\tb</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\Animation.cpp">
+      <Filter>Source Files\tb</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\BitmapFont.cpp">
+      <Filter>Source Files\tb</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\BitmapFontText.cpp">
+      <Filter>Source Files\tb</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\Container.cpp">
+      <Filter>Source Files\tb</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\Creature.cpp">
+      <Filter>Source Files\tb</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\Entity.cpp">
+      <Filter>Source Files\tb</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\ErrorWindow.cpp">
+      <Filter>Source Files\tb</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\FloatingText.cpp">
+      <Filter>Source Files\tb</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\Game.cpp">
+      <Filter>Source Files\tb</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\GameText.cpp">
+      <Filter>Source Files\tb</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\Light.cpp">
+      <Filter>Source Files\tb</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\Map.cpp">
+      <Filter>Source Files\tb</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\MenuBar.cpp">
+      <Filter>Source Files\tb</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\Object.cpp">
+      <Filter>Source Files\tb</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\Projectile.cpp">
+      <Filter>Source Files\tb</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\Sprite.cpp">
+      <Filter>Source Files\tb</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\SpriteBatch.cpp">
+      <Filter>Source Files\tb</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\SpriteData.cpp">
+      <Filter>Source Files\tb</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\SpriteDataWindow.cpp">
+      <Filter>Source Files\tb</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\SpriteEditorWindow.cpp">
+      <Filter>Source Files\tb</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\StatusBar.cpp">
+      <Filter>Source Files\tb</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\Thing.cpp">
+      <Filter>Source Files\tb</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imconfig.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imgui.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imgui_internal.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imstb_rectpack.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imstb_textedit.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imstb_truetype.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="boost_base64\boost_base64.hpp">
+      <Filter>Header Files\boost_base64</Filter>
+    </ClInclude>
+    <ClInclude Include="boost_zlib\boost_zlib.hpp">
+      <Filter>Header Files\boost_zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="pugixml\pugixml.hpp">
+      <Filter>Header Files\pugixml</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui-sfml\imconfig-SFML.h">
+      <Filter>Header Files\imgui-sfml</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui-sfml\imgui-SFML.h">
+      <Filter>Header Files\imgui-sfml</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui-sfml\imgui-SFML_export.h">
+      <Filter>Header Files\imgui-sfml</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\TileMap.h">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\Utility.h">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\Animation.h">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\BitmapFont.h">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\BitmapFontText.h">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\Constants.h">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\Container.h">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\Creature.h">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\Entity.h">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\FloatingText.h">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\Game.h">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\GameText.h">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\Light.h">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\Map.h">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\Map-backup.hpp">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\Object.h">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\Projectile.h">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\Sprite.h">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\SpriteBatch.h">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\SpriteData.h">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\SpriteEditorWindow.h">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\Thing.h">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\Tile.h">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+    <ClInclude Include="utility.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\SpriteDataWindow.h">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\ErrorWindow.h">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\MenuBar.h">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\StatusBar.h">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="resource.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

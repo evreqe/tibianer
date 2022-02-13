@@ -1,0 +1,17 @@
+﻿  main.cpp
+Z:\Code\tibianer\tibianer\tb\MenuBar.hpp(28,1): error C2027: use of undefined type 'tb::Game'
+Z:\Code\tibianer\tibianer\tb\MenuBar.hpp(5): message : see declaration of 'tb::Game'
+Z:\Code\tibianer\tibianer\tb\MenuBar.hpp(28,1): error C2440: '<function-style-cast>': cannot convert from 'float' to 'ImVec2'
+Z:\Code\tibianer\tibianer\tb\MenuBar.hpp(28,1): message : No constructor could take the source type, or constructor overload resolution was ambiguous
+Z:\Code\tibianer\tibianer\tb\MenuBar.hpp(48,1): error C2027: use of undefined type 'tb::Game'
+Z:\Code\tibianer\tibianer\tb\MenuBar.hpp(5): message : see declaration of 'tb::Game'
+Z:\Code\tibianer\tibianer\tb\MenuBar.hpp(71,1): error C2027: use of undefined type 'tb::Game'
+Z:\Code\tibianer\tibianer\tb\MenuBar.hpp(5): message : see declaration of 'tb::Game'
+Z:\Code\tibianer\tibianer\tb\MenuBar.hpp(76,1): error C2027: use of undefined type 'tb::Game'
+Z:\Code\tibianer\tibianer\tb\MenuBar.hpp(5): message : see declaration of 'tb::Game'
+Z:\Code\tibianer\tibianer\tb\MenuBar.hpp(83,1): error C2027: use of undefined type 'tb::Game'
+Z:\Code\tibianer\tibianer\tb\MenuBar.hpp(5): message : see declaration of 'tb::Game'
+Z:\Code\tibianer\tibianer\tb\MenuBar.hpp(88,1): error C2027: use of undefined type 'tb::Game'
+Z:\Code\tibianer\tibianer\tb\MenuBar.hpp(5): message : see declaration of 'tb::Game'
+Z:\Code\tibianer\tibianer\tb\MenuBar.hpp(95,1): error C2027: use of undefined type 'tb::Game'
+Z:\Code\tibianer\tibianer\tb\MenuBar.hpp(5): message : see declaration of 'tb::Game'
