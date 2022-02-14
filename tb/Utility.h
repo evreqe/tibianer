@@ -1,6 +1,20 @@
 #pragma once
 
-#include "tb/Constants.hpp"
+#include <cstdint>
+#include <cmath>
+
+#include <iostream>
+#include <format>
+#include <fstream>
+#include <random>
+#include <source_location>
+#include <string>
+#include <string_view>
+#include <type_traits>
+
+#include <SFML/Graphics.hpp>
+
+#include "tb/Constants.h"
 
 namespace tb
 {
@@ -11,14 +25,17 @@ namespace tb
         fputs(std::vformat(str_fmt, std::make_format_args(args...)).c_str(), stdout);
     }
 
-    void printError(const std::string_view text, const std::source_location sl = std::source_location::current())
+    static void printError(const std::string_view text, const std::source_location sl = std::source_location::current())
     {
         std::cout << "ERROR: " << sl.file_name() << ":" << sl.line() << ":" << sl.function_name() << ": " << text;
     }
 
     namespace Utility
     {
-        sf::IntRect GetSpriteRectByID(tb::SpriteID_t id, uint8_t width, uint8_t height)
+        static std::random_device randomDevice;
+        static std::default_random_engine randomEngine(randomDevice());
+
+        static sf::IntRect GetSpriteRectByID(tb::SpriteID_t id, uint8_t tileWidth, uint8_t tileHeight)
         {
             // index in the spritesheet starts at 1
             id = id - 1;
@@ -26,36 +43,51 @@ namespace tb
             int u = (id % (tb::Textures::Sprites.getSize().x / tb::Constants::TileSize)) * tb::Constants::TileSize;
             int v = (id / (tb::Textures::Sprites.getSize().y / tb::Constants::TileSize)) * tb::Constants::TileSize;
 
-            u = u - ((width  - 1) * tb::Constants::TileSize);
-            v = v - ((height - 1) * tb::Constants::TileSize);
+            u = u - ((tileWidth - 1) * tb::Constants::TileSize);
+            v = v - ((tileHeight - 1) * tb::Constants::TileSize);
 
-            return sf::IntRect(u, v, tb::Constants::TileSize * width, tb::Constants::TileSize * height);
+            return sf::IntRect(u, v, tb::Constants::TileSize * tileWidth, tb::Constants::TileSize * tileHeight);
         }
 
-        template <class T>
-        std::optional<std::string> GetValueByKey(std::unordered_map<T, std::string>& map, T key)
+        template <typename E>
+        constexpr auto toUnderlying(E e) noexcept
         {
-            auto it = map.find(key);
-            if (it != map.end())
-            {
-                return it->second;
-            }
-
-            return std::nullopt;
+            return static_cast<std::underlying_type_t<E>>(e);
         }
 
-        template <class T>
-        std::optional<T> GetKeyByValue(std::unordered_map<T, std::string>& map, const std::string& value)
+        static void toggleBool(bool& b)
         {
-            for (auto it = map.begin(); it != map.end(); ++it)
-            {
-                if (it->second == value)
-                {
-                    return it->first;
-                }
-            }
+            b = !b;
+        }
 
-            return std::nullopt;
+        static bool fileExists(const std::string& fileName)
+        {
+            std::ifstream file(fileName.c_str());
+            return file.good();
+        }
+
+        static float calculateDistance(float x1, float y1, float x2, float y2)
+        {
+            return std::sqrt(std::pow(x1 - x2, 2) + std::pow(y1 - y2, 2));
+        }
+
+        static uint32_t getRandomNumber(uint32_t min, uint32_t max)
+        {
+            std::uniform_int_distribution<uint32_t> uniformDistribution(min, max);
+
+            return uniformDistribution(randomEngine);
+        }
+
+        static float getRandomNumberFloat(float min, float max)
+        {
+            std::uniform_real_distribution<float> uniformDistribution(min, max);
+
+            return uniformDistribution(randomEngine);
+        }
+
+        static void eraseNullTerminator(std::string& text)
+        {
+            text.erase(std::remove(text.begin(), text.end(), '\0'), text.end());
         }
     }
 }

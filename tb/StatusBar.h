@@ -1,5 +1,15 @@
 #pragma once
 
+#include <string>
+#include <string_view>
+
+#include "imgui.h"
+#include "imgui-SFML.h"
+
+#include "tb/Constants.h"
+
+#include "tb/Game.h"
+
 namespace tb
 {
     class Game;
@@ -9,93 +19,23 @@ namespace tb
 
     public:
 
-        StatusBar()
-        {
-            //
-        }
+        StatusBar();
 
-/*
-        void draw(tb::Game* game)
-        {
-            if (m_isVisible == false)
-            {
-                return;
-            }
+        void draw(tb::Game* game);
 
-            ImGui::SetNextWindowPos(ImVec2(0.0f, game->getRenderWindow()->getSize().y - m_height));
-            ImGui::SetNextWindowSize(ImVec2(game->getRenderWindow()->getSize().x, m_height));
+        float getHeight();
+        void setHeight(float height);
 
-            ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 2.0f));
+        std::string_view getText();
+        void setText(const std::string& text);
 
-            bool isVisible = true;
-            ImGui::Begin("##StatusBar", &isVisible, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize);
-
-            ImGui::PopStyleVar(2);
-
-            ImGui::SetCursorPosX(8.0f);
-
-            ImGui::Text(m_text.c_str());
-
-            if (game->getGameState() == tb::GameState::InGame)
-            {
-                ImGui::SameLine();
-
-                std::string bottomRightText = "H 0, M 0, C 0, A 0";
-
-                ImVec2 bottomRightTextSize = ImGui::CalcTextSize(bottomRightText.c_str());
-
-                // apply right-justify alignment
-                ImGui::SetCursorPosX(game->getRenderWindow()->getSize().x - bottomRightTextSize.x - 8.0f);
-
-                ImGui::Text(bottomRightText.c_str());
-            }
-
-            ImGui::End();
-        }
-*/
-
-        float getHeight()
-        {
-            if (m_isVisible == false)
-            {
-                return 0.0f;
-            }
-
-            return m_height;
-        }
-
-        void setHeight(float height)
-        {
-            m_height = height;
-        }
-
-        std::string_view getText()
-        {
-            return m_text;
-        }
-
-        void setText(const std::string& text)
-        {
-            m_text = text;
-        }
-
-        bool getIsVisible()
-        {
-            return m_isVisible;
-        }
-
-        void setIsVisible(bool b)
-        {
-            m_isVisible = b;
-        }
-
-        void toggleIsVisible()
-        {
-            m_isVisible = !m_isVisible;
-        }
+        bool getIsVisible();
+        void setIsVisible(bool b);
+        void toggleIsVisible();
 
     private:
+
+        tb::Game* m_game;
 
         bool m_isVisible = true;
 

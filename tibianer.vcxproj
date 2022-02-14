@@ -114,7 +114,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalIncludeDirectories>Z:\Code\!libraries\boost_1_78_0;Z:\Code\!libraries\tomlplusplus-3.0.0\include;Z:\Code\!libraries\fmt-8.1.1\include;Z:\Code\!libraries\sol2-3.2.2\include;Z:\Code\!libraries\pugixml-1.11\src;Z:\Code\!libraries\luajit-2.0.5\src;Z:\Code\!libraries\SFML-2.5.1\include;Z:\Code\!libraries\Thor-2.0\include;Z:\Code\tibianer\tibianer\;Z:\Code\tibianer\tibianer\boost_zlib;Z:\Code\tibianer\tibianer\boost_base64;Z:\Code\tibianer\tibianer\pugixml;Z:\Code\tibianer\tibianer\imgui;Z:\Code\tibianer\tibianer\imgui-sfml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Z:\Code\!libraries\boost_1_78_0;Z:\Code\!libraries\tomlplusplus-3.0.1;Z:\Code\!libraries\tomlplusplus-3.0.1\include;Z:\Code\!libraries\fmt-8.1.1\include;Z:\Code\!libraries\sol2-3.2.2\include;Z:\Code\!libraries\pugixml-1.11\src;Z:\Code\!libraries\luajit-2.0.5\src;Z:\Code\!libraries\SFML-2.5.1\include;Z:\Code\!libraries\Thor-2.0\include;Z:\Code\tibianer\tibianer;Z:\Code\tibianer\tibianer\boost_zlib;Z:\Code\tibianer\tibianer\boost_base64;Z:\Code\tibianer\tibianer\pugixml;Z:\Code\tibianer\tibianer\imgui;Z:\Code\tibianer\tibianer\imgui-sfml;Z:\Code\tibianer\tibianer\magic_enum;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -153,31 +153,18 @@
     <ClCompile Include="imgui\imgui_tables.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="tb\Animation.cpp" />
     <ClCompile Include="tb\BitmapFont.cpp" />
     <ClCompile Include="tb\BitmapFontText.cpp" />
-    <ClCompile Include="tb\Container.cpp" />
-    <ClCompile Include="tb\Creature.cpp" />
-    <ClCompile Include="tb\Entity.cpp" />
     <ClCompile Include="tb\ErrorWindow.cpp" />
-    <ClCompile Include="tb\FloatingText.cpp" />
     <ClCompile Include="tb\Game.cpp" />
     <ClCompile Include="tb\GameText.cpp" />
-    <ClCompile Include="tb\Light.cpp" />
-    <ClCompile Include="tb\Map.cpp" />
     <ClCompile Include="tb\MenuBar.cpp" />
-    <ClCompile Include="tb\Object.cpp" />
-    <ClCompile Include="tb\Projectile.cpp" />
     <ClCompile Include="tb\Sprite.cpp" />
     <ClCompile Include="tb\SpriteBatch.cpp" />
     <ClCompile Include="tb\SpriteData.cpp" />
     <ClCompile Include="tb\SpriteDataWindow.cpp" />
     <ClCompile Include="tb\SpriteEditorWindow.cpp" />
     <ClCompile Include="tb\StatusBar.cpp" />
-    <ClCompile Include="tb\Thing.cpp" />
-    <ClCompile Include="tb\Tile.cpp" />
-    <ClCompile Include="tb\TileMap.cpp" />
-    <ClCompile Include="tb\Utility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="boost_base64\boost_base64.hpp" />
@@ -193,34 +180,20 @@
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="pugixml\pugixml.hpp" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="tb\Animation.h" />
     <ClInclude Include="tb\BitmapFont.h" />
     <ClInclude Include="tb\BitmapFontText.h" />
     <ClInclude Include="tb\Constants.h" />
-    <ClInclude Include="tb\Container.h" />
-    <ClInclude Include="tb\Creature.h" />
-    <ClInclude Include="tb\Entity.h" />
     <ClInclude Include="tb\ErrorWindow.h" />
-    <ClInclude Include="tb\FloatingText.h" />
     <ClInclude Include="tb\Game.h" />
     <ClInclude Include="tb\GameText.h" />
-    <ClInclude Include="tb\Light.h" />
-    <ClInclude Include="tb\Map-backup.hpp" />
-    <ClInclude Include="tb\Map.h" />
     <ClInclude Include="tb\MenuBar.h" />
-    <ClInclude Include="tb\Object.h" />
-    <ClInclude Include="tb\Projectile.h" />
     <ClInclude Include="tb\Sprite.h" />
     <ClInclude Include="tb\SpriteBatch.h" />
     <ClInclude Include="tb\SpriteData.h" />
     <ClInclude Include="tb\SpriteDataWindow.h" />
     <ClInclude Include="tb\SpriteEditorWindow.h" />
     <ClInclude Include="tb\StatusBar.h" />
-    <ClInclude Include="tb\Thing.h" />
-    <ClInclude Include="tb\Tile.h" />
-    <ClInclude Include="tb\TileMap.h" />
     <ClInclude Include="tb\Utility.h" />
-    <ClInclude Include="utility.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />

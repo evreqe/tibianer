@@ -19,7 +19,7 @@ namespace tb
         const SpriteID_t SpriteIDDefault = 1;
 
         const uint32_t TileSize = 32;
-        const float TileSizeF = 32.0f;
+        const float TileSizeFloat = 32.0f;
 
         const uint32_t TileNull = 0; // when no tile exists at a position
 
@@ -49,28 +49,28 @@ namespace tb
 
     namespace Variables
     {
-        uint32_t MapWidth = 128;
-        uint32_t MapHeight = 128;
+        inline uint32_t MapWidth = 128;
+        inline uint32_t MapHeight = 128;
 
-        uint32_t MapSize = 16384; // = MapWidth * MapHeight
+        inline uint32_t MapSize = 16384; // = MapWidth * MapHeight
     }
 
     namespace Textures
     {
-        sf::Texture Loading;
-        sf::Texture EnterGame;
-        sf::Texture JourneyOnward;
-        sf::Texture MapSelect;
-        sf::Texture Sprites;
-        sf::Texture GUI;
-        sf::Texture Lights;
-        sf::Texture Wood;
-        sf::Texture WoodHorizontal1;
-        sf::Texture WoodHorizontal2;
-        sf::Texture WoodVertical1;
-        sf::Texture WoodVertical2;
-        sf::Texture InGame;
-        sf::Texture Water;
+        inline sf::Texture Loading;
+        inline sf::Texture EnterGame;
+        inline sf::Texture JourneyOnward;
+        inline sf::Texture MapSelect;
+        inline sf::Texture Sprites;
+        inline sf::Texture GUI;
+        inline sf::Texture Lights;
+        inline sf::Texture Wood;
+        inline sf::Texture WoodHorizontal1;
+        inline sf::Texture WoodHorizontal2;
+        inline sf::Texture WoodVertical1;
+        inline sf::Texture WoodVertical2;
+        inline sf::Texture InGame;
+        inline sf::Texture Water;
     }
 
     namespace KeyValues
@@ -99,7 +99,7 @@ namespace tb
         {
             const std::string FileName = "images/font.png";
 
-            sf::Vector2u GlyphSize(18, 19);
+            const sf::Vector2u GlyphSize(18, 19);
 
             // 16x6
             const std::vector<unsigned int> GlyphWidthList =
@@ -117,7 +117,7 @@ namespace tb
         {
             const std::string FileName = "images/font_tiny.png";
 
-            sf::Vector2u GlyphSize(7, 10);
+            const sf::Vector2u GlyphSize(7, 10);
 
             // 16x6
             const std::vector<unsigned int> GlyphWidthList =
@@ -135,7 +135,7 @@ namespace tb
         {
             const std::string FileName = "images/font_modern.png";
 
-            sf::Vector2u GlyphSize(16, 12);
+            const sf::Vector2u GlyphSize(16, 12);
 
             // 16x6
             const std::vector<unsigned int> GlyphWidthList =
@@ -190,7 +190,7 @@ namespace tb
         };
     }
 
-    typedef std::bitset<tb::SpriteFlags::NumFlags> SpriteFlags_t;
+    using SpriteFlags_t = std::bitset<tb::SpriteFlags::NumFlags>;
 
     namespace KeyValues
     {

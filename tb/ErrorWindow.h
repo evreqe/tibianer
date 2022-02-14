@@ -1,5 +1,10 @@
 #pragma once
 
+#include <string>
+
+#include "imgui.h"
+#include "imgui-SFML.h"
+
 namespace tb
 {
 
@@ -8,44 +13,16 @@ namespace tb
 
     public:
 
-        ErrorWindow()
-        {
-            //
-        }
+        ErrorWindow();
 
-        void draw()
-        {
-            ImGui::Begin(m_titleText.c_str(), &m_isVisible, ImGuiWindowFlags_AlwaysAutoResize);
+        void draw();
 
-            ImGui::Text(m_errorText.c_str());
+        void setTitleText(const std::string& text);
+        void setErrorText(const std::string& text);
 
-            ImGui::End();
-        }
-
-        void setTitleText(const std::string& text)
-        {
-            m_titleText = text;
-        }
-
-        void setErrorText(const std::string& text)
-        {
-            m_errorText = text;
-        }
-
-        bool getIsVisible()
-        {
-            return m_isVisible;
-        }
-
-        void setIsVisible(bool b)
-        {
-            m_isVisible = b;
-        }
-
-        void toggleIsVisible()
-        {
-            m_isVisible = !m_isVisible;
-        }
+        bool getIsVisible();
+        void setIsVisible(bool b);
+        void toggleIsVisible();
 
     private:
 

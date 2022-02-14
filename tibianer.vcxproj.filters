@@ -63,58 +63,19 @@
     <ClCompile Include="imgui-sfml\imgui-SFML.cpp">
       <Filter>Source Files\imgui-sfml</Filter>
     </ClCompile>
-    <ClCompile Include="tb\Tile.cpp">
-      <Filter>Source Files\tb</Filter>
-    </ClCompile>
-    <ClCompile Include="tb\TileMap.cpp">
-      <Filter>Source Files\tb</Filter>
-    </ClCompile>
-    <ClCompile Include="tb\Utility.cpp">
-      <Filter>Source Files\tb</Filter>
-    </ClCompile>
-    <ClCompile Include="tb\Animation.cpp">
-      <Filter>Source Files\tb</Filter>
-    </ClCompile>
     <ClCompile Include="tb\BitmapFont.cpp">
       <Filter>Source Files\tb</Filter>
     </ClCompile>
     <ClCompile Include="tb\BitmapFontText.cpp">
       <Filter>Source Files\tb</Filter>
     </ClCompile>
-    <ClCompile Include="tb\Container.cpp">
-      <Filter>Source Files\tb</Filter>
-    </ClCompile>
-    <ClCompile Include="tb\Creature.cpp">
-      <Filter>Source Files\tb</Filter>
-    </ClCompile>
-    <ClCompile Include="tb\Entity.cpp">
-      <Filter>Source Files\tb</Filter>
-    </ClCompile>
     <ClCompile Include="tb\ErrorWindow.cpp">
-      <Filter>Source Files\tb</Filter>
-    </ClCompile>
-    <ClCompile Include="tb\FloatingText.cpp">
       <Filter>Source Files\tb</Filter>
     </ClCompile>
     <ClCompile Include="tb\Game.cpp">
       <Filter>Source Files\tb</Filter>
     </ClCompile>
     <ClCompile Include="tb\GameText.cpp">
-      <Filter>Source Files\tb</Filter>
-    </ClCompile>
-    <ClCompile Include="tb\Light.cpp">
-      <Filter>Source Files\tb</Filter>
-    </ClCompile>
-    <ClCompile Include="tb\Map.cpp">
-      <Filter>Source Files\tb</Filter>
-    </ClCompile>
-    <ClCompile Include="tb\MenuBar.cpp">
-      <Filter>Source Files\tb</Filter>
-    </ClCompile>
-    <ClCompile Include="tb\Object.cpp">
-      <Filter>Source Files\tb</Filter>
-    </ClCompile>
-    <ClCompile Include="tb\Projectile.cpp">
       <Filter>Source Files\tb</Filter>
     </ClCompile>
     <ClCompile Include="tb\Sprite.cpp">
@@ -132,10 +93,10 @@
     <ClCompile Include="tb\SpriteEditorWindow.cpp">
       <Filter>Source Files\tb</Filter>
     </ClCompile>
-    <ClCompile Include="tb\StatusBar.cpp">
+    <ClCompile Include="tb\MenuBar.cpp">
       <Filter>Source Files\tb</Filter>
     </ClCompile>
-    <ClCompile Include="tb\Thing.cpp">
+    <ClCompile Include="tb\StatusBar.cpp">
       <Filter>Source Files\tb</Filter>
     </ClCompile>
   </ItemGroup>
@@ -179,13 +140,7 @@
     <ClInclude Include="imgui-sfml\imgui-SFML_export.h">
       <Filter>Header Files\imgui-sfml</Filter>
     </ClInclude>
-    <ClInclude Include="tb\TileMap.h">
-      <Filter>Header Files\tb</Filter>
-    </ClInclude>
     <ClInclude Include="tb\Utility.h">
-      <Filter>Header Files\tb</Filter>
-    </ClInclude>
-    <ClInclude Include="tb\Animation.h">
       <Filter>Header Files\tb</Filter>
     </ClInclude>
     <ClInclude Include="tb\BitmapFont.h">
@@ -197,37 +152,10 @@
     <ClInclude Include="tb\Constants.h">
       <Filter>Header Files\tb</Filter>
     </ClInclude>
-    <ClInclude Include="tb\Container.h">
-      <Filter>Header Files\tb</Filter>
-    </ClInclude>
-    <ClInclude Include="tb\Creature.h">
-      <Filter>Header Files\tb</Filter>
-    </ClInclude>
-    <ClInclude Include="tb\Entity.h">
-      <Filter>Header Files\tb</Filter>
-    </ClInclude>
-    <ClInclude Include="tb\FloatingText.h">
-      <Filter>Header Files\tb</Filter>
-    </ClInclude>
     <ClInclude Include="tb\Game.h">
       <Filter>Header Files\tb</Filter>
     </ClInclude>
     <ClInclude Include="tb\GameText.h">
-      <Filter>Header Files\tb</Filter>
-    </ClInclude>
-    <ClInclude Include="tb\Light.h">
-      <Filter>Header Files\tb</Filter>
-    </ClInclude>
-    <ClInclude Include="tb\Map.h">
-      <Filter>Header Files\tb</Filter>
-    </ClInclude>
-    <ClInclude Include="tb\Map-backup.hpp">
-      <Filter>Header Files\tb</Filter>
-    </ClInclude>
-    <ClInclude Include="tb\Object.h">
-      <Filter>Header Files\tb</Filter>
-    </ClInclude>
-    <ClInclude Include="tb\Projectile.h">
       <Filter>Header Files\tb</Filter>
     </ClInclude>
     <ClInclude Include="tb\Sprite.h">
@@ -241,15 +169,6 @@
     </ClInclude>
     <ClInclude Include="tb\SpriteEditorWindow.h">
       <Filter>Header Files\tb</Filter>
-    </ClInclude>
-    <ClInclude Include="tb\Thing.h">
-      <Filter>Header Files\tb</Filter>
-    </ClInclude>
-    <ClInclude Include="tb\Tile.h">
-      <Filter>Header Files\tb</Filter>
-    </ClInclude>
-    <ClInclude Include="utility.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="tb\SpriteDataWindow.h">
       <Filter>Header Files\tb</Filter>

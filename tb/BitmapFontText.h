@@ -22,7 +22,7 @@ public:
 
 private:
 
-    virtual void draw(sf::RenderTarget& target, sf::RenderStates states);
+    virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
     sf::VertexArray m_vertexArray;
 

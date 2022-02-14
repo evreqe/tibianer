@@ -1,4 +1,14 @@
 z:\code\tibianer\tibianer\release\vc143.pdb
+z:\code\tibianer\tibianer\release\spriteeditorwindow.obj
+z:\code\tibianer\tibianer\release\spritedatawindow.obj
+z:\code\tibianer\tibianer\release\spritedata.obj
+z:\code\tibianer\tibianer\release\spritebatch.obj
+z:\code\tibianer\tibianer\release\sprite.obj
+z:\code\tibianer\tibianer\release\gametext.obj
+z:\code\tibianer\tibianer\release\game.obj
+z:\code\tibianer\tibianer\release\errorwindow.obj
+z:\code\tibianer\tibianer\release\bitmapfonttext.obj
+z:\code\tibianer\tibianer\release\bitmapfont.obj
 z:\code\tibianer\tibianer\release\main.obj
 z:\code\tibianer\tibianer\release\imgui_widgets.obj
 z:\code\tibianer\tibianer\release\imgui_tables.obj
@@ -6,6 +16,8 @@ z:\code\tibianer\tibianer\release\imgui_draw.obj
 z:\code\tibianer\tibianer\release\imgui_demo.obj
 z:\code\tibianer\tibianer\release\imgui.obj
 z:\code\tibianer\tibianer\release\imgui-sfml.obj
+z:\code\tibianer\tibianer\release\menubar.obj
+z:\code\tibianer\tibianer\release\statusbar.obj
 z:\code\tibianer\release\tibianer.exe
 z:\code\tibianer\tibianer\release\tibianer.ipdb
 z:\code\tibianer\tibianer\release\tibianer.iobj

@@ -1,3 +1,4 @@
+/*
 #include <cstdlib>
 #include <cstddef>
 #include <cstdint>
@@ -52,18 +53,29 @@
 
 #include "toml++/toml.h"
 
-#include <windows.h>
+#include "resource.h"
+
+#include "tb/Utility.h"
+#include "tb/Constants.h"
+*/
 
 #include "resource.h"
 
-#include "utility.h"
-
+#include "tb/Constants.h"
 #include "tb/Utility.h"
-#include "tb/Game.h"
 
-tb::Game game;
+#include "tb/Game.h"
+#include "tb/MenuBar.h"
+#include "tb/StatusBar.h"
+
+tb::Game g_game;
+tb::MenuBar g_menuBar;
+tb::StatusBar g_statusBar;
 
 int main()
 {
-    game.run();
+    g_game.setMenuBar(&g_menuBar);
+    g_game.setStatusBar(&g_statusBar);
+
+    g_game.run();
 }

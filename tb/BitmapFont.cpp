@@ -9,7 +9,7 @@ BitmapFont::BitmapFont()
     m_vertexArray.resize(m_numGlyphs * 4);
 }
 
-bool BitmapFont::load(const std::string& texture, sf::Vector2u glyphSize, const std::vector<unsigned int>* glyphWidthList, unsigned int glyphSpace = 0)
+bool BitmapFont::load(const std::string& texture, sf::Vector2u glyphSize, const std::vector<unsigned int>* glyphWidthList, unsigned int glyphSpace)
 {
     if (m_texture.loadFromFile(texture) == false)
     {

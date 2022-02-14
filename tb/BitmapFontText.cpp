@@ -8,7 +8,7 @@ BitmapFontText::BitmapFontText()
     m_vertexArray.setPrimitiveType(sf::Quads);
 }
 
-void BitmapFontText::setText(tb::BitmapFont* bf, std::string text, sf::Color textColor, bool isCentered = false)
+void BitmapFontText::setText(tb::BitmapFont* bf, std::string text, sf::Color textColor, bool isCentered)
 {
     m_bitmapFont = bf;
 
@@ -78,7 +78,7 @@ sf::VertexArray* BitmapFontText::getVertexArray()
     return &m_vertexArray;
 }
 
-void BitmapFontText::draw(sf::RenderTarget& target, sf::RenderStates states)
+void BitmapFontText::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     states.transform *= getTransform();
 
