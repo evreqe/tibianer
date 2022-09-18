@@ -1,8 +1,6 @@
 #pragma once
 
-#include <vector>
-#include <string>
-#include <sstream>
+#include "common.h"
 
 #include <boost/algorithm/string.hpp>
 
@@ -23,6 +21,7 @@ class GameText : public sf::Drawable, public sf::Transformable
 public:
 
     GameText();
+    ~GameText();
 
     void setText(tb::BitmapFont& bitmapFont, sf::Vector2u tileCoords, tb::ZAxis_t z, const std::string& text, sf::Color textColor, bool isCentered = true);
 

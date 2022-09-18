@@ -1,5 +1,7 @@
 #pragma once
 
+#include "common.h"
+
 #include <SFML/Graphics.hpp>
 
 #include "tb/Constants.h"
@@ -14,10 +16,13 @@ class Sprite : public sf::Sprite
 public:
 
     Sprite();
+    ~Sprite();
     Sprite(tb::SpriteID_t id);
 
     tb::SpriteID_t getID();
     void setID(tb::SpriteID_t id);
+
+    void updateTextureRect();
 
     uint8_t getTileWidth();
     void setTileWidth(uint8_t tileWidth);

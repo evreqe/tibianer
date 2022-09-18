@@ -5,12 +5,17 @@ namespace tb
 
 Game::Game()
 {
-    tb::print("{} (Build: {} {})\n", m_gameTitle, __DATE__, __TIME__);
+    //
+}
+
+Game::~Game()
+{
+    //
 }
 
 void Game::createRenderWindow()
 {
-    m_renderWindow.create(sf::VideoMode(m_renderWindowWidth, m_renderWindowHeight), m_gameTitle, m_renderWindowStyle);
+    m_renderWindow.create(sf::VideoMode(m_renderWindowWidth, m_renderWindowHeight), tb::Constants::GameTitle, m_renderWindowStyle);
 
     if (m_renderWindowIcon.loadFromFile(m_renderWindowIconFileName) == true)
     {
@@ -18,7 +23,7 @@ void Game::createRenderWindow()
     }
     else
     {
-        tb::print("ERROR: Failed to load icon file: {}\n", m_renderWindowIconFileName);
+        g_Log.write("ERROR: Failed to load icon file: {}\n", m_renderWindowIconFileName);
     }
 
     if (m_renderWindowFrameRateLimit != 0)
@@ -49,8 +54,8 @@ bool Game::loadTextures()
 {
     if (auto maximumTextureSize = sf::Texture::getMaximumSize(); maximumTextureSize < m_minimumTextureSizeRequiredToRun)
     {
-        tb::print("Your computer supports a maximum texture size of {}\n", maximumTextureSize);
-        tb::print("This game requires at least {} texture size in order to play\n", m_minimumTextureSizeRequiredToRun);
+        g_Log.write("Your computer supports a maximum texture size of {}\n", maximumTextureSize);
+        g_Log.write("This game requires at least {} texture size in order to play\n", m_minimumTextureSizeRequiredToRun);
         return false;
     }
 
@@ -58,19 +63,19 @@ bool Game::loadTextures()
     {
         if (texture.loadFromFile(textureFileName) == false)
         {
-            tb::print("ERROR: Failed to load texture file: {}", textureFileName);
+            g_Log.write("ERROR: Failed to load texture file: {}\n", textureFileName);
             return false;
         }
     }
 
     // tiled textures
+    tb::Textures::Scroll.setRepeated(true);
+
     tb::Textures::Wood.setRepeated(true);
     tb::Textures::WoodHorizontal1.setRepeated(true);
     tb::Textures::WoodHorizontal2.setRepeated(true);
     tb::Textures::WoodVertical1.setRepeated(true);
     tb::Textures::WoodVertical2.setRepeated(true);
-
-    tb::Textures::Water.setRepeated(true);
 
     return true;
 }
@@ -136,56 +141,233 @@ void Game::drawWoodBorder(sf::FloatRect rect)
 
 void Game::drawBackgroundTextureWithWoodBorder(const sf::Texture& texture)
 {
-    /*
-            m_img = tb::Textures::InGame.copyToImage();
+/*
+        m_img = tb::Textures::InGame.copyToImage();
 
-            float levels = 3.0f;
+        float levels = 3.0f;
 
-            float sr, sg, sb;
-            sf::Uint8 dr, dg, db;
+        float sr, sg, sb;
+        sf::Uint8 dr, dg, db;
 
-            for (unsigned int i = 0; i < m_img.getSize().x; ++i)
+        for (unsigned int i = 0; i < m_img.getSize().x; ++i)
+        {
+            for (unsigned int j = 0; j < m_img.getSize().y; ++j)
             {
-                for (unsigned int j = 0; j < m_img.getSize().y; ++j)
-                {
-                    auto pxl = m_img.getPixel(i, j);
+                auto pxl = m_img.getPixel(i, j);
 
-                    pxl.r *= 0.75f;
-                    pxl.g *= 0.75f;
-                    pxl.b *= 0.75f;
+                pxl.r *= 0.75f;
+                pxl.g *= 0.75f;
+                pxl.b *= 0.75f;
 
-                    sr = (float)(pxl.r) / 255.0f;
-                    sg = (float)(pxl.g) / 255.0f;
-                    sb = (float)(pxl.b) / 255.0f;
+                sr = (float)(pxl.r) / 255.0f;
+                sg = (float)(pxl.g) / 255.0f;
+                sb = (float)(pxl.b) / 255.0f;
 
-                    dr = 255 * std::roundf(sr * levels) / levels;
-                    dg = 255 * std::roundf(sg * levels) / levels;
-                    db = 255 * std::roundf(sb * levels) / levels;
+                dr = 255 * std::roundf(sr * levels) / levels;
+                dg = 255 * std::roundf(sg * levels) / levels;
+                db = 255 * std::roundf(sb * levels) / levels;
 
-                    m_img.setPixel(i, j, sf::Color(dr, dg, db));
-                }
+                m_img.setPixel(i, j, sf::Color(dr, dg, db));
             }
+        }
 
-            m_tex.loadFromImage(m_img);
+        m_tex.loadFromImage(m_img);
 
-            sf::Sprite spr;
-            spr.setTexture(m_tex);
+        sf::Sprite spr;
+        spr.setTexture(m_tex);
 
-            m_renderWindow.draw(spr);
+        m_renderWindow.draw(spr);
 
-            tb::Sprite spr2;
-            spr2.setID(4);
+        tb::Sprite spr2;
+        spr2.setID(4);
 
-            m_renderWindow.draw(spr2);
+        m_renderWindow.draw(spr2);
 
-            return;
-    */
+        return;
+*/
+
+/*
+    sf::Sprite sprInGame2;
+    sprInGame2.setTexture(tb::Textures::InGame2);
+
+    m_renderWindow.draw(sprInGame2);
+
+    sf::RenderTexture rt;
+    rt.create(416, 288);
+    rt.clear(sf::Color::Transparent);
+
+    sf::Sprite sprLight;
+    sprLight.setTexture(tb::Textures::Light);
+    sprLight.setPosition(128, 128);
+
+    rt.draw(sprLight, sf::BlendAdd);
+
+    sprLight.setPosition(0, 0);
+
+    rt.draw(sprLight, sf::BlendAdd);
+
+    sf::RectangleShape rect;
+    rect.setSize(sf::Vector2f(416.0f, 288.0f));
+    rect.setFillColor(sf::Color(255, 255, 255, 64));
+
+    rt.draw(rect, sf::BlendAdd);
+
+    rt.display();
+
+    sf::Sprite sprRt;
+    sprRt.setTexture(rt.getTexture());
+
+    sf::BlendMode linearBurn = sf::BlendMultiply;
+    //linearBurn.colorEquation = sf::BlendMode::Equation::Add;
+    //linearBurn.alphaEquation = sf::BlendMode::Equation::Add;
+    //linearBurn.colorSrcFactor = sf::BlendMode::Factor::One;
+    //linearBurn.colorDstFactor = sf::BlendMode::Factor::SrcColor;
+    //linearBurn.alphaSrcFactor = sf::BlendMode::Factor::One;
+    //linearBurn.alphaDstFactor = sf::BlendMode::Factor::SrcColor;
+
+    static uint32_t colorEquation = 2; // sf::BlendMode::Equation::Add;
+    static uint32_t alphaEquation = 2; // sf::BlendMode::Equation::Add;
+    static uint32_t colorSrcFactor = 3; // sf::BlendMode::Factor::One;
+    static uint32_t colorDstFactor = 2; // sf::BlendMode::Factor::SrcColor;
+    static uint32_t alphaSrcFactor = 8; // sf::BlendMode::Factor::One;
+    static uint32_t alphaDstFactor = 8; // sf::BlendMode::Factor::SrcColor;
+
+    bool isVisible = true;
+    ImGui::Begin("Blend Mode##BlendModeWindow", &isVisible);
+
+    if (ImGui::Button("Random##BlendModeRandom"))
+    {
+        colorEquation = tb::Utility::getRandomNumber(0, 2);
+        alphaEquation = tb::Utility::getRandomNumber(0, 2);
+
+        colorSrcFactor = tb::Utility::getRandomNumber(0, 9);
+        colorDstFactor = tb::Utility::getRandomNumber(0, 9);
+        alphaSrcFactor = tb::Utility::getRandomNumber(0, 9);
+        alphaDstFactor = tb::Utility::getRandomNumber(0, 9);
+    }
+
+    ImGui::Separator();
+
+    ImGui::Text("colorEquation: %d", colorEquation);
+    ImGui::Text("alphaEquation: %d", alphaEquation);
+    ImGui::Text("colorSrcFactor: %d", colorSrcFactor);
+    ImGui::Text("colorDstFactor: %d", colorDstFactor);
+    ImGui::Text("alphaSrcFactor: %d", alphaSrcFactor);
+    ImGui::Text("alphaDstFactor: %d", alphaDstFactor);
+
+    ImGui::Separator();
+
+    if (ImGui::BeginTable("##BlendModeTable", 2, ImGuiTableFlags_BordersOuter))
+    {
+        ImGui::TableNextRow();
+
+        ImGui::TableSetColumnIndex(0);
+
+        if (ImGui::Button("ColorEquationAdd##BlendModeColorEquationAdd")) { colorEquation = sf::BlendMode::Equation::Add; }
+        if (ImGui::Button("ColorEquationSubtract##BlendModeColorEquationSubtract")) { colorEquation = sf::BlendMode::Equation::Subtract; }
+        if (ImGui::Button("ColorEquationReverseSubtract##BlendModeColorEquationReverseSubtract")) { colorEquation = sf::BlendMode::Equation::ReverseSubtract; }
+
+        ImGui::Separator();
+
+        ImGui::TableSetColumnIndex(1);
+
+        if (ImGui::Button("AlphaEquationAdd##BlendModeAlphaEquationAdd")) { alphaEquation = sf::BlendMode::Equation::Add; }
+        if (ImGui::Button("AlphaEquationSubtract##BlendModeAlphaEquationSubtract")) { alphaEquation = sf::BlendMode::Equation::Subtract; }
+        if (ImGui::Button("AlphaEquationReverseSubtract##BlendModeAlphaEquationReverseSubtract")) { alphaEquation = sf::BlendMode::Equation::ReverseSubtract; }
+
+        ImGui::Separator();
+
+        ImGui::TableNextRow();
+
+        ImGui::TableSetColumnIndex(0);
+
+        if (ImGui::Button("ColorSrcFactorDstAlpha##BlendModeColorSrcFactorDstAlpha")) { colorSrcFactor = sf::BlendMode::Factor::DstAlpha; }
+        if (ImGui::Button("ColorSrcFactorDstColor##BlendModeColorSrcFactorDstColor")) { colorSrcFactor = sf::BlendMode::Factor::DstColor; }
+        if (ImGui::Button("ColorSrcFactorOne##BlendModeColorSrcFactorOne")) { colorSrcFactor = sf::BlendMode::Factor::One; }
+        if (ImGui::Button("ColorSrcFactorOneMinusDstAlpha##BlendModeColorSrcFactorOneMinusDstAlpha")) { colorSrcFactor = sf::BlendMode::Factor::OneMinusDstAlpha; }
+        if (ImGui::Button("ColorSrcFactorOneMinusDstColor##BlendModeColorSrcFactorOneMinusDstColor")) { colorSrcFactor = sf::BlendMode::Factor::OneMinusDstColor; }
+        if (ImGui::Button("ColorSrcFactorOneMinusSrcAlpha##BlendModeColorSrcFactorOneMinusSrcAlpha")) { colorSrcFactor = sf::BlendMode::Factor::OneMinusSrcAlpha; }
+        if (ImGui::Button("ColorSrcFactorOneMinusSrcColor##BlendModeColorSrcFactorOneMinusSrcColor")) { colorSrcFactor = sf::BlendMode::Factor::OneMinusSrcColor; }
+        if (ImGui::Button("ColorSrcFactorSrcAlpha##BlendModeColorSrcFactorSrcAlpha")) { colorSrcFactor = sf::BlendMode::Factor::SrcAlpha; }
+        if (ImGui::Button("ColorSrcFactorSrcColor##BlendModeColorSrcFactorSrcColor")) { colorSrcFactor = sf::BlendMode::Factor::SrcColor; }
+        if (ImGui::Button("ColorSrcFactorZero##BlendModeColorSrcFactorZero")) { colorSrcFactor = sf::BlendMode::Factor::Zero; }
+
+        ImGui::Separator();
+
+        ImGui::TableSetColumnIndex(1);
+
+        if (ImGui::Button("ColorDstFactorDstAlpha##BlendModeColorDstFactorDstAlpha")) { colorDstFactor = sf::BlendMode::Factor::DstAlpha; }
+        if (ImGui::Button("ColorDstFactorDstColor##BlendModeColorDstFactorDstColor")) { colorDstFactor = sf::BlendMode::Factor::DstColor; }
+        if (ImGui::Button("ColorDstFactorOne##BlendModeColorDstFactorOne")) { colorDstFactor = sf::BlendMode::Factor::One; }
+        if (ImGui::Button("ColorDstFactorOneMinusDstAlpha##BlendModeColorDstFactorOneMinusDstAlpha")) { colorDstFactor = sf::BlendMode::Factor::OneMinusDstAlpha; }
+        if (ImGui::Button("ColorDstFactorOneMinusDstColor##BlendModeColorDstFactorOneMinusDstColor")) { colorDstFactor = sf::BlendMode::Factor::OneMinusDstColor; }
+        if (ImGui::Button("ColorDstFactorOneMinusSrcAlpha##BlendModeColorDstFactorOneMinusSrcAlpha")) { colorDstFactor = sf::BlendMode::Factor::OneMinusSrcAlpha; }
+        if (ImGui::Button("ColorDstFactorOneMinusSrcColor##BlendModeColorDstFactorOneMinusSrcColor")) { colorDstFactor = sf::BlendMode::Factor::OneMinusSrcColor; }
+        if (ImGui::Button("ColorDstFactorSrcAlpha##BlendModeColorDstFactorSrcAlpha")) { colorDstFactor = sf::BlendMode::Factor::SrcAlpha; }
+        if (ImGui::Button("ColorDstFactorSrcColor##BlendModeColorDstFactorSrcColor")) { colorDstFactor = sf::BlendMode::Factor::SrcColor; }
+        if (ImGui::Button("ColorDstFactorZero##BlendModeColorDstFactorZero")) { colorDstFactor = sf::BlendMode::Factor::Zero; }
+
+        ImGui::Separator();
+
+        ImGui::TableNextRow();
+
+        ImGui::TableSetColumnIndex(0);
+
+        if (ImGui::Button("AlphaSrcFactorDstAlpha##BlendModeAlphaSrcFactorDstAlpha")) { alphaSrcFactor = sf::BlendMode::Factor::DstAlpha; }
+        if (ImGui::Button("AlphaSrcFactorDstColor##BlendModeAlphaSrcFactorDstColor")) { alphaSrcFactor = sf::BlendMode::Factor::DstColor; }
+        if (ImGui::Button("AlphaSrcFactorOne##BlendModeAlphaSrcFactorOne")) { alphaSrcFactor = sf::BlendMode::Factor::One; }
+        if (ImGui::Button("AlphaSrcFactorOneMinusDstAlpha##BlendModeAlphaSrcFactorOneMinusDstAlpha")) { alphaSrcFactor = sf::BlendMode::Factor::OneMinusDstAlpha; }
+        if (ImGui::Button("AlphaSrcFactorOneMinusDstColor##BlendModeAlphaSrcFactorOneMinusDstColor")) { alphaSrcFactor = sf::BlendMode::Factor::OneMinusDstColor; }
+        if (ImGui::Button("AlphaSrcFactorOneMinusSrcAlpha##BlendModeAlphaSrcFactorOneMinusSrcAlpha")) { alphaSrcFactor = sf::BlendMode::Factor::OneMinusSrcAlpha; }
+        if (ImGui::Button("AlphaSrcFactorOneMinusSrcColor##BlendModeAlphaSrcFactorOneMinusSrcColor")) { alphaSrcFactor = sf::BlendMode::Factor::OneMinusSrcColor; }
+        if (ImGui::Button("AlphaSrcFactorSrcAlpha##BlendModeAlphaSrcFactorSrcAlpha")) { alphaSrcFactor = sf::BlendMode::Factor::SrcAlpha; }
+        if (ImGui::Button("AlphaSrcFactorSrcColor##BlendModeAlphaSrcFactorSrcColor")) { alphaSrcFactor = sf::BlendMode::Factor::SrcColor; }
+        if (ImGui::Button("AlphaSrcFactorZero##BlendModeAlphaSrcFactorZero")) { alphaSrcFactor = sf::BlendMode::Factor::Zero; }
+
+        ImGui::TableSetColumnIndex(1);
+
+        if (ImGui::Button("AlphaDstFactorDstAlpha##BlendModeAlphaDstFactorDstAlpha")) { alphaDstFactor = sf::BlendMode::Factor::DstAlpha; }
+        if (ImGui::Button("AlphaDstFactorDstColor##BlendModeAlphaDstFactorDstColor")) { alphaDstFactor = sf::BlendMode::Factor::DstColor; }
+        if (ImGui::Button("AlphaDstFactorOne##BlendModeAlphaDstFactorOne")) { alphaDstFactor = sf::BlendMode::Factor::One; }
+        if (ImGui::Button("AlphaDstFactorOneMinusDstAlpha##BlendModeAlphaDstFactorOneMinusDstAlpha")) { alphaDstFactor = sf::BlendMode::Factor::OneMinusDstAlpha; }
+        if (ImGui::Button("AlphaDstFactorOneMinusDstColor##BlendModeAlphaDstFactorOneMinusDstColor")) { alphaDstFactor = sf::BlendMode::Factor::OneMinusDstColor; }
+        if (ImGui::Button("AlphaDstFactorOneMinusSrcAlpha##BlendModeAlphaDstFactorOneMinusSrcAlpha")) { alphaDstFactor = sf::BlendMode::Factor::OneMinusSrcAlpha; }
+        if (ImGui::Button("AlphaDstFactorOneMinusSrcColor##BlendModeAlphaDstFactorOneMinusSrcColor")) { alphaDstFactor = sf::BlendMode::Factor::OneMinusSrcColor; }
+        if (ImGui::Button("AlphaDstFactorSrcAlpha##BlendModeAlphaDstFactorSrcAlpha")) { alphaDstFactor = sf::BlendMode::Factor::SrcAlpha; }
+        if (ImGui::Button("AlphaDstFactorSrcColor##BlendModeAlphaDstFactorSrcColor")) { alphaDstFactor = sf::BlendMode::Factor::SrcColor; }
+        if (ImGui::Button("AlphaDstFactorZero##BlendModeAlphaDstFactorZero")) { alphaDstFactor = sf::BlendMode::Factor::Zero; }
+
+        ImGui::EndTable();
+    }
+
+    ImGui::End();
+
+    linearBurn.colorEquation = (sf::BlendMode::Equation)colorEquation;
+    linearBurn.alphaEquation = (sf::BlendMode::Equation)alphaEquation;
+    linearBurn.colorSrcFactor = (sf::BlendMode::Factor)colorSrcFactor;
+    linearBurn.colorDstFactor = (sf::BlendMode::Factor)colorDstFactor;
+    linearBurn.alphaSrcFactor = (sf::BlendMode::Factor)alphaSrcFactor;
+    linearBurn.alphaDstFactor = (sf::BlendMode::Factor)alphaDstFactor;
+
+    // light.png
+    // 2 2 3 2 8 8
+    // 2 0 3 2 8 8
+
+    // light2.png
+    // 2 2 8 8 8 8
+    // 2 2 5 8 8 8
+    // 2 2 2 8 8 8
+
+    m_renderWindow.draw(sprRt, linearBurn);
+
+    return;
+*/
 
     float renderWindowWidth = m_renderWindow.getSize().x;
     float renderWindowHeight = m_renderWindow.getSize().y;
 
-    float menuBarHeight = m_menuBar->getHeight();
-    float statusBarHeight = m_statusBar->getHeight();
+    float menuBarHeight = g_MenuBar.getHeight();
+    float statusBarHeight = g_StatusBar.getHeight();
 
     sf::RectangleShape blackBorder(sf::Vector2f(renderWindowWidth - 20.0f, renderWindowHeight - 20.0f - menuBarHeight - statusBarHeight));
     blackBorder.setFillColor(sf::Color(0, 0, 0));
@@ -214,6 +396,30 @@ void Game::drawLoadingScreen()
 void Game::drawMapSelectScreen()
 {
     drawBackgroundTextureWithWoodBorder(tb::Textures::MapSelect);
+}
+
+void Game::drawInGameScreen()
+{
+    g_Map.getTileMapTiles(tb::ZAxis::Ground)->draw(m_renderWindow);
+    g_Map.getTileMapTileEdges(tb::ZAxis::Ground)->draw(m_renderWindow);
+
+    doAnimatedWater();
+}
+
+void Game::doAnimatedWater()
+{
+    // TODO: check if player is above ground
+
+    sf::Time timeElapsed = m_animatedWaterClock.getElapsedTime();
+    if (timeElapsed >= tb::Constants::WaterAnimationFrameTime)
+    {
+        if (g_Map.getTileMapTiles(tb::ZAxis::Ground)->doAnimatedWater() == false)
+        {
+            g_Log.write("ERROR: animated water failed\n");
+        }
+
+        m_animatedWaterClock.restart();
+    }
 }
 
 void Game::processEvents()
@@ -263,45 +469,72 @@ void Game::fixMouseCursorForWindowResize(sf::RenderWindow& renderWindow)
 
 void Game::waitForKeyPress()
 {
-    tb::print("Press any key to continue...\n");
+    fmt::print("Press any key to continue...\n");
 
     int waitForKeyPress = std::cin.get();
 }
 
 void Game::run()
 {
-    tb::print("Creating render window\n");
+    g_Log.deleteContents();
+
+    g_Log.open();
+
+    g_Log.write("{} (Build: {} {})\n", tb::Constants::GameTitle, __DATE__, __TIME__);
+
+    g_Log.write("Creating render window\n");
     createRenderWindow();
 
-    tb::print("Loading sprite data\n");
-    if (m_spriteData.load() == false)
+    g_Log.write("Loading sprite data\n");
+    if (g_SpriteData.load() == false)
     {
-        tb::print("ERROR: Failed to load sprite data\n");
+        g_Log.write("ERROR: Failed to load sprite data\n");
         waitForKeyPress();
         return;
     }
 
-    tb::print("Loading textures\n");
+    g_Log.write("Loading pattern data\n");
+    if (g_PatternData.load() == false)
+    {
+        g_Log.write("ERROR: Failed to load pattern data\n");
+        waitForKeyPress();
+        return;
+    }
+
+    g_Log.write("Loading water data\n");
+    if (g_WaterData.load() == false)
+    {
+        g_Log.write("ERROR: Failed to load water data\n");
+        waitForKeyPress();
+        return;
+    }
+
+    g_Log.write("Loading textures\n");
     if (loadTextures() == false)
     {
-        tb::print("ERROR: Failed to load textures\n");
+        g_Log.write("ERROR: Failed to load textures\n");
         waitForKeyPress();
         return;
     }
 
-    tb::print("Loading bitmap fonts\n");
+    g_Log.write("Loading bitmap fonts\n");
     if (loadBitmapFonts() == false)
     {
-        tb::print("ERROR: Failed to load bitmap fonts\n");
+        g_Log.write("ERROR: Failed to load bitmap fonts\n");
         waitForKeyPress();
         return;
     }
 
-    tb::print("Loading mouse cursors\n");
+    g_Log.write("Loading mouse cursors\n");
     m_cursorArrow.loadFromSystem(sf::Cursor::Arrow);
 
-    m_spriteDataWindow.setSpriteData(m_spriteData);
-    m_spriteEditorWindow.setSpriteData(m_spriteData);
+    g_Log.write("Loading map\n");
+    if (g_Map.load("maps/test/test.tmx") == false)
+    {
+        g_Log.write("ERROR: Failed to load map\n");
+        waitForKeyPress();
+        return;
+    }
 
     while (m_renderWindow.isOpen() == true)
     {
@@ -327,9 +560,13 @@ void Game::run()
         {
             drawMapSelectScreen();
         }
+        else if (m_gameState == tb::GameState::InGame);
+        {
+            drawInGameScreen();
+        }
 
-        m_menuBar->draw(this);
-        m_statusBar->draw(this);
+        g_MenuBar.draw();
+        g_StatusBar.draw();
 
         if (m_showDemoWindow == true)
         {
@@ -341,14 +578,19 @@ void Game::run()
             ImGui::ShowStackToolWindow(&m_showStackToolWindow);
         }
 
-        if (m_spriteEditorWindow.getIsVisible() == true)
+        if (*g_SpriteEditorWindow.getIsVisible() == true)
         {
-            m_spriteEditorWindow.draw();
+            g_SpriteEditorWindow.draw();
         }
 
-        if (m_spriteDataWindow.getIsVisible() == true)
+        if (*g_SpriteDataWindow.getIsVisible() == true)
         {
-            m_spriteDataWindow.draw();
+            g_SpriteDataWindow.draw();
+        }
+
+        if (*g_LogWindow.getIsVisible() == true)
+        {
+            g_LogWindow.draw();
         }
 
         ImGui::SFML::Render(m_renderWindow);
@@ -358,7 +600,9 @@ void Game::run()
 
     ImGui::SFML::Shutdown();
 
-    waitForKeyPress();
+    g_Log.close();
+
+    //waitForKeyPress();
 }
 
 void Game::toggleDemoWindow()
@@ -376,44 +620,9 @@ sf::RenderWindow* Game::getRenderWindow()
     return &m_renderWindow;
 }
 
-tb::SpriteDataWindow* Game::getSpriteDataWindow()
-{
-    return &m_spriteDataWindow;
-}
-
-void Game::toggleSpriteDataWindow()
-{
-    m_spriteDataWindow.toggleIsVisible();
-}
-
-tb::SpriteEditorWindow* Game::getSpriteEditorWindow()
-{
-    return &m_spriteEditorWindow;
-}
-
-void Game::toggleSpriteEditorWindow()
-{
-    m_spriteEditorWindow.toggleIsVisible();
-}
-
-tb::SpriteData* Game::getSpriteData()
-{
-    return &m_spriteData;
-}
-
 tb::GameState Game::getGameState()
 {
     return m_gameState;
-}
-
-void Game::setMenuBar(tb::MenuBar* menuBar)
-{
-    m_menuBar = menuBar;
-}
-
-void Game::setStatusBar(tb::StatusBar* statusBar)
-{
-    m_statusBar = statusBar;
 }
 
 }

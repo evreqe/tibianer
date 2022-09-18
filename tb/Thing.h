@@ -1,12 +1,12 @@
 #pragma once
 
-#include <memory>
-#include <vector>
+#include "common.h"
 
 #include <SFML/Graphics.hpp>
 
-#include "tb/Constants.hpp"
-#include "tb/Utility.hpp"
+#include "tb/Constants.h"
+#include "tb/Utility.h"
+#include "tb/Log.h"
 
 namespace tb
 {
@@ -16,8 +16,11 @@ class Thing
 
 public:
 
-    typedef std::shared_ptr<tb::Thing> Ptr;
-    typedef std::vector<tb::Thing::Ptr> List;
+    Thing();
+    virtual ~Thing();
+
+    using Ptr = std::shared_ptr<tb::Thing>;
+    using List = std::vector<tb::Thing::Ptr>;
 
     struct SortByTileNumber_t
     {
@@ -37,7 +40,7 @@ public:
             {
                 if (a->getTileY() == b->getTileY())
                 {
-                    return a->getDrawIndex() < b->getDrawIndex();
+                    return a->getDrawOrderType() < b->getDrawOrderType();
                 }
                 else
                 {
@@ -49,177 +52,41 @@ public:
         }
     };
 
-    Thing()
-    {
-        //
-    }
+    uint32_t getTileNumber();
+    void setTileNumber(uint32_t tileNumber);
 
-    void updateTileNumber()
-    {
-        m_tileNumber = m_tileX + (m_tileY * tb::Variables::MapWidth);
-    }
+    sf::Vector2u getTileCoords();
+    void setTileCoords(const sf::Vector2u& tileCoords);
 
-    void setCoords(uint32_t x, uint32_t y)
-    {
-        setX(x);
-        setY(y);
+    uint32_t getTileX();
+    void setTileX(uint32_t tileX);
 
-        setTileX(x * tb::Constants::TileSize);
-        setTileY(y * tb::Constants::TileSize);
-    }
+    uint32_t getTileY();
+    void setTileY(uint32_t tileY);
 
-    void setTileCoords(uint32_t tileX, uint32_t tileY)
-    {
-        if (tileX == 0 || tileY == 0)
-        {
-            std::cout << "Error: divide by zero in Thing::setTileCoords()\n";
-            return;
-        }
+    sf::Vector2u getPixelCoords();
+    void setPixelCoords(const sf::Vector2u& pixelCoords);
 
-        setX(tileX / tb::Constants::TileSize);
-        setY(tileY / tb::Constants::TileSize);
+    uint32_t getPixelX();
+    void setPixelX(uint32_t pixelX);
 
-        setTileX(tileX);
-        setTileY(tileY);
-    }
+    uint32_t getPixelY();
+    void setPixelY(uint32_t pixelY);
 
-    void updateTileCoords()
-    {
-        m_tileX = m_x * tb::Constants::TileSize;
-        m_tileY = m_y * tb::Constants::TileSize;
+    tb::ZAxis_t getZ();
+    void setZ(tb::ZAxis_t z);
 
-        updateTileNumber();
-    }
+    tb::ThingType getThingType();
+    void setThingType(tb::ThingType thingType);
 
-    uint32_t getTileX()
-    {
-        return m_tileX;
-    }
+    tb::DrawOrderType getDrawOrderType();
+    void setDrawOrderType(tb::DrawOrderType drawOrder);
 
-    void setTileX(uint32_t x)
-    {
-        m_tileX = x;
-    }
+    uint8_t getDrawOffset();
+    void setDrawOffset(uint8_t drawOffset);
 
-    uint32_t getTileY()
-    {
-        return m_tileY;
-    }
-
-    void setTileY(uint32_t y)
-    {
-        m_tileY = y;
-    }
-
-    sf::Vector2u getTileCoords()
-    {
-        return sf::Vector2u(m_tileX, m_tileY);
-    }
-
-    uint32_t getTileNumber()
-    {
-        return m_tileNumber;
-    }
-
-    void setTileNumber(int tileNumber)
-    {
-        m_tileNumber = tileNumber;
-    }
-
-    uint32_t getX()
-    {
-        return m_x;
-    }
-
-    void setX(uint32_t x)
-    {
-        m_x = x;
-    }
-
-    uint32_t getY()
-    {
-        return m_y;
-    }
-
-    void setY(uint32_t y)
-    {
-        m_y = y;
-    }
-
-    tb::ZAxis_t getZ()
-    {
-        return m_z;
-    }
-
-    void setZ(tb::ZAxis_t z)
-    {
-        m_z = z;
-    }
-
-    sf::Vector2u getCoords()
-    {
-        return sf::Vector2u(m_x, m_y);
-    }
-
-    tb::DrawIndex getDrawIndex()
-    {
-        return m_drawIndex;
-    }
-
-    void setDrawIndex(tb::DrawIndex drawIndex)
-    {
-        m_drawIndex = drawIndex;
-    }
-
-    uint32_t getDrawOffset()
-    {
-        return m_drawOffset;
-    }
-
-    void setDrawOffset(int drawOffset)
-    {
-        m_drawOffset = drawOffset;
-    }
-
-    bool isReadyForErase()
-    {
-        return m_isReadyForErase;
-    }
-
-    void setIsReadyForErase(bool b)
-    {
-        m_isReadyForErase = b;
-    }
-
-    bool isEntity()
-    {
-        return m_isEntity;
-    }
-
-    void setIsEntity(bool b)
-    {
-        m_isEntity = b;
-    }
-
-    bool isObject()
-    {
-        return m_isObject;
-    }
-
-    void setIsObject(bool b)
-    {
-        m_isObject = b;
-    }
-
-    bool isCreature()
-    {
-        return m_isCreature;
-    }
-
-    void setIsCreature(bool b)
-    {
-        m_isCreature = b;
-    }
+    bool getIsReadyForErase();
+    void setIsReadyForErase(bool b);
 
 private:
 
@@ -227,23 +94,18 @@ private:
 
     uint32_t m_tileNumber = 0;
 
-    uint32_t m_tileX = 0;
-    uint32_t m_tileY = 0;
+    sf::Vector2u m_tileCoords;
+    sf::Vector2u m_pixelCoords;
 
-    uint32_t m_x = 0;
-    uint32_t m_y = 0;
     tb::ZAxis_t m_z = 0;
 
-    tb::DrawIndex m_drawIndex = tb::DrawIndex::Default;
+    tb::ThingType m_thingType = tb::ThingType::Null;
 
-    uint32_t m_drawOffset = 0;
+    tb::DrawOrderType m_drawOrderType = tb::DrawOrderType::Default;
+
+    uint8_t m_drawOffset = 0;
 
     bool m_isReadyForErase = false;
-
-    bool m_isEntity = false;
-    bool m_isObject = false;
-    bool m_isCreature = false;
-
 };
 
 }

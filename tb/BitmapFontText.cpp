@@ -3,9 +3,14 @@
 namespace tb
 {
 
-BitmapFontText::BitmapFontText()
+BitmapFontText::~BitmapFontText()
 {
     m_vertexArray.setPrimitiveType(sf::Quads);
+}
+
+BitmapFontText::BitmapFontText()
+{
+    //
 }
 
 void BitmapFontText::setText(tb::BitmapFont* bf, std::string text, sf::Color textColor, bool isCentered)
@@ -13,7 +18,6 @@ void BitmapFontText::setText(tb::BitmapFont* bf, std::string text, sf::Color tex
     m_bitmapFont = bf;
 
     m_vertexArray.clear();
-
     m_vertexArray.resize(text.size() * 4);
 
     unsigned int x = 0;

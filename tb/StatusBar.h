@@ -1,7 +1,6 @@
 #pragma once
 
-#include <string>
-#include <string_view>
+#include "common.h"
 
 #include "imgui.h"
 #include "imgui-SFML.h"
@@ -20,8 +19,19 @@ namespace tb
     public:
 
         StatusBar();
+        ~StatusBar();
+        StatusBar(const StatusBar&) = delete;
+        StatusBar(StatusBar&&) = delete;
+        StatusBar& operator=(const StatusBar&) = delete;
+        StatusBar& operator=(StatusBar&&) = delete;
 
-        void draw(tb::Game* game);
+        static StatusBar& getInstance()
+        {
+            static StatusBar statusBar;
+            return statusBar;
+        }
+
+        void draw();
 
         float getHeight();
         void setHeight(float height);
@@ -35,8 +45,6 @@ namespace tb
 
     private:
 
-        tb::Game* m_game;
-
         bool m_isVisible = true;
 
         const float m_heightDefault = 19.0f;
@@ -48,4 +56,9 @@ namespace tb
         std::string m_text = m_TextDefault;
     };
 
+}
+
+namespace
+{
+    tb::StatusBar& g_StatusBar = tb::StatusBar::getInstance();
 }

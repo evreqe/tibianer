@@ -111,18 +111,18 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;SPDLOG_COMPILED_LIB;SPDLOG_FMT_EXTERNAL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalIncludeDirectories>Z:\Code\!libraries\boost_1_78_0;Z:\Code\!libraries\tomlplusplus-3.0.1;Z:\Code\!libraries\tomlplusplus-3.0.1\include;Z:\Code\!libraries\fmt-8.1.1\include;Z:\Code\!libraries\sol2-3.2.2\include;Z:\Code\!libraries\pugixml-1.11\src;Z:\Code\!libraries\luajit-2.0.5\src;Z:\Code\!libraries\SFML-2.5.1\include;Z:\Code\!libraries\Thor-2.0\include;Z:\Code\tibianer\tibianer;Z:\Code\tibianer\tibianer\boost_zlib;Z:\Code\tibianer\tibianer\boost_base64;Z:\Code\tibianer\tibianer\pugixml;Z:\Code\tibianer\tibianer\imgui;Z:\Code\tibianer\tibianer\imgui-sfml;Z:\Code\tibianer\tibianer\magic_enum;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Z:\Code\!libraries\boost_1_78_0;Z:\Code\!libraries\tomlplusplus-3.2.0;Z:\Code\!libraries\tomlplusplus-3.2.0\include;Z:\Code\!libraries\fmt-8.1.1\include;Z:\Code\!libraries\spdlog-1.9.2\include;Z:\Code\!libraries\sol2-3.2.2\include;Z:\Code\!libraries\pugixml-1.11\src;Z:\Code\!libraries\luajit-2.0.5\src;Z:\Code\!libraries\SFML-2.5.1\include;Z:\Code\!libraries\Thor-2.0\include;Z:\Code\tibianer\tibianer;Z:\Code\tibianer\tibianer\boost_zlib;Z:\Code\tibianer\tibianer\boost_base64;Z:\Code\tibianer\tibianer\pugixml;Z:\Code\tibianer\tibianer\imgui;Z:\Code\tibianer\tibianer\imgui-sfml;Z:\Code\tibianer\tibianer\magic_enum;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>opengl32.lib;openal32.lib;freetype.lib;ogg.lib;vorbis.lib;vorbisenc.lib;vorbisfile.lib;flac.lib;sfml-audio.lib;sfml-graphics.lib;sfml-main.lib;sfml-network.lib;sfml-system.lib;sfml-window.lib;thor.lib;fmt.lib;pugixml.lib;lua51.lib;libboost_iostreams-vc143-mt-x32-1_78.lib;libboost_zlib-vc143-mt-x32-1_78.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>Z:\Code\!libraries\boost_1_78_0\stage\lib;Z:\Code\!libraries\SFML-2.5.1\lib;Z:\Code\!libraries\Thor-2.0\lib;Z:\Code\!libraries\fmt-8.1.1\lib;Z:\Code\!libraries\pugixml-1.11\lib;Z:\Code\!libraries\luajit-2.0.5\src;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;openal32.lib;freetype.lib;ogg.lib;vorbis.lib;vorbisenc.lib;vorbisfile.lib;flac.lib;sfml-audio.lib;sfml-graphics.lib;sfml-main.lib;sfml-network.lib;sfml-system.lib;sfml-window.lib;thor.lib;fmt.lib;spdlog.lib;pugixml.lib;lua51.lib;libboost_iostreams-vc143-mt-x32-1_78.lib;libboost_zlib-vc143-mt-x32-1_78.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>Z:\Code\!libraries\boost_1_78_0\stage\lib;Z:\Code\!libraries\SFML-2.5.1\lib;Z:\Code\!libraries\Thor-2.0\lib;Z:\Code\!libraries\fmt-8.1.1\lib;Z:\Code\!libraries\spdlog-1.9.2\lib;Z:\Code\!libraries\pugixml-1.11\lib;Z:\Code\!libraries\luajit-2.0.5\src;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -153,22 +153,34 @@
     <ClCompile Include="imgui\imgui_tables.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="spdlog\spdlog.cpp" />
     <ClCompile Include="tb\BitmapFont.cpp" />
     <ClCompile Include="tb\BitmapFontText.cpp" />
-    <ClCompile Include="tb\ErrorWindow.cpp" />
+    <ClCompile Include="tb\Entity.cpp" />
+    <ClCompile Include="tb\LogWindow.cpp" />
     <ClCompile Include="tb\Game.cpp" />
     <ClCompile Include="tb\GameText.cpp" />
+    <ClCompile Include="tb\Log.cpp" />
+    <ClCompile Include="tb\Map.cpp" />
     <ClCompile Include="tb\MenuBar.cpp" />
+    <ClCompile Include="tb\Object.cpp" />
+    <ClCompile Include="tb\PatternData.cpp" />
     <ClCompile Include="tb\Sprite.cpp" />
     <ClCompile Include="tb\SpriteBatch.cpp" />
     <ClCompile Include="tb\SpriteData.cpp" />
     <ClCompile Include="tb\SpriteDataWindow.cpp" />
     <ClCompile Include="tb\SpriteEditorWindow.cpp" />
     <ClCompile Include="tb\StatusBar.cpp" />
+    <ClCompile Include="tb\Thing.cpp" />
+    <ClCompile Include="tb\Tile.cpp" />
+    <ClCompile Include="tb\TileMap.cpp" />
+    <ClCompile Include="tb\WaterData.cpp" />
+    <ClCompile Include="tb\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="boost_base64\boost_base64.hpp" />
     <ClInclude Include="boost_zlib\boost_zlib.hpp" />
+    <ClInclude Include="common.h" />
     <ClInclude Include="imgui-sfml\imconfig-SFML.h" />
     <ClInclude Include="imgui-sfml\imgui-SFML.h" />
     <ClInclude Include="imgui-sfml\imgui-SFML_export.h" />
@@ -183,17 +195,26 @@
     <ClInclude Include="tb\BitmapFont.h" />
     <ClInclude Include="tb\BitmapFontText.h" />
     <ClInclude Include="tb\Constants.h" />
-    <ClInclude Include="tb\ErrorWindow.h" />
+    <ClInclude Include="tb\LogWindow.h" />
     <ClInclude Include="tb\Game.h" />
     <ClInclude Include="tb\GameText.h" />
+    <ClInclude Include="tb\Log.h" />
+    <ClInclude Include="tb\Map.h" />
     <ClInclude Include="tb\MenuBar.h" />
+    <ClInclude Include="tb\Object.h" />
+    <ClInclude Include="tb\PatternData.h" />
     <ClInclude Include="tb\Sprite.h" />
     <ClInclude Include="tb\SpriteBatch.h" />
     <ClInclude Include="tb\SpriteData.h" />
     <ClInclude Include="tb\SpriteDataWindow.h" />
     <ClInclude Include="tb\SpriteEditorWindow.h" />
     <ClInclude Include="tb\StatusBar.h" />
+    <ClInclude Include="tb\Thing.h" />
+    <ClInclude Include="tb\Tile.h" />
+    <ClInclude Include="tb\TileMap.h" />
     <ClInclude Include="tb\Utility.h" />
+    <ClInclude Include="tb\WaterData.h" />
+    <ClInclude Include="tb\Window.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />

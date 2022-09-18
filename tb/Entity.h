@@ -1,13 +1,17 @@
 #pragma once
 
+#include <cstdint>
+
+#include <memory>
 #include <string>
+#include <string_view>
 #include <vector>
 
 #include <SFML/Graphics.hpp>
 
-#include "tb/Constants.hpp"
-#include "tb/Utility.hpp"
-#include "tb/Thing.hpp"
+#include "tb/Constants.h"
+#include "tb/Utility.h"
+#include "tb/Thing.h"
 
 namespace tb
 {
@@ -20,20 +24,10 @@ public:
     typedef std::shared_ptr<tb::Entity> Ptr;
     typedef std::vector<tb::Entity::Ptr> List;
 
-    Entity()
-    {
-        setIsEntity(true);
-    }
+    Entity();
 
-    const std::string& getName() const
-    {
-        return m_name;
-    }
-
-    void setName(const std::string& name)
-    {
-        m_name = name;
-    }
+    const std::string& getName();
+    void setName(const std::string& name);
 
 private:
 

@@ -7,7 +7,7 @@
 #include <boost/iostreams/copy.hpp>
 #include <boost/iostreams/device/back_inserter.hpp>
 
-std::string boost_zlib_decompress_string_copy(const std::string& subject)
+static std::string boost_zlib_decompress_string(const std::string& subject)
 {
     boost::iostreams::filtering_streambuf<boost::iostreams::input> in;
     in.push(boost::iostreams::zlib_decompressor());
@@ -19,7 +19,7 @@ std::string boost_zlib_decompress_string_copy(const std::string& subject)
     return decompressed;
 }
 
-void boost_zlib_decompress_string(const std::string& subject, std::string& buffer)
+static void boost_zlib_decompress_string_ex(const std::string& subject, std::string& buffer)
 {
     boost::iostreams::filtering_streambuf<boost::iostreams::input> in;
     in.push(boost::iostreams::zlib_decompressor());

@@ -1,10 +1,10 @@
 #pragma once
 
-#include <iostream>
-#include <string>
-#include <vector>
+#include "common.h"
 
 #include <SFML/Graphics.hpp>
+
+#include "tb/Utility.h"
 
 namespace tb
 {
@@ -15,6 +15,7 @@ class BitmapFont
 public:
 
     BitmapFont();
+    ~BitmapFont();
 
     bool load(const std::string& texture, sf::Vector2u glyphSize, const std::vector<unsigned int>* glyphWidthList, unsigned int glyphSpace = 0);
 

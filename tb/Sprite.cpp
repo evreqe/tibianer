@@ -10,6 +10,11 @@ Sprite::Sprite()
     setID(tb::Constants::SpriteIDDefault);
 }
 
+Sprite::~Sprite()
+{
+    //
+}
+
 Sprite::Sprite(tb::SpriteID_t id)
 {
     setTexture(tb::Textures::Sprites);
@@ -17,32 +22,23 @@ Sprite::Sprite(tb::SpriteID_t id)
     setID(id);
 }
 
+tb::SpriteID_t Sprite::getID()
+{
+    return m_id;
+}
+
 void Sprite::setID(tb::SpriteID_t id)
 {
     m_id = id;
 
-    if (m_useWidthAndHeight == true)
-    {
-        if (id == 1808)
-        {
-            m_tileWidth = 2;
-            m_tileHeight = 2;
-        }
-        else if (id == 1242)
-        {
-            m_tileWidth = 3;
-            m_tileHeight = 2;
-        }
-    }
-
-    sf::IntRect rect = tb::Utility::GetSpriteRectByID(id, m_tileWidth, m_tileHeight);
-
-    setTextureRect(rect);
+    updateTextureRect();
 }
 
-tb::SpriteID_t Sprite::getID()
+void Sprite::updateTextureRect()
 {
-    return m_id;
+    sf::IntRect rect = tb::Utility::getSpriteRectByID(m_id, m_tileWidth, m_tileHeight);
+
+    setTextureRect(rect);
 }
 
 uint8_t Sprite::getTileWidth()
@@ -53,6 +49,8 @@ uint8_t Sprite::getTileWidth()
 void Sprite::setTileWidth(uint8_t tileWidth)
 {
     m_tileWidth = tileWidth;
+
+    updateTextureRect();
 }
 
 uint8_t Sprite::getTileHeight()
@@ -63,6 +61,8 @@ uint8_t Sprite::getTileHeight()
 void Sprite::setTileHeight(uint8_t tileHeight)
 {
     m_tileHeight = tileHeight;
+
+    updateTextureRect();
 }
 
 bool Sprite::getUseWidthAndHeight()

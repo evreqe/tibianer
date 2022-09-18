@@ -12,7 +12,12 @@ SpriteBatch::SpriteBatch()
     m_numSprites = 0;
 }
 
-void SpriteBatch::addSprite(tb::Sprite& sprite, bool applyTileOffset)
+SpriteBatch::~SpriteBatch()
+{
+    //
+}
+
+void SpriteBatch::addSprite(tb::Sprite& sprite, bool applyTileWidthAndHeightOffset)
 {
     sf::Vector2f spritePosition = sprite.getPosition();
 
@@ -23,7 +28,7 @@ void SpriteBatch::addSprite(tb::Sprite& sprite, bool applyTileOffset)
     float spriteTileWidth = tb::Constants::TileSizeFloat * sprite.getTileWidth();
     float spriteTileHeight = tb::Constants::TileSizeFloat * sprite.getTileHeight();
 
-    if (applyTileOffset == true)
+    if (applyTileWidthAndHeightOffset == true)
     {
         spritePosition.x -= (spriteTileWidth - tb::Constants::TileSizeFloat);
         spritePosition.y -= (spriteTileHeight - tb::Constants::TileSizeFloat);
@@ -70,23 +75,24 @@ void SpriteBatch::clear()
 
 void SpriteBatch::printDebugText()
 {
-    tb::print("SpriteBatch Debug Text\n");
+    fmt::print("SpriteBatch Debug Text\n");
 
-    tb::print("    Max Sprites:  {}\n", m_maxSprites);
-    tb::print("    Max Vertices: {}\n", m_maxVertices);
+    fmt::print("    Max Sprites:  {}\n", m_maxSprites);
+    fmt::print("    Max Vertices: {}\n", m_maxVertices);
 
-    tb::print("    Vertex Count: {}\n", m_vertexArray.getVertexCount());
+    fmt::print("    Vertex Count: {}\n", m_vertexArray.getVertexCount());
 
-    tb::print("    Num Sprites:  {}\n", m_numSprites);
+    fmt::print("    Num Sprites:  {}\n", m_numSprites);
 }
 
 void SpriteBatch::draw(sf::RenderTarget& target, sf::RenderStates states)
 {
-    states.transform *= getTransform();
-
-    states.texture = &tb::Textures::Sprites;
-
     target.draw(m_vertexArray, states);
+}
+
+uint32_t SpriteBatch::getNumSprites()
+{
+    return m_numSprites;
 }
 
 }

@@ -1,12 +1,17 @@
 #pragma once
 
+#include "common.h"
+
 #include <SFML/Graphics.hpp>
 
-#include "tb/Constants.hpp"
-#include "tb/Entity.hpp"
-#include "tb/Object.hpp"
-//#include "tb/Creature.hpp"
-//#include "tb/Animation.hpp"
+#include "tb/Constants.h"
+#include "tb/Utility.h"
+#include "tb/Log.h"
+
+#include "tb/Entity.h"
+#include "tb/Object.h"
+//#include "tb/Creature.h"
+//#include "tb/Animation.h"
 
 namespace tb
 {
@@ -16,142 +21,76 @@ class Tile
 
 public:
 
-    typedef std::shared_ptr<tb::Tile> Ptr;
-    typedef std::vector<tb::Tile::Ptr> List;
+    Tile();
+    ~Tile();
+
+    using Ptr = std::shared_ptr<tb::Tile>;
+    using List = std::vector<tb::Tile::Ptr>;
 
     struct sortByTileNumber_t
     {
         bool operator()(tb::Tile::Ptr a, tb::Tile::Ptr b) const
         {
-            return (a->getNumber() < b->getNumber());
+            return (a->getTileNumber() < b->getTileNumber());
         }
     };
 
-    uint32_t getNumber()
-    {
-        return m_number;
-    }
+    uint32_t getTileNumber();
+    void setTileNumber(uint32_t tileNumber);
 
-    void setNumber(uint32_t number)
-    {
-        m_number = number;
-    }
+    tb::SpriteID_t getSpriteID();
+    void setSpriteID(tb::SpriteID_t spriteID);
 
-    tb::SpriteID_t getSpriteID()
-    {
-        return m_spriteID;
-    }
+    tb::SpriteFlags_t getSpriteFlags();
+    void setSpriteFlags(const tb::SpriteFlags_t& spriteFlags);
 
-    void setSpriteID(tb::SpriteID_t id)
-    {
-        m_spriteID = id;
-    }
+    sf::Vector2u getPixelCoords();
+    void setPixelCoords(const sf::Vector2u& pixelCoords);
 
-    sf::Vector2u getPosition()
-    {
-        return m_position;
-    }
+    sf::Vector2u getTileCoords();
+    void setTileCoords(const sf::Vector2u& tileCoords);
 
-    tb::ZAxis_t getZ()
-    {
-        return m_z;
-    }
+    uint32_t getTileX();
+    void setTileX(uint32_t tileX);
 
-    void setZ(tb::ZAxis_t z)
-    {
-        m_z = z;
-    }
+    uint32_t getTileY();
+    void setTileY(uint32_t tileY);
 
-    uint8_t getHeight()
-    {
-        return m_height;
-    }
+    tb::ZAxis_t getZ();
+    void setZ(tb::ZAxis_t z);
 
-    void setHeight(uint8_t height)
-    {
-        m_height = height;
-    }
+    uint8_t getHeight();
+    void setHeight(uint8_t height);
 
-    tb::Entity::List* getEntityList()
-    {
-        return &m_entityList;
-    }
+    void addEntity(tb::Entity::Ptr entity);
+    void removeEntity(tb::Entity::Ptr entity);
 
-    tb::Object::List* getObjectList()
-    {
-        return &m_objectList;
-    }
-
-    void addEntity(tb::Entity::Ptr entity)
-    {
-        m_entityList.push_back(entity);
-    }
-
-    void removeEntity(tb::Entity::Ptr entity)
-    {
-        auto it = std::find(m_entityList.begin(), m_entityList.end(), entity);
-
-        if (it != m_entityList.end())
-        {
-            m_entityList.erase(it);
-        }
-    }
-
-    void addObject(tb::Object::Ptr object)
-    {
-/*
-        if (object->getFlags().test(tb::SpriteFlags::decal))
-        {
-            m_objectList.insert(m_objectList.begin(), object);
-        }
-        else
-        {
-            m_objectList.push_back(object);
-        }
-*/
-
-        m_objectList.push_back(object);
-    }
-
-    void removeObject(tb::Object::Ptr object)
-    {
-        auto it = std::find(m_objectList.begin(), m_objectList.end(), object);
-
-        if (it != m_objectList.end())
-        {
-            m_objectList.erase(it);
-        }
-    }
+    void addObject(tb::Object::Ptr object);
+    void removeObject(tb::Object::Ptr object);
 
 /*
-    void addCreature(tb::Creature::Ptr creature)
-    {
-        if (creature->isDead() == true)
-        {
-            m_creatureList.insert(m_creatureList.begin(), creature);
-        }
-        else
-        {
-            m_creatureList.push_back(creature);
-        }
-    }
+    void addCreature(tb::Creature::Ptr creature);
 */
 
 
 /*
-    void addAnimation(tb::Animation::Ptr animation)
-    {
-        m_animationList.push_back(animation);
-    }
+    void addAnimation(tb::Animation::Ptr animation);
 */
+
+    tb::Entity::List* getEntityList();
+    tb::Object::List* getObjectList();
+    tb::Object::List* getTileEdgeObjectList();
 
 private:
 
-    uint32_t m_number = 0; // index of the tile on the screen from left to right, top to bottom
+    uint32_t m_tileNumber = 0; // index of the tile on the screen from left to right, top to bottom
 
     tb::SpriteID_t m_spriteID = 0;
 
-    sf::Vector2u m_position;
+    tb::SpriteFlags_t m_spriteFlags;
+
+    sf::Vector2u m_tileCoords;
+    sf::Vector2u m_pixelCoords;
 
     tb::ZAxis_t m_z = tb::ZAxis::Default;
 
@@ -159,6 +98,7 @@ private:
 
     tb::Entity::List m_entityList;
     tb::Object::List m_objectList;
+    tb::Object::List m_tileEdgeObjectList;
     //tb::Creature::List m_creatureList;
     //tb::Animation::List m_animationList;
 

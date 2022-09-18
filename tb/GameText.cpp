@@ -8,6 +8,11 @@ GameText::GameText()
     //
 }
 
+GameText::~GameText()
+{
+    //
+}
+
 void GameText::setText(tb::BitmapFont& bitmapFont, sf::Vector2u tileCoords, tb::ZAxis_t z, const std::string& text, sf::Color textColor, bool isCentered)
 {
     m_texture = bitmapFont.getTexture();
@@ -33,6 +38,7 @@ void GameText::setText(tb::BitmapFont& bitmapFont, sf::Vector2u tileCoords, tb::
     const unsigned int textHeight = bitmapFont.getGlyphSize()->y;
 
     m_bitmapFontTextList.clear();
+    m_bitmapFontTextList.reserve(m_textList.size());
 
     for (auto& textValue : m_textList)
     {

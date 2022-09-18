@@ -40,6 +40,9 @@
     <Filter Include="Source Files\tb">
       <UniqueIdentifier>{50fb8739-649b-42e5-986f-48259fd6bd55}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\spdlog">
+      <UniqueIdentifier>{5e6c6990-8233-4d12-945e-9cf25ff22861}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -69,7 +72,7 @@
     <ClCompile Include="tb\BitmapFontText.cpp">
       <Filter>Source Files\tb</Filter>
     </ClCompile>
-    <ClCompile Include="tb\ErrorWindow.cpp">
+    <ClCompile Include="tb\LogWindow.cpp">
       <Filter>Source Files\tb</Filter>
     </ClCompile>
     <ClCompile Include="tb\Game.cpp">
@@ -97,6 +100,39 @@
       <Filter>Source Files\tb</Filter>
     </ClCompile>
     <ClCompile Include="tb\StatusBar.cpp">
+      <Filter>Source Files\tb</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\TileMap.cpp">
+      <Filter>Source Files\tb</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\Thing.cpp">
+      <Filter>Source Files\tb</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\Tile.cpp">
+      <Filter>Source Files\tb</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\Object.cpp">
+      <Filter>Source Files\tb</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\Entity.cpp">
+      <Filter>Source Files\tb</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\Map.cpp">
+      <Filter>Source Files\tb</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\Window.cpp">
+      <Filter>Source Files\tb</Filter>
+    </ClCompile>
+    <ClCompile Include="spdlog\spdlog.cpp">
+      <Filter>Source Files\spdlog</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\Log.cpp">
+      <Filter>Source Files\tb</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\PatternData.cpp">
+      <Filter>Source Files\tb</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\WaterData.cpp">
       <Filter>Source Files\tb</Filter>
     </ClCompile>
   </ItemGroup>
@@ -173,13 +209,43 @@
     <ClInclude Include="tb\SpriteDataWindow.h">
       <Filter>Header Files\tb</Filter>
     </ClInclude>
-    <ClInclude Include="tb\ErrorWindow.h">
+    <ClInclude Include="tb\LogWindow.h">
       <Filter>Header Files\tb</Filter>
     </ClInclude>
     <ClInclude Include="tb\MenuBar.h">
       <Filter>Header Files\tb</Filter>
     </ClInclude>
     <ClInclude Include="tb\StatusBar.h">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\TileMap.h">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\Thing.h">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\Tile.h">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\Object.h">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\Map.h">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+    <ClInclude Include="common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\Window.h">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\Log.h">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\PatternData.h">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\WaterData.h">
       <Filter>Header Files\tb</Filter>
     </ClInclude>
   </ItemGroup>

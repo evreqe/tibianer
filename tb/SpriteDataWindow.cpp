@@ -8,13 +8,20 @@ SpriteDataWindow::SpriteDataWindow()
     //
 }
 
+SpriteDataWindow::~SpriteDataWindow()
+{
+    //
+}
+
 void SpriteDataWindow::draw()
 {
-    ImGui::Begin("Sprite Data##SpriteDataWindow", &m_isVisible, ImGuiWindowFlags_AlwaysHorizontalScrollbar | ImGuiWindowFlags_AlwaysVerticalScrollbar);
+    bool* isVisible = getIsVisible();
 
-    if (m_spriteData == nullptr)
+    ImGui::Begin("Sprite Data##SpriteDataWindow", isVisible, ImGuiWindowFlags_AlwaysHorizontalScrollbar | ImGuiWindowFlags_AlwaysVerticalScrollbar);
+
+    if (g_SpriteData.isLoaded() == false)
     {
-        ImGui::Text("ERROR: m_spriteData == nullptr");
+        ImGui::Text("ERROR: g_SpriteData.isLoaded() == false");
         ImGui::End();
 
         return;
@@ -22,7 +29,7 @@ void SpriteDataWindow::draw()
 
     if (ImGui::BeginChild("##SpriteDataChild1", ImVec2(0, 0), true, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_AlwaysVerticalScrollbar))
     {
-        auto spriteDataList = m_spriteData->getDataList();
+        auto spriteDataList = g_SpriteData.getDataList();
         if (spriteDataList != nullptr)
         {
             ImGuiListClipper clipper;
@@ -32,11 +39,11 @@ void SpriteDataWindow::draw()
             {
                 for (int i = clipper.DisplayStart; i < clipper.DisplayEnd; i++)
                 {
-                    tb::Sprite spr;
-                    spr.setUseWidthAndHeight(false);
-                    spr.setID(i);
+                    tb::Sprite sprite;
+                    sprite.setUseWidthAndHeight(false);
+                    sprite.setID(i);
 
-                    ImGui::ImageButton(spr);
+                    ImGui::ImageButton(sprite);
 
                     ImGui::Text(std::format("ID: {}", spriteDataList->at(i).SpriteID).c_str());
 
@@ -51,26 +58,6 @@ void SpriteDataWindow::draw()
     }
 
     ImGui::End();
-}
-
-void SpriteDataWindow::setSpriteData(tb::SpriteData& spriteData)
-{
-    m_spriteData = &spriteData;
-}
-
-bool SpriteDataWindow::getIsVisible()
-{
-    return m_isVisible;
-}
-
-void SpriteDataWindow::setIsVisible(bool b)
-{
-    m_isVisible = b;
-}
-
-void SpriteDataWindow::toggleIsVisible()
-{
-    m_isVisible = !m_isVisible;
 }
 
 }

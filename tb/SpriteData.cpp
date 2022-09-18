@@ -8,6 +8,11 @@ SpriteData::SpriteData()
     //
 }
 
+SpriteData::~SpriteData()
+{
+    //
+}
+
 bool SpriteData::load()
 {
     m_dataList.clear();
@@ -16,12 +21,11 @@ bool SpriteData::load()
     m_data = toml::parse_file(m_fileName);
     if (m_data.size() == 0)
     {
-        tb::print("ERROR: Sprite data failed to parse from file: {}\n", m_fileName);
-
+        g_Log.write("ERROR: Sprite data failed to parse from file: {}\n", m_fileName);
         return false;
     }
 
-    tb::print("Sprite data loaded from file: {}\n", m_fileName);
+    g_Log.write("Sprite data loaded from file: {}\n", m_fileName);
 
     tb::SpriteData::Data firstSpriteData;
     firstSpriteData.SpriteID = 0;
@@ -30,19 +34,32 @@ bool SpriteData::load()
 
     for (tb::SpriteID_t i = 1; i < tb::Constants::NumSprites + 1; i++)
     {
+        std::string spriteIndex = std::to_string(i);
+
         tb::SpriteData::Data spriteData;
 
         spriteData.SpriteID = i;
+
+        spriteData.Name = m_data[spriteIndex]["Name"].value_or("");
+
+        spriteData.Article = m_data[spriteIndex]["Article"].value_or("");
+
+        spriteData.Weight = m_data[spriteIndex]["Weight"].value_or(0.0f);
+
+        spriteData.TileWidth = m_data[spriteIndex]["TileWidth"].value_or(1);
+        spriteData.TileHeight = m_data[spriteIndex]["TileHeight"].value_or(1);
 
         tb::SpriteFlags_t spriteFlags;
 
         for (auto& [spriteFlagName, spriteFlag] : tb::KeyValues::SpriteFlags)
         {
-            bool spriteFlagValue = m_data[std::to_string(i)][spriteFlagName].value_or(false);
+            std::string spriteFlagKey = "Flag" + spriteFlagName;
+
+            bool spriteFlagValue = m_data[spriteIndex][spriteFlagKey].value_or(false);
 
             if (spriteFlagValue == true)
             {
-                //tb::print("[DEBUG]: [{}] {} = {}\n", i, spriteFlagName, spriteFlagValue);
+                //tb::print("[DEBUG]: [{}] {} = {}\n", i, spriteFlagKey, spriteFlagValue);
 
                 spriteFlags.set(spriteFlag, 1);
             }
@@ -58,7 +75,15 @@ bool SpriteData::load()
         m_dataList.push_back(spriteData);
     }
 
-    tb::print("Sprite data list size: {}\n", m_dataList.size());
+    g_Log.write("Sprite data list size: {}\n", m_dataList.size());
+
+    return true;
+}
+
+bool SpriteData::isLoaded()
+{
+    if (m_data.size() == 0) return false;
+    if (m_dataList.size() == 0) return false;
 
     return true;
 }
@@ -67,7 +92,7 @@ bool SpriteData::save()
 {
     if (m_dataList.size() == 0)
     {
-        tb::printError("m_dataList.size() == 0\n");
+        g_Log.write("m_dataList.size() == 0\n");
         return false;
     }
 
@@ -76,7 +101,7 @@ bool SpriteData::save()
 
     if (file.is_open() == false)
     {
-        tb::printError("file.is_open() == false\n");
+        g_Log.write("file.is_open() == false\n");
         return false;
     }
 
@@ -84,20 +109,29 @@ bool SpriteData::save()
     {
         file << std::format("[{}]\n", spriteData.SpriteID);
 
+        file << std::format("Name=\"{}\"\n", spriteData.Name);
+
+        file << std::format("Article=\"{}\"\n", spriteData.Article);
+
+        file << std::format("Weight={:.2f}\n", spriteData.Weight);
+
+        file << std::format("TileWidth={}\n", spriteData.TileWidth);
+        file << std::format("TileHeight={}\n", spriteData.TileHeight);
+
         for (auto& [spriteFlagName, spriteFlag] : tb::KeyValues::SpriteFlags)
         {
             bool isFlagEnabled = spriteData.SpriteFlags.test(spriteFlag);
 
             if (isFlagEnabled == true)
             {
-                file << std::format("{}=1\n", spriteFlagName);
+                file << std::format("Flag{}=1\n", spriteFlagName);
             }
         }
     }
 
     file.close();
 
-    tb::print("Sprite data saved to file: {}\n", m_fileName);
+    g_Log.write("Sprite data saved to file: {}\n", m_fileName);
 
     return true;
 }

@@ -1,9 +1,6 @@
 #pragma once
 
-#include <bitset>
-#include <string>
-#include <unordered_map>
-#include <vector>
+#include "common.h"
 
 #include <SFML/Graphics.hpp>
 
@@ -12,9 +9,24 @@ namespace tb
     using ZAxis_t = uint8_t;
     using SpriteID_t = uint16_t;
 
+    using SpriteIDList = std::vector<SpriteID_t>;
+
     namespace Constants
     {
+        const std::string GameTitle = "Tibianer";
+
         const uint32_t NumSprites = 4096; // 2048x2048
+
+        const uint32_t NumPatterns = 32; // increase when needed
+
+        const uint32_t NumWaterAnimationFrames = 16;
+
+        const uint32_t NumWaterSpritesPerAnimationFrame = 8;
+
+        const sf::Time WaterAnimationFrameTime = sf::seconds(0.5f);
+
+        const uint32_t WaterPatternWidth = 4;
+        const uint32_t WaterPatternHeight = 2;
 
         const SpriteID_t SpriteIDDefault = 1;
 
@@ -49,10 +61,15 @@ namespace tb
 
     namespace Variables
     {
-        inline uint32_t MapWidth = 128;
-        inline uint32_t MapHeight = 128;
+        inline uint32_t MapTileWidth = 128;
+        inline uint32_t MapTileHeight = 128;
 
-        inline uint32_t MapSize = 16384; // = MapWidth * MapHeight
+        inline uint32_t MapNumTiles = 16384;
+
+        inline uint32_t MapPixelWidth = 4096;
+        inline uint32_t MapPixelHeight = 4096;
+
+        inline uint32_t MapNumPixels = 16777216;
     }
 
     namespace Textures
@@ -64,13 +81,15 @@ namespace tb
         inline sf::Texture Sprites;
         inline sf::Texture GUI;
         inline sf::Texture Lights;
+        inline sf::Texture Light;
+        inline sf::Texture InGame;
+        inline sf::Texture InGame2;
+        inline sf::Texture Scroll;
         inline sf::Texture Wood;
         inline sf::Texture WoodHorizontal1;
         inline sf::Texture WoodHorizontal2;
         inline sf::Texture WoodVertical1;
         inline sf::Texture WoodVertical2;
-        inline sf::Texture InGame;
-        inline sf::Texture Water;
     }
 
     namespace KeyValues
@@ -84,15 +103,18 @@ namespace tb
             {"images/sprites.png",             tb::Textures::Sprites},
             {"images/gui.png",                 tb::Textures::GUI},
             {"images/lights.png",              tb::Textures::Lights},
+            {"images/light.png",               tb::Textures::Light},
+            {"images/in_game.png",             tb::Textures::InGame},
+            {"images/in_game2.png",            tb::Textures::InGame2},
+            {"images/scroll.png",              tb::Textures::Scroll},
             {"images/wood.png",                tb::Textures::Wood},
             {"images/wood_horizontal1.png",    tb::Textures::WoodHorizontal1},
             {"images/wood_horizontal2.png",    tb::Textures::WoodHorizontal2},
             {"images/wood_vertical1.png",      tb::Textures::WoodVertical1},
             {"images/wood_vertical2.png",      tb::Textures::WoodVertical2},
-            {"images/ingame.png",              tb::Textures::InGame},
-            {"images/water.png",               tb::Textures::Water},
         };
     }
+
     namespace BitmapFonts
     {
         namespace Default
@@ -262,13 +284,27 @@ namespace tb
         Night,
     };
 
-    enum class DrawIndexType : uint8_t
+    enum class ThingType : uint8_t
+    {
+        Null,
+        Creature,
+        Object,
+        Entity,
+    };
+
+    enum class DrawOrderType : uint8_t
     {
         First,
         TileEdge,
         Decal,
         Default,
         Last,
+    };
+
+    enum class PatternType : uint8_t
+    {
+        Tile,
+        Object,
     };
 
     enum class TileMapType : uint8_t

@@ -1,17 +1,26 @@
 #pragma once
 
+#include "common.h"
+
 #include "tb/Constants.h"
 #include "tb/Utility.h"
+#include "tb/Log.h"
 
 #include "tb/SpriteData.h"
+#include "tb/PatternData.h"
+#include "tb/WaterData.h"
+
+#include "tb/Sprite.h"
+
 #include "tb/BitmapFont.h"
 #include "tb/GameText.h"
-#include "tb/Sprite.h"
+
+#include "tb/Map.h"
 
 #include "tb/MenuBar.h"
 #include "tb/StatusBar.h"
 
-#include "tb/ErrorWindow.h"
+#include "tb/LogWindow.h"
 #include "tb/SpriteDataWindow.h"
 #include "tb/SpriteEditorWindow.h"
 
@@ -20,15 +29,23 @@
 namespace tb
 {
 
-class MenuBar;
-class StatusBar;
-
 class Game
 {
 
 public:
 
     Game();
+    ~Game();
+    Game(const Game&) = delete;
+    Game(Game&&) = delete;
+    Game& operator=(const Game&) = delete;
+    Game& operator=(Game&&) = delete;
+
+    static Game& getInstance()
+    {
+        static Game game;
+        return game;
+    }
 
     void createRenderWindow();
 
@@ -42,6 +59,9 @@ public:
     void drawEnterGameScreen();
     void drawLoadingScreen();
     void drawMapSelectScreen();
+    void drawInGameScreen();
+
+    void doAnimatedWater();
 
     void processEvents();
 
@@ -57,31 +77,20 @@ public:
 
     sf::RenderWindow* getRenderWindow();
 
-    tb::SpriteDataWindow* getSpriteDataWindow();
-    void toggleSpriteDataWindow();
-
-    tb::SpriteEditorWindow* getSpriteEditorWindow();
-    void toggleSpriteEditorWindow();
-
-    tb::SpriteData* getSpriteData();
-
     tb::GameState getGameState();
-
-    void setMenuBar(tb::MenuBar* menuBar);
-    void setStatusBar(tb::StatusBar* statusBar);
 
 private:
 
     bool m_showDemoWindow = false;
     bool m_showStackToolWindow = false;
 
-    const std::string m_gameTitle = "Tibianer";
-
-    tb::GameState m_gameState = tb::GameState::EnterGame;
+    tb::GameState m_gameState = tb::GameState::InGame;
 
     unsigned int m_minimumTextureSizeRequiredToRun = 2048;
 
     sf::Clock m_deltaClock;
+
+    sf::Clock m_animatedWaterClock;
 
     sf::Cursor m_cursorArrow;
 
@@ -105,20 +114,14 @@ private:
     unsigned int m_renderWindowIconWidth = 32;
     unsigned int m_renderWindowIconHeight = 32;
 
-    tb::MenuBar* m_menuBar = nullptr;
-    tb::StatusBar* m_statusBar = nullptr;
-
     tb::BitmapFont m_bitmapFontDefault;
     tb::BitmapFont m_bitmapFontTiny;
     tb::BitmapFont m_bitmapFontModern;
-
-    tb::SpriteData m_spriteData;
-
-    tb::SpriteDataWindow m_spriteDataWindow;
-    tb::SpriteEditorWindow m_spriteEditorWindow;
-
-    sf::Texture m_tex;
-    sf::Image m_img;
 };
 
+}
+
+namespace
+{
+    tb::Game& g_Game = tb::Game::getInstance();
 }

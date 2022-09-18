@@ -1,6 +1,11 @@
 #pragma once
 
+#include "common.h"
+
+#include "tb/Window.h"
+
 #include "tb/SpriteData.h"
+
 #include "tb/Sprite.h"
 
 #include "imgui.h"
@@ -9,26 +14,34 @@
 namespace tb
 {
 
-    class SpriteDataWindow
+    class SpriteDataWindow : public tb::Window
     {
 
     public:
 
         SpriteDataWindow();
+        ~SpriteDataWindow();
+        SpriteDataWindow(const SpriteDataWindow&) = delete;
+        SpriteDataWindow(SpriteDataWindow&&) = delete;
+        SpriteDataWindow& operator=(const SpriteDataWindow&) = delete;
+        SpriteDataWindow& operator=(SpriteDataWindow&&) = delete;
+
+        static SpriteDataWindow& getInstance()
+        {
+            static SpriteDataWindow spriteDataWindow;
+            return spriteDataWindow;
+        }
 
         void draw();
 
-        void setSpriteData(tb::SpriteData& spriteData);
-
-        bool getIsVisible();
-        void setIsVisible(bool b);
-        void toggleIsVisible();
-
     private:
 
-        bool m_isVisible = false;
-
-        tb::SpriteData* m_spriteData = nullptr;
+        //
     };
 
+}
+
+namespace
+{
+    tb::SpriteDataWindow& g_SpriteDataWindow = tb::SpriteDataWindow::getInstance();
 }

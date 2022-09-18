@@ -1,9 +1,13 @@
 #pragma once
 
-#include <string>
+#include "common.h"
 
 #include "imgui.h"
 #include "imgui-SFML.h"
+
+#include "tb/LogWindow.h"
+#include "tb/SpriteDataWindow.h"
+#include "tb/SpriteEditorWindow.h"
 
 #include "tb/Game.h"
 
@@ -17,8 +21,19 @@ namespace tb
     public:
 
         MenuBar();
+        ~MenuBar();
+        MenuBar(const MenuBar&) = delete;
+        MenuBar(MenuBar&&) = delete;
+        MenuBar& operator=(const MenuBar&) = delete;
+        MenuBar& operator=(MenuBar&&) = delete;
 
-        void draw(tb::Game* game);
+        static MenuBar& getInstance()
+        {
+            static MenuBar menuBar;
+            return menuBar;
+        }
+
+        void draw();
 
         float getHeight();
         void setHeight(float height);
@@ -29,8 +44,6 @@ namespace tb
 
     private:
 
-        tb::Game* m_game;
-
         bool m_isVisible = true;
 
         const float m_heightDefault = 19.0f;
@@ -39,5 +52,9 @@ namespace tb
 
         float m_height = m_heightDefault;
     };
+}
 
+namespace
+{
+    tb::MenuBar& g_MenuBar = tb::MenuBar::getInstance();
 }

@@ -8,16 +8,21 @@ MenuBar::MenuBar()
     //
 }
 
-void MenuBar::draw(tb::Game* game)
+MenuBar::~MenuBar()
+{
+    //
+}
+
+void MenuBar::draw()
 {
     if (m_isVisible == false)
     {
         return;
     }
 
-    auto renderWindow = game->getRenderWindow();
+    auto renderWindow = g_Game.getRenderWindow();
 
-    bool isInGame = (game->getGameState() == tb::GameState::InGame);
+    bool isInGame = (g_Game.getGameState() == tb::GameState::InGame);
 
     ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f));
     ImGui::SetNextWindowSize(ImVec2(renderWindow->getSize().x, m_height));
@@ -71,24 +76,29 @@ void MenuBar::draw(tb::Game* game)
         {
             if (ImGui::MenuItem("Sprite Editor...##MenuItemDeveloperSpriteEditor", 0))
             {
-                game->toggleSpriteEditorWindow();
+                g_SpriteEditorWindow.toggleIsVisible();
             }
 
             if (ImGui::MenuItem("Sprite Data...##MenuItemDeveloperSpriteData", 0))
             {
-                game->toggleSpriteDataWindow();
+                g_SpriteDataWindow.toggleIsVisible();
+            }
+
+            if (ImGui::MenuItem("Log Window...##MenuItemDeveloperLogWindow", 0))
+            {
+                g_LogWindow.toggleIsVisible();
             }
 
             ImGui::Separator();
 
             if (ImGui::MenuItem("Demo Window...##MenuItemDeveloperDemoWindow", 0))
             {
-                game->toggleDemoWindow();
+                g_Game.toggleDemoWindow();
             }
 
             if (ImGui::MenuItem("Stack Tool Window...##MenuItemDeveloperStackToolWindow", 0))
             {
-                game->toggleStackToolWindow();
+                g_Game.toggleStackToolWindow();
             }
 
             ImGui::EndMenu();

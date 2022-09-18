@@ -1,6 +1,6 @@
 #pragma once
 
-#include <iostream>
+#include "common.h"
 
 #include <SFML/Graphics.hpp>
 
@@ -11,20 +11,22 @@
 namespace tb
 {
 
-class SpriteBatch : public sf::Drawable, public sf::Transformable
+class SpriteBatch
 {
 
 public:
 
     SpriteBatch();
+    ~SpriteBatch();
 
-    void addSprite(tb::Sprite& sprite, bool applyTileOffset = false);
+    void addSprite(tb::Sprite& sprite, bool applyTileWidthAndHeightOffset = false);
     void clear();
     void printDebugText();
+    void draw(sf::RenderTarget& target, sf::RenderStates states);
+
+    uint32_t getNumSprites();
 
 private:
-
-    virtual void draw(sf::RenderTarget& target, sf::RenderStates states);
 
     sf::VertexArray m_vertexArray;
 

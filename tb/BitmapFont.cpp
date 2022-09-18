@@ -9,11 +9,16 @@ BitmapFont::BitmapFont()
     m_vertexArray.resize(m_numGlyphs * 4);
 }
 
+BitmapFont::~BitmapFont()
+{
+    //
+}
+
 bool BitmapFont::load(const std::string& texture, sf::Vector2u glyphSize, const std::vector<unsigned int>* glyphWidthList, unsigned int glyphSpace)
 {
     if (m_texture.loadFromFile(texture) == false)
     {
-        std::cout << "ERROR: Failed to load texture file: " << texture << "\n";
+        fmt::print("ERROR: Failed to load texture file: {}\n", texture);
         return false;
     }
 
