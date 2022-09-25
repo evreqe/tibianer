@@ -13,24 +13,19 @@ Thing::~Thing()
     //
 }
 
-uint32_t Thing::getTileNumber()
+uint32_t Thing::getTileIndex()
 {
-    return m_tileNumber;
+    return m_tileIndex;
 }
 
-void Thing::setTileNumber(uint32_t tileNumber)
+void Thing::setTileIndex(uint32_t tileIndex)
 {
-    m_tileNumber = tileNumber;
+    m_tileIndex = tileIndex;
 }
-
-//void Thing::updateTileNumber()
-//{
-    //m_tileNumber = m_tileCoords.x + (m_tileCoords.y * tb::Variables::MapTileWidth);
-//}
 
 sf::Vector2u Thing::getTileCoords()
 {
-    return sf::Vector2u(m_tileCoords.x, m_tileCoords.y);
+    return m_tileCoords;
 }
 
 void Thing::setTileCoords(const sf::Vector2u& tileCoords)
@@ -67,7 +62,7 @@ void Thing::setTileY(uint32_t tileY)
 
 sf::Vector2u Thing::getPixelCoords()
 {
-    return sf::Vector2u(m_pixelCoords.x, m_pixelCoords.y);
+    return m_pixelCoords;
 }
 
 void Thing::setPixelCoords(const sf::Vector2u& pixelCoords)

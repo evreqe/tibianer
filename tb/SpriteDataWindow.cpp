@@ -15,6 +15,8 @@ SpriteDataWindow::~SpriteDataWindow()
 
 void SpriteDataWindow::draw()
 {
+    centerAndResizeOnFirstUseEver();
+
     bool* isVisible = getIsVisible();
 
     ImGui::Begin("Sprite Data##SpriteDataWindow", isVisible, ImGuiWindowFlags_AlwaysHorizontalScrollbar | ImGuiWindowFlags_AlwaysVerticalScrollbar);

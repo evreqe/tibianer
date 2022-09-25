@@ -47,9 +47,7 @@ namespace tb
 
         bool m_isVisible = true;
 
-        const float m_heightDefault = 19.0f;
-
-        float m_height = m_heightDefault;
+        float m_height = tb::Constants::StatusBarHeight;
 
         const std::string m_TextDefault = "Welcome to Tibianer!";
 

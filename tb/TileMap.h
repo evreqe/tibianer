@@ -31,6 +31,8 @@ public:
 
     bool load(uint32_t tileWidth, uint32_t tileHeight, tb::SpriteIDList tileSpriteIDList, const std::string& name, tb::TileMapType tileMapType, tb::ZAxis_t z);
 
+    bool isTileIndexOutOfBounds(uint32_t tileIndex);
+
     void updateTileSpriteID(tb::Tile::Ptr tile, tb::SpriteID_t spriteID);
     void updateTileSpriteFlags(tb::Tile::Ptr tile, tb::SpriteID_t spriteID);
 
@@ -46,8 +48,6 @@ public:
     bool applyTilePatterns();
     bool applyTileObjectPatterns();
 
-    sf::Vector2u getTileCoordsByTileNumber(uint32_t tileNumber);
-
     const std::string& getName();
     void setName(const std::string& name);
 
@@ -57,7 +57,7 @@ public:
     tb::ZAxis_t getZ();
     void setZ(tb::ZAxis_t z);
 
-    void draw(sf::RenderTarget& target);
+    void draw(const sf::IntRect& rect, sf::RenderTarget& renderTarget);
 
 private:
 

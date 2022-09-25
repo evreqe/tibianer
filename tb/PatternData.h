@@ -36,7 +36,7 @@ namespace tb
             tb::PatternType PatternType = tb::PatternType::Tile;
             uint8_t Width = 0;
             uint8_t Height = 0;
-           tb::SpriteIDList Sprites;
+           tb::SpriteIDList SpriteIDList;
         } Pattern, * Pattern_ptr;
 
         using PatternList = std::vector<tb::PatternData::Pattern>;
@@ -54,6 +54,8 @@ namespace tb
         toml::table m_data;
 
         tb::PatternData::PatternList m_patternList;
+
+        const uint8_t m_numPatternsToLoad = 16;
 
     };
 

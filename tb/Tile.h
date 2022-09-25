@@ -10,7 +10,7 @@
 
 #include "tb/Entity.h"
 #include "tb/Object.h"
-//#include "tb/Creature.h"
+#include "tb/Creature.h"
 //#include "tb/Animation.h"
 
 namespace tb
@@ -27,16 +27,16 @@ public:
     using Ptr = std::shared_ptr<tb::Tile>;
     using List = std::vector<tb::Tile::Ptr>;
 
-    struct sortByTileNumber_t
+    struct sortByTileIndex_t
     {
         bool operator()(tb::Tile::Ptr a, tb::Tile::Ptr b) const
         {
-            return (a->getTileNumber() < b->getTileNumber());
+            return (a->getTileIndex() < b->getTileIndex());
         }
     };
 
-    uint32_t getTileNumber();
-    void setTileNumber(uint32_t tileNumber);
+    uint32_t getTileIndex();
+    void setTileIndex(uint32_t tileIndex);
 
     tb::SpriteID_t getSpriteID();
     void setSpriteID(tb::SpriteID_t spriteID);
@@ -68,9 +68,7 @@ public:
     void addObject(tb::Object::Ptr object);
     void removeObject(tb::Object::Ptr object);
 
-/*
     void addCreature(tb::Creature::Ptr creature);
-*/
 
 
 /*
@@ -80,10 +78,11 @@ public:
     tb::Entity::List* getEntityList();
     tb::Object::List* getObjectList();
     tb::Object::List* getTileEdgeObjectList();
+    tb::Creature::List* getCreatureList();
 
 private:
 
-    uint32_t m_tileNumber = 0; // index of the tile on the screen from left to right, top to bottom
+    uint32_t m_tileIndex = 0; // index of the tile on the screen from left to right, top to bottom
 
     tb::SpriteID_t m_spriteID = 0;
 
@@ -99,7 +98,7 @@ private:
     tb::Entity::List m_entityList;
     tb::Object::List m_objectList;
     tb::Object::List m_tileEdgeObjectList;
-    //tb::Creature::List m_creatureList;
+    tb::Creature::List m_creatureList;
     //tb::Animation::List m_animationList;
 
 };

@@ -9,17 +9,18 @@
 #include "tb/SpriteData.h"
 #include "tb/PatternData.h"
 #include "tb/WaterData.h"
+#include "tb/OutfitData.h"
 
 #include "tb/Sprite.h"
-
+#include "tb/Creature.h"
 #include "tb/BitmapFont.h"
 #include "tb/GameText.h"
-
 #include "tb/Map.h"
 
 #include "tb/MenuBar.h"
 #include "tb/StatusBar.h"
 
+#include "tb/OverlayWindow.h"
 #include "tb/LogWindow.h"
 #include "tb/SpriteDataWindow.h"
 #include "tb/SpriteEditorWindow.h"
@@ -61,8 +62,21 @@ public:
     void drawMapSelectScreen();
     void drawInGameScreen();
 
+    void drawGameWindow();
+
+    void drawGameLayer(tb::ZAxis_t z);
+
+    sf::IntRect getTilesToDrawRect();
+
+    bool isTileMapVisible(tb::TileMap* tileMap);
+
+    tb::Tile::Ptr getTileOfThing(tb::Thing::Ptr thing);
+
     void doAnimatedWater();
 
+    bool createPlayer();
+
+    void handleMouseWheelEvent(sf::Event event);
     void processEvents();
 
     // this function fixes a bug between imgui, SFML and imgui-SFML
@@ -117,6 +131,19 @@ private:
     tb::BitmapFont m_bitmapFontDefault;
     tb::BitmapFont m_bitmapFontTiny;
     tb::BitmapFont m_bitmapFontModern;
+
+    sf::View m_gameWindowView;
+
+    sf::RenderTexture m_gameWindow;
+    sf::Sprite m_gameWindowSprite;
+
+    sf::RenderTexture m_gameWindowLayer;
+    sf::Sprite m_gameWindowLayerSprite;
+
+    float m_gameWindowZoomLevel = 1.0f;
+    float m_gameWindowZoomFactor = 0.4f;
+
+    tb::Creature::Ptr m_player;
 };
 
 }

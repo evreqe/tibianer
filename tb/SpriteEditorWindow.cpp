@@ -73,6 +73,17 @@ void SpriteEditorWindow::updateSpriteDataFromInputs(tb::SpriteID_t spriteID)
 
 void SpriteEditorWindow::draw()
 {
+    const ImGuiViewport* viewport = ImGui::GetMainViewport();
+
+    ImVec2 windowPosition = viewport->Pos;
+    windowPosition.y += tb::Constants::MenuBarHeight;
+
+    ImVec2 windowSize = viewport->Size;
+    windowSize.y -= tb::Constants::StatusBarHeight + tb::Constants::MenuBarHeight;
+
+    ImGui::SetNextWindowPos(windowPosition);
+    ImGui::SetNextWindowSize(windowSize);
+
     bool* isVisible = getIsVisible();
 
     ImGui::Begin("Sprite Editor##SpriteEditorWindow", isVisible, ImGuiWindowFlags_AlwaysHorizontalScrollbar | ImGuiWindowFlags_AlwaysVerticalScrollbar);
@@ -159,26 +170,9 @@ void SpriteEditorWindow::draw()
 
         ImGui::ImageButton(sprite);
 
-        ImGui::Text("Flags:");
-
-        if (ImGui::BeginChild("##SpriteEditorChild2", ImVec2(0, 480), true))
-        {
-            for (auto& [spriteFlagName, spriteFlag] : tb::KeyValues::SpriteFlags)
-            {
-                tb::SpriteFlags_t* spriteFlags = &spriteDataList->at(m_selectedSpriteID).SpriteFlags;
-
-                bool isChecked = spriteFlags->test(spriteFlag);
-
-                if (ImGui::Checkbox(std::format("{0}##SpriteEditorChild2Checkbox{1}{0}", spriteFlagName, m_selectedSpriteID).c_str(), &isChecked))
-                {
-                    spriteFlags->flip(spriteFlag);
-                }
-            }
-
-            ImGui::EndChild();
-        }
-
         ImGui::Text("Highlight Flag:");
+
+        ImGui::SameLine();
 
         std::string highlightComboPreviewText = "Null";
 
@@ -210,44 +204,72 @@ void SpriteEditorWindow::draw()
             ImGui::EndCombo();
         }
 
-        ImGui::TableSetColumnIndex(2);
-
-        if (ImGui::InputText("Name:##SpriteEditorInputName", m_inputName, IM_ARRAYSIZE(m_inputName)))
-        {
-            updateSpriteDataFromInputs(m_selectedSpriteID);
-        }
-
-        if (ImGui::InputText("Article:##SpriteEditorInputArticle", m_inputArticle, IM_ARRAYSIZE(m_inputArticle)))
-        {
-            updateSpriteDataFromInputs(m_selectedSpriteID);
-        }
-
-        if (ImGui::InputFloat("Weight:##SpriteEditorInputWeight", &m_inputWeight, 0.0f, 0.0f, "%.2f"))
-        {
-            if (m_inputWeight < 0.0f) m_inputWeight = 0.0f;
-
-            updateSpriteDataFromInputs(m_selectedSpriteID);
-        }
-
-        if (ImGui::InputInt("Tile Width:##SpriteEditorInputTileWidth", &m_inputTileWidth))
-        {
-            if (m_inputTileWidth < 1) m_inputTileWidth = 1;
-
-            updateSpriteDataFromInputs(m_selectedSpriteID);
-        }
-
-        if (ImGui::InputInt("Tile Height:##SpriteEditorInputTileHeight", &m_inputTileHeight))
-        {
-            if (m_inputTileHeight < 1) m_inputTileHeight = 1;
-
-            updateSpriteDataFromInputs(m_selectedSpriteID);
-        }
-
         ImGui::Separator();
+
+        ImGui::Text("Flags:");
+
+        if (ImGui::BeginChild("##SpriteEditorChild2", ImVec2(0, 0), true, ImGuiWindowFlags_AlwaysAutoResize))
+        {
+            for (auto& [spriteFlagName, spriteFlag] : tb::KeyValues::SpriteFlags)
+            {
+                tb::SpriteFlags_t* spriteFlags = &spriteDataList->at(m_selectedSpriteID).SpriteFlags;
+
+                bool isChecked = spriteFlags->test(spriteFlag);
+
+                if (ImGui::Checkbox(std::format("{0}##SpriteEditorChild2Checkbox{1}{0}", spriteFlagName, m_selectedSpriteID).c_str(), &isChecked))
+                {
+                    spriteFlags->flip(spriteFlag);
+                }
+            }
+
+            ImGui::EndChild();
+        }
+
+        ImGui::TableSetColumnIndex(2);
 
         if (ImGui::Button("Save##SpriteEditorButtonSave"))
         {
             g_SpriteData.save();
+        }
+
+        ImGui::Separator();
+
+        ImGui::Text("Properties:");
+
+        if (ImGui::BeginChild("##SpriteEditorChild3", ImVec2(0, 0), true, ImGuiWindowFlags_AlwaysAutoResize))
+        {
+            if (ImGui::InputText("Name:##SpriteEditorInputName", m_inputName, IM_ARRAYSIZE(m_inputName)))
+            {
+                updateSpriteDataFromInputs(m_selectedSpriteID);
+            }
+
+            if (ImGui::InputText("Article:##SpriteEditorInputArticle", m_inputArticle, IM_ARRAYSIZE(m_inputArticle)))
+            {
+                updateSpriteDataFromInputs(m_selectedSpriteID);
+            }
+
+            if (ImGui::InputFloat("Weight:##SpriteEditorInputWeight", &m_inputWeight, 0.0f, 0.0f, "%.2f"))
+            {
+                if (m_inputWeight < 0.0f) m_inputWeight = 0.0f;
+
+                updateSpriteDataFromInputs(m_selectedSpriteID);
+            }
+
+            if (ImGui::InputInt("Tile Width:##SpriteEditorInputTileWidth", &m_inputTileWidth))
+            {
+                if (m_inputTileWidth < 1) m_inputTileWidth = 1;
+
+                updateSpriteDataFromInputs(m_selectedSpriteID);
+            }
+
+            if (ImGui::InputInt("Tile Height:##SpriteEditorInputTileHeight", &m_inputTileHeight))
+            {
+                if (m_inputTileHeight < 1) m_inputTileHeight = 1;
+
+                updateSpriteDataFromInputs(m_selectedSpriteID);
+            }
+
+            ImGui::EndChild();
         }
 
         ImGui::EndTable();

@@ -13,11 +13,17 @@ GameText::~GameText()
     //
 }
 
-void GameText::setText(tb::BitmapFont& bitmapFont, sf::Vector2u tileCoords, tb::ZAxis_t z, const std::string& text, sf::Color textColor, bool isCentered)
+bool GameText::setText(tb::BitmapFont* bitmapFont, const sf::Vector2u& tileCoords, tb::ZAxis_t z, const std::string& text, const sf::Color& textColor, bool isCentered)
 {
-    m_texture = bitmapFont.getTexture();
+    if (bitmapFont == nullptr)
+    {
+        g_Log.write("ERROR: nullptr\n");
+        return false;
+    }
 
-    m_tilePosition = tileCoords;
+    m_texture = bitmapFont->getTexture();
+
+    m_tileCoords = tileCoords;
 
     m_z = z;
 
@@ -25,17 +31,13 @@ void GameText::setText(tb::BitmapFont& bitmapFont, sf::Vector2u tileCoords, tb::
 
     m_textColor = textColor;
 
-    m_numTextLines = 0;
-
     m_textList.clear();
 
     boost::split(m_textList, text, boost::is_any_of("\n"));
 
-    m_numTextLines = m_textList.size();
-
     sf::Vector2f textPosition = static_cast<sf::Vector2f>(tileCoords);
 
-    const unsigned int textHeight = bitmapFont.getGlyphSize()->y;
+    const unsigned int textHeight = bitmapFont->getGlyphSize().y;
 
     m_bitmapFontTextList.clear();
     m_bitmapFontTextList.reserve(m_textList.size());
@@ -44,24 +46,26 @@ void GameText::setText(tb::BitmapFont& bitmapFont, sf::Vector2u tileCoords, tb::
     {
         tb::BitmapFontText bitmapFontText;
 
-        bitmapFontText.setText(&bitmapFont, textValue, textColor, isCentered);
+        bitmapFontText.setText(bitmapFont, textValue, textColor, isCentered);
 
         bitmapFontText.setPosition(textPosition);
 
-        textPosition.y = textPosition.y + static_cast<float>(textHeight) + 1;
+        textPosition.y = textPosition.y + (static_cast<float>(textHeight) + 1.0f);
 
         m_bitmapFontTextList.push_back(bitmapFontText);
     }
+
+    return true;
+}
+
+sf::Vector2u GameText::getTileCoords()
+{
+    return m_tileCoords;
 }
 
 tb::ZAxis_t GameText::getZ()
 {
     return m_z;
-}
-
-sf::Vector2u GameText::getTilePosition()
-{
-    return m_tilePosition;
 }
 
 std::string GameText::getText()
@@ -72,11 +76,6 @@ std::string GameText::getText()
 sf::Color* GameText::getTextColor()
 {
     return &m_textColor;
-}
-
-unsigned int GameText::getNumTextLines()
-{
-    return m_numTextLines;
 }
 
 std::vector<std::string>* GameText::getTextList()

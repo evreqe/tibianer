@@ -26,15 +26,15 @@ namespace tb
 
         static LogWindow& getInstance()
         {
-            static LogWindow errorWindow;
-            return errorWindow;
+            static LogWindow logWindow;
+            return logWindow;
         }
 
         void draw();
 
     private:
 
-        std::string m_titleText = "Log##LogWindow";
+        //
     };
 
 }

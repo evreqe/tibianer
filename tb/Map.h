@@ -57,7 +57,13 @@ public:
     };
 
     template <class T>
-    uint32_t getTileNumberByPixelCoords(T pixelCoords)
+    uint32_t getTileIndexByTileCoords(const T& tileCoords)
+    {
+        return tileCoords.x + (tileCoords.y * m_tileWidth);
+    }
+
+    template <class T>
+    uint32_t getTileIndexByPixelCoords(const T& pixelCoords)
     {
         uint32_t tileX = 0;
         uint32_t tileY = 0;
@@ -76,7 +82,16 @@ public:
     }
 
     template <class T>
-    sf::Vector2u getTileCoordsByPixelCoords(T pixelCoords)
+    sf::Vector2u getPixelCoordsByTileCoords(const T& tileCoords)
+    {
+        uint32_t pixelX = tileCoords.x * tb::Constants::TileSize;
+        uint32_t pixelY = tileCoords.y * tb::Constants::TileSize;
+
+        return sf::Vector2u(pixelX, pixelY);
+    }
+
+    template <class T>
+    sf::Vector2u getTileCoordsByPixelCoords(const T& pixelCoords)
     {
         uint32_t tileX = 0;
         uint32_t tileY = 0;
@@ -96,7 +111,9 @@ public:
 
     bool load(const std::string& fileName);
 
-    bool isTileNumberOutOfBounds(uint32_t tileNumber);
+    sf::Vector2u getTileCoordsByTileIndex(uint32_t tileIndex);
+
+    bool isTileIndexOutOfBounds(uint32_t tileIndex);
     bool isTileCoordsOutOfBounds(const sf::Vector2u& tileCoords);
 
     const std::string& getFileName();
@@ -128,7 +145,7 @@ private:
     uint32_t m_tileWidth = 0;
     uint32_t m_tileHeight = 0;
 
-    uint32_t m_numTiles = 0; // m_tileWidth * m_tileHeight
+    uint32_t m_numTiles = 0; // = m_tileWidth * m_tileHeight
 
     Properties_t m_properties;
 

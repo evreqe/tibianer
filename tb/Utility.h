@@ -2,9 +2,9 @@
 
 #include "common.h"
 
-#include <SFML/Graphics.hpp>
-
 #include "tb/Constants.h"
+
+#include <SFML/Graphics.hpp>
 
 namespace tb
 {

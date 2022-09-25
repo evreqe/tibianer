@@ -13,14 +13,14 @@ Tile::~Tile()
     //
 }
 
-uint32_t Tile::getTileNumber()
+uint32_t Tile::getTileIndex()
 {
-    return m_tileNumber;
+    return m_tileIndex;
 }
 
-void Tile::setTileNumber(uint32_t tileNumber)
+void Tile::setTileIndex(uint32_t tileIndex)
 {
-    m_tileNumber = tileNumber;
+    m_tileIndex = tileIndex;
 }
 
 tb::SpriteID_t Tile::getSpriteID()
@@ -171,6 +171,11 @@ void Tile::removeObject(tb::Object::Ptr object)
     std::erase(m_objectList, object);
 }
 
+void Tile::addCreature(tb::Creature::Ptr creature)
+{
+    m_creatureList.push_back(creature);
+}
+
 tb::Entity::List* Tile::getEntityList()
 {
     return &m_entityList;
@@ -184,6 +189,11 @@ tb::Object::List* Tile::getObjectList()
 tb::Object::List* Tile::getTileEdgeObjectList()
 {
     return &m_tileEdgeObjectList;
+}
+
+tb::Creature::List* Tile::getCreatureList()
+{
+    return &m_creatureList;
 }
 
 }

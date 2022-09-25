@@ -7,6 +7,7 @@
 namespace tb
 {
     using ZAxis_t = uint8_t;
+    using OutfitIndex_t = uint8_t;
     using SpriteID_t = uint16_t;
 
     using SpriteIDList = std::vector<SpriteID_t>;
@@ -15,9 +16,12 @@ namespace tb
     {
         const std::string GameTitle = "Tibianer";
 
-        const uint32_t NumSprites = 4096; // 2048x2048
+        const std::string PlayerNameDefault = "Avatar";
 
-        const uint32_t NumPatterns = 32; // increase when needed
+        const float MenuBarHeight = 19.0f;
+        const float StatusBarHeight = 19.0f;
+
+        const uint32_t NumSprites = 4096; // 2048x2048
 
         const uint32_t NumWaterAnimationFrames = 16;
 
@@ -28,27 +32,34 @@ namespace tb
         const uint32_t WaterPatternWidth = 4;
         const uint32_t WaterPatternHeight = 2;
 
+        const uint32_t NumOutfitSpriteIndex = 4; // head, body, legs, feet
+
+        const uint32_t NumOutfitSpriteDirections = 4; // up, right, down, left
+
+        const SpriteID_t SpriteIDNull = 0;
         const SpriteID_t SpriteIDDefault = 1;
 
         const uint32_t TileSize = 32;
+        const uint32_t TileSizeHalf = 16;
         const float TileSizeFloat = 32.0f;
-
-        const uint32_t TileNull = 0; // when no tile exists at a position
+        const float TileSizeHalfFloat = 16.0f;
 
         const uint32_t NumZAxis = 16;
 
-        const uint32_t NumTilesX = 13;    // number of tiles visible on the x-axis
-        const uint32_t NumTilesY = 9;     // number of tiles visible on the y-axis
+        const uint32_t GameWindowTileWidth  = 13;    // number of tiles visible on the x-axis
+        const uint32_t GameWindowTileHeight = 9;     // number of tiles visible on the y-axis
 
-        const uint32_t NumTilesFromCenterX = 6;    // number of tiles visible to the west or east of the player on the x-axis
-        const uint32_t NumTilesFromCenterY = 4;    // number of tiles visible to the north or south of the player on the y-axis
+        const uint32_t GameWindowNumTilesFromCenterX = 6;    // number of tiles visible to the west or east of the player on the x-axis
+        const uint32_t GameWindowNumTilesFromCenterY = 4;    // number of tiles visible to the north or south of the player on the y-axis
 
-        const uint32_t NumTilesVisible = NumTilesX * NumTilesY; // number of tiles visible on the screen
+        const uint32_t GameWindowNumTilesVisible = GameWindowTileWidth * GameWindowTileHeight; // number of tiles visible in the game window
 
-        const uint32_t NumTilesToDrawFromOffscreen = 1; // need to draw some tiles that are not visible in order to account for large objects that take up 4 tiles
+        const uint32_t GameWindowNumTilesToDrawFromOffscreen = 1; // need to draw some tiles that are not visible in order to account for large objects that take up 4 tiles
 
-        const uint32_t TilesWidth  = NumTilesX * TileSize;    // number of pixels visible on the x-axis
-        const uint32_t TilesHeight = NumTilesY * TileSize;    // number of pixels visible on the y-axis
+        const uint32_t GameWindowPixelWidth  = GameWindowTileWidth  * TileSize;    // number of pixels visible on the x-axis
+        const uint32_t GameWindowPixelHeight = GameWindowTileHeight * TileSize;    // number of pixels visible on the y-axis
+
+        const uint32_t GameWindowNumPixelsVisible = GameWindowPixelWidth * GameWindowPixelHeight; // number of pixels visible in the game window
 
         const uint32_t TileHeightMovementDifference = 2; // player cannot move to a tile if it has vertical objects stacked 2 axis higher than the player
 
@@ -61,15 +72,15 @@ namespace tb
 
     namespace Variables
     {
-        inline uint32_t MapTileWidth = 128;
-        inline uint32_t MapTileHeight = 128;
+        //inline uint32_t MapTileWidth = 128;
+        //inline uint32_t MapTileHeight = 128;
 
-        inline uint32_t MapNumTiles = 16384;
+        //inline uint32_t MapNumTiles = 16384;
 
-        inline uint32_t MapPixelWidth = 4096;
-        inline uint32_t MapPixelHeight = 4096;
+        //inline uint32_t MapPixelWidth = 4096;
+        //inline uint32_t MapPixelHeight = 4096;
 
-        inline uint32_t MapNumPixels = 16777216;
+        //inline uint32_t MapNumPixels = 16777216;
     }
 
     namespace Textures
@@ -113,6 +124,26 @@ namespace tb
             {"images/wood_vertical1.png",      tb::Textures::WoodVertical1},
             {"images/wood_vertical2.png",      tb::Textures::WoodVertical2},
         };
+    }
+
+    namespace Fonts
+    {
+        namespace Default
+        {
+            const std::string FileName = "fonts/OpenSans.ttf";
+        }
+
+        namespace Console
+        {
+            const std::string FileName = "fonts/Inconsolata.ttf";
+        }
+
+        namespace System
+        {
+            const std::string FileName = "fonts/System.ttf";
+
+            const uint32_t CharacterSize = 13;
+        }
     }
 
     namespace BitmapFonts
@@ -259,12 +290,17 @@ namespace tb
             Min     = 0,
             Default = 7,
             Max     = 15,
+        };
+    }
 
-            Floor       = Min,
-            UnderGround = Default - 1,
-            Ground      = Default,
-            AboveGround = Default + 1,
-            Ceiling     = Max,
+    namespace OutfitIndex
+    {
+        enum : OutfitIndex_t
+        {
+            Head = 0,
+            Body = 1,
+            Legs = 2,
+            Feet = 3,
         };
     }
 
@@ -282,6 +318,33 @@ namespace tb
     {
         Day,
         Night,
+    };
+
+    enum class Direction : uint8_t
+    {
+        Up,
+        Right,
+        Down,
+        Left,
+        UpLeft,
+        UpRight,
+        DownLeft,
+        DownRight,
+    };
+
+    enum class Vocation : uint8_t
+    {
+        Knight,
+        Paladin,
+        Druid,
+        Sorcerer,
+    };
+
+    enum class BloodType : uint8_t
+    {
+        None,
+        Red,
+        Green,
     };
 
     enum class ThingType : uint8_t

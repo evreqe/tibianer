@@ -31,6 +31,16 @@ void Sprite::setID(tb::SpriteID_t id)
 {
     m_id = id;
 
+    tb::SpriteData::Data* data = &g_SpriteData.getDataList()->at(m_id);
+    if (data == nullptr)
+    {
+        g_Log.write("ERROR: nullptr\n");
+        return;
+    }
+
+    setTileHeight(data->TileWidth);
+    setTileWidth(data->TileHeight);
+
     updateTextureRect();
 }
 

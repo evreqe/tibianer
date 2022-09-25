@@ -17,35 +17,41 @@ SpriteBatch::~SpriteBatch()
     //
 }
 
-void SpriteBatch::addSprite(tb::Sprite& sprite, bool applyTileWidthAndHeightOffset)
+bool SpriteBatch::addSprite(tb::Sprite* sprite, bool applyTileWidthAndHeightOffset)
 {
-    sf::Vector2f spritePosition = sprite.getPosition();
+    if (sprite == nullptr)
+    {
+        g_Log.write("ERROR: nullptr\n");
+        return false;
+    }
 
-    sf::FloatRect spriteRect = (sf::FloatRect)sprite.getTextureRect();
+    sf::Vector2f spritePosition = sprite->getPosition();
 
-    sf::Color spriteColor = sprite.getColor();
+    sf::FloatRect spriteRect = static_cast<sf::FloatRect>(sprite->getTextureRect());
 
-    float spriteTileWidth = tb::Constants::TileSizeFloat * sprite.getTileWidth();
-    float spriteTileHeight = tb::Constants::TileSizeFloat * sprite.getTileHeight();
+    sf::Color spriteColor = sprite->getColor();
+
+    float spriteTileWidth  = tb::Constants::TileSizeFloat * sprite->getTileWidth();
+    float spriteTileHeight = tb::Constants::TileSizeFloat * sprite->getTileHeight();
 
     if (applyTileWidthAndHeightOffset == true)
     {
-        spritePosition.x -= (spriteTileWidth - tb::Constants::TileSizeFloat);
+        spritePosition.x -= (spriteTileWidth  - tb::Constants::TileSizeFloat);
         spritePosition.y -= (spriteTileHeight - tb::Constants::TileSizeFloat);
     }
 
     sf::Vertex* vertex = &m_vertexArray[m_numSprites * 4];
 
     // top left, top right, bottom right, bottom left
-    vertex[0].position = sf::Vector2f(spritePosition.x, spritePosition.y);
+    vertex[0].position = sf::Vector2f(spritePosition.x,                   spritePosition.y);
     vertex[1].position = sf::Vector2f(spritePosition.x + spriteTileWidth, spritePosition.y);
     vertex[2].position = sf::Vector2f(spritePosition.x + spriteTileWidth, spritePosition.y + spriteTileHeight);
-    vertex[3].position = sf::Vector2f(spritePosition.x, spritePosition.y + spriteTileHeight);
+    vertex[3].position = sf::Vector2f(spritePosition.x,                   spritePosition.y + spriteTileHeight);
 
-    vertex[0].texCoords = sf::Vector2f(spriteRect.left, spriteRect.top);
+    vertex[0].texCoords = sf::Vector2f(spriteRect.left,                    spriteRect.top);
     vertex[1].texCoords = sf::Vector2f(spriteRect.left + spriteRect.width, spriteRect.top);
     vertex[2].texCoords = sf::Vector2f(spriteRect.left + spriteRect.width, spriteRect.top + spriteRect.height);
-    vertex[3].texCoords = sf::Vector2f(spriteRect.left, spriteRect.top + spriteRect.height);
+    vertex[3].texCoords = sf::Vector2f(spriteRect.left,                    spriteRect.top + spriteRect.height);
 
     vertex[0].color = spriteColor;
     vertex[1].color = spriteColor;
@@ -61,8 +67,10 @@ void SpriteBatch::addSprite(tb::Sprite& sprite, bool applyTileWidthAndHeightOffs
 
         m_vertexArray.resize(m_maxVertices);
 
-        this->printDebugText();
+        printDebugText();
     }
+
+    return true;
 }
 
 void SpriteBatch::clear()
@@ -75,14 +83,14 @@ void SpriteBatch::clear()
 
 void SpriteBatch::printDebugText()
 {
-    fmt::print("SpriteBatch Debug Text\n");
+    g_Log.write("SpriteBatch Debug Text\n");
 
-    fmt::print("    Max Sprites:  {}\n", m_maxSprites);
-    fmt::print("    Max Vertices: {}\n", m_maxVertices);
+    g_Log.write("----> Max Sprites:  {}\n", m_maxSprites);
+    g_Log.write("----> Max Vertices: {}\n", m_maxVertices);
 
-    fmt::print("    Vertex Count: {}\n", m_vertexArray.getVertexCount());
+    g_Log.write("----> Vertex Count: {}\n", m_vertexArray.getVertexCount());
 
-    fmt::print("    Num Sprites:  {}\n", m_numSprites);
+    g_Log.write("----> Num Sprites:  {}\n", m_numSprites);
 }
 
 void SpriteBatch::draw(sf::RenderTarget& target, sf::RenderStates states)

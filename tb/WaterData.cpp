@@ -21,11 +21,11 @@ namespace tb
         m_data = toml::parse_file(m_fileName);
         if (m_data.size() == 0)
         {
-            g_Log.write("ERROR: Water data failed to parse from file: {}\n", m_fileName);
+            g_Log.write("ERROR: Failed to parse data from file: {}\n", m_fileName);
             return false;
         }
 
-        g_Log.write("Water data loaded from file: {}\n", m_fileName);
+        g_Log.write("Loaded data from file: {}\n", m_fileName);
 
         for (unsigned int i = 0; i < tb::Constants::NumWaterAnimationFrames; i++)
         {
@@ -33,65 +33,69 @@ namespace tb
 
             if (!m_data[waterIndex])
             {
-                continue;
+                g_Log.write("ERROR: {} is missing data at index {}\n", m_fileName, i);
+                return false;
             }
 
-            g_Log.write("Water index: {}\n", waterIndex);
+            g_Log.write("Index: {}\n", i);
 
             tb::SpriteIDList spriteIDList;
             spriteIDList.reserve(tb::Constants::NumWaterSpritesPerAnimationFrame);
 
             auto sprites = m_data[waterIndex]["Sprites"].as_array();
 
-            if (sprites != nullptr)
+            if (sprites == nullptr)
             {
-                for (auto& sprite : *sprites)
+                g_Log.write("ERROR: nullptr\n");
+                return false;
+            }
+
+            for (auto& sprite : *sprites)
+            {
+                uint32_t spriteID = sprite.value_or(0);
+                if (spriteID == 0)
                 {
-                    uint32_t spriteID = sprite.value_or(0);
-                    if (spriteID == 0)
-                    {
-                        g_Log.write("ERROR: spriteID == 0\n");
-                        return false;
-                    }
-
-                    g_Log.write("Water sprite ID: {}\n", spriteID);
-
-                    spriteIDList.push_back(spriteID);
+                    g_Log.write("ERROR: Sprite ID cannot be zero\n");
+                    return false;
                 }
+
+                g_Log.write("Sprite ID: {}\n", spriteID);
+
+                spriteIDList.push_back(spriteID);
             }
 
             if (spriteIDList.size() == 0)
             {
-                g_Log.write("ERROR: spriteIDList.size() == 0\n");
+                g_Log.write("Sprite ID list is empty at index {}\n", i);
                 return false;
             }
 
             if (spriteIDList.size() != tb::Constants::NumWaterSpritesPerAnimationFrame)
             {
-                g_Log.write("ERROR: spriteIDList.size() != tb::Constants::NumWaterSpritesPerAnimationFrame\n");
+                g_Log.write("Sprite ID list has the wrong size\n");
                 return false;
             }
 
             m_spriteIDList_List.push_back(spriteIDList);
         }
 
-        g_Log.write("Water data sprite ID list list size: {}\n", m_spriteIDList_List.size());
+        g_Log.write("Loaded data size: {}\n", m_spriteIDList_List.size());
 
         if (m_spriteIDList_List.size() != tb::Constants::NumWaterAnimationFrames)
         {
-            g_Log.write("ERROR: m_spriteIDList_List.size() != tb::Constants::NumWaterAnimationFrames\n");
+            g_Log.write("ERROR: Loaded data has the wrong size\n");
             return false;
         }
 
-        g_Log.write("m_spriteIDList_List:\n");
+        g_Log.write("Sprite ID list list:\n");
 
         for (auto& spriteIDListEx : m_spriteIDList_List)
         {
-            g_Log.write("-- spriteIDList:\n");
+            g_Log.write("--> Sprite ID list:\n");
 
             for (auto& spriteID : spriteIDListEx)
             {
-                g_Log.write("---- spriteID: {}\n", spriteID);
+                g_Log.write("----> Sprite ID: {}\n", spriteID);
             }
         }
 

@@ -4,6 +4,8 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "tb/Log.h"
+
 #include "tb/BitmapFont.h"
 
 namespace tb
@@ -17,17 +19,19 @@ public:
     BitmapFontText();
     ~BitmapFontText();
 
-    void setText(tb::BitmapFont* bf, std::string text, sf::Color textColor, bool isCentered = false);
+    bool setText(tb::BitmapFont* bitmapFont, const std::string& text, const sf::Color& textColor, bool isCentered = false);
 
     sf::VertexArray* getVertexArray();
 
-private:
+    tb::BitmapFont* getBitmapFont();
 
-    void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+private:
 
     sf::VertexArray m_vertexArray;
 
     tb::BitmapFont* m_bitmapFont = nullptr;
+
+    virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
 };
 

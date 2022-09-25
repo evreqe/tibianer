@@ -61,8 +61,8 @@ bool Map::load(const std::string& fileName)
         return false;
     }
 
-    uint32_t m_tileWidth = xmlNode_map.attribute("width").as_uint(); // width is number of tiles
-    uint32_t m_tileHeight = xmlNode_map.attribute("height").as_uint(); // height is number of tiles
+    m_tileWidth = xmlNode_map.attribute("width").as_uint(); // width is number of tiles
+    m_tileHeight = xmlNode_map.attribute("height").as_uint(); // height is number of tiles
 
     m_numTiles = m_tileWidth * m_tileHeight;
 
@@ -71,15 +71,15 @@ bool Map::load(const std::string& fileName)
 
     m_numPixels = m_pixelWidth * m_pixelHeight;
 
-    tb::Variables::MapTileWidth = m_tileWidth;
-    tb::Variables::MapTileHeight = m_tileHeight;
+    //tb::Variables::MapTileWidth = m_tileWidth;
+    //tb::Variables::MapTileHeight = m_tileHeight;
 
-    tb::Variables::MapNumTiles = m_numTiles;
+    //tb::Variables::MapNumTiles = m_numTiles;
 
-    tb::Variables::MapPixelWidth = m_pixelWidth;
-    tb::Variables::MapPixelHeight = m_pixelHeight;
+    //tb::Variables::MapPixelWidth = m_pixelWidth;
+    //tb::Variables::MapPixelHeight = m_pixelHeight;
 
-    tb::Variables::MapNumPixels = m_numPixels;
+    //tb::Variables::MapNumPixels = m_numPixels;
 
     g_Log.write("Map size: {}x{} tiles ({} tiles total)\n", m_tileWidth, m_tileHeight, m_numTiles);
     g_Log.write("Map size: {}x{} pixels ({} pixels total)\n", m_pixelWidth, m_pixelHeight, m_numPixels);
@@ -304,7 +304,7 @@ bool Map::load(const std::string& fileName)
 
                 g_Log.write("object pixelCoords: {}x{}\n", pixelCoords.x, pixelCoords.y);
 
-                uint32_t tileNumber = getTileNumberByPixelCoords(pixelCoords);
+                uint32_t tileIndex = getTileIndexByPixelCoords(pixelCoords);
 
                 sf::Vector2u tileCoords = getTileCoordsByPixelCoords(pixelCoords);
 
@@ -342,7 +342,7 @@ bool Map::load(const std::string& fileName)
                         continue;
                     }
 
-                    tb::Tile::Ptr tile = tileList->at(tileNumber);
+                    tb::Tile::Ptr tile = tileList->at(tileIndex);
 
                     if (tile == nullptr)
                     {
@@ -368,9 +368,17 @@ bool Map::load(const std::string& fileName)
     return true;
 }
 
-bool Map::isTileNumberOutOfBounds(uint32_t tileNumber)
+sf::Vector2u Map::getTileCoordsByTileIndex(uint32_t tileIndex)
 {
-    if (tileNumber > (m_numTiles - 1))
+    uint32_t tileX = (tileIndex % m_tileWidth) * tb::Constants::TileSize;
+    uint32_t tileY = (tileIndex / m_tileHeight);
+
+    return sf::Vector2u(tileX, tileY);
+}
+
+bool Map::isTileIndexOutOfBounds(uint32_t tileIndex)
+{
+    if (tileIndex > (m_numTiles - 1))
     {
         return true;
     }
@@ -421,7 +429,7 @@ uint32_t Map::getNumTiles()
     return m_numTiles;
 }
 
-tb::Map::Properties_t* Map::getProperties()
+Map::Properties_t* Map::getProperties()
 {
     return &m_properties;
 }

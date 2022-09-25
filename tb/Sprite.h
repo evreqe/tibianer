@@ -6,6 +6,9 @@
 
 #include "tb/Constants.h"
 #include "tb/Utility.h"
+#include "Tb/Log.h"
+
+#include "tb/SpriteData.h"
 
 namespace tb
 {

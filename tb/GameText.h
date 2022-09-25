@@ -8,6 +8,7 @@
 
 #include "tb/Constants.h"
 #include "tb/Utility.h"
+#include "tb/Log.h"
 
 #include "tb/BitmapFont.h"
 #include "tb/BitmapFontText.h"
@@ -23,17 +24,15 @@ public:
     GameText();
     ~GameText();
 
-    void setText(tb::BitmapFont& bitmapFont, sf::Vector2u tileCoords, tb::ZAxis_t z, const std::string& text, sf::Color textColor, bool isCentered = true);
+    bool setText(tb::BitmapFont* bitmapFont, const sf::Vector2u& tileCoords, tb::ZAxis_t z, const std::string& text, const sf::Color& textColor, bool isCentered = true);
+
+    sf::Vector2u getTileCoords();
 
     tb::ZAxis_t getZ();
-
-    sf::Vector2u getTilePosition();
 
     std::string getText();
 
     sf::Color* getTextColor();
-
-    unsigned int getNumTextLines();
 
     std::vector<std::string>* getTextList();
 
@@ -43,17 +42,15 @@ private:
 
     sf::Texture* m_texture = nullptr;
 
-    sf::Vector2u m_tilePosition;
+    sf::Vector2u m_tileCoords;
+
+    tb::ZAxis_t m_z = tb::ZAxis::Default;
 
     std::string m_text;
 
     sf::Color m_textColor;
 
-    tb::ZAxis_t m_z = tb::ZAxis::Default;
-
-    int m_type = 0; // ? speech type, yelling, etc
-
-    unsigned int m_numTextLines = 0;
+    int m_type = 0; // speech type: yelling, whispering, broadcasting, monster, etc
 
     std::vector<std::string> m_textList;
 

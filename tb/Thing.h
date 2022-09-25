@@ -22,11 +22,11 @@ public:
     using Ptr = std::shared_ptr<tb::Thing>;
     using List = std::vector<tb::Thing::Ptr>;
 
-    struct SortByTileNumber_t
+    struct SortByTileIndex_t
     {
         bool operator()(tb::Thing::Ptr a, tb::Thing::Ptr b) const
         {
-            return (a->getTileNumber() < b->getTileNumber());
+            return (a->getTileIndex() < b->getTileIndex());
         }
     };
 
@@ -52,8 +52,8 @@ public:
         }
     };
 
-    uint32_t getTileNumber();
-    void setTileNumber(uint32_t tileNumber);
+    uint32_t getTileIndex();
+    void setTileIndex(uint32_t tileIndex);
 
     sf::Vector2u getTileCoords();
     void setTileCoords(const sf::Vector2u& tileCoords);
@@ -92,7 +92,7 @@ private:
 
     uint32_t m_uniqueID = 0;
 
-    uint32_t m_tileNumber = 0;
+    uint32_t m_tileIndex = 0;
 
     sf::Vector2u m_tileCoords;
     sf::Vector2u m_pixelCoords;

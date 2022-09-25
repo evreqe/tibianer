@@ -84,7 +84,12 @@ void MenuBar::draw()
                 g_SpriteDataWindow.toggleIsVisible();
             }
 
-            if (ImGui::MenuItem("Log Window...##MenuItemDeveloperLogWindow", 0))
+            if (ImGui::MenuItem("Overlay...##MenuItemDeveloperOverlayWindow", 0))
+            {
+                g_OverlayWindow.toggleIsVisible();
+            }
+
+            if (ImGui::MenuItem("Log...##MenuItemDeveloperLogWindow", 0))
             {
                 g_LogWindow.toggleIsVisible();
             }

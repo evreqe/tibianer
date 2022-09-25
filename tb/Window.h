@@ -20,6 +20,8 @@ namespace tb
         void setIsVisible(bool b);
         void toggleIsVisible();
 
+        void centerAndResizeOnFirstUseEver();
+
     private:
 
         bool m_isVisible = false;

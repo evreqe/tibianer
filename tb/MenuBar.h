@@ -5,6 +5,9 @@
 #include "imgui.h"
 #include "imgui-SFML.h"
 
+#include "tb/Constants.h"
+
+#include "tb/OverlayWindow.h"
 #include "tb/LogWindow.h"
 #include "tb/SpriteDataWindow.h"
 #include "tb/SpriteEditorWindow.h"
@@ -46,11 +49,9 @@ namespace tb
 
         bool m_isVisible = true;
 
-        const float m_heightDefault = 19.0f;
+        float m_height = tb::Constants::MenuBarHeight;
 
         const float m_helpMenuAlignmentOffset = 44.0f;
-
-        float m_height = m_heightDefault;
     };
 }
 

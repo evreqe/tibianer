@@ -5,7 +5,12 @@ namespace tb
 
 Entity::Entity()
 {
-    Thing::setThingType(tb::ThingType::Entity);
+    setThingType(tb::ThingType::Entity);
+}
+
+Entity::~Entity()
+{
+    //
 }
 
 const std::string& Entity::getName()

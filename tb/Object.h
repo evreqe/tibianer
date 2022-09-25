@@ -22,7 +22,7 @@ public:
 
     Object();
     ~Object();
-    Object(sf::Vector2u tileCoords, tb::ZAxis_t z, tb::SpriteID_t spriteID);
+    Object(const sf::Vector2u& tileCoords, tb::ZAxis_t z, tb::SpriteID_t spriteID);
 
     using Ptr = std::shared_ptr<tb::Object>;
     using List = std::vector<tb::Object::Ptr>;
@@ -53,8 +53,8 @@ public:
     tb::ObjectType getObjectType();
     void setObjectType(tb::ObjectType objectType);
 
-    void setCount(uint8_t count);
-    uint8_t getCount();
+    void setCount(uint32_t count);
+    uint32_t getCount();
 
     void setIsDecay(bool b);
     bool getIsDecay();
@@ -68,7 +68,7 @@ private:
 
     tb::ObjectType m_objectType = tb::ObjectType::Null;
 
-    uint8_t m_count = 1;
+    uint32_t m_count = 1;
 
     bool m_isDecay = false;
 

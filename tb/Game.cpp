@@ -5,7 +5,10 @@ namespace tb
 
 Game::Game()
 {
-    //
+    m_gameWindow.create(tb::Constants::GameWindowPixelWidth, tb::Constants::GameWindowPixelHeight);
+    m_gameWindowLayer.create(tb::Constants::GameWindowPixelWidth, tb::Constants::GameWindowPixelHeight);
+
+    m_gameWindowView.reset(sf::FloatRect(0.0f, 0.0f, tb::Constants::GameWindowPixelWidth, tb::Constants::GameWindowPixelHeight));
 }
 
 Game::~Game()
@@ -47,7 +50,11 @@ void Game::createRenderWindow()
     ImGui::StyleColorsLight();
 
     ImGuiIO& imguiIO = ImGui::GetIO();
+
+    imguiIO.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+
     imguiIO.ConfigWindowsMoveFromTitleBarOnly = true;
+    imguiIO.ConfigDockingWithShift = true;
 }
 
 bool Game::loadTextures()
@@ -55,7 +62,7 @@ bool Game::loadTextures()
     if (auto maximumTextureSize = sf::Texture::getMaximumSize(); maximumTextureSize < m_minimumTextureSizeRequiredToRun)
     {
         g_Log.write("Your computer supports a maximum texture size of {}\n", maximumTextureSize);
-        g_Log.write("This game requires at least {} texture size in order to play\n", m_minimumTextureSizeRequiredToRun);
+        g_Log.write("ERROR: This game requires at least {} texture size in order to play\n", m_minimumTextureSizeRequiredToRun);
         return false;
     }
 
@@ -87,12 +94,12 @@ bool Game::loadBitmapFonts()
         return false;
     }
 
-    if (m_bitmapFontTiny.load(tb::BitmapFonts::Tiny::FileName, tb::BitmapFonts::Tiny::GlyphSize, &tb::BitmapFonts::Tiny::GlyphWidthList, -1) == false)
+    if (m_bitmapFontTiny.load(tb::BitmapFonts::Tiny::FileName, tb::BitmapFonts::Tiny::GlyphSize, &tb::BitmapFonts::Tiny::GlyphWidthList) == false)
     {
         return false;
     }
 
-    if (m_bitmapFontModern.load(tb::BitmapFonts::Modern::FileName, tb::BitmapFonts::Modern::GlyphSize, &tb::BitmapFonts::Modern::GlyphWidthList, -1) == false)
+    if (m_bitmapFontModern.load(tb::BitmapFonts::Modern::FileName, tb::BitmapFonts::Modern::GlyphSize, &tb::BitmapFonts::Modern::GlyphWidthList) == false)
     {
         return false;
     }
@@ -400,10 +407,222 @@ void Game::drawMapSelectScreen()
 
 void Game::drawInGameScreen()
 {
-    g_Map.getTileMapTiles(tb::ZAxis::Ground)->draw(m_renderWindow);
-    g_Map.getTileMapTileEdges(tb::ZAxis::Ground)->draw(m_renderWindow);
+    drawGameWindow();
 
     doAnimatedWater();
+}
+
+void Game::drawGameWindow()
+{
+    m_gameWindowView.setCenter
+    (
+        m_player->getPixelX() + tb::Constants::TileSizeHalf,
+        m_player->getPixelY() + tb::Constants::TileSizeHalf
+    );
+
+    m_gameWindow.setView(m_gameWindowView);
+    m_gameWindow.clear(sf::Color::Red);
+
+    tb::ZAxis_t zBegin = tb::ZAxis::Min;
+    tb::ZAxis_t zEnd   = tb::ZAxis::Max;
+
+    // check if the player is underground
+    if (m_player->getZ() < tb::ZAxis::Default)
+    {
+        // draw from the bottom to 1 level below the default
+        // this will draw everything that is underground
+        zBegin = tb::ZAxis::Min;
+        zEnd   = tb::ZAxis::Default - 1;
+    }
+    else
+    {
+        // draw from the default level to the top
+        // this will draw everything that is aboveground
+        zBegin = tb::ZAxis::Default;
+        zEnd   = tb::ZAxis::Max;
+    }
+
+    //g_Log.write("zBegin,zEnd: {},{}\n", zBegin, zEnd);
+
+    for (tb::ZAxis_t i = zBegin; i < zEnd + 1; i++)
+    {
+        auto tileMapTiles = g_Map.getTileMapTiles(i);
+
+        if (isTileMapVisible(tileMapTiles) == true)
+        {
+            //g_Log.write("drawGameLayer: {}\n", i);
+
+            drawGameLayer(i);
+        }
+    }
+
+/*
+    for (tb::ZAxis_t i = zBegin; i < zEnd + 1; i++)
+    {
+        m_tileMapObjects[i].clear();
+        m_tileMapCreatures[i].clear();
+        m_tileMapAnimations[i].clear();
+        m_tileMapProjectiles[i].clear();
+        m_tileMapThings[i].clear();
+
+        //updateTileThings(&m_map.tileMapTiles[i]); // lags too much here, updated elsewhere
+    }
+*/
+
+    //std::cout << "drawGameLayer START ------------------" << std::endl;
+
+/*
+    for (unsigned int i = zBegin; i < zEnd + 1; i++)
+    {
+        if (isTileMapVisible(&m_map.tileMapTiles[i]) == true)
+        {
+            drawGameLayer(i);
+
+            //std::cout << "drawGameLayer: " << i << std::endl;
+        }
+
+        if (i == tibia::ZAxis::max)
+        {
+            break;
+        }
+
+        if (findTilesAboveThing(m_player, i + 1) == true)
+        {
+            break;
+        }
+    }
+*/
+
+    //std::cout << "drawGameLayer STOP -------------------" << std::endl;
+
+    //doRayCast(m_player->getTilePosition(), sf::Vector2u(0, 0), m_player->getZ());
+
+    //drawFloatingTextList();
+    //drawGameTextList();
+
+    //drawGameWindowText();
+
+    m_gameWindow.display();
+
+    m_gameWindowSprite.setTexture(m_gameWindow.getTexture());
+    m_gameWindowSprite.setPosition(32.0f, 32.0f);
+
+    m_renderWindow.draw(m_gameWindowSprite);
+}
+
+void Game::drawGameLayer(tb::ZAxis_t z)
+{
+    m_gameWindowLayer.setView(m_gameWindowView);
+    m_gameWindowLayer.clear(sf::Color::Transparent);
+
+    auto tilesToDrawRect = getTilesToDrawRect();
+
+    g_Map.getTileMapTiles(z)->draw(tilesToDrawRect, m_gameWindowLayer);
+    g_Map.getTileMapTileEdges(z)->draw(tilesToDrawRect, m_gameWindowLayer);
+
+    m_gameWindowLayer.display();
+
+    m_gameWindowLayerSprite.setTexture(m_gameWindowLayer.getTexture());
+
+    m_gameWindowLayerSprite.setPosition
+    (
+        (tilesToDrawRect.left + 1) * tb::Constants::TileSize,
+        (tilesToDrawRect.top  + 1) * tb::Constants::TileSize
+    );
+
+    m_gameWindow.draw(m_gameWindowLayerSprite);
+}
+
+sf::IntRect Game::getTilesToDrawRect()
+{
+    int x1 = m_player->getTileX();
+    int y1 = m_player->getTileY();
+
+    x1 = x1 - tb::Constants::GameWindowNumTilesFromCenterX - tb::Constants::GameWindowNumTilesToDrawFromOffscreen;
+    y1 = y1 - tb::Constants::GameWindowNumTilesFromCenterY - tb::Constants::GameWindowNumTilesToDrawFromOffscreen;
+
+    int x2 = tb::Constants::GameWindowTileWidth  + (tb::Constants::GameWindowNumTilesToDrawFromOffscreen + 1);
+    int y2 = tb::Constants::GameWindowTileHeight + (tb::Constants::GameWindowNumTilesToDrawFromOffscreen + 1);
+
+    return sf::IntRect(x1, y1, x2, y2);
+}
+
+bool Game::isTileMapVisible(tb::TileMap* tileMap)
+{
+    tb::Tile::List* tileList = tileMap->getTileList();
+
+    if (tileList->size() == 0)
+    {
+        return false;
+    }
+
+    auto tilesToDrawRect = getTilesToDrawRect();
+
+    int x1 = tilesToDrawRect.left;
+    int y1 = tilesToDrawRect.top;
+
+    int x2 = tilesToDrawRect.width;
+    int y2 = tilesToDrawRect.height;
+
+    for (int i = x1; i < x1 + x2; i++)
+    {
+        for (int j = y1; j < y1 + y2; j++)
+        {
+            if (i < 0) continue;
+            if (j < 0) continue;
+
+            if (i > g_Map.getTileWidth() - 1) continue;
+            if (j > g_Map.getTileHeight() - 1) continue;
+
+            uint32_t tileIndex = i + j * g_Map.getTileWidth();
+
+            if (g_Map.isTileIndexOutOfBounds(tileIndex) == true)
+            {
+                continue;
+            }
+
+            tb::Tile::Ptr tile = tileList->at(tileIndex);
+
+            if (tile == nullptr)
+            {
+                continue;
+            }
+
+            tb::SpriteID_t tileSpriteID = tile->getSpriteID();
+
+            if (tileSpriteID != tb::Constants::SpriteIDNull)
+            {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+tb::Tile::Ptr Game::getTileOfThing(tb::Thing::Ptr thing)
+{
+    if (thing == nullptr)
+    {
+        return nullptr;
+    }
+
+    auto tileList = g_Map.getTileMapTiles(thing->getZ())->getTileList();
+
+    if (tileList->size() == 0)
+    {
+        return nullptr;
+    }
+
+    uint32_t tileIndex = g_Map.getTileIndexByTileCoords(thing->getTileCoords());
+
+    if (g_Map.isTileIndexOutOfBounds(tileIndex) == true)
+    {
+        g_Log.write("ERROR: tile index is out of bounds: {}\n", tileIndex);
+        return nullptr;
+    }
+
+    return tileList->at(tileIndex);
 }
 
 void Game::doAnimatedWater()
@@ -413,12 +632,76 @@ void Game::doAnimatedWater()
     sf::Time timeElapsed = m_animatedWaterClock.getElapsedTime();
     if (timeElapsed >= tb::Constants::WaterAnimationFrameTime)
     {
-        if (g_Map.getTileMapTiles(tb::ZAxis::Ground)->doAnimatedWater() == false)
+        if (g_Map.getTileMapTiles(tb::ZAxis::Default)->doAnimatedWater() == false)
         {
             g_Log.write("ERROR: animated water failed\n");
         }
 
         m_animatedWaterClock.restart();
+    }
+}
+
+bool Game::createPlayer()
+{
+    auto mapProperties = g_Map.getProperties();
+
+    auto player = std::make_shared<tb::Creature>
+    (
+        sf::Vector2u(mapProperties->PlayerStartX, mapProperties->PlayerStartY),
+        mapProperties->PlayerStartZ
+    );
+
+    auto playerProperties = player->getProperties();
+    playerProperties->IsPlayer = true;
+    playerProperties->HasOutfit = true;
+
+    player->setName(tb::Constants::PlayerNameDefault);
+
+    m_player = player;
+
+    tb::Tile::Ptr tile = getTileOfThing(m_player);
+
+    if (tile == nullptr)
+    {
+        g_Log.write("ERROR: nullptr\n");
+        return false;
+    }
+
+    tile->addCreature(m_player);
+
+    g_Log.write("tile sprite id: {}\n", tile->getSpriteID());
+    g_Log.write("tile x: {}\n", tile->getTileX());
+    g_Log.write("tile y: {}\n", tile->getTileY());
+    g_Log.write("tile z: {}\n", tile->getZ());
+    g_Log.write("tile index: {}\n", tile->getTileIndex());
+
+    g_Log.write("Player coords: {},{},{}\n", m_player->getTileX(), m_player->getTileY(), m_player->getZ());
+
+    return true;
+}
+
+void Game::handleMouseWheelEvent(sf::Event event)
+{
+    // scroll up
+    if (event.mouseWheel.delta > 0)
+    {
+        // zoom in
+
+        m_gameWindowZoomLevel -= m_gameWindowZoomFactor;
+
+        if (m_gameWindowZoomLevel < 1.0f) m_gameWindowZoomLevel = 1.0f;
+
+        m_gameWindowView.setSize(sf::Vector2f(tb::Constants::GameWindowPixelWidth * m_gameWindowZoomLevel, tb::Constants::GameWindowPixelHeight * m_gameWindowZoomLevel));
+    }
+
+    // scroll down
+    else if (event.mouseWheel.delta < 0)
+    {
+        // zoom out
+
+        m_gameWindowZoomLevel += m_gameWindowZoomFactor;
+
+        m_gameWindowView.setSize(sf::Vector2f(tb::Constants::GameWindowPixelWidth * m_gameWindowZoomLevel, tb::Constants::GameWindowPixelHeight * m_gameWindowZoomLevel));
     }
 }
 
@@ -429,16 +712,36 @@ void Game::processEvents()
     {
         ImGui::SFML::ProcessEvent(m_renderWindow, event);
 
-        if (event.type == sf::Event::Resized)
+        if (event.type == sf::Event::Closed)
+        {
+            m_renderWindow.close();
+        }
+        else if (event.type == sf::Event::Resized)
         {
             // stretch to fill window
             sf::FloatRect visibleArea(0.0f, 0.0f, event.size.width, event.size.height);
             m_renderWindow.setView(sf::View(visibleArea));
         }
-
-        if (event.type == sf::Event::Closed)
+        else if (event.type == sf::Event::MouseButtonReleased)
         {
-            m_renderWindow.close();
+            if (event.mouseButton.button == sf::Mouse::Right)
+            {
+                auto io = ImGui::GetIO();
+                if (io.WantCaptureKeyboard == false && io.WantCaptureMouse == false)
+                {
+                    if (ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow) == false)
+                    {
+                        if (ImGui::IsAnyItemHovered() == false)
+                        {
+                            ::MessageBoxA(NULL, "right-clicked", "Mouse", MB_ICONINFORMATION);
+                        }
+                    }
+                }
+            }
+        }
+        else if (event.type == sf::Event::MouseWheelMoved)
+        {
+            handleMouseWheelEvent(event);
         }
     }
 }
@@ -469,7 +772,7 @@ void Game::fixMouseCursorForWindowResize(sf::RenderWindow& renderWindow)
 
 void Game::waitForKeyPress()
 {
-    fmt::print("Press any key to continue...\n");
+    g_Log.write("Press any key to continue...\n");
 
     int waitForKeyPress = std::cin.get();
 }
@@ -509,6 +812,14 @@ void Game::run()
         return;
     }
 
+    g_Log.write("Loading outfit data\n");
+    if (g_OutfitData.load() == false)
+    {
+        g_Log.write("ERROR: Failed to load outfit data\n");
+        waitForKeyPress();
+        return;
+    }
+
     g_Log.write("Loading textures\n");
     if (loadTextures() == false)
     {
@@ -536,8 +847,13 @@ void Game::run()
         return;
     }
 
+    g_Log.write("Creating player\n");
+    createPlayer();
+
     while (m_renderWindow.isOpen() == true)
     {
+        g_OverlayWindow.clearTextList();
+
         processEvents();
 
         fixMouseCursorForWindowResize(m_renderWindow);
@@ -565,8 +881,46 @@ void Game::run()
             drawInGameScreen();
         }
 
+        std::string playerCoordsText = std::format("Player X,Y,Z: {},{},{}\n", m_player->getTileX(), m_player->getTileY(), m_player->getZ());
+
+        g_OverlayWindow.addTextToList(playerCoordsText);
+
         g_MenuBar.draw();
         g_StatusBar.draw();
+
+        ImGuiDockNodeFlags dockSpaceFlags = ImGuiDockNodeFlags_PassthruCentralNode;
+
+        ImGuiWindowFlags dockSpaceWindowFlags = ImGuiWindowFlags_None;
+        dockSpaceWindowFlags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+        dockSpaceWindowFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+
+        const ImGuiViewport* viewport = ImGui::GetMainViewport();
+
+        ImVec2 windowPosition = viewport->Pos;
+        windowPosition.y += tb::Constants::MenuBarHeight;
+
+        ImVec2 windowSize = viewport->Size;
+        windowSize.y -= tb::Constants::StatusBarHeight + tb::Constants::MenuBarHeight;
+
+        ImGui::SetNextWindowBgAlpha(0.0f);
+        ImGui::SetNextWindowPos(windowPosition);
+        ImGui::SetNextWindowSize(windowSize);
+        ImGui::SetNextWindowViewport(viewport->ID);
+
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+
+        bool isDockSpaceVisible = true;
+
+        ImGui::Begin("DockSpace", &isDockSpaceVisible, dockSpaceWindowFlags);
+
+        ImGui::PopStyleVar(3);
+
+        ImGuiID dockSpaceID = ImGui::GetID("MyDockSpace");
+        ImGui::DockSpace(dockSpaceID, ImVec2(0.0f, 0.0f), dockSpaceFlags);
+
+        ImGui::End();
 
         if (m_showDemoWindow == true)
         {
@@ -586,6 +940,11 @@ void Game::run()
         if (*g_SpriteDataWindow.getIsVisible() == true)
         {
             g_SpriteDataWindow.draw();
+        }
+
+        if (*g_OverlayWindow.getIsVisible() == true)
+        {
+            g_OverlayWindow.draw();
         }
 
         if (*g_LogWindow.getIsVisible() == true)

@@ -16,27 +16,27 @@ namespace tb
     bool PatternData::load()
     {
         m_patternList.clear();
-        m_patternList.reserve(tb::Constants::NumPatterns);
+        m_patternList.reserve(32);
 
         m_data = toml::parse_file(m_fileName);
         if (m_data.size() == 0)
         {
-            g_Log.write("ERROR: Pattern data failed to parse from file: {}\n", m_fileName);
+            g_Log.write("ERROR: Failed to parse data from file: {}\n", m_fileName);
             return false;
         }
 
-        g_Log.write("Pattern data loaded from file: {}\n", m_fileName);
+        g_Log.write("Loaded data from file: {}\n", m_fileName);
 
-        for (unsigned int i = 0; i < tb::Constants::NumPatterns; i++)
+        for (unsigned int i = 0; i < m_numPatternsToLoad; i++)
         {
             std::string patternIndex = std::to_string(i);
 
             if (!m_data[patternIndex])
             {
-                continue;
+                break;
             }
 
-            g_Log.write("Pattern index: {}\n", i);
+            g_Log.write("Index: {}\n", i);
 
             tb::PatternData::Pattern pattern;
 
@@ -46,7 +46,7 @@ namespace tb
 
             if (pattern.Name.size() == 0)
             {
-                g_Log.write("ERROR: pattern.Name.size() == 0\n");
+                g_Log.write("ERROR: Name cannot be empty\n");
                 return false;
             }
 
@@ -62,7 +62,7 @@ namespace tb
             }
             else
             {
-                g_Log.write("ERROR: unknown patternType\n");
+                g_Log.write("ERROR: PatternType is unknown\n");
                 return false;
             }
 
@@ -71,39 +71,48 @@ namespace tb
 
             if (pattern.Width == 0 || pattern.Height == 0)
             {
-                g_Log.write("ERROR: pattern.Width == 0 || pattern.Height == 0\n");
+                g_Log.write("ERROR: Width or Height cannot be zero\n");
                 return false;
             }
 
             auto sprites = m_data[patternIndex]["Sprites"].as_array();
 
-            if (sprites)
+            if (sprites == nullptr)
             {
-                for (auto& sprite : *sprites)
-                {
-                    uint32_t spriteID = sprite.value_or(0);
-                    if (spriteID == 0)
-                    {
-                        g_Log.write("ERROR: spriteID == 0\n");
-                        return false;
-                    }
-
-                    g_Log.write("Pattern sprite ID: {}\n", spriteID);
-
-                    pattern.Sprites.push_back(spriteID);
-                }
+                g_Log.write("ERROR: nullptr\n");
+                return false;
             }
 
-            if (pattern.Sprites.size() == 0)
+            for (auto& sprite : *sprites)
             {
-                g_Log.write("ERROR: pattern.Sprites.size() == 0\n");
+                uint32_t spriteID = sprite.value_or(0);
+                if (spriteID == 0)
+                {
+                    g_Log.write("ERROR: Sprite ID cannot be zero at index: {}\n", i);
+                    return false;
+                }
+
+                g_Log.write("Sprite ID: {}\n", spriteID);
+
+                pattern.SpriteIDList.push_back(spriteID);
+            }
+
+            if (pattern.SpriteIDList.size() == 0)
+            {
+                g_Log.write("ERROR: Sprite ID list cannot be empty\n");
                 return false;
             }
 
             m_patternList.push_back(pattern);
         }
 
-        g_Log.write("Pattern data list size: {}\n", m_patternList.size());
+        g_Log.write("Loaded data size: {}\n", m_patternList.size());
+
+        if (m_patternList.size() == 0)
+        {
+            g_Log.write("ERROR: Loaded data has the wrong size\n");
+            return false;
+        }
 
         return true;
     }
@@ -120,7 +129,7 @@ namespace tb
     {
         if (m_patternList.size() == 0)
         {
-            g_Log.write("m_patternList.size() == 0\n");
+            g_Log.write("ERROR: Cannot save data because it is empty\n");
             return false;
         }
 
@@ -129,7 +138,7 @@ namespace tb
 
         if (file.is_open() == false)
         {
-            g_Log.write("file.is_open() == false\n");
+            g_Log.write("Cannot open file: {}\n", m_fileName);
             return false;
         }
 
@@ -146,13 +155,13 @@ namespace tb
 
             uint32_t spriteIndex = 0;
 
-            for (auto& spriteID : pattern.Sprites)
+            for (auto& spriteID : pattern.SpriteIDList)
             {
                 file << spriteID;
 
-                if (spriteIndex != pattern.Sprites.size())
+                if (spriteIndex != pattern.SpriteIDList.size())
                 {
-                    file << ", ";
+                    file << ",";
                 }
 
                 spriteIndex++;
@@ -163,7 +172,7 @@ namespace tb
 
         file.close();
 
-        g_Log.write("Pattern data saved to file: {}\n", m_fileName);
+        g_Log.write("Saved data to file: {}\n", m_fileName);
 
         return true;
     }

@@ -21,20 +21,27 @@ bool SpriteData::load()
     m_data = toml::parse_file(m_fileName);
     if (m_data.size() == 0)
     {
-        g_Log.write("ERROR: Sprite data failed to parse from file: {}\n", m_fileName);
+        g_Log.write("ERROR: Failed to parse data from file: {}\n", m_fileName);
         return false;
     }
 
-    g_Log.write("Sprite data loaded from file: {}\n", m_fileName);
+    g_Log.write("Loaded data from file: {}\n", m_fileName);
 
     tb::SpriteData::Data firstSpriteData;
     firstSpriteData.SpriteID = 0;
+    firstSpriteData.Name = "NULL";
 
     m_dataList.push_back(firstSpriteData);
 
     for (tb::SpriteID_t i = 1; i < tb::Constants::NumSprites + 1; i++)
     {
         std::string spriteIndex = std::to_string(i);
+
+        if (!m_data[spriteIndex])
+        {
+            g_Log.write("ERROR: {} is missing data at index {}\n", m_fileName, i);
+            return false;
+        }
 
         tb::SpriteData::Data spriteData;
 
@@ -75,7 +82,13 @@ bool SpriteData::load()
         m_dataList.push_back(spriteData);
     }
 
-    g_Log.write("Sprite data list size: {}\n", m_dataList.size());
+    g_Log.write("Loaded data size: {}\n", m_dataList.size());
+
+    if (m_dataList.size() != tb::Constants::NumSprites + 1)
+    {
+        g_Log.write("ERROR: Loaded data has the wrong size\n");
+        return false;
+    }
 
     return true;
 }
@@ -92,7 +105,7 @@ bool SpriteData::save()
 {
     if (m_dataList.size() == 0)
     {
-        g_Log.write("m_dataList.size() == 0\n");
+        g_Log.write("ERROR: Cannot save data because it is empty\n");
         return false;
     }
 
@@ -101,7 +114,7 @@ bool SpriteData::save()
 
     if (file.is_open() == false)
     {
-        g_Log.write("file.is_open() == false\n");
+        g_Log.write("Cannot open file: {}\n", m_fileName);
         return false;
     }
 
@@ -131,7 +144,7 @@ bool SpriteData::save()
 
     file.close();
 
-    g_Log.write("Sprite data saved to file: {}\n", m_fileName);
+    g_Log.write("Saved data to file: {}\n", m_fileName);
 
     return true;
 }

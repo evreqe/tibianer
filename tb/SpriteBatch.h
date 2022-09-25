@@ -5,6 +5,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "tb/Constants.h"
+#include "tb/Log.h"
 
 #include "tb/Sprite.h"
 
@@ -19,7 +20,7 @@ public:
     SpriteBatch();
     ~SpriteBatch();
 
-    void addSprite(tb::Sprite& sprite, bool applyTileWidthAndHeightOffset = false);
+    bool addSprite(tb::Sprite* sprite, bool applyTileWidthAndHeightOffset = false);
     void clear();
     void printDebugText();
     void draw(sf::RenderTarget& target, sf::RenderStates states);

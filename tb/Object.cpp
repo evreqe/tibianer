@@ -15,12 +15,11 @@ Object::~Object()
     //
 }
 
-Object::Object(sf::Vector2u tileCoords, tb::ZAxis_t z, tb::SpriteID_t spriteID)
+Object::Object(const sf::Vector2u& tileCoords, tb::ZAxis_t z, tb::SpriteID_t spriteID)
 {
     setThingType(tb::ThingType::Object);
 
     setTileCoords(tileCoords);
-
     setZ(z);
 
     setSpriteID(spriteID);
@@ -143,21 +142,21 @@ void Object::setSpriteID(tb::SpriteID_t spriteID)
 
     m_sprite.setID(spriteID);
 
-    tb::SpriteData::Data* data = &g_SpriteData.getDataList()->at(spriteID);
+    //tb::SpriteData::Data* data = &g_SpriteData.getDataList()->at(spriteID);
 
-    if (data == nullptr)
-    {
-        g_Log.write("data == nullptr\n");
-        return;
-    }
+    //if (data == nullptr)
+    //{
+        //g_Log.write("data == nullptr\n");
+        //return;
+    //}
 
-    g_Log.write("spriteID: {}\n", spriteID);
+    //g_Log.write("spriteID: {}\n", spriteID);
 
-    g_Log.write("tileWidth: {}\n", data->TileWidth);
-    g_Log.write("tileHeight: {}\n", data->TileHeight);
+    //g_Log.write("tileWidth: {}\n", data->TileWidth);
+    //g_Log.write("tileHeight: {}\n", data->TileHeight);
 
-    m_sprite.setTileHeight(data->TileWidth);
-    m_sprite.setTileWidth(data->TileHeight);
+    //m_sprite.setTileHeight(data->TileWidth);
+    //m_sprite.setTileWidth(data->TileHeight);
 
     /*
             m_flags = tb::UMaps::spriteFlags[m_id];
@@ -253,12 +252,12 @@ void Object::setObjectType(tb::ObjectType objectType)
     m_objectType = objectType;
 }
 
-void Object::setCount(uint8_t count)
+void Object::setCount(uint32_t count)
 {
     m_count = count;
 }
 
-uint8_t Object::getCount()
+uint32_t Object::getCount()
 {
     return m_count;
 }
