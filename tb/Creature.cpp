@@ -13,7 +13,7 @@ Creature::~Creature()
     //
 }
 
-Creature::Creature(const sf::Vector2u& tileCoords, tb::ZAxis_t z)
+Creature::Creature(const sf::Vector2i& tileCoords, tb::ZAxis_t z)
 {
     setThingType(tb::ThingType::Creature);
 
@@ -21,11 +21,7 @@ Creature::Creature(const sf::Vector2u& tileCoords, tb::ZAxis_t z)
     setZ(z);
 
     m_dummySprite.setID(2182);
-}
-
-void Creature::update()
-{
-    m_dummySprite.setPosition(getPixelX(), getPixelY());
+    m_dummySprite.setTileWidthAndHeightByID(2182);
 }
 
 Creature::Properties_t* Creature::getProperties()
@@ -36,6 +32,13 @@ Creature::Properties_t* Creature::getProperties()
 Creature::Skills_t* Creature::getSkills()
 {
     return &m_skills;
+}
+
+void Creature::update()
+{
+    sf::Vector2f pixelCoords = getPixelCoords();
+
+    m_dummySprite.setPosition(pixelCoords);
 }
 
 std::string Creature::getName()
@@ -68,7 +71,7 @@ tb::Sprite* Creature::getOutfitSprite(tb::OutfitIndex_t outfitIndex)
     return &m_outfitSpriteList.at(outfitIndex);
 }
 
-void Creature::setOutfitSprite(tb::OutfitIndex_t outfitIndex, tb::Sprite sprite)
+void Creature::setOutfitSprite(tb::OutfitIndex_t outfitIndex, const tb::Sprite& sprite)
 {
     m_outfitSpriteList.at(outfitIndex) = sprite;
 }

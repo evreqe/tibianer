@@ -4,8 +4,6 @@
 
 #include <boost/algorithm/string.hpp>
 
-#include <SFML/Graphics.hpp>
-
 #include "tb/Constants.h"
 #include "tb/Utility.h"
 #include "tb/Log.h"
@@ -24,9 +22,9 @@ public:
     GameText();
     ~GameText();
 
-    bool setText(tb::BitmapFont* bitmapFont, const sf::Vector2u& tileCoords, tb::ZAxis_t z, const std::string& text, const sf::Color& textColor, bool isCentered = true);
+    bool setText(tb::BitmapFont* bitmapFont, const sf::Vector2i& tileCoords, tb::ZAxis_t z, const std::string& text, const sf::Color& textColor, bool isCentered = true);
 
-    sf::Vector2u getTileCoords();
+    sf::Vector2i getTileCoords();
 
     tb::ZAxis_t getZ();
 
@@ -42,7 +40,7 @@ private:
 
     sf::Texture* m_texture = nullptr;
 
-    sf::Vector2u m_tileCoords;
+    sf::Vector2i m_tileCoords;
 
     tb::ZAxis_t m_z = tb::ZAxis::Default;
 
@@ -50,7 +48,7 @@ private:
 
     sf::Color m_textColor;
 
-    int m_type = 0; // speech type: yelling, whispering, broadcasting, monster, etc
+    int m_type = 0; // TODO: speech type: yelling, whispering, broadcasting, monster, etc
 
     std::vector<std::string> m_textList;
 

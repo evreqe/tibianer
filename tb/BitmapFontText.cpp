@@ -49,25 +49,25 @@ bool BitmapFontText::setText(tb::BitmapFont* bitmapFont, const std::string& text
         const unsigned int glyphSizeX = bitmapFont->getGlyphSize().x;
         const unsigned int glyphSizeY = bitmapFont->getGlyphSize().y;
 
-        const unsigned int tu = asciiValue % (textureSizeX / glyphSizeX);
-        const unsigned int tv = asciiValue / (textureSizeX / glyphSizeX);
+        const unsigned int u = asciiValue % (textureSizeX / glyphSizeX);
+        const unsigned int v = asciiValue / (textureSizeX / glyphSizeX);
 
-        sf::Vertex* quad = &m_vertexArray[i * 4];
+        sf::Vertex* vertex = &m_vertexArray[i * 4];
 
-        quad[0].position = sf::Vector2f(x,              y);
-        quad[1].position = sf::Vector2f(x + glyphSizeX, y);
-        quad[2].position = sf::Vector2f(x + glyphSizeX, y + glyphSizeY);
-        quad[3].position = sf::Vector2f(x,              y + glyphSizeY);
+        vertex[0].position = static_cast<sf::Vector2f>(sf::Vector2u(x,              y));
+        vertex[1].position = static_cast<sf::Vector2f>(sf::Vector2u(x + glyphSizeX, y));
+        vertex[2].position = static_cast<sf::Vector2f>(sf::Vector2u(x + glyphSizeX, y + glyphSizeY));
+        vertex[3].position = static_cast<sf::Vector2f>(sf::Vector2u(x,              y + glyphSizeY));
 
-        quad[0].texCoords = sf::Vector2f(tu          * glyphSizeX, tv          * glyphSizeY);
-        quad[1].texCoords = sf::Vector2f((tu + 1.0f) * glyphSizeX, tv          * glyphSizeY);
-        quad[2].texCoords = sf::Vector2f((tu + 1.0f) * glyphSizeX, (tv + 1.0f) * glyphSizeY);
-        quad[3].texCoords = sf::Vector2f(tu          * glyphSizeX, (tv + 1.0f) * glyphSizeY);
+        vertex[0].texCoords = static_cast<sf::Vector2f>(sf::Vector2u(u       * glyphSizeX, v       * glyphSizeY));
+        vertex[1].texCoords = static_cast<sf::Vector2f>(sf::Vector2u((u + 1) * glyphSizeX, v       * glyphSizeY));
+        vertex[2].texCoords = static_cast<sf::Vector2f>(sf::Vector2u((u + 1) * glyphSizeX, (v + 1) * glyphSizeY));
+        vertex[3].texCoords = static_cast<sf::Vector2f>(sf::Vector2u(u       * glyphSizeX, (v + 1) * glyphSizeY));
 
-        quad[0].color = textColor;
-        quad[1].color = textColor;
-        quad[2].color = textColor;
-        quad[3].color = textColor;
+        vertex[0].color = textColor;
+        vertex[1].color = textColor;
+        vertex[2].color = textColor;
+        vertex[3].color = textColor;
 
         const unsigned int glyphWidth = bitmapFont->getGlyphWidthList()->at(asciiValue); //bitmapFont->getGlyphSize()->x;
 
@@ -84,7 +84,7 @@ bool BitmapFontText::setText(tb::BitmapFont* bitmapFont, const std::string& text
         {
             for (std::size_t i = 0; i < m_vertexArray.getVertexCount(); i++)
             {
-                m_vertexArray[i].position.x = m_vertexArray[i].position.x - (static_cast<float>(textWidth) / 2.0f);
+                m_vertexArray[i].position.x = m_vertexArray[i].position.x - static_cast<float>(textWidth / 2);
             }
         }
     }

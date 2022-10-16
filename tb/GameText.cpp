@@ -13,11 +13,11 @@ GameText::~GameText()
     //
 }
 
-bool GameText::setText(tb::BitmapFont* bitmapFont, const sf::Vector2u& tileCoords, tb::ZAxis_t z, const std::string& text, const sf::Color& textColor, bool isCentered)
+bool GameText::setText(tb::BitmapFont* bitmapFont, const sf::Vector2i& tileCoords, tb::ZAxis_t z, const std::string& text, const sf::Color& textColor, bool isCentered)
 {
     if (bitmapFont == nullptr)
     {
-        g_Log.write("ERROR: nullptr\n");
+        g_Log.write("ERROR: bitmapFont == nullptr\n");
         return false;
     }
 
@@ -37,7 +37,7 @@ bool GameText::setText(tb::BitmapFont* bitmapFont, const sf::Vector2u& tileCoord
 
     sf::Vector2f textPosition = static_cast<sf::Vector2f>(tileCoords);
 
-    const unsigned int textHeight = bitmapFont->getGlyphSize().y;
+    const float textHeight = bitmapFont->getTextHeight();
 
     m_bitmapFontTextList.clear();
     m_bitmapFontTextList.reserve(m_textList.size());
@@ -50,7 +50,7 @@ bool GameText::setText(tb::BitmapFont* bitmapFont, const sf::Vector2u& tileCoord
 
         bitmapFontText.setPosition(textPosition);
 
-        textPosition.y = textPosition.y + (static_cast<float>(textHeight) + 1.0f);
+        textPosition.y = textPosition.y + (textHeight + 1.0f);
 
         m_bitmapFontTextList.push_back(bitmapFontText);
     }
@@ -58,7 +58,7 @@ bool GameText::setText(tb::BitmapFont* bitmapFont, const sf::Vector2u& tileCoord
     return true;
 }
 
-sf::Vector2u GameText::getTileCoords()
+sf::Vector2i GameText::getTileCoords()
 {
     return m_tileCoords;
 }

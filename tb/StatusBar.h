@@ -7,56 +7,65 @@
 
 #include "tb/Constants.h"
 
+#include "tb/RenderWindow.h"
 #include "tb/Game.h"
 
 namespace tb
 {
-    class Game;
 
-    class StatusBar
+class StatusBar
+{
+
+public:
+
+    StatusBar();
+    ~StatusBar();
+
+    static StatusBar& getInstance()
     {
+        static StatusBar instance;
+        return instance;
+    }
 
-    public:
+private:
 
-        StatusBar();
-        ~StatusBar();
-        StatusBar(const StatusBar&) = delete;
-        StatusBar(StatusBar&&) = delete;
-        StatusBar& operator=(const StatusBar&) = delete;
-        StatusBar& operator=(StatusBar&&) = delete;
+    StatusBar(const StatusBar&) = delete;
+    StatusBar(StatusBar&&) = delete;
+    StatusBar& operator=(const StatusBar&) = delete;
+    StatusBar& operator=(StatusBar&&) = delete;
 
-        static StatusBar& getInstance()
-        {
-            static StatusBar statusBar;
-            return statusBar;
-        }
+public:
 
-        void draw();
+    void draw();
 
-        float getHeight();
-        void setHeight(float height);
+    float getHeight();
+    void setHeight(float height);
 
-        std::string_view getText();
-        void setText(const std::string& text);
+    std::string_view getText();
+    void setText(const std::string& text);
 
-        bool getIsVisible();
-        void setIsVisible(bool b);
-        void toggleIsVisible();
+    bool getIsVisible();
+    void setIsVisible(bool b);
+    void toggleIsVisible();
 
-    private:
+private:
 
-        bool m_isVisible = true;
+    bool m_isVisible = true;
 
-        float m_height = tb::Constants::StatusBarHeight;
+    const float m_heightDefault = 19.0f;
 
-        const std::string m_TextDefault = "Welcome to Tibianer!";
+    float m_height = m_heightDefault;
 
-        std::string m_text = m_TextDefault;
-    };
+    const float m_bottomRightTextPadding = 8.0f;
+
+    const std::string m_TextDefault = "Welcome to Tibianer!";
+
+    std::string m_text = m_TextDefault;
+};
 
 }
 
 namespace
 {
-    tb::StatusBar& g_StatusBar = tb::StatusBar::getInstance();
+    inline tb::StatusBar& g_StatusBar = tb::StatusBar::getInstance();
 }

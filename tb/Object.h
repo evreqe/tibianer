@@ -2,8 +2,6 @@
 
 #include "common.h"
 
-#include <SFML/Graphics.hpp>
-
 #include "tb/Constants.h"
 #include "tb/Utility.h"
 
@@ -22,7 +20,7 @@ public:
 
     Object();
     ~Object();
-    Object(const sf::Vector2u& tileCoords, tb::ZAxis_t z, tb::SpriteID_t spriteID);
+    Object(const sf::Vector2i& tileCoords, tb::ZAxis_t z, tb::SpriteID_t spriteID);
 
     using Ptr = std::shared_ptr<tb::Object>;
     using List = std::vector<tb::Object::Ptr>;
@@ -43,6 +41,14 @@ public:
         }
     };
 
+    struct Properties_t
+    {
+        bool Decay = false;
+        bool Regenerate = false;
+    };
+
+    Properties_t* getProperties();
+
     void update();
 
     tb::Sprite* getSprite();
@@ -56,13 +62,12 @@ public:
     void setCount(uint32_t count);
     uint32_t getCount();
 
-    void setIsDecay(bool b);
-    bool getIsDecay();
-
-    sf::Clock* getClockDecay();
-    sf::Clock* getClockRegenerate();
+    sf::Clock* getDecayClock();
+    sf::Clock* getRegenerateClock();
 
 private:
+
+    Properties_t m_properties;
 
     tb::Sprite m_sprite;
 
@@ -70,10 +75,8 @@ private:
 
     uint32_t m_count = 1;
 
-    bool m_isDecay = false;
-
-    sf::Clock m_clockDecay;
-    sf::Clock m_clockRegenerate;
+    sf::Clock m_decayClock;
+    sf::Clock m_regenerateClock;
 
 };
 

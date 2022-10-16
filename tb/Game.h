@@ -7,6 +7,7 @@
 #include "tb/Log.h"
 
 #include "tb/SpriteData.h"
+#include "tb/BitmapFontData.h"
 #include "tb/PatternData.h"
 #include "tb/WaterData.h"
 #include "tb/OutfitData.h"
@@ -19,6 +20,9 @@
 
 #include "tb/MenuBar.h"
 #include "tb/StatusBar.h"
+
+#include "tb/RenderWindow.h"
+#include "tb/GameWindow.h"
 
 #include "tb/OverlayWindow.h"
 #include "tb/LogWindow.h"
@@ -37,61 +41,65 @@ public:
 
     Game();
     ~Game();
+
+    static Game& getInstance()
+    {
+        static Game instance;
+        return instance;
+    }
+
+private:
+
     Game(const Game&) = delete;
     Game(Game&&) = delete;
     Game& operator=(const Game&) = delete;
     Game& operator=(Game&&) = delete;
 
-    static Game& getInstance()
-    {
-        static Game game;
-        return game;
-    }
+public:
 
-    void createRenderWindow();
+    void initImGui();
 
     bool loadTextures();
     bool loadBitmapFonts();
+
+    void drawDockSpace();
 
     void drawWoodBackground();
     void drawWoodBorder(sf::FloatRect rect);
     void drawBackgroundTextureWithWoodBorder(const sf::Texture& texture);
 
-    void drawEnterGameScreen();
-    void drawLoadingScreen();
-    void drawMapSelectScreen();
-    void drawInGameScreen();
+    void doGameStateEnterGame();
+    void doGameStateLoading();
+    void doGameStateMapSelect();
+    void doGameStateInGame();
 
-    void drawGameWindow();
-
-    void drawGameLayer(tb::ZAxis_t z);
-
-    sf::IntRect getTilesToDrawRect();
-
-    bool isTileMapVisible(tb::TileMap* tileMap);
-
-    tb::Tile::Ptr getTileOfThing(tb::Thing::Ptr thing);
+    sf::Vector2i getMousePositionInDesktop();
 
     void doAnimatedWater();
 
     bool createPlayer();
 
-    void handleMouseWheelEvent(sf::Event event);
+    void handleClosedEvent(sf::Event event);
+    void handleResizedEvent(sf::Event event);
+    void handleMouseWheelMovedEvent(sf::Event event);
     void processEvents();
 
-    // this function fixes a bug between imgui, SFML and imgui-SFML
-    // where the mouse cursor doesn't work correctly when resizing the window
-    void fixMouseCursorForWindowResize(sf::RenderWindow& renderWindow);
+    void fixMouseCursorForWindowResize(sf::RenderWindow* renderWindow);
+
+    void createTileFileFromImageFile(const std::string& fileName);
+
+    void doOverlayText();
 
     void waitForKeyPress();
+    void exit();
     void run();
 
     void toggleDemoWindow();
     void toggleStackToolWindow();
 
-    sf::RenderWindow* getRenderWindow();
-
     tb::GameState getGameState();
+
+    tb::Creature::Ptr getPlayer();
 
 private:
 
@@ -100,55 +108,25 @@ private:
 
     tb::GameState m_gameState = tb::GameState::InGame;
 
-    unsigned int m_minimumTextureSizeRequiredToRun = 2048;
+    const unsigned int m_minimumTextureSizeRequiredToRun = 2048;
 
     sf::Clock m_deltaClock;
 
     sf::Clock m_animatedWaterClock;
 
-    sf::Cursor m_cursorArrow;
+    sf::Cursor m_arrowCursor;
 
-    sf::RenderWindow m_renderWindow;
-
-    unsigned int m_renderWindowWidth = 1280;
-    unsigned int m_renderWindowHeight = 720;
-
-    sf::Uint32 m_renderWindowStyle = sf::Style::Titlebar | sf::Style::Close | sf::Style::Resize;
-
-    unsigned int m_renderWindowFrameRateLimit = 60;
-
-    bool m_renderWindowVerticalSyncIsEnabled = false;
-
-    bool m_renderWindowStartMaximized = true;
-
-    sf::Image m_renderWindowIcon;
-
-    const std::string m_renderWindowIconFileName = "images/icon.png";
-
-    unsigned int m_renderWindowIconWidth = 32;
-    unsigned int m_renderWindowIconHeight = 32;
-
-    tb::BitmapFont m_bitmapFontDefault;
-    tb::BitmapFont m_bitmapFontTiny;
-    tb::BitmapFont m_bitmapFontModern;
-
-    sf::View m_gameWindowView;
-
-    sf::RenderTexture m_gameWindow;
-    sf::Sprite m_gameWindowSprite;
-
-    sf::RenderTexture m_gameWindowLayer;
-    sf::Sprite m_gameWindowLayerSprite;
-
-    float m_gameWindowZoomLevel = 1.0f;
-    float m_gameWindowZoomFactor = 0.4f;
+    tb::BitmapFont m_defaultBitmapFont;
+    tb::BitmapFont m_tinyBitmapFont;
+    tb::BitmapFont m_modernBitmapFont;
 
     tb::Creature::Ptr m_player;
+
 };
 
 }
 
 namespace
 {
-    tb::Game& g_Game = tb::Game::getInstance();
+    inline tb::Game& g_Game = tb::Game::getInstance();
 }

@@ -13,8 +13,14 @@ BitmapFont::~BitmapFont()
     //
 }
 
-bool BitmapFont::load(const std::string& fileName, const sf::Vector2u& glyphSize, const std::vector<unsigned int>* glyphWidthList, unsigned int glyphSpace)
+bool BitmapFont::load(const std::string& fileName, const sf::Vector2u& glyphSize, const float textHeight, const std::vector<unsigned int>* glyphWidthList, unsigned int glyphSpace)
 {
+    if (std::filesystem::exists(fileName) == false)
+    {
+        g_Log.write("ERROR: File does not exist: {}\n", fileName);
+        return false;
+    }
+
     if (m_texture.loadFromFile(fileName) == false)
     {
         g_Log.write("ERROR: Failed to load texture file: {}\n", fileName);
@@ -26,6 +32,8 @@ bool BitmapFont::load(const std::string& fileName, const sf::Vector2u& glyphSize
 
     m_glyphSize = glyphSize;
 
+    m_textHeight = textHeight;
+
     m_glyphWidthList = *glyphWidthList;
 
     m_glyphSpace = glyphSpace;
@@ -35,29 +43,35 @@ bool BitmapFont::load(const std::string& fileName, const sf::Vector2u& glyphSize
 
     if (textureSizeX == 0 || textureSizeY == 0)
     {
-        g_Log.write("ERROR: Texture width or height cannot be zero\n");
+        g_Log.write("ERROR: Texture width or height is zero\n");
         return false;
     }
 
     const unsigned int glyphSizeX = glyphSize.x;
     const unsigned int glyphSizeY = glyphSize.y;
 
+    if (glyphSizeX == 0 || glyphSizeY == 0)
+    {
+        g_Log.write("ERROR: Glyph width or height is zero\n");
+        return false;
+    }
+
     for (unsigned int i = 0; i < m_numGlyphs; i++)
     {
-        const unsigned int tu = i % (textureSizeX / glyphSizeX);
-        const unsigned int tv = i / (textureSizeX / glyphSizeX);
+        const unsigned int u = i % (textureSizeX / glyphSizeX);
+        const unsigned int v = i / (textureSizeX / glyphSizeX);
 
-        sf::Vertex* quad = &m_vertexArray[i * 4];
+        sf::Vertex* vertex = &m_vertexArray[i * 4];
 
-        quad[0].position = sf::Vector2f(i          * glyphSizeX, 1.0f          * glyphSizeY);
-        quad[1].position = sf::Vector2f((i + 1.0f) * glyphSizeX, 1.0f          * glyphSizeY);
-        quad[2].position = sf::Vector2f((i + 1.0f) * glyphSizeX, 2.0f          * glyphSizeY);
-        quad[3].position = sf::Vector2f(i          * glyphSizeX, 2.0f          * glyphSizeY);
+        vertex[0].position = static_cast<sf::Vector2f>(sf::Vector2u(i       * glyphSizeX, 1 * glyphSizeY));
+        vertex[1].position = static_cast<sf::Vector2f>(sf::Vector2u((i + 1) * glyphSizeX, 1 * glyphSizeY));
+        vertex[2].position = static_cast<sf::Vector2f>(sf::Vector2u((i + 1) * glyphSizeX, 2 * glyphSizeY));
+        vertex[3].position = static_cast<sf::Vector2f>(sf::Vector2u(i       * glyphSizeX, 2 * glyphSizeY));
 
-        quad[0].texCoords = sf::Vector2f(tu          * glyphSizeX, tv          * glyphSizeY);
-        quad[1].texCoords = sf::Vector2f((tu + 1.0f) * glyphSizeX, tv          * glyphSizeY);
-        quad[2].texCoords = sf::Vector2f((tu + 1.0f) * glyphSizeX, (tv + 1.0f) * glyphSizeY);
-        quad[3].texCoords = sf::Vector2f(tu          * glyphSizeX, (tv + 1.0f) * glyphSizeY);
+        vertex[0].texCoords = static_cast<sf::Vector2f>(sf::Vector2u(u       * glyphSizeX, v       * glyphSizeY));
+        vertex[1].texCoords = static_cast<sf::Vector2f>(sf::Vector2u((u + 1) * glyphSizeX, v       * glyphSizeY));
+        vertex[2].texCoords = static_cast<sf::Vector2f>(sf::Vector2u((u + 1) * glyphSizeX, (v + 1) * glyphSizeY));
+        vertex[3].texCoords = static_cast<sf::Vector2f>(sf::Vector2u(u       * glyphSizeX, (v + 1) * glyphSizeY));
     }
 
     return true;
@@ -76,6 +90,11 @@ sf::Texture* BitmapFont::getTexture()
 sf::Vector2u BitmapFont::getGlyphSize()
 {
     return m_glyphSize;
+}
+
+float BitmapFont::getTextHeight()
+{
+    return m_textHeight;
 }
 
 std::vector<unsigned int>* BitmapFont::getGlyphWidthList()

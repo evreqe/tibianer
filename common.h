@@ -41,6 +41,8 @@
 #include "fmt/core.h"
 #include "fmt/ostream.h"
 
-#define SPDLOG_COMPILED_LIB
-#define SPDLOG_FMT_EXTERNAL
-#include "spdlog/spdlog.h"
+#include "magic_enum.hpp"
+using namespace magic_enum::bitwise_operators;
+
+#include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>

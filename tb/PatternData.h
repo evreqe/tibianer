@@ -11,57 +11,62 @@
 namespace tb
 {
 
-    class PatternData
+class PatternData
+{
+
+public:
+
+    PatternData();
+    ~PatternData();
+
+    static PatternData& getInstance()
     {
+        static PatternData instance;
+        return instance;
+    }
 
-    public:
+private:
 
-        PatternData();
-        ~PatternData();
-        PatternData(const PatternData&) = delete;
-        PatternData(PatternData&&) = delete;
-        PatternData& operator=(const PatternData&) = delete;
-        PatternData& operator=(PatternData&&) = delete;
+    PatternData(const PatternData&) = delete;
+    PatternData(PatternData&&) = delete;
+    PatternData& operator=(const PatternData&) = delete;
+    PatternData& operator=(PatternData&&) = delete;
 
-        static PatternData& getInstance()
-        {
-            static PatternData patternData;
-            return patternData;
-        }
+public:
 
-        typedef struct _Pattern
-        {
-            uint32_t Index = 0;
-            std::string Name;
-            tb::PatternType PatternType = tb::PatternType::Tile;
-            uint8_t Width = 0;
-            uint8_t Height = 0;
-           tb::SpriteIDList SpriteIDList;
-        } Pattern, * Pattern_ptr;
+    typedef struct _Data
+    {
+        uint32_t Index = 0;
+        std::string Name;
+        tb::PatternType PatternType = tb::PatternType::Tile;
+        uint8_t Width = 0;
+        uint8_t Height = 0;
+        tb::SpriteIDList SpriteIDList;
+    } Data, *Data_ptr;
 
-        using PatternList = std::vector<tb::PatternData::Pattern>;
+    using DataList = std::vector<tb::PatternData::Data>;
 
-        bool load();
-        bool isLoaded();
-        bool save();
+    bool load();
+    bool isLoaded();
+    bool save();
 
-        tb::PatternData::PatternList* getPatternList();
+    tb::PatternData::DataList* getDataList();
 
-    private:
+private:
 
-        std::string m_fileName = "data/patterns.txt";
+    std::string m_fileName = "data/patterns.txt";
 
-        toml::table m_data;
+    toml::table m_data;
 
-        tb::PatternData::PatternList m_patternList;
+    tb::PatternData::DataList m_dataList;
 
-        const uint8_t m_numPatternsToLoad = 16;
+    const unsigned int m_numToLoad = 16;
 
-    };
+};
 
 }
 
 namespace
 {
-    tb::PatternData& g_PatternData = tb::PatternData::getInstance();
+    inline tb::PatternData& g_PatternData = tb::PatternData::getInstance();
 }

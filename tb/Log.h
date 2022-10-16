@@ -15,16 +15,21 @@ public:
 
     Log();
     ~Log();
+
+    static Log& getInstance()
+    {
+        static Log instance;
+        return instance;
+    }
+
+private:
+
     Log(const Log&) = delete;
     Log(Log&&) = delete;
     Log& operator=(const Log&) = delete;
     Log& operator=(Log&&) = delete;
 
-    static Log& getInstance()
-    {
-        static Log log;
-        return log;
-    }
+public:
 
     typedef struct _FormatString
     {
@@ -43,6 +48,11 @@ public:
     template <typename... Args>
     void write(const FormatString& format, Args&&... args)
     {
+        if (m_isEnabled == false)
+        {
+            return;
+        }
+
         vwrite(format, fmt::make_format_args(args...));
     }
 
@@ -50,9 +60,14 @@ public:
     void close();
     void deleteContents();
 
+    bool isEnabled();
+    void setIsEnabled(bool b);
+
     std::string getText();
 
 private:
+
+    bool m_isEnabled = true;
 
     const std::string m_fileName = "log.txt";
 
@@ -66,5 +81,5 @@ private:
 
 namespace
 {
-    tb::Log& g_Log = tb::Log::getInstance();
+    inline tb::Log& g_Log = tb::Log::getInstance();
 }

@@ -2,8 +2,6 @@
 
 #include "common.h"
 
-#include <SFML/Graphics.hpp>
-
 #include "tb/Constants.h"
 #include "tb/Utility.h"
 #include "tb/Log.h"
@@ -21,8 +19,8 @@ public:
     Entity();
     ~Entity();
 
-    typedef std::shared_ptr<tb::Entity> Ptr;
-    typedef std::vector<tb::Entity::Ptr> List;
+    using Ptr = std::shared_ptr<tb::Entity>;
+    using List = std::vector<tb::Entity::Ptr>;
 
     const std::string& getName();
     void setName(const std::string& name);

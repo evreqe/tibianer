@@ -15,67 +15,71 @@ namespace tb
 
     bool PatternData::load()
     {
-        m_patternList.clear();
-        m_patternList.reserve(32);
+        if (std::filesystem::exists(m_fileName) == false)
+        {
+            g_Log.write("ERROR: File does not exist: {}\n", m_fileName);
+            return false;
+        }
 
+        m_data.clear();
         m_data = toml::parse_file(m_fileName);
         if (m_data.size() == 0)
         {
-            g_Log.write("ERROR: Failed to parse data from file: {}\n", m_fileName);
+            g_Log.write("ERROR: Failed to load data from file: {}\n", m_fileName);
             return false;
         }
 
         g_Log.write("Loaded data from file: {}\n", m_fileName);
 
-        for (unsigned int i = 0; i < m_numPatternsToLoad; i++)
-        {
-            std::string patternIndex = std::to_string(i);
+        m_dataList.clear();
+        m_dataList.reserve(m_numToLoad);
 
-            if (!m_data[patternIndex])
+        for (unsigned int i = 0; i < m_numToLoad; i++)
+        {
+            std::string index = std::to_string(i);
+
+            if (!m_data[index])
             {
                 break;
             }
 
-            g_Log.write("Index: {}\n", i);
+            g_Log.write("Index: {}\n", index);
 
-            tb::PatternData::Pattern pattern;
+            tb::PatternData::Data data;
 
-            pattern.Index = i;
+            data.Index = i;
 
-            pattern.Name = m_data[patternIndex]["Name"].value_or("");
+            data.Name = m_data[index]["Name"].value_or("");
 
-            if (pattern.Name.size() == 0)
+            if (data.Name.size() == 0)
             {
-                g_Log.write("ERROR: Name cannot be empty\n");
+                g_Log.write("ERROR: 'Name' is empty\n");
                 return false;
             }
 
-            std::string_view patternType = m_data[patternIndex]["Type"].value_or("");
+            std::string_view patternType = m_data[index]["Type"].value_or("");
 
-            if (patternType == "tile")
+            auto patternTypeEx = magic_enum::enum_cast<tb::PatternType>(patternType);
+            if (patternTypeEx.has_value())
             {
-                pattern.PatternType = tb::PatternType::Tile;
-            }
-            else if (patternType == "object")
-            {
-                pattern.PatternType = tb::PatternType::Object;
+                data.PatternType = patternTypeEx.value();
             }
             else
             {
-                g_Log.write("ERROR: PatternType is unknown\n");
+                g_Log.write("ERROR: 'Type' is unknown\n");
                 return false;
             }
 
-            pattern.Width = m_data[patternIndex]["Width"].value_or(0);
-            pattern.Height = m_data[patternIndex]["Height"].value_or(0);
+            data.Width = static_cast<uint8_t>(m_data[index]["Width"].value_or(0));
+            data.Height = static_cast<uint8_t>(m_data[index]["Height"].value_or(0));
 
-            if (pattern.Width == 0 || pattern.Height == 0)
+            if (data.Width == 0 || data.Height == 0)
             {
-                g_Log.write("ERROR: Width or Height cannot be zero\n");
+                g_Log.write("ERROR: 'Width' or 'Height' is zero\n");
                 return false;
             }
 
-            auto sprites = m_data[patternIndex]["Sprites"].as_array();
+            auto sprites = m_data[index]["Sprites"].as_array();
 
             if (sprites == nullptr)
             {
@@ -83,34 +87,36 @@ namespace tb
                 return false;
             }
 
-            for (auto& sprite : *sprites)
+            for (unsigned int j = 0; auto& sprite : *sprites)
             {
-                uint32_t spriteID = sprite.value_or(0);
+                tb::SpriteID_t spriteID = static_cast<tb::SpriteID_t>(sprite.value_or(0));
                 if (spriteID == 0)
                 {
-                    g_Log.write("ERROR: Sprite ID cannot be zero at index: {}\n", i);
+                    g_Log.write("ERROR: Sprite ID is zero at index: [{}] Sprites=[#{}]\n", i, j);
                     return false;
                 }
 
                 g_Log.write("Sprite ID: {}\n", spriteID);
 
-                pattern.SpriteIDList.push_back(spriteID);
+                data.SpriteIDList.push_back(spriteID);
+
+                j++;
             }
 
-            if (pattern.SpriteIDList.size() == 0)
+            if (data.SpriteIDList.size() == 0)
             {
-                g_Log.write("ERROR: Sprite ID list cannot be empty\n");
+                g_Log.write("ERROR: 'Sprites' is empty\n");
                 return false;
             }
 
-            m_patternList.push_back(pattern);
+            m_dataList.push_back(data);
         }
 
-        g_Log.write("Loaded data size: {}\n", m_patternList.size());
+        g_Log.write("Loaded data size: {}\n", m_dataList.size());
 
-        if (m_patternList.size() == 0)
+        if (m_dataList.size() == 0)
         {
-            g_Log.write("ERROR: Loaded data has the wrong size\n");
+            g_Log.write("ERROR: Loaded data is empty\n");
             return false;
         }
 
@@ -120,14 +126,14 @@ namespace tb
     bool PatternData::isLoaded()
     {
         if (m_data.size() == 0) return false;
-        if (m_patternList.size() == 0) return false;
+        if (m_dataList.size() == 0) return false;
 
         return true;
     }
 
     bool PatternData::save()
     {
-        if (m_patternList.size() == 0)
+        if (m_dataList.size() == 0)
         {
             g_Log.write("ERROR: Cannot save data because it is empty\n");
             return false;
@@ -138,28 +144,37 @@ namespace tb
 
         if (file.is_open() == false)
         {
-            g_Log.write("Cannot open file: {}\n", m_fileName);
+            g_Log.write("ERROR: Cannot open file: {}\n", m_fileName);
             return false;
         }
 
-        for (auto& pattern : m_patternList)
+        for (auto& data : m_dataList)
         {
-            file << std::format("[{}]\n", pattern.Index);
+            file << std::format("[{}]\n", data.Index);
 
-            file << std::format("Name=\"{}\"\n", pattern.Name);
+            file << std::format("Name=\"{}\"\n", data.Name);
 
-            file << std::format("Width={}\n", pattern.Width);
-            file << std::format("Height={}\n", pattern.Height);
+            std::string_view patternTypeString = magic_enum::enum_name(data.PatternType);
+            if (patternTypeString.size() == 0)
+            {
+                g_Log.write("ERROR: 'PatternType' is empty\n");
+                return false;
+            }
+
+            file << std::format("Type=\"{}\"\n", patternTypeString);
+
+            file << std::format("Width={}\n", data.Width);
+            file << std::format("Height={}\n", data.Height);
 
             file << "Sprites=[";
 
             uint32_t spriteIndex = 0;
 
-            for (auto& spriteID : pattern.SpriteIDList)
+            for (auto& spriteID : data.SpriteIDList)
             {
                 file << spriteID;
 
-                if (spriteIndex != pattern.SpriteIDList.size())
+                if (spriteIndex != data.SpriteIDList.size())
                 {
                     file << ",";
                 }
@@ -177,9 +192,9 @@ namespace tb
         return true;
     }
 
-    tb::PatternData::PatternList* PatternData::getPatternList()
+    tb::PatternData::DataList* PatternData::getDataList()
     {
-        return &m_patternList;
+        return &m_dataList;
     }
 
 }

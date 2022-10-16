@@ -12,50 +12,58 @@
 #include "tb/SpriteDataWindow.h"
 #include "tb/SpriteEditorWindow.h"
 
+#include "tb/RenderWindow.h"
 #include "tb/Game.h"
 
 namespace tb
 {
-    class Game;
 
-    class MenuBar
+class MenuBar
+{
+
+public:
+
+    MenuBar();
+    ~MenuBar();
+
+    static MenuBar& getInstance()
     {
+        static MenuBar instance;
+        return instance;
+    }
 
-    public:
+private:
 
-        MenuBar();
-        ~MenuBar();
-        MenuBar(const MenuBar&) = delete;
-        MenuBar(MenuBar&&) = delete;
-        MenuBar& operator=(const MenuBar&) = delete;
-        MenuBar& operator=(MenuBar&&) = delete;
+    MenuBar(const MenuBar&) = delete;
+    MenuBar(MenuBar&&) = delete;
+    MenuBar& operator=(const MenuBar&) = delete;
+    MenuBar& operator=(MenuBar&&) = delete;
 
-        static MenuBar& getInstance()
-        {
-            static MenuBar menuBar;
-            return menuBar;
-        }
+public:
 
-        void draw();
+    void draw();
 
-        float getHeight();
-        void setHeight(float height);
+    float getHeight();
+    void setHeight(float height);
 
-        bool getIsVisible();
-        void setIsVisible(bool b);
-        void toggleIsVisible();
+    bool getIsVisible();
+    void setIsVisible(bool b);
+    void toggleIsVisible();
 
-    private:
+private:
 
-        bool m_isVisible = true;
+    bool m_isVisible = true;
 
-        float m_height = tb::Constants::MenuBarHeight;
+    const float m_heightDefault = 19.0f;
 
-        const float m_helpMenuAlignmentOffset = 44.0f;
-    };
+    float m_height = m_heightDefault;
+
+    const float m_helpMenuAlignmentOffset = 44.0f;
+};
+
 }
 
 namespace
 {
-    tb::MenuBar& g_MenuBar = tb::MenuBar::getInstance();
+    inline tb::MenuBar& g_MenuBar = tb::MenuBar::getInstance();
 }

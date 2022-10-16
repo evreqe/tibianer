@@ -20,8 +20,14 @@ void StatusBar::draw()
         return;
     }
 
-    ImGui::SetNextWindowPos(ImVec2(0.0f, g_Game.getRenderWindow()->getSize().y - m_height));
-    ImGui::SetNextWindowSize(ImVec2(g_Game.getRenderWindow()->getSize().x, m_height));
+    sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
+
+    sf::Vector2u renderWindowSize2u = renderWindow->getSize();
+
+    sf::Vector2f renderWindowSize2f = static_cast<sf::Vector2f>(renderWindowSize2u);
+
+    ImGui::SetNextWindowPos(ImVec2(0.0f, renderWindowSize2f.y - m_height));
+    ImGui::SetNextWindowSize(ImVec2(renderWindowSize2f.x, m_height));
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 2.0f));
@@ -44,7 +50,7 @@ void StatusBar::draw()
         ImVec2 bottomRightTextSize = ImGui::CalcTextSize(bottomRightText.c_str());
 
         // apply right-justify alignment
-        ImGui::SetCursorPosX(g_Game.getRenderWindow()->getSize().x - bottomRightTextSize.x - 8.0f);
+        ImGui::SetCursorPosX(renderWindowSize2f.x - bottomRightTextSize.x - m_bottomRightTextPadding);
 
         ImGui::Text(bottomRightText.c_str());
     }

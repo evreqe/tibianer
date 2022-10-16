@@ -33,79 +33,103 @@ void Tile::setSpriteID(tb::SpriteID_t spriteID)
     m_spriteID = spriteID;
 }
 
-tb::SpriteFlags_t Tile::getSpriteFlags()
+tb::SpriteFlags* Tile::getSpriteFlags()
 {
-    return m_spriteFlags;
+    return &m_spriteFlags;
 }
 
-void Tile::setSpriteFlags(const tb::SpriteFlags_t& spriteFlags)
+void Tile::setSpriteFlags(const tb::SpriteFlags& spriteFlags)
 {
     m_spriteFlags = spriteFlags;
 }
 
-sf::Vector2u Tile::getPixelCoords()
+sf::Vector2f Tile::getPixelCoords()
 {
-    return Tile::m_pixelCoords;
+    return m_pixelCoords;
 }
 
-void Tile::setPixelCoords(const sf::Vector2u& pixelCoords)
+void Tile::setPixelCoords(const sf::Vector2f& pixelCoords)
 {
     m_pixelCoords = pixelCoords;
 
-    if (pixelCoords.x == 0)
+    if (pixelCoords.x < 0.0f)
     {
         m_tileCoords.x = 0;
     }
     else
     {
-        m_tileCoords.x = pixelCoords.x / tb::Constants::TileSize;
+        m_tileCoords.x = static_cast<int>(pixelCoords.x / tb::Constants::TileSizeFloat);
     }
 
-    if (pixelCoords.y == 0)
+    if (pixelCoords.y < 0.0f)
     {
         m_tileCoords.y = 0;
     }
     else
     {
-        m_tileCoords.y = pixelCoords.y / tb::Constants::TileSize;
+        m_tileCoords.y = static_cast<int>(pixelCoords.y / tb::Constants::TileSizeFloat);
     }
 }
 
-sf::Vector2u Tile::getTileCoords()
+float Tile::getPixelX()
+{
+    return m_pixelCoords.x;
+}
+
+void Tile::setPixelX(float pixelX)
+{
+    m_pixelCoords.x = pixelX;
+
+    m_tileCoords.x = static_cast<int>(pixelX / tb::Constants::TileSizeFloat);
+}
+
+float Tile::getPixelY()
+{
+    return m_pixelCoords.y;
+}
+
+void Tile::setPixelY(float pixelY)
+{
+    m_pixelCoords.y = pixelY;
+
+    m_tileCoords.y = static_cast<int>(pixelY / tb::Constants::TileSizeFloat);
+}
+
+sf::Vector2i Tile::getTileCoords()
 {
     return m_tileCoords;
 }
 
-void Tile::setTileCoords(const sf::Vector2u& tileCoords)
+void Tile::setTileCoords(const sf::Vector2i& tileCoords)
 {
     m_tileCoords = tileCoords;
 
-    m_pixelCoords.x = tileCoords.x * tb::Constants::TileSize;
-    m_pixelCoords.y = tileCoords.y * tb::Constants::TileSize;
+    m_pixelCoords.x = static_cast<float>(tileCoords.x * tb::Constants::TileSize);
+    m_pixelCoords.y = static_cast<float>(tileCoords.y * tb::Constants::TileSize);
 }
 
-uint32_t Tile::getTileX()
+int Tile::getTileX()
 {
     return m_tileCoords.x;
 }
 
-void Tile::setTileX(uint32_t tileX)
+void Tile::setTileX(int tileX)
 {
     m_tileCoords.x = tileX;
 
-    m_pixelCoords.x = tileX * tb::Constants::TileSize;
+    m_pixelCoords.x = static_cast<float>(tileX * tb::Constants::TileSize);
 }
 
-uint32_t Tile::getTileY()
+int Tile::getTileY()
 {
     return m_tileCoords.y;
 }
 
-void Tile::setTileY(uint32_t tileY)
+void Tile::setTileY(int tileY)
 {
     m_tileCoords.y = tileY;
 
-    m_pixelCoords.y = tileY * tb::Constants::TileSize;
+    m_pixelCoords.y = static_cast<float>(tileY * tb::Constants::TileSize);
 }
 
 tb::ZAxis_t Tile::getZ()

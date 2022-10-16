@@ -2,8 +2,6 @@
 
 #include "common.h"
 
-#include <SFML/Graphics.hpp>
-
 #include "tb/Constants.h"
 #include "tb/Utility.h"
 #include "Tb/Log.h"
@@ -20,11 +18,13 @@ public:
 
     Sprite();
     ~Sprite();
-    Sprite(tb::SpriteID_t id);
 
     tb::SpriteID_t getID();
-    void setID(tb::SpriteID_t id);
+    void setID(tb::SpriteID_t spriteID);
 
+    void setTileWidthAndHeightByID(tb::SpriteID_t spriteID);
+
+    sf::IntRect getTextureRectByID(tb::SpriteID_t spriteID, uint8_t tileWidth, uint8_t tileHeight);
     void updateTextureRect();
 
     uint8_t getTileWidth();
@@ -33,17 +33,13 @@ public:
     uint8_t getTileHeight();
     void setTileHeight(uint8_t tileHeight);
 
-    bool getUseWidthAndHeight();
-    void setUseWidthAndHeight(bool b);
-
 private:
 
-    tb::SpriteID_t m_id = tb::Constants::SpriteIDDefault;
+    tb::SpriteID_t m_spriteID = tb::Constants::SpriteIDDefault;
 
     uint8_t m_tileWidth = 1;
     uint8_t m_tileHeight = 1;
 
-    bool m_useWidthAndHeight = true;
 };
 
 }

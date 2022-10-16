@@ -2,11 +2,11 @@
 
 #include "common.h"
 
-#include <SFML/Graphics.hpp>
-
 #include "tb/Constants.h"
 #include "tb/Utility.h"
 #include "tb/Log.h"
+
+#include "tb/SpriteFlags.h"
 
 #include "tb/Entity.h"
 #include "tb/Object.h"
@@ -27,7 +27,7 @@ public:
     using Ptr = std::shared_ptr<tb::Tile>;
     using List = std::vector<tb::Tile::Ptr>;
 
-    struct sortByTileIndex_t
+    struct SortByTileIndex_t
     {
         bool operator()(tb::Tile::Ptr a, tb::Tile::Ptr b) const
         {
@@ -41,20 +41,26 @@ public:
     tb::SpriteID_t getSpriteID();
     void setSpriteID(tb::SpriteID_t spriteID);
 
-    tb::SpriteFlags_t getSpriteFlags();
-    void setSpriteFlags(const tb::SpriteFlags_t& spriteFlags);
+    tb::SpriteFlags* getSpriteFlags();
+    void setSpriteFlags(const tb::SpriteFlags& spriteFlags);
 
-    sf::Vector2u getPixelCoords();
-    void setPixelCoords(const sf::Vector2u& pixelCoords);
+    sf::Vector2f getPixelCoords();
+    void setPixelCoords(const sf::Vector2f& pixelCoords);
 
-    sf::Vector2u getTileCoords();
-    void setTileCoords(const sf::Vector2u& tileCoords);
+    float getPixelX();
+    void setPixelX(float pixelX);
 
-    uint32_t getTileX();
-    void setTileX(uint32_t tileX);
+    float getPixelY();
+    void setPixelY(float pixelY);
 
-    uint32_t getTileY();
-    void setTileY(uint32_t tileY);
+    sf::Vector2i getTileCoords();
+    void setTileCoords(const sf::Vector2i& tileCoords);
+
+    int getTileX();
+    void setTileX(int tileX);
+
+    int getTileY();
+    void setTileY(int tileY);
 
     tb::ZAxis_t getZ();
     void setZ(tb::ZAxis_t z);
@@ -69,7 +75,6 @@ public:
     void removeObject(tb::Object::Ptr object);
 
     void addCreature(tb::Creature::Ptr creature);
-
 
 /*
     void addAnimation(tb::Animation::Ptr animation);
@@ -86,10 +91,10 @@ private:
 
     tb::SpriteID_t m_spriteID = 0;
 
-    tb::SpriteFlags_t m_spriteFlags;
+    tb::SpriteFlags m_spriteFlags;
 
-    sf::Vector2u m_tileCoords;
-    sf::Vector2u m_pixelCoords;
+    sf::Vector2i m_tileCoords;
+    sf::Vector2f m_pixelCoords;
 
     tb::ZAxis_t m_z = tb::ZAxis::Default;
 

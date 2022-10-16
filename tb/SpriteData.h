@@ -8,6 +8,8 @@
 #include "tb/Utility.h"
 #include "tb/Log.h"
 
+#include "tb/SpriteFlags.h"
+
 namespace tb
 {
 
@@ -18,21 +20,26 @@ public:
 
     SpriteData();
     ~SpriteData();
+
+    static SpriteData& getInstance()
+    {
+        static SpriteData instance;
+        return instance;
+    }
+
+private:
+
     SpriteData(const SpriteData&) = delete;
     SpriteData(SpriteData&&) = delete;
     SpriteData& operator=(const SpriteData&) = delete;
     SpriteData& operator=(SpriteData&&) = delete;
 
-    static SpriteData& getInstance()
-    {
-        static SpriteData spriteData;
-        return spriteData;
-    }
+public:
 
     typedef struct _Data
     {
         tb::SpriteID_t SpriteID = 0;
-        tb::SpriteFlags_t SpriteFlags;
+        tb::SpriteFlags SpriteFlags;
         std::string Article = ""; // '' or 'a' or 'an'
         std::string Name;
         float Weight = 0.0f; // cap
@@ -57,11 +64,13 @@ private:
 
     tb::SpriteData::DataList m_dataList;
 
+    const unsigned int m_numToLoad = tb::Constants::NumSprites;
+
 };
 
 }
 
 namespace
 {
-    tb::SpriteData& g_SpriteData = tb::SpriteData::getInstance();
+    inline tb::SpriteData& g_SpriteData = tb::SpriteData::getInstance();
 }

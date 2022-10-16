@@ -2,8 +2,6 @@
 
 #include "common.h"
 
-#include <SFML/Graphics.hpp>
-
 #include "tb/Constants.h"
 #include "tb/Utility.h"
 
@@ -23,10 +21,10 @@ public:
 
     Creature();
     ~Creature();
-    Creature(const sf::Vector2u& tileCoords, tb::ZAxis_t z);
+    Creature(const sf::Vector2i& tileCoords, tb::ZAxis_t z);
 
-    typedef std::shared_ptr<tb::Creature> Ptr;
-    typedef std::vector<tb::Creature::Ptr> List;
+    using Ptr = std::shared_ptr<tb::Creature>;
+    using List = std::vector<tb::Creature::Ptr>;
 
     struct Properties_t
     {
@@ -48,10 +46,10 @@ public:
         uint32_t Fishing             = tb::Constants::SkillLevelDefault;
     };
 
-    void update();
-
     Properties_t* getProperties();
     Skills_t* getSkills();
+
+    void update();
 
     uint8_t getTileOffset();
     void setTileOffset(uint8_t tileOffset);
@@ -77,7 +75,7 @@ public:
     void setOutfitSpriteID(tb::OutfitIndex_t outfitIndex, tb::SpriteID_t spriteID);
 
     tb::Sprite* getOutfitSprite(tb::OutfitIndex_t outfitIndex);
-    void setOutfitSprite(tb::OutfitIndex_t outfitIndex, tb::Sprite sprite);
+    void setOutfitSprite(tb::OutfitIndex_t outfitIndex, const tb::Sprite& sprite);
 
 private:
 

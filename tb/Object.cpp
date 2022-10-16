@@ -6,8 +6,6 @@ namespace tb
 Object::Object()
 {
     setThingType(tb::ThingType::Object);
-
-    setSpriteID(tb::Constants::SpriteIDDefault);
 }
 
 Object::~Object()
@@ -15,7 +13,12 @@ Object::~Object()
     //
 }
 
-Object::Object(const sf::Vector2u& tileCoords, tb::ZAxis_t z, tb::SpriteID_t spriteID)
+Object::Properties_t* Object::getProperties()
+{
+    return &m_properties;
+}
+
+Object::Object(const sf::Vector2i& tileCoords, tb::ZAxis_t z, tb::SpriteID_t spriteID)
 {
     setThingType(tb::ThingType::Object);
 
@@ -136,11 +139,13 @@ void Object::setSpriteID(tb::SpriteID_t spriteID)
 {
     if (g_SpriteData.isLoaded() == false)
     {
-        g_Log.write("g_SpriteData.isLoaded() == false\n");
+        g_Log.write("ERROR: Sprite data is not loaded\n");
         return;
     }
 
     m_sprite.setID(spriteID);
+
+    m_sprite.setTileWidthAndHeightByID(spriteID);
 
     //tb::SpriteData::Data* data = &g_SpriteData.getDataList()->at(spriteID);
 
@@ -262,26 +267,14 @@ uint32_t Object::getCount()
     return m_count;
 }
 
-void Object::setIsDecay(bool b)
+sf::Clock* Object::getDecayClock()
 {
-    m_isDecay = b;
-
-    m_clockDecay.restart();
+    return &m_decayClock;
 }
 
-bool Object::getIsDecay()
+sf::Clock* Object::getRegenerateClock()
 {
-    return m_isDecay;
-}
-
-sf::Clock* Object::getClockDecay()
-{
-    return &m_clockDecay;
-}
-
-sf::Clock* Object::getClockRegenerate()
-{
-    return &m_clockRegenerate;
+    return &m_regenerateClock;
 }
 
 }

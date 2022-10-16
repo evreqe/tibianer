@@ -42,14 +42,23 @@ void SpriteDataWindow::draw()
                 for (int i = clipper.DisplayStart; i < clipper.DisplayEnd; i++)
                 {
                     tb::Sprite sprite;
-                    sprite.setUseWidthAndHeight(false);
-                    sprite.setID(i);
+                    sprite.setID(static_cast<tb::SpriteID_t>(i));
 
                     ImGui::ImageButton(sprite);
 
                     ImGui::Text(std::format("ID: {}", spriteDataList->at(i).SpriteID).c_str());
 
-                    ImGui::Text(std::format("Sprite Flags: {}", spriteDataList->at(i).SpriteFlags.to_string()).c_str());
+                    tb::SpriteFlags* spriteFlags = &spriteDataList->at(i).SpriteFlags;
+
+                    ImGui::Text(std::format("Sprite Flags: {}", spriteFlags->getCount()).c_str());
+
+                    for (auto& [spriteFlag, spriteFlagName] : tb::SpriteFlagEntries)
+                    {
+                        if (spriteFlags->hasFlag(spriteFlag) == true)
+                        {
+                            ImGui::Text(std::format("----> {}", spriteFlagName).c_str());
+                        }
+                    }
 
                     ImGui::Separator();
                 }

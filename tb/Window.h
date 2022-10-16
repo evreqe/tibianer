@@ -8,23 +8,24 @@
 namespace tb
 {
 
-    class Window
-    {
+class Window
+{
 
-    public:
+public:
 
-        Window();
-        ~Window();
+    Window();
+    ~Window();
 
-        bool* getIsVisible();
-        void setIsVisible(bool b);
-        void toggleIsVisible();
+    bool* getIsVisible();
+    void setIsVisible(bool b);
+    void toggleIsVisible();
 
-        void centerAndResizeOnFirstUseEver();
+    void centerAndResizeOnFirstUseEver();
 
-    private:
+private:
 
-        bool m_isVisible = false;
-    };
+    bool m_isVisible = false;
+
+};
 
 }

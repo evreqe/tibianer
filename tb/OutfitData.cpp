@@ -15,58 +15,65 @@ namespace tb
 
     bool OutfitData::load()
     {
-        m_outfitList.clear();
-        m_outfitList.reserve(tb::Constants::NumOutfitSpriteIndex);
+        if (std::filesystem::exists(m_fileName) == false)
+        {
+            g_Log.write("ERROR: File does not exist: {}\n", m_fileName);
+            return false;
+        }
 
+        m_data.clear();
         m_data = toml::parse_file(m_fileName);
         if (m_data.size() == 0)
         {
-            g_Log.write("ERROR: Failed to parse data from file: {}\n", m_fileName);
+            g_Log.write("ERROR: Failed to load data from file: {}\n", m_fileName);
             return false;
         }
 
         g_Log.write("Loaded data from file: {}\n", m_fileName);
 
-        for (unsigned int i = 0; i < tb::Constants::NumOutfitSpriteIndex; i++)
+        m_dataList.clear();
+        m_dataList.reserve(m_numToLoad);
+
+        for (unsigned int i = 0; i < m_numToLoad; i++)
         {
-            std::string outfitIndex = std::to_string(i);
+            std::string index = std::to_string(i);
 
-            if (!m_data[outfitIndex])
+            if (!m_data[index])
             {
-                g_Log.write("ERROR: {} is missing data at index {}\n", m_fileName, i);
+                g_Log.write("ERROR: {} is missing data at index: [{}]\n", m_fileName, i);
                 return false;
             }
 
-            g_Log.write("Index: {}\n", i);
+            g_Log.write("Index: {}\n", index);
 
-            tb::OutfitData::Outfit outfit;
+            tb::OutfitData::Data data;
 
-            outfit.Index = i;
+            data.Index = i;
 
-            outfit.Name = m_data[outfitIndex]["Name"].value_or("");
+            data.Name = m_data[index]["Name"].value_or("");
 
-            if (outfit.Name.size() == 0)
+            if (data.Name.size() == 0)
             {
-                g_Log.write("ERROR: Name cannot be empty\n");
+                g_Log.write("ERROR: 'Name' is empty\n");
                 return false;
             }
 
-            g_Log.write("Name: {}\n", outfit.Name);
+            g_Log.write("Name: {}\n", data.Name);
 
             for (unsigned int j = 0; j < m_numSpriteIDListToLoadPerIndex; j++)
             {
                 std::string spritesIndex = std::format("Sprites{}", j);
 
-                if (!m_data[outfitIndex][spritesIndex])
+                if (!m_data[index][spritesIndex])
                 {
                     break;
                 }
 
-                g_Log.write("Sprites# index: {}\n", j);
+                g_Log.write("Sprites# index: {}\n", spritesIndex);
 
                 tb::SpriteIDList spriteIDList;
 
-                auto sprites = m_data[outfitIndex][spritesIndex].as_array();
+                auto sprites = m_data[index][spritesIndex].as_array();
 
                 if (sprites == nullptr)
                 {
@@ -74,12 +81,12 @@ namespace tb
                     return false;
                 }
 
-                for (auto& sprite : *sprites)
+                for (unsigned int k = 0; auto& sprite : *sprites)
                 {
-                    uint32_t spriteID = sprite.value_or(0);
+                    tb::SpriteID_t spriteID = static_cast<tb::SpriteID_t>(sprite.value_or(0));
                     if (spriteID == 0)
                     {
-                        g_Log.write("ERROR: Sprite ID cannot be zero at index: [{}] Sprites{}\n", i, j);
+                        g_Log.write("ERROR: Sprite ID is zero at index: [{}] Sprites{}=[#{}]\n", i, j, k);
                         return false;
                     }
 
@@ -90,21 +97,21 @@ namespace tb
 
                 if (spriteIDList.size() == 0)
                 {
-                    g_Log.write("ERROR: Sprite ID list cannot be empty\n");
+                    g_Log.write("ERROR: 'Sprites#' is empty at index: [{}] Sprites{}\n", i, j);
                     return false;
                 }
 
-                outfit.SpriteIDList_List.push_back(spriteIDList);
+                data.SpriteIDList_List.push_back(spriteIDList);
             }
 
-            m_outfitList.push_back(outfit);
+            m_dataList.push_back(data);
         }
 
-        g_Log.write("Loaded data size: {}\n", m_outfitList.size());
+        g_Log.write("Loaded data size: {}\n", m_dataList.size());
 
-        if (m_outfitList.size() != tb::Constants::NumOutfitSpriteIndex)
+        if (m_dataList.size() != tb::Constants::NumOutfitSpriteIndex)
         {
-            g_Log.write("ERROR: Loaded data has the wrong size\n");
+            g_Log.write("ERROR: Loaded data has the wrong size, {} instead of {}\n", m_dataList.size(), tb::Constants::NumOutfitSpriteIndex);
             return false;
         }
 
@@ -114,14 +121,14 @@ namespace tb
     bool OutfitData::isLoaded()
     {
         if (m_data.size() == 0) return false;
-        if (m_outfitList.size() == 0) return false;
+        if (m_dataList.size() == 0) return false;
 
         return true;
     }
 
-    tb::OutfitData::OutfitList* OutfitData::getOutfitList()
+    tb::OutfitData::DataList* OutfitData::getDataList()
     {
-        return &m_outfitList;
+        return &m_dataList;
     }
 
 }

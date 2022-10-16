@@ -2,8 +2,6 @@
 
 #include "common.h"
 
-#include <SFML/Graphics.hpp>
-
 #include "tb/Constants.h"
 #include "tb/Utility.h"
 #include "tb/Log.h"
@@ -29,7 +27,8 @@ public:
 
     using Array = std::array<tb::TileMap, tb::Constants::NumZAxis>;
 
-    bool load(uint32_t tileWidth, uint32_t tileHeight, tb::SpriteIDList tileSpriteIDList, const std::string& name, tb::TileMapType tileMapType, tb::ZAxis_t z);
+    // TODO: pass tileSpriteIDList as const ref? uses swap
+    bool load(uint32_t tileWidth, uint32_t tileHeight, const tb::SpriteIDList& tileSpriteIDList, const std::string& name, tb::TileMapType tileMapType, tb::ZAxis_t z);
 
     bool isTileIndexOutOfBounds(uint32_t tileIndex);
 
@@ -40,6 +39,8 @@ public:
 
     tb::Tile::List* getTileList();
     tb::Tile::List* getWaterTileList();
+
+    tb::Tile::List getTileListWithinTileRect(const sf::IntRect& tileRect);
 
     void loadWaterTiles();
 
@@ -57,20 +58,22 @@ public:
     tb::ZAxis_t getZ();
     void setZ(tb::ZAxis_t z);
 
-    void draw(const sf::IntRect& rect, sf::RenderTarget& renderTarget);
+    bool isVisibleWithinTileRect(const sf::IntRect& tileRect);
+
+    void draw(const sf::IntRect& tileRect, sf::RenderTarget& renderTarget);
 
 private:
 
-    std::string m_name = std::string();
+    std::string m_name;
 
-    tb::TileMapType m_tileMapType;
+    tb::TileMapType m_tileMapType = tb::TileMapType::Tiles;
 
     uint32_t m_tileWidth = 0;
     uint32_t m_tileHeight = 0;
 
     uint32_t m_numTiles = 0;
 
-    tb::ZAxis_t m_z;
+    tb::ZAxis_t m_z = tb::ZAxis::Default;
 
     tb::SpriteIDList m_tileSpriteIDList;
 

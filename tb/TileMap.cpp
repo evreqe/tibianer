@@ -13,34 +13,37 @@ TileMap::~TileMap()
     //
 }
 
-bool TileMap::load(uint32_t tileWidth, uint32_t tileHeight, tb::SpriteIDList tileSpriteIDList, const std::string& name, tb::TileMapType tileMapType, tb::ZAxis_t z)
+bool TileMap::load(uint32_t tileWidth, uint32_t tileHeight, const tb::SpriteIDList& tileSpriteIDList, const std::string& name, tb::TileMapType tileMapType, tb::ZAxis_t z)
 {
     if (g_SpriteData.isLoaded() == false)
     {
-        g_Log.write("g_SpriteData.isLoaded() == false\n");
+        g_Log.write("ERROR: Sprite data is not loaded\n");
         return false;
     }
 
     if (tileWidth == 0 || tileHeight == 0)
     {
-        g_Log.write("tileWidth == 0 || tileHeight == 0\n");
+        g_Log.write("ERROR: Tile width or tile height is zero\n");
         return false;
     }
 
-    m_tileList.clear();
-    m_waterTileList.clear();
-
-    m_tileSpriteIDList.clear();
-    m_tileSpriteIDList.swap(tileSpriteIDList);
-
-    if (m_tileSpriteIDList.size() == 0)
+    if (tileSpriteIDList.size() == 0)
     {
-        g_Log.write("m_tileSpriteIDList.size() == 0\n");
+        g_Log.write("ERROR: Tile sprite ID list is empty\n");
         return false;
     }
 
-    g_Log.write("name: {}\n",  name);
-    g_Log.write("m_tileSpriteIDList.size(): {}\n", m_tileSpriteIDList.size());
+    if (name.size() == 0)
+    {
+        g_Log.write("ERROR: Name is empty\n");
+        return false;
+    }
+
+    g_Log.write("tile width and height: {}x{}\n", tileWidth, tileHeight);
+    g_Log.write("tile sprite ID list size: {}\n", m_tileSpriteIDList.size());
+    g_Log.write("name: {}\n", name);
+    g_Log.write("tile map type: {}\n", magic_enum::enum_name(tileMapType));
+    g_Log.write("z: {}\n", z);
 
     m_name = name;
 
@@ -55,58 +58,61 @@ bool TileMap::load(uint32_t tileWidth, uint32_t tileHeight, tb::SpriteIDList til
 
     m_waterAnimationFrame = 1; // start the animation at index 1 because the applied water pattern starts at index 0
 
-    for (uint32_t i = 0; i < m_tileWidth; ++i)
+    m_tileList.clear();
+    m_tileList.reserve(m_numTiles);
+
+    m_tileSpriteIDList.clear();
+    m_tileSpriteIDList.reserve(m_numTiles);
+    //m_tileSpriteIDList.swap(tileSpriteIDList); // cannot use swap with const reference
+    m_tileSpriteIDList = tileSpriteIDList;
+
+    for (int tileX = 0; tileX < m_tileWidth; tileX++)
     {
-        for (uint32_t j = 0; j < m_tileHeight; ++j)
+        for (int tileY = 0; tileY < m_tileHeight; tileY++)
         {
-            uint32_t tileIndex = i + j * m_tileWidth;
+            uint32_t tileIndex = tileX + tileY * m_tileWidth;
 
             if (tileIndex > m_tileSpriteIDList.size())
             {
-                g_Log.write("tileIndex is out of bounds: {}\n", tileIndex);
+                g_Log.write("ERROR: Tile index is out of bounds: {}\n", tileIndex);
                 continue;
             }
 
-            sf::Vector2u tilePixelCoords
-            (
-                i * tb::Constants::TileSize,
-                j * tb::Constants::TileSize
-            );
-
             tb::SpriteID_t tileSpriteID = m_tileSpriteIDList.at(tileIndex);
 
-            tb::SpriteFlags_t* tileSpriteFlags = &g_SpriteData.getDataList()->at(tileSpriteID).SpriteFlags;
+            tb::SpriteFlags* tileSpriteFlags = &g_SpriteData.getDataList()->at(tileSpriteID).SpriteFlags;
 
-            //if (tileId == tb::TILE_NULL && m_type == tb::TileMapTypes::tiles)
-            //{
-                //tileFlags.set(tb::SpriteFlags::null);
-            //}
+            if (tileSpriteID == tb::Constants::SpriteIDNull && m_tileMapType == tb::TileMapType::Tiles)
+            {
+                tileSpriteFlags->setFlag(tb::SpriteFlag::Null, true);
+            }
 
             tb::Tile::Ptr tile = std::make_shared<tb::Tile>();
             tile->setTileIndex(tileIndex);
             tile->setSpriteID(tileSpriteID);
             tile->setSpriteFlags(*tileSpriteFlags);
-            tile->setPixelCoords(tilePixelCoords);
+            tile->setTileCoords(sf::Vector2i(tileX, tileY));
             tile->setZ(z);
             m_tileList.push_back(tile);
-
-            if (z == tb::ZAxis::Default)
-            {
-                if ((*tileSpriteFlags).test(tb::SpriteFlags::Water))
-                {
-                    m_waterTileList.push_back(tile);
-                }
-            }
         }
     }
 
-    std::sort(m_tileList.begin(), m_tileList.end(), tb::Tile::sortByTileIndex_t());
+    std::sort(m_tileList.begin(), m_tileList.end(), tb::Tile::SortByTileIndex_t());
 
-    g_Log.write("Applying tile patterns to tile map...\n");
-    if (applyTilePatterns() == false)
+    if (m_tileMapType == tb::TileMapType::Tiles)
     {
-        g_Log.write("ERROR: Failed to apply tile patterns to tile map\n");
-        return false;
+        loadWaterTiles();
+
+        sf::Clock timeToApplyTilePatterns;
+
+        g_Log.write("Applying tile patterns to tile map...\n");
+        if (applyTilePatterns() == false)
+        {
+            g_Log.write("ERROR: Failed to apply tile patterns to tile map\n");
+            return false;
+        }
+
+        g_Log.write("Tile patterns applied in {} seconds\n", timeToApplyTilePatterns.getElapsedTime().asSeconds());
     }
 
     return true;
@@ -129,7 +135,7 @@ void TileMap::updateTileSpriteID(tb::Tile::Ptr tile, tb::SpriteID_t spriteID)
 
 void TileMap::updateTileSpriteFlags(tb::Tile::Ptr tile, tb::SpriteID_t spriteID)
 {
-    tb::SpriteFlags_t* tileSpriteFlags = &g_SpriteData.getDataList()->at(spriteID).SpriteFlags;
+    tb::SpriteFlags* tileSpriteFlags = &g_SpriteData.getDataList()->at(spriteID).SpriteFlags;
 
     if (tileSpriteFlags != nullptr)
     {
@@ -152,13 +158,77 @@ tb::Tile::List* TileMap::getWaterTileList()
     return &m_waterTileList;
 }
 
+tb::Tile::List TileMap::getTileListWithinTileRect(const sf::IntRect& tileRect)
+{
+    tb::Tile::List tileList;
+
+    if (m_tileList.size() == 0)
+    {
+        return tileList;
+    }
+
+    int x1 = tileRect.left;
+    int y1 = tileRect.top;
+
+    int x2 = tileRect.width;
+    int y2 = tileRect.height;
+
+    for (int tileX = x1; tileX < x1 + x2; tileX++)
+    {
+        for (int tileY = y1; tileY < y1 + y2; tileY++)
+        {
+            if (tileX < 0) continue;
+            if (tileY < 0) continue;
+
+            if (tileX > m_tileWidth - 1) continue;
+            if (tileY > m_tileHeight - 1) continue;
+
+            uint32_t tileIndex = tileX + tileY * m_tileWidth;
+
+            if (isTileIndexOutOfBounds(tileIndex) == true)
+            {
+                continue;
+            }
+
+            tb::Tile::Ptr tile = m_tileList.at(tileIndex);
+
+            if (tile == nullptr)
+            {
+                continue;
+            }
+
+            tb::SpriteID_t tileSpriteID = tile->getSpriteID();
+
+            if (tileSpriteID == tb::Constants::SpriteIDNull)
+            {
+                continue;
+            }
+
+            tileList.push_back(tile);
+        }
+    }
+
+    return tileList;
+}
+
 void TileMap::loadWaterTiles()
 {
+    if (m_z != tb::ZAxis::Default)
+    {
+        return;
+    }
+
+    if (m_tileMapType != tb::TileMapType::Tiles)
+    {
+        return;
+    }
+
     m_waterTileList.clear();
+    m_waterTileList.reserve(m_numTiles);
 
     for (auto& tile : m_tileList)
     {
-        if (tile->getSpriteFlags().test(tb::SpriteFlags::Water))
+        if (tile->getSpriteFlags()->hasFlag(tb::SpriteFlag::Water) == true)
         {
             m_waterTileList.push_back(tile);
         }
@@ -226,7 +296,7 @@ bool TileMap::doAnimatedWater()
 
 bool TileMap::applyTilePatterns()
 {
-    auto patternList = g_PatternData.getPatternList();
+    auto patternList = g_PatternData.getDataList();
     if (patternList == nullptr)
     {
         g_Log.write("ERROR: patternList == nullptr\n");
@@ -244,7 +314,7 @@ bool TileMap::applyTilePatterns()
 
         tb::Tile::List* tileList = &m_tileList;
 
-        if (pattern.Name == "water")
+        if (pattern.Name == "Water")
         {
             tileList = &m_waterTileList;
 
@@ -273,12 +343,12 @@ bool TileMap::applyTilePatterns()
 
             uint32_t spriteIndex = tileColumnIndex;
 
-            while (spriteIndex > (pattern.Width - 1))
+            while (spriteIndex > static_cast<unsigned int>(pattern.Width - 1))
             {
                 spriteIndex = spriteIndex - pattern.Width;
             }
 
-            while (tileRowIndex > (pattern.Height - 1))
+            while (tileRowIndex > static_cast<unsigned int>(pattern.Height - 1))
             {
                 tileRowIndex = tileRowIndex - pattern.Height;
             }
@@ -300,7 +370,7 @@ bool TileMap::applyTilePatterns()
 
 bool TileMap::applyTileObjectPatterns()
 {
-    auto patternList = g_PatternData.getPatternList();
+    auto patternList = g_PatternData.getDataList();
     if (patternList == nullptr)
     {
         g_Log.write("ERROR: patternList == nullptr\n");
@@ -330,7 +400,7 @@ bool TileMap::applyTileObjectPatterns()
                 {
                     if (pattern.Width > pattern.Height) // horizontal
                     {
-                        uint32_t objectTileX = object->getTileX();
+                        int objectTileX = object->getTileX();
 
                         if (m_z & 1)
                         {
@@ -357,7 +427,7 @@ bool TileMap::applyTileObjectPatterns()
                     }
                     else if (pattern.Height > pattern.Width) // vertical
                     {
-                        uint32_t objectTileY = object->getTileY();
+                        int objectTileY = object->getTileY();
 
                         if (m_z & 1)
                         {
@@ -420,38 +490,33 @@ void TileMap::setZ(tb::ZAxis_t z)
     m_z = z;
 }
 
-void TileMap::draw(const sf::IntRect& rect, sf::RenderTarget& renderTarget)
+bool TileMap::isVisibleWithinTileRect(const sf::IntRect& tileRect)
 {
+    // checks to see if any of the tiles of this tile map are visible within a rectangle
+    // used to skip drawing of a tile map if the player cannot see it
+
     if (m_tileList.size() == 0)
     {
-        return;
+        return false;
     }
 
-    sf::RenderStates renderStates;
-    renderStates.texture = &tb::Textures::Sprites;
+    int x1 = tileRect.left;
+    int y1 = tileRect.top;
 
-    m_vertexList.clear();
-    m_vertexList.reserve(m_numTiles * 4);
+    int x2 = tileRect.width;
+    int y2 = tileRect.height;
 
-    //g_Log.write("left,top,width,height: {},{},{},{}\n", rect.left, rect.top, rect.width, rect.height);
-
-    int x1 = rect.left;
-    int y1 = rect.top;
-
-    int x2 = rect.width;
-    int y2 = rect.height;
-
-    for (int i = x1; i < x1 + x2; i++)
+    for (int tileX = x1; tileX < x1 + x2; tileX++)
     {
-        for (int j = y1; j < y1 + y2; j++)
+        for (int tileY = y1; tileY < y1 + y2; tileY++)
         {
-            if (i < 0) continue;
-            if (j < 0) continue;
+            if (tileX < 0) continue;
+            if (tileY < 0) continue;
 
-            if (i > m_tileWidth - 1) continue;
-            if (j > m_tileHeight - 1) continue;
+            if (tileX > m_tileWidth - 1) continue;
+            if (tileY > m_tileHeight - 1) continue;
 
-            uint32_t tileIndex = i + (j * m_tileWidth);
+            uint32_t tileIndex = tileX + tileY * m_tileWidth;
 
             if (isTileIndexOutOfBounds(tileIndex) == true)
             {
@@ -472,36 +537,72 @@ void TileMap::draw(const sf::IntRect& rect, sf::RenderTarget& renderTarget)
                 continue;
             }
 
-            int tu = (tileSpriteID - 1) % (tb::Textures::Sprites.getSize().x / tb::Constants::TileSize);
-            int tv = (tileSpriteID - 1) / (tb::Textures::Sprites.getSize().y / tb::Constants::TileSize);
-
-            sf::Vertex quad[4];
-
-            quad[0].position = sf::Vector2f(i       * tb::Constants::TileSize, j       * tb::Constants::TileSize);
-            quad[1].position = sf::Vector2f((i + 1) * tb::Constants::TileSize, j       * tb::Constants::TileSize);
-            quad[2].position = sf::Vector2f((i + 1) * tb::Constants::TileSize, (j + 1) * tb::Constants::TileSize);
-            quad[3].position = sf::Vector2f(i       * tb::Constants::TileSize, (j + 1) * tb::Constants::TileSize);
-
-            quad[0].texCoords = sf::Vector2f(tu       * tb::Constants::TileSize, tv       * tb::Constants::TileSize);
-            quad[1].texCoords = sf::Vector2f((tu + 1) * tb::Constants::TileSize, tv       * tb::Constants::TileSize);
-            quad[2].texCoords = sf::Vector2f((tu + 1) * tb::Constants::TileSize, (tv + 1) * tb::Constants::TileSize);
-            quad[3].texCoords = sf::Vector2f(tu       * tb::Constants::TileSize, (tv + 1) * tb::Constants::TileSize);
-
-            tb::SpriteFlags_t tileFlags = tile->getSpriteFlags();
-
-            if (tileFlags.test(tb::SpriteFlags::NoDraw))
-            {
-                quad[0].color = sf::Color::Transparent;
-                quad[1].color = sf::Color::Transparent;
-                quad[2].color = sf::Color::Transparent;
-                quad[3].color = sf::Color::Transparent;
-            }
-
-            m_vertexList.push_back(quad[0]);
-            m_vertexList.push_back(quad[1]);
-            m_vertexList.push_back(quad[2]);
-            m_vertexList.push_back(quad[3]);
+            return true;
         }
+    }
+
+    return false;
+}
+
+void TileMap::draw(const sf::IntRect& tileRect, sf::RenderTarget& renderTarget)
+{
+    tb::Tile::List tileList = getTileListWithinTileRect(tileRect);
+
+    if (tileList.size() == 0)
+    {
+        return;
+    }
+
+    sf::RenderStates renderStates;
+    renderStates.texture = &tb::Textures::Sprites;
+
+    m_vertexList.clear();
+    m_vertexList.reserve(m_numTiles * 4);
+
+    unsigned int spritesSizeX = tb::Textures::Sprites.getSize().x;
+    unsigned int spritesSizeY = tb::Textures::Sprites.getSize().y;
+
+    for (auto& tile : tileList)
+    {
+        tb::SpriteID_t tileSpriteID = tile->getSpriteID();
+
+        if (tileSpriteID == tb::Constants::SpriteIDNull)
+        {
+            continue;
+        }
+
+        int tileX = tile->getTileX();
+        int tileY = tile->getTileY();
+
+        unsigned int u = (tileSpriteID - 1) % (spritesSizeX / tb::Constants::TileSize);
+        unsigned int v = (tileSpriteID - 1) / (spritesSizeY / tb::Constants::TileSize);
+
+        sf::Vertex vertex[4];
+
+        vertex[0].position = static_cast<sf::Vector2f>(sf::Vector2i(tileX       * tb::Constants::TileSize, tileY       * tb::Constants::TileSize));
+        vertex[1].position = static_cast<sf::Vector2f>(sf::Vector2i((tileX + 1) * tb::Constants::TileSize, tileY       * tb::Constants::TileSize));
+        vertex[2].position = static_cast<sf::Vector2f>(sf::Vector2i((tileX + 1) * tb::Constants::TileSize, (tileY + 1) * tb::Constants::TileSize));
+        vertex[3].position = static_cast<sf::Vector2f>(sf::Vector2i(tileX       * tb::Constants::TileSize, (tileY + 1) * tb::Constants::TileSize));
+
+        vertex[0].texCoords = static_cast<sf::Vector2f>(sf::Vector2i(u       * tb::Constants::TileSize, v       * tb::Constants::TileSize));
+        vertex[1].texCoords = static_cast<sf::Vector2f>(sf::Vector2i((u + 1) * tb::Constants::TileSize, v       * tb::Constants::TileSize));
+        vertex[2].texCoords = static_cast<sf::Vector2f>(sf::Vector2i((u + 1) * tb::Constants::TileSize, (v + 1) * tb::Constants::TileSize));
+        vertex[3].texCoords = static_cast<sf::Vector2f>(sf::Vector2i(u       * tb::Constants::TileSize, (v + 1) * tb::Constants::TileSize));
+
+        tb::SpriteFlags* tileSpriteFlags = tile->getSpriteFlags();
+
+        if (tileSpriteFlags->hasFlag(tb::SpriteFlag::NoDraw) == true)
+        {
+            vertex[0].color = sf::Color::Transparent;
+            vertex[1].color = sf::Color::Transparent;
+            vertex[2].color = sf::Color::Transparent;
+            vertex[3].color = sf::Color::Transparent;
+        }
+
+        m_vertexList.push_back(vertex[0]);
+        m_vertexList.push_back(vertex[1]);
+        m_vertexList.push_back(vertex[2]);
+        m_vertexList.push_back(vertex[3]);
     }
 
     //g_Log.write("m_vertexList.size(): {}\n", m_vertexList.size());
@@ -513,72 +614,43 @@ void TileMap::draw(const sf::IntRect& rect, sf::RenderTarget& renderTarget)
 
     tb::SpriteBatch spriteBatch;
 
-    x1 = rect.left;
-    y1 = rect.top;
-
-    x2 = rect.width;
-    y2 = rect.height;
-
-    for (int i = x1; i < x1 + x2; i++)
+    for (auto& tile : tileList)
     {
-        for (int j = y1; j < y1 + y2; j++)
+        tb::Thing::List thingList;
+
+        tb::Object::List* objectList = tile->getObjectList();
+        tb::Creature::List* creatureList = tile->getCreatureList();
+
+        size_t thingListReserveSize = objectList->size() + creatureList->size();
+
+        thingList.reserve(thingListReserveSize);
+
+        std::copy(objectList->begin(), objectList->end(), std::back_inserter(thingList));
+        std::copy(creatureList->begin(), creatureList->end(), std::back_inserter(thingList));
+
+        std::stable_sort(thingList.begin(), thingList.end(), tb::Thing::SortByTileCoords_t());
+
+        for (auto& thing : thingList)
         {
-            if (i < 0) continue;
-            if (j < 0) continue;
-
-            if (i > m_tileWidth - 1) continue;
-            if (j > m_tileHeight - 1) continue;
-
-            uint32_t tileIndex = i + (j * m_tileWidth);
-
-            if (isTileIndexOutOfBounds(tileIndex) == true)
+            if (thing->getThingType() == tb::ThingType::Object)
             {
-                continue;
+                tb::Object::Ptr object = std::static_pointer_cast<tb::Object>(thing);
+
+                object->update();
+
+                tb::Sprite* sprite = object->getSprite();
+
+                spriteBatch.addSprite(sprite, true);
             }
-
-            tb::Tile::Ptr tile = m_tileList.at(tileIndex);
-
-            if (tile == nullptr)
+            else if (thing->getThingType() == tb::ThingType::Creature)
             {
-                continue;
-            }
+                tb::Creature::Ptr creature = std::static_pointer_cast<tb::Creature>(thing);
 
-            tb::Thing::List thingList;
+                creature->update();
 
-            tb::Object::List* objectList = tile->getObjectList();
-            tb::Creature::List* creatureList = tile->getCreatureList();
+                tb::Sprite* sprite = creature->getDummySprite();
 
-            size_t thingListReserveSize = objectList->size() + creatureList->size();
-
-            thingList.reserve(thingListReserveSize);
-
-            std::copy(objectList->begin(), objectList->end(), std::back_inserter(thingList));
-            std::copy(creatureList->begin(), creatureList->end(), std::back_inserter(thingList));
-
-            std::stable_sort(thingList.begin(), thingList.end(), tb::Thing::SortByTileCoords_t());
-
-            for (auto& thing : thingList)
-            {
-                if (thing->getThingType() == tb::ThingType::Object)
-                {
-                    tb::Object::Ptr object = std::static_pointer_cast<tb::Object>(thing);
-
-                    object->update();
-
-                    tb::Sprite* sprite = object->getSprite();
-
-                    spriteBatch.addSprite(sprite, true);
-                }
-                else if (thing->getThingType() == tb::ThingType::Creature)
-                {
-                    tb::Creature::Ptr creature = std::static_pointer_cast<tb::Creature>(thing);
-
-                    creature->update();
-
-                    tb::Sprite* sprite = creature->getDummySprite();
-
-                    spriteBatch.addSprite(sprite, true);
-                }
+                spriteBatch.addSprite(sprite, true);
             }
         }
     }

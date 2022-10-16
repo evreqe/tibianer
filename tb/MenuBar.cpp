@@ -20,12 +20,14 @@ void MenuBar::draw()
         return;
     }
 
-    auto renderWindow = g_Game.getRenderWindow();
-
     bool isInGame = (g_Game.getGameState() == tb::GameState::InGame);
 
+    sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
+
+    float renderWinndowWidth = static_cast<float>(renderWindow->getSize().x);
+
     ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f));
-    ImGui::SetNextWindowSize(ImVec2(renderWindow->getSize().x, m_height));
+    ImGui::SetNextWindowSize(ImVec2(renderWinndowWidth, m_height));
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
@@ -40,10 +42,11 @@ void MenuBar::draw()
         if (ImGui::BeginMenu("File##MenuItemFile"))
         {
             if (ImGui::MenuItem("Options...##MenuItemFileOptions", 0)) {}
+            if (ImGui::MenuItem("Hotkeys...##MenuItemFileHotkeys", 0)) {}
 
             ImGui::Separator();
 
-            if (ImGui::MenuItem("Exit##MenuItemFileExit", 0))
+            if (ImGui::MenuItem("Exit (Bye bye)##MenuItemFileExit", 0))
             {
                 renderWindow->close();
             }
@@ -58,7 +61,7 @@ void MenuBar::draw()
                 //
             }
 
-            if (ImGui::MenuItem("End Game##MenuItemGameEndGame", 0, false, isInGame))
+            if (ImGui::MenuItem("End Game##MenuItemGameEndGame", 0, false, isInGame == true))
             {
                 //
             }
@@ -68,7 +71,49 @@ void MenuBar::draw()
 
         if (ImGui::BeginMenu("Info##MenuItemInfo"))
         {
-            if (ImGui::MenuItem("Set Outfit...##MenuItemInfoSetOutfit", 0, false, isInGame)) {}
+            if (ImGui::MenuItem("Set Outfit...##MenuItemInfoSetOutfit", 0, false, isInGame == true)) {}
+            ImGui::EndMenu();
+        }
+
+        if (ImGui::BeginMenu("Window##MenuItemWindow"))
+        {
+            if (ImGui::MenuItem("4:3 640x480##MenuItemWindowResolution1", 0))
+            {
+                g_RenderWindow.setSizeAndCenter(sf::Vector2u(640, 480));
+            }
+
+            if (ImGui::MenuItem("4:3 800x600##MenuItemWindowResolution2", 0))
+            {
+                g_RenderWindow.setSizeAndCenter(sf::Vector2u(800, 600));
+            }
+
+            if (ImGui::MenuItem("4:3 1024x768##MenuItemWindowResolution3", 0))
+            {
+                g_RenderWindow.setSizeAndCenter(sf::Vector2u(1024, 768));
+            }
+
+            ImGui::Separator();
+
+            if (ImGui::MenuItem("16:9 720p##MenuItemWindowResolution4", 0))
+            {
+                g_RenderWindow.setSizeAndCenter(sf::Vector2u(1280, 720));
+            }
+
+            if (ImGui::MenuItem("16:9 1080p##MenuItemWindowResolution5", 0))
+            {
+                g_RenderWindow.setSizeAndCenter(sf::Vector2u(1920, 1080));
+            }
+
+            if (ImGui::MenuItem("16:9 1440p##MenuItemWindowResolution6", 0))
+            {
+                g_RenderWindow.setSizeAndCenter(sf::Vector2u(2560, 1440));
+            }
+
+            if (ImGui::MenuItem("16:9 4k##MenuItemWindowResolution7", 0))
+            {
+                g_RenderWindow.setSizeAndCenter(sf::Vector2u(2160, 3840));
+            }
+
             ImGui::EndMenu();
         }
 

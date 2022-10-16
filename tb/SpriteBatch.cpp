@@ -21,7 +21,7 @@ bool SpriteBatch::addSprite(tb::Sprite* sprite, bool applyTileWidthAndHeightOffs
 {
     if (sprite == nullptr)
     {
-        g_Log.write("ERROR: nullptr\n");
+        g_Log.write("ERROR: sprite == nullptr\n");
         return false;
     }
 
@@ -31,12 +31,13 @@ bool SpriteBatch::addSprite(tb::Sprite* sprite, bool applyTileWidthAndHeightOffs
 
     sf::Color spriteColor = sprite->getColor();
 
-    float spriteTileWidth  = tb::Constants::TileSizeFloat * sprite->getTileWidth();
-    float spriteTileHeight = tb::Constants::TileSizeFloat * sprite->getTileHeight();
+    float spriteTileWidth = static_cast<float>(tb::Constants::TileSize * sprite->getTileWidth());
+    float spriteTileHeight = static_cast<float>(tb::Constants::TileSize * sprite->getTileHeight());
 
+    // big sprites
     if (applyTileWidthAndHeightOffset == true)
     {
-        spritePosition.x -= (spriteTileWidth  - tb::Constants::TileSizeFloat);
+        spritePosition.x -= (spriteTileWidth - tb::Constants::TileSizeFloat);
         spritePosition.y -= (spriteTileHeight - tb::Constants::TileSizeFloat);
     }
 

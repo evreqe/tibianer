@@ -48,6 +48,7 @@ void Log::open()
 void Log::close()
 {
     m_text.clear();
+    m_file.flush();
     m_file.close();
 }
 
@@ -56,6 +57,16 @@ void Log::deleteContents()
     m_text.clear();
     m_file.open(m_fileName, std::ofstream::out | std::ofstream::trunc);
     m_file.close();
+}
+
+bool Log::isEnabled()
+{
+    return m_isEnabled;
+}
+
+void Log::setIsEnabled(bool b)
+{
+    m_isEnabled = b;
 }
 
 std::string Log::getText()

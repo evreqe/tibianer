@@ -13,6 +13,11 @@ Thing::~Thing()
     //
 }
 
+Thing::Properties_t* Thing::getProperties()
+{
+    return &m_properties;
+}
+
 uint32_t Thing::getTileIndex()
 {
     return m_tileIndex;
@@ -23,106 +28,106 @@ void Thing::setTileIndex(uint32_t tileIndex)
     m_tileIndex = tileIndex;
 }
 
-sf::Vector2u Thing::getTileCoords()
+sf::Vector2i Thing::getTileCoords()
 {
     return m_tileCoords;
 }
 
-void Thing::setTileCoords(const sf::Vector2u& tileCoords)
+void Thing::setTileCoords(const sf::Vector2i& tileCoords)
 {
     m_tileCoords = tileCoords;
 
-    m_pixelCoords.x = m_tileCoords.x * tb::Constants::TileSize;
-    m_pixelCoords.y = m_tileCoords.y * tb::Constants::TileSize;
+    m_pixelCoords.x = static_cast<float>(m_tileCoords.x * tb::Constants::TileSize);
+    m_pixelCoords.y = static_cast<float>(m_tileCoords.y * tb::Constants::TileSize);
 }
 
-uint32_t Thing::getTileX()
+int Thing::getTileX()
 {
     return m_tileCoords.x;
 }
 
-void Thing::setTileX(uint32_t tileX)
+void Thing::setTileX(int tileX)
 {
     m_tileCoords.x = tileX;
 
-    m_pixelCoords.x = tileX * tb::Constants::TileSize;
+    m_pixelCoords.x = static_cast<float>(tileX * tb::Constants::TileSize);
 }
 
-uint32_t Thing::getTileY()
+int Thing::getTileY()
 {
     return m_tileCoords.y;
 }
 
-void Thing::setTileY(uint32_t tileY)
+void Thing::setTileY(int tileY)
 {
     m_tileCoords.y = tileY;
 
-    m_pixelCoords.y = tileY * tb::Constants::TileSize;
+    m_pixelCoords.y = static_cast<float>(tileY * tb::Constants::TileSize);
 }
 
-sf::Vector2u Thing::getPixelCoords()
+sf::Vector2f Thing::getPixelCoords()
 {
     return m_pixelCoords;
 }
 
-void Thing::setPixelCoords(const sf::Vector2u& pixelCoords)
+void Thing::setPixelCoords(const sf::Vector2f& pixelCoords)
 {
     m_pixelCoords = pixelCoords;
 
-    if (pixelCoords.x == 0)
+    if (pixelCoords.x < 0.0f)
     {
         m_tileCoords.x = 0;
     }
     else
     {
-        m_tileCoords.x = pixelCoords.x / tb::Constants::TileSize;
+        m_tileCoords.x = static_cast<int>(pixelCoords.x / tb::Constants::TileSizeFloat);
     }
 
-    if (pixelCoords.y == 0)
+    if (pixelCoords.y < 0.0f)
     {
         m_tileCoords.y = 0;
     }
     else
     {
-        m_tileCoords.y = pixelCoords.y / tb::Constants::TileSize;
+        m_tileCoords.y = static_cast<int>(pixelCoords.y / tb::Constants::TileSizeFloat);
     }
 }
 
-uint32_t Thing::getPixelX()
+float Thing::getPixelX()
 {
     return m_pixelCoords.x;
 }
 
-void Thing::setPixelX(uint32_t pixelX)
+void Thing::setPixelX(float pixelX)
 {
     m_pixelCoords.x = pixelX;
 
-    if (pixelX == 0)
+    if (pixelX < 0.0f)
     {
         m_tileCoords.x = 0;
     }
     else
     {
-        m_tileCoords.x = pixelX / tb::Constants::TileSize;
+        m_tileCoords.x = static_cast<int>(pixelX / tb::Constants::TileSizeFloat);
     }
 }
 
-uint32_t Thing::getPixelY()
+float Thing::getPixelY()
 {
     return m_pixelCoords.y;
 }
 
-void Thing::setPixelY(uint32_t pixelY)
+void Thing::setPixelY(float pixelY)
 {
     m_pixelCoords.y = pixelY;
 
-    if (pixelY == 0)
+    if (pixelY < 0.0f)
     {
         m_tileCoords.y = 0;
     }
     else
     {
-        m_tileCoords.y = pixelY / tb::Constants::TileSize;
+        m_tileCoords.y = static_cast<int>(pixelY / tb::Constants::TileSizeFloat);
     }
 }
 
@@ -164,16 +169,6 @@ uint8_t Thing::getDrawOffset()
 void Thing::setDrawOffset(uint8_t drawOffset)
 {
     m_drawOffset = drawOffset;
-}
-
-bool Thing::getIsReadyForErase()
-{
-    return m_isReadyForErase;
-}
-
-void Thing::setIsReadyForErase(bool b)
-{
-    m_isReadyForErase = b;
 }
 
 }

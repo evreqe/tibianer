@@ -2,8 +2,6 @@
 
 #include "common.h"
 
-#include <SFML/Graphics.hpp>
-
 #include "tb/Constants.h"
 #include "tb/Utility.h"
 #include "tb/Log.h"
@@ -17,7 +15,7 @@ class Thing
 public:
 
     Thing();
-    virtual ~Thing();
+    virtual ~Thing(); // TODO: why is this virtual?
 
     using Ptr = std::shared_ptr<tb::Thing>;
     using List = std::vector<tb::Thing::Ptr>;
@@ -52,26 +50,33 @@ public:
         }
     };
 
+    struct Properties_t
+    {
+        bool Erase = false;
+    };
+
+    Properties_t* getProperties();
+
     uint32_t getTileIndex();
     void setTileIndex(uint32_t tileIndex);
 
-    sf::Vector2u getTileCoords();
-    void setTileCoords(const sf::Vector2u& tileCoords);
+    sf::Vector2i getTileCoords();
+    void setTileCoords(const sf::Vector2i& tileCoords);
 
-    uint32_t getTileX();
-    void setTileX(uint32_t tileX);
+    int getTileX();
+    void setTileX(int tileX);
 
-    uint32_t getTileY();
-    void setTileY(uint32_t tileY);
+    int getTileY();
+    void setTileY(int tileY);
 
-    sf::Vector2u getPixelCoords();
-    void setPixelCoords(const sf::Vector2u& pixelCoords);
+    sf::Vector2f getPixelCoords();
+    void setPixelCoords(const sf::Vector2f& pixelCoords);
 
-    uint32_t getPixelX();
-    void setPixelX(uint32_t pixelX);
+    float getPixelX();
+    void setPixelX(float pixelX);
 
-    uint32_t getPixelY();
-    void setPixelY(uint32_t pixelY);
+    float getPixelY();
+    void setPixelY(float pixelY);
 
     tb::ZAxis_t getZ();
     void setZ(tb::ZAxis_t z);
@@ -85,17 +90,16 @@ public:
     uint8_t getDrawOffset();
     void setDrawOffset(uint8_t drawOffset);
 
-    bool getIsReadyForErase();
-    void setIsReadyForErase(bool b);
-
 private:
+
+    Properties_t m_properties;
 
     uint32_t m_uniqueID = 0;
 
     uint32_t m_tileIndex = 0;
 
-    sf::Vector2u m_tileCoords;
-    sf::Vector2u m_pixelCoords;
+    sf::Vector2i m_tileCoords;
+    sf::Vector2f m_pixelCoords;
 
     tb::ZAxis_t m_z = 0;
 
@@ -105,7 +109,6 @@ private:
 
     uint8_t m_drawOffset = 0;
 
-    bool m_isReadyForErase = false;
 };
 
 }

@@ -11,53 +11,60 @@
 namespace tb
 {
 
-    class OutfitData
+class OutfitData
+{
+
+public:
+
+    OutfitData();
+    ~OutfitData();
+
+    static OutfitData& getInstance()
     {
+        static OutfitData instance;
+        return instance;
+    }
 
-    public:
+private:
 
-        OutfitData();
-        ~OutfitData();
-        OutfitData(const OutfitData&) = delete;
-        OutfitData(OutfitData&&) = delete;
-        OutfitData& operator=(const OutfitData&) = delete;
-        OutfitData& operator=(OutfitData&&) = delete;
+    OutfitData(const OutfitData&) = delete;
+    OutfitData(OutfitData&&) = delete;
+    OutfitData& operator=(const OutfitData&) = delete;
+    OutfitData& operator=(OutfitData&&) = delete;
 
-        static OutfitData& getInstance()
-        {
-            static OutfitData OutfitData;
-            return OutfitData;
-        }
+public:
 
-        typedef struct _Outfit
-        {
-            uint32_t Index = 0;
-            std::string Name;
-            std::vector<tb::SpriteIDList> SpriteIDList_List;
-        } Outfit, * Outfit_ptr;
+    typedef struct _Data
+    {
+        uint32_t Index = 0;
+        std::string Name;
+        std::vector<tb::SpriteIDList> SpriteIDList_List;
+    } Data, *Data_ptr;
 
-        using OutfitList = std::vector<tb::OutfitData::Outfit>;
+    using DataList = std::vector<tb::OutfitData::Data>;
 
-        bool load();
-        bool isLoaded();
+    bool load();
+    bool isLoaded();
 
-        tb::OutfitData::OutfitList* getOutfitList();
+    tb::OutfitData::DataList* getDataList();
 
-    private:
+private:
 
-        std::string m_fileName = "data/outfits.txt";
+    std::string m_fileName = "data/outfits.txt";
 
-        toml::table m_data;
+    toml::table m_data;
 
-        tb::OutfitData::OutfitList m_outfitList;
+    tb::OutfitData::DataList m_dataList;
 
-        const uint8_t m_numSpriteIDListToLoadPerIndex = 16;
+    const unsigned int m_numToLoad = tb::Constants::NumOutfitSpriteIndex;
 
-    };
+    const unsigned int m_numSpriteIDListToLoadPerIndex = 16;    // Sprites#=[]
+
+};
 
 }
 
 namespace
 {
-    tb::OutfitData& g_OutfitData = tb::OutfitData::getInstance();
+    inline tb::OutfitData& g_OutfitData = tb::OutfitData::getInstance();
 }

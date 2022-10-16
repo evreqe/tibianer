@@ -40,8 +40,11 @@
     <Filter Include="Source Files\tb">
       <UniqueIdentifier>{50fb8739-649b-42e5-986f-48259fd6bd55}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\spdlog">
-      <UniqueIdentifier>{5e6c6990-8233-4d12-945e-9cf25ff22861}</UniqueIdentifier>
+    <Filter Include="Header Files\magic_enum">
+      <UniqueIdentifier>{2679e727-38ea-4510-a2f8-8bb5099e4106}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\pugixml">
+      <UniqueIdentifier>{08d69965-f385-47b6-8661-e6b1cc8f934a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -123,9 +126,6 @@
     <ClCompile Include="tb\Window.cpp">
       <Filter>Source Files\tb</Filter>
     </ClCompile>
-    <ClCompile Include="spdlog\spdlog.cpp">
-      <Filter>Source Files\spdlog</Filter>
-    </ClCompile>
     <ClCompile Include="tb\Log.cpp">
       <Filter>Source Files\tb</Filter>
     </ClCompile>
@@ -133,6 +133,30 @@
       <Filter>Source Files\tb</Filter>
     </ClCompile>
     <ClCompile Include="tb\WaterData.cpp">
+      <Filter>Source Files\tb</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\Creature.cpp">
+      <Filter>Source Files\tb</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\OutfitData.cpp">
+      <Filter>Source Files\tb</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\OverlayWindow.cpp">
+      <Filter>Source Files\tb</Filter>
+    </ClCompile>
+    <ClCompile Include="pugixml\pugixml.cpp">
+      <Filter>Source Files\pugixml</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\GameWindow.cpp">
+      <Filter>Source Files\tb</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\RenderWindow.cpp">
+      <Filter>Source Files\tb</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\BitmapFontData.cpp">
+      <Filter>Source Files\tb</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\SpriteFlags.cpp">
       <Filter>Source Files\tb</Filter>
     </ClCompile>
   </ItemGroup>
@@ -163,9 +187,6 @@
     </ClInclude>
     <ClInclude Include="boost_zlib\boost_zlib.hpp">
       <Filter>Header Files\boost_zlib</Filter>
-    </ClInclude>
-    <ClInclude Include="pugixml\pugixml.hpp">
-      <Filter>Header Files\pugixml</Filter>
     </ClInclude>
     <ClInclude Include="imgui-sfml\imconfig-SFML.h">
       <Filter>Header Files\imgui-sfml</Filter>
@@ -246,6 +267,45 @@
       <Filter>Header Files\tb</Filter>
     </ClInclude>
     <ClInclude Include="tb\WaterData.h">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\Creature.h">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+    <ClInclude Include="magic_enum\magic_enum.hpp">
+      <Filter>Header Files\magic_enum</Filter>
+    </ClInclude>
+    <ClInclude Include="magic_enum\magic_enum_format.hpp">
+      <Filter>Header Files\magic_enum</Filter>
+    </ClInclude>
+    <ClInclude Include="magic_enum\magic_enum_fuse.hpp">
+      <Filter>Header Files\magic_enum</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\OutfitData.h">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\Entity.h">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\OverlayWindow.h">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+    <ClInclude Include="pugixml\pugixml.hpp">
+      <Filter>Header Files\pugixml</Filter>
+    </ClInclude>
+    <ClInclude Include="pugixml\pugiconfig.hpp">
+      <Filter>Header Files\pugixml</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\GameWindow.h">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\RenderWindow.h">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\BitmapFontData.h">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\SpriteFlags.h">
       <Filter>Header Files\tb</Filter>
     </ClInclude>
   </ItemGroup>

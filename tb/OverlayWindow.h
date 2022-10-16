@@ -2,63 +2,73 @@
 
 #include "common.h"
 
-#include "tb/Window.h"
-
 #include "imgui.h"
 #include "imgui-SFML.h"
+
+#include "tb/Window.h"
+
+#include "tb/Constants.h"
+
+#include "tb/MenuBar.h"
+#include "tb/StatusBar.h"
 
 namespace tb
 {
 
-    class OverlayWindow : public Window
+class OverlayWindow : public Window
+{
+
+public:
+
+    OverlayWindow();
+    ~OverlayWindow();
+
+    static OverlayWindow& getInstance()
     {
+        static OverlayWindow instance;
+        return instance;
+    }
 
-    public:
+private:
 
-        OverlayWindow();
-        ~OverlayWindow();
-        OverlayWindow(const OverlayWindow&) = delete;
-        OverlayWindow(OverlayWindow&&) = delete;
-        OverlayWindow& operator=(const OverlayWindow&) = delete;
-        OverlayWindow& operator=(OverlayWindow&&) = delete;
+    OverlayWindow(const OverlayWindow&) = delete;
+    OverlayWindow(OverlayWindow&&) = delete;
+    OverlayWindow& operator=(const OverlayWindow&) = delete;
+    OverlayWindow& operator=(OverlayWindow&&) = delete;
 
-        static OverlayWindow& getInstance()
-        {
-            static OverlayWindow overlayWindow;
-            return overlayWindow;
-        }
+public:
 
-        void clearTextList();
+    void clearTextList();
 
-        std::vector<std::string>* getTextList();
+    std::vector<std::string>* getTextList();
 
-        void addTextToList(const std::string& text);
+    void addTextToList(const std::string& text);
 
-        void draw();
+    void draw();
 
-    private:
+private:
 
-        ImGuiWindowFlags m_windowFlags =
-            ImGuiWindowFlags_AlwaysAutoResize |
-            ImGuiWindowFlags_NoDecoration |
-            ImGuiWindowFlags_NoDocking |
-            ImGuiWindowFlags_NoMove |
-            ImGuiWindowFlags_NoSavedSettings |
-            ImGuiWindowFlags_NoFocusOnAppearing |
-            ImGuiWindowFlags_NoNav |
-            ImGuiWindowFlags_NoNavInputs |
-            ImGuiWindowFlags_NoNavFocus |
-            ImGuiWindowFlags_NoMouseInputs;
+    ImGuiWindowFlags m_windowFlags =
+        ImGuiWindowFlags_AlwaysAutoResize |
+        ImGuiWindowFlags_NoDecoration |
+        ImGuiWindowFlags_NoDocking |
+        ImGuiWindowFlags_NoMove |
+        ImGuiWindowFlags_NoSavedSettings |
+        ImGuiWindowFlags_NoFocusOnAppearing |
+        ImGuiWindowFlags_NoNav |
+        ImGuiWindowFlags_NoNavInputs |
+        ImGuiWindowFlags_NoNavFocus |
+        ImGuiWindowFlags_NoMouseInputs;
 
 
-        const float m_windowBackgroundAlpha = 0.25f;
+    const float m_windowBackgroundAlpha = 0.25f;
 
-        std::vector<std::string> m_textList;
-    };
+    std::vector<std::string> m_textList;
+};
 
 }
 
 namespace
 {
-    tb::OverlayWindow& g_OverlayWindow = tb::OverlayWindow::getInstance();
+    inline tb::OverlayWindow& g_OverlayWindow = tb::OverlayWindow::getInstance();
 }

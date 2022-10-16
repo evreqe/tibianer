@@ -11,42 +11,49 @@
 namespace tb
 {
 
-    class WaterData
+class WaterData
+{
+
+public:
+
+    WaterData();
+    ~WaterData();
+
+    static WaterData& getInstance()
     {
+        static WaterData instance;
+        return instance;
+    }
 
-    public:
+private:
 
-        WaterData();
-        ~WaterData();
-        WaterData(const WaterData&) = delete;
-        WaterData(WaterData&&) = delete;
-        WaterData& operator=(const WaterData&) = delete;
-        WaterData& operator=(WaterData&&) = delete;
+    WaterData(const WaterData&) = delete;
+    WaterData(WaterData&&) = delete;
+    WaterData& operator=(const WaterData&) = delete;
+    WaterData& operator=(WaterData&&) = delete;
 
-        static WaterData& getInstance()
-        {
-            static WaterData waterData;
-            return waterData;
-        }
+public:
 
-        bool load();
-        bool isLoaded();
+    bool load();
+    bool isLoaded();
 
-        std::vector<tb::SpriteIDList>* getSpriteIDList_List();
+    std::vector<tb::SpriteIDList>* getSpriteIDList_List();
 
-    private:
+private:
 
-        std::string m_fileName = "data/water_sprites.txt";
+    std::string m_fileName = "data/water.txt";
 
-        toml::table m_data;
+    toml::table m_data;
 
-        std::vector<tb::SpriteIDList> m_spriteIDList_List;
+    std::vector<tb::SpriteIDList> m_spriteIDList_List;
 
-    };
+    const unsigned int m_numToLoad = tb::Constants::NumWaterAnimationFrames;
+
+};
 
 }
 
 namespace
 {
-    tb::WaterData& g_WaterData = tb::WaterData::getInstance();
+    inline tb::WaterData& g_WaterData = tb::WaterData::getInstance();
 }
