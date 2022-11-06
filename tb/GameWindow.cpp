@@ -16,6 +16,11 @@ GameWindow::~GameWindow()
     //
 }
 
+GameWindow::Properties_t* GameWindow::getProperties()
+{
+    return &m_properties;
+}
+
 sf::Vector2f GameWindow::getPosition()
 {
     return m_position;
@@ -130,26 +135,42 @@ void GameWindow::handleMouseWheelMovedEvent(sf::Event event)
     if (event.mouseWheel.delta > 0)
     {
         // zoom in
+        m_zoomScale -= m_zoomFactor;
 
-        m_zoomLevel -= m_zoomFactor;
-
-        if (m_zoomLevel < m_zoomLevelMinimum)
+        if (m_zoomScale < m_zoomScaleMinimum)
         {
-            m_zoomLevel = m_zoomLevelMinimum;
+            m_zoomScale = m_zoomScaleMinimum;
         }
-
-        m_view.setSize(sf::Vector2f(m_pixelWidth * m_zoomLevel, m_pixelHeight * m_zoomLevel));
     }
 
     // scroll down
     else if (event.mouseWheel.delta < 0)
     {
         // zoom out
-
-        m_zoomLevel += m_zoomFactor;
-
-        m_view.setSize(sf::Vector2f(m_pixelWidth * m_zoomLevel, m_pixelHeight * m_zoomLevel));
+        m_zoomScale += m_zoomFactor;
     }
+
+    m_view.setSize(sf::Vector2f(m_pixelWidth * m_zoomScale, m_pixelHeight * m_zoomScale));
+}
+
+void GameWindow::handleMouseButtonPressedEvent(sf::Event event)
+{
+    if (isMouseInsideWindow() == false)
+    {
+        return;
+    }
+
+    //
+}
+
+void GameWindow::handleMouseButtonReleasedEvent(sf::Event event)
+{
+    if (isMouseInsideWindow() == false)
+    {
+        return;
+    }
+
+    //
 }
 
 void GameWindow::drawTileHighlight()
@@ -189,7 +210,7 @@ void GameWindow::draw()
 {
     setPosition(sf::Vector2f(32.0f, 32.0f));
 
-    auto player = g_Game.getPlayer();
+    tb::Creature::Ptr player = g_Game.getPlayer();
 
     m_view.setCenter
     (
@@ -257,7 +278,10 @@ void GameWindow::draw()
         }
     */
 
-    drawTileHighlight();
+    if (m_properties.ShowTileHighlight== true)
+    {
+        drawTileHighlight();
+    }
 
     m_window.display();
 

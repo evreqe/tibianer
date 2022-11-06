@@ -132,7 +132,7 @@
     <ClCompile Include="tb\PatternData.cpp">
       <Filter>Source Files\tb</Filter>
     </ClCompile>
-    <ClCompile Include="tb\WaterData.cpp">
+    <ClCompile Include="tb\WaterAnimationData.cpp">
       <Filter>Source Files\tb</Filter>
     </ClCompile>
     <ClCompile Include="tb\Creature.cpp">
@@ -157,6 +157,21 @@
       <Filter>Source Files\tb</Filter>
     </ClCompile>
     <ClCompile Include="tb\SpriteFlags.cpp">
+      <Filter>Source Files\tb</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\TextureData.cpp">
+      <Filter>Source Files\tb</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\EnterGameWindow.cpp">
+      <Filter>Source Files\tb</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\MapSelectWindow.cpp">
+      <Filter>Source Files\tb</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_stdlib.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\MapData.cpp">
       <Filter>Source Files\tb</Filter>
     </ClCompile>
   </ItemGroup>
@@ -266,7 +281,7 @@
     <ClInclude Include="tb\PatternData.h">
       <Filter>Header Files\tb</Filter>
     </ClInclude>
-    <ClInclude Include="tb\WaterData.h">
+    <ClInclude Include="tb\WaterAnimationData.h">
       <Filter>Header Files\tb</Filter>
     </ClInclude>
     <ClInclude Include="tb\Creature.h">
@@ -306,6 +321,21 @@
       <Filter>Header Files\tb</Filter>
     </ClInclude>
     <ClInclude Include="tb\SpriteFlags.h">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\TextureData.h">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\EnterGameWindow.h">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\MapSelectWindow.h">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imgui_stdlib.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\MapData.h">
       <Filter>Header Files\tb</Filter>
     </ClInclude>
   </ItemGroup>

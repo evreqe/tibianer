@@ -32,7 +32,7 @@ bool Map::load(const std::string& fileName)
         return false;
     }
 
-    g_Log.write("Loading map file: {}\n", fileName);
+    g_Log.write("Loading map from file: {}\n", fileName);
 
     sf::Clock timeToLoadMap;
 
@@ -41,7 +41,7 @@ bool Map::load(const std::string& fileName)
 
     if (xmlParseResult.status != pugi::xml_parse_status::status_ok)
     {
-        g_Log.write("ERROR: Failed to load map file: {}\nDescription: {}\nOffset: {}\n", fileName, xmlParseResult.description(), xmlParseResult.offset);
+        g_Log.write("ERROR: Failed to load map from file: {}\nDescription: {}\nOffset: {}\n", fileName, xmlParseResult.description(), xmlParseResult.offset);
         return false;
     }
 
@@ -54,7 +54,7 @@ bool Map::load(const std::string& fileName)
         return false;
     }
 
-    std::string orientation = xmlNode_map.attribute("orientation").as_string();
+    std::string_view orientation = xmlNode_map.attribute("orientation").as_string();
 
     if (orientation != "orthogonal")
     {
@@ -62,7 +62,7 @@ bool Map::load(const std::string& fileName)
         return false;
     }
 
-    std::string tileRenderOrder = xmlNode_map.attribute("renderorder").as_string();
+    std::string_view tileRenderOrder = xmlNode_map.attribute("renderorder").as_string();
 
     if (tileRenderOrder != "right-down")
     {
@@ -101,23 +101,23 @@ bool Map::load(const std::string& fileName)
 
     for (auto& xmlNode_map_properties_property : xmlNode_map_properties.children("property"))
     {
-        std::string xmlNode_map_properties_property__name = xmlNode_map_properties_property.attribute("name").as_string();
-        std::string xmlNode_map_properties_property__value = xmlNode_map_properties_property.attribute("value").as_string();
+        std::string_view xmlNode_map_properties_property__name = xmlNode_map_properties_property.attribute("name").as_string();
+        std::string_view xmlNode_map_properties_property__value = xmlNode_map_properties_property.attribute("value").as_string();
 
-        g_Log.write("xml_node map_properties_property__name: {}\n", xmlNode_map_properties_property__name);
-        g_Log.write("xml_node map_properties_property__value: {}\n", xmlNode_map_properties_property__value);
+        //g_Log.write("xml_node map_properties_property__name: {}\n", xmlNode_map_properties_property__name);
+        //g_Log.write("xml_node map_properties_property__value: {}\n", xmlNode_map_properties_property__value);
 
         if (xmlNode_map_properties_property__name == "Name")
         {
-            m_properties.Name = xmlNode_map_properties_property.attribute("value").as_string();
+            m_properties.Name = xmlNode_map_properties_property__value;
         }
         else if (xmlNode_map_properties_property__name == "Description")
         {
-            m_properties.Description = xmlNode_map_properties_property.attribute("value").as_string();
+            m_properties.Description = xmlNode_map_properties_property__value;
         }
         else if (xmlNode_map_properties_property__name == "Author")
         {
-            m_properties.Author = xmlNode_map_properties_property.attribute("value").as_string();
+            m_properties.Author = xmlNode_map_properties_property__value;
         }
 
         else if (xmlNode_map_properties_property__name == "PlayerStartX")
@@ -134,9 +134,7 @@ bool Map::load(const std::string& fileName)
         }
         else if (xmlNode_map_properties_property__name == "TimeOfDay")
         {
-            std::string timeOfDayString = xmlNode_map_properties_property.attribute("value").as_string();
-
-            auto timeOfDay = magic_enum::enum_cast<tb::TimeOfDay>(timeOfDayString);
+            auto timeOfDay = magic_enum::enum_cast<tb::TimeOfDay>(xmlNode_map_properties_property__value);
 
             if (timeOfDay.has_value() == true)
             {
@@ -154,9 +152,9 @@ bool Map::load(const std::string& fileName)
 
     for (auto& xmlNode_map_group : xmlNode_map.children("group"))
     {
-        std::string xmlNode_map_group__name = xmlNode_map_group.attribute("name").as_string();
+        std::string_view xmlNode_map_group__name = xmlNode_map_group.attribute("name").as_string();
 
-        g_Log.write("xml_node map_group__name: {}\n", xmlNode_map_group__name);
+        //g_Log.write("xml_node map_group__name: {}\n", xmlNode_map_group__name);
 
         tb::ZAxis_t tileMapZ = static_cast<tb::ZAxis_t>(xmlNode_map_group.attribute("name").as_uint()); // z-axis is the name of the Group Layer in Tiled Editor
 
@@ -171,7 +169,7 @@ bool Map::load(const std::string& fileName)
         {
             std::string xmlNode_map_group_layer__name = xmlNode_map_group_layer.attribute("name").as_string();
 
-            g_Log.write("xml_node map_group_layer__name: {}\n", xmlNode_map_group_layer__name);
+            //g_Log.write("xml_node map_group_layer__name: {}\n", xmlNode_map_group_layer__name);
 
             pugi::xml_node xmlNode_map_group_layer_data = xmlNode_map_group_layer.child("data");
             if (xmlNode_map_group_layer_data == NULL)
@@ -184,18 +182,16 @@ bool Map::load(const std::string& fileName)
 
             bool isCompressed = false;
 
-            std::string xmlNode_map_group_layer_data__compression;
-
             pugi::xml_attribute xmlAttribute_map_group_layer_data__compression = xmlNode_map_group_layer_data.attribute("compression");
             if (xmlAttribute_map_group_layer_data__compression != NULL)
             {
                 isCompressed = true;
             }
 
-            xmlNode_map_group_layer_data__compression = xmlAttribute_map_group_layer_data__compression.value();
-
             if (isCompressed == true)
             {
+                std::string_view xmlNode_map_group_layer_data__compression = xmlAttribute_map_group_layer_data__compression.value();
+
                 if
                 (
                     xmlNode_map_group_layer_data__encoding    != "base64" &&
@@ -320,9 +316,9 @@ bool Map::load(const std::string& fileName)
         {
             for (auto& xmlNode_map_group_objectgroup : xmlNode_map_group.children("objectgroup"))
             {
-                std::string xmlNode_map_group_objectgroup__name = xmlNode_map_group_objectgroup.attribute("name").as_string();
+                std::string_view xmlNode_map_group_objectgroup__name = xmlNode_map_group_objectgroup.attribute("name").as_string();
 
-                g_Log.write("xmlNode_map_group_objectgroup__name: {}\n", xmlNode_map_group_objectgroup__name);
+                //g_Log.write("xmlNode_map_group_objectgroup__name: {}\n", xmlNode_map_group_objectgroup__name);
 
                 tb::MapObjectLayerType mapObjectLayerType = tb::MapObjectLayerType::Objects;
 
@@ -351,14 +347,14 @@ bool Map::load(const std::string& fileName)
                 {
                     tb::SpriteID_t objectSpriteID = static_cast<tb::SpriteID_t>(xmlNode_map_group_objectgroup_object.attribute("gid").as_uint());
 
-                    g_Log.write("object sprite ID: {}\n", objectSpriteID);
+                    //g_Log.write("object sprite ID: {}\n", objectSpriteID);
 
                     sf::Vector2f objectPixelCoords;
 
                     objectPixelCoords.x = xmlNode_map_group_objectgroup_object.attribute("x").as_float();
                     objectPixelCoords.y = xmlNode_map_group_objectgroup_object.attribute("y").as_float();
 
-                    g_Log.write("object pixel coords: {}x{}\n", objectPixelCoords.x, objectPixelCoords.y);
+                    //g_Log.write("object pixel coords: {}x{}\n", objectPixelCoords.x, objectPixelCoords.y);
 
                     uint32_t objectTileIndex = getTileIndexByPixelCoords(objectPixelCoords);
 
@@ -367,15 +363,11 @@ bool Map::load(const std::string& fileName)
                     //  this was an old bug in Tiled Editor that was fixed by Orientation and Tile Render Order
                     //tileCoords.y -= 1; // have to subtract one due to Tiled Editor
 
-                    g_Log.write("object tile coords: {}x{}\n", objectTileCoords.x, objectTileCoords.y);
+                    //g_Log.write("object tile coords: {}x{}\n", objectTileCoords.x, objectTileCoords.y);
 
                     if (mapObjectLayerType == tb::MapObjectLayerType::Objects)
                     {
                         tb::Object::Ptr object = std::make_shared<tb::Object>(objectTileCoords, tileMapZ, objectSpriteID);
-
-                        // TODO: get object type from sprite data
-                        //tb::ObjectType objectType = x;
-                        //object->setObjectType(objectType);
 
                         tb::TileMap* tileMap = &m_tileMapTiles[tileMapZ];
 

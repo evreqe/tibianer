@@ -11,6 +11,7 @@
 #include "tb/LogWindow.h"
 #include "tb/SpriteDataWindow.h"
 #include "tb/SpriteEditorWindow.h"
+#include "tb/EnterGameWindow.h"
 
 #include "tb/RenderWindow.h"
 #include "tb/Game.h"

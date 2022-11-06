@@ -15,9 +15,9 @@ SpriteEditorWindow::~SpriteEditorWindow()
 
 void SpriteEditorWindow::resetInputs()
 {
-    memset(m_inputName, 0, sizeof(m_inputName));
+    std::memset(m_inputName, 0, sizeof(m_inputName));
 
-    memset(m_inputArticle, 0, sizeof(m_inputArticle));
+    std::memset(m_inputArticle, 0, sizeof(m_inputArticle));
 
     m_inputWeight = 0.0f;
 
@@ -225,7 +225,7 @@ void SpriteEditorWindow::draw()
 
         ImGui::TableSetColumnIndex(2);
 
-        if (ImGui::Button("Save##SpriteEditorButtonSave"))
+        if (ImGui::Button("Save##SpriteEditorButtonSave", m_buttonSize))
         {
             g_SpriteData.save();
         }

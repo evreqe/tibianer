@@ -3,6 +3,7 @@
 #include "common.h"
 
 #include "imgui.h"
+#include "imgui_stdlib.h"
 #include "imgui-SFML.h"
 
 #include "tb/Window.h"
@@ -60,6 +61,8 @@ private:
     float m_inputWeight = 0.0f;
     int m_inputTileWidth = 1;
     int m_inputTileHeight = 1;
+
+    const ImVec2 m_buttonSize = ImVec2(105.0f, 29.0f);
 };
 
 }

@@ -8,7 +8,7 @@
 
 #include "tb/SpriteData.h"
 #include "tb/PatternData.h"
-#include "tb/WaterData.h"
+#include "tb/WaterAnimationData.h"
 
 #include "tb/Tile.h"
 #include "tb/Sprite.h"
@@ -27,7 +27,6 @@ public:
 
     using Array = std::array<tb::TileMap, tb::Constants::NumZAxis>;
 
-    // TODO: pass tileSpriteIDList as const ref? uses swap
     bool load(uint32_t tileWidth, uint32_t tileHeight, const tb::SpriteIDList& tileSpriteIDList, const std::string& name, tb::TileMapType tileMapType, tb::ZAxis_t z);
 
     bool isTileIndexOutOfBounds(uint32_t tileIndex);
@@ -44,7 +43,7 @@ public:
 
     void loadWaterTiles();
 
-    bool doAnimatedWater();
+    bool doAnimatedWater(const sf::IntRect& tileRect);
 
     bool applyTilePatterns();
     bool applyTileObjectPatterns();

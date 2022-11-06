@@ -31,6 +31,10 @@ Object::Object(const sf::Vector2i& tileCoords, tb::ZAxis_t z, tb::SpriteID_t spr
     //{
         //setCountById();
     //}
+
+    // TODO: get object type from sprite data
+    //tb::ObjectType objectType = x;
+    //setObjectType(objectType);
 }
 
 void Object::update()

@@ -39,7 +39,9 @@
 #include <vector>
 
 #include "fmt/core.h"
+#include "fmt/format.h"
 #include "fmt/ostream.h"
+#include "fmt/ranges.h"
 
 #include "magic_enum.hpp"
 using namespace magic_enum::bitwise_operators;

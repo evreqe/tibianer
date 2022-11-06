@@ -39,12 +39,6 @@ bool TileMap::load(uint32_t tileWidth, uint32_t tileHeight, const tb::SpriteIDLi
         return false;
     }
 
-    g_Log.write("tile width and height: {}x{}\n", tileWidth, tileHeight);
-    g_Log.write("tile sprite ID list size: {}\n", m_tileSpriteIDList.size());
-    g_Log.write("name: {}\n", name);
-    g_Log.write("tile map type: {}\n", magic_enum::enum_name(tileMapType));
-    g_Log.write("z: {}\n", z);
-
     m_name = name;
 
     m_tileMapType = tileMapType;
@@ -65,6 +59,12 @@ bool TileMap::load(uint32_t tileWidth, uint32_t tileHeight, const tb::SpriteIDLi
     m_tileSpriteIDList.reserve(m_numTiles);
     //m_tileSpriteIDList.swap(tileSpriteIDList); // cannot use swap with const reference
     m_tileSpriteIDList = tileSpriteIDList;
+
+    g_Log.write("z: {}\n", z);
+    g_Log.write("name: {}\n", m_name);
+    g_Log.write("tile width and height: {}x{}\n", m_tileWidth, m_tileHeight);
+    g_Log.write("tile sprite ID list size: {}\n", m_tileSpriteIDList.size());
+    g_Log.write("tile map type: {}\n", magic_enum::enum_name(m_tileMapType));
 
     for (int tileX = 0; tileX < m_tileWidth; tileX++)
     {
@@ -235,9 +235,9 @@ void TileMap::loadWaterTiles()
     }
 }
 
-bool TileMap::doAnimatedWater()
+bool TileMap::doAnimatedWater(const sf::IntRect& tileRect)
 {
-    auto waterSpriteIDList_List = g_WaterData.getSpriteIDList_List();
+    auto waterSpriteIDList_List = g_WaterAnimationData.getSpriteIDList_List();
     if (waterSpriteIDList_List == nullptr)
     {
         g_Log.write("ERROR: waterSpriteIDList_List == nullptr\n");
@@ -256,8 +256,15 @@ bool TileMap::doAnimatedWater()
         return false;
     }
 
-    for (auto& tile : m_waterTileList)
+    tb::Tile::List tileList = getTileListWithinTileRect(tileRect);
+
+    for (auto& tile : tileList)
     {
+        if (tile->getSpriteFlags()->hasFlag(tb::SpriteFlag::Water) == false)
+        {
+            continue;
+        }
+
         uint32_t tileColumnIndex = m_tileWidth - tile->getTileX();
 
         tileColumnIndex = m_tileWidth - tileColumnIndex;

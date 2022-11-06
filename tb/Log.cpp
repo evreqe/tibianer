@@ -42,12 +42,14 @@ void Log::vwrite(const FormatString& format, fmt::format_args args)
 void Log::open()
 {
     m_text.clear();
+
     m_file.open(m_fileName, std::ofstream::out | std::ofstream::app);
 }
 
 void Log::close()
 {
     m_text.clear();
+
     m_file.flush();
     m_file.close();
 }
@@ -55,6 +57,7 @@ void Log::close()
 void Log::deleteContents()
 {
     m_text.clear();
+
     m_file.open(m_fileName, std::ofstream::out | std::ofstream::trunc);
     m_file.close();
 }

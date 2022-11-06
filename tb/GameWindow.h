@@ -41,6 +41,13 @@ private:
 
 public:
 
+    struct Properties_t
+    {
+        bool ShowTileHighlight = true;
+    };
+
+    Properties_t* getProperties();
+
     sf::Vector2f getPosition();
     void setPosition(const sf::Vector2f& position);
 
@@ -53,6 +60,8 @@ public:
     bool isMouseInsideWindow();
 
     void handleMouseWheelMovedEvent(sf::Event event);
+    void handleMouseButtonPressedEvent(sf::Event event);
+    void handleMouseButtonReleasedEvent(sf::Event event);
 
     void drawTileHighlight();
 
@@ -62,6 +71,8 @@ public:
     sf::IntRect getTileRect();
 
 private:
+
+    Properties_t m_properties;
 
     sf::Vector2f m_position;
 
@@ -73,14 +84,14 @@ private:
     sf::RenderTexture m_windowLayer;
     sf::Sprite m_windowLayerSprite;
 
-    float m_zoomLevel = 1.0f;
-    float m_zoomLevelMinimum = 1.0f;
+    float m_zoomScale = 1.0f;
+    float m_zoomScaleMinimum = 1.0f;
     float m_zoomFactor = 0.2f;
 
     float m_scale = 1.5f;
 
     tb::Sprite m_tileHighlightSprite;
-    tb::SpriteID_t m_tileHighlightSpriteID = 3960;
+    tb::SpriteID_t m_tileHighlightSpriteID = 3960; // TODO: magic number
 
     const int m_tileWidth = 13; // number of tiles visible on the x-axis
     const int m_tileHeight = 9; // number of tiles visible on the y-axis

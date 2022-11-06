@@ -6,10 +6,12 @@
 #include "tb/Utility.h"
 #include "tb/Log.h"
 
+#include "tb/MapData.h"
+#include "tb/TextureData.h"
 #include "tb/SpriteData.h"
 #include "tb/BitmapFontData.h"
 #include "tb/PatternData.h"
-#include "tb/WaterData.h"
+#include "tb/WaterAnimationData.h"
 #include "tb/OutfitData.h"
 
 #include "tb/Sprite.h"
@@ -28,6 +30,8 @@
 #include "tb/LogWindow.h"
 #include "tb/SpriteDataWindow.h"
 #include "tb/SpriteEditorWindow.h"
+#include "tb/EnterGameWindow.h"
+#include "tb/MapSelectWindow.h"
 
 #include <windows.h> // must be included last due to conflicts
 
@@ -59,8 +63,12 @@ public:
 
     void initImGui();
 
+    bool loadData();
+
     bool loadTextures();
     bool loadBitmapFonts();
+
+    bool loadMap(const std::string& fileName);
 
     void drawDockSpace();
 
@@ -73,6 +81,8 @@ public:
     void doGameStateMapSelect();
     void doGameStateInGame();
 
+    bool isMouseInsideImGuiWindow();
+
     sf::Vector2i getMousePositionInDesktop();
 
     void doAnimatedWater();
@@ -82,6 +92,8 @@ public:
     void handleClosedEvent(sf::Event event);
     void handleResizedEvent(sf::Event event);
     void handleMouseWheelMovedEvent(sf::Event event);
+    void handleMouseButtonPressedEvent(sf::Event event);
+    void handleMouseButtonReleasedEvent(sf::Event event);
     void processEvents();
 
     void fixMouseCursorForWindowResize(sf::RenderWindow* renderWindow);
@@ -93,20 +105,28 @@ public:
     void waitForKeyPress();
     void exit();
     void run();
+    void endGame();
 
     void toggleDemoWindow();
     void toggleStackToolWindow();
 
     tb::GameState getGameState();
+    void setGameState(tb::GameState gameState);
 
     tb::Creature::Ptr getPlayer();
+
+    void setLoadMapFileName(const std::string& fileName);
 
 private:
 
     bool m_showDemoWindow = false;
     bool m_showStackToolWindow = false;
 
-    tb::GameState m_gameState = tb::GameState::InGame;
+    tb::GameState m_gameState = tb::GameState::EnterGame;
+
+    uint32_t m_numLoadingFrames = 0;
+
+    std::string m_loadMapFileName;
 
     const unsigned int m_minimumTextureSizeRequiredToRun = 2048;
 
@@ -119,6 +139,13 @@ private:
     tb::BitmapFont m_defaultBitmapFont;
     tb::BitmapFont m_tinyBitmapFont;
     tb::BitmapFont m_modernBitmapFont;
+
+    const std::unordered_map<std::string, tb::BitmapFont&> m_bitmapFontNames =
+    {
+        {"Default",    m_defaultBitmapFont},
+        {"Tiny",       m_tinyBitmapFont},
+        {"Modern",     m_modernBitmapFont},
+    };
 
     tb::Creature::Ptr m_player;
 

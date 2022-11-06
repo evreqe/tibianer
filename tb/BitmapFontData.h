@@ -63,6 +63,8 @@ private:
 
     const unsigned int m_numToLoad = 8;
 
+    const unsigned int m_numGlyphs = 96;
+
 };
 
 }

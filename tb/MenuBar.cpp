@@ -20,7 +20,7 @@ void MenuBar::draw()
         return;
     }
 
-    bool isInGame = (g_Game.getGameState() == tb::GameState::InGame);
+    tb::GameState gameState = g_Game.getGameState();
 
     sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
 
@@ -56,14 +56,14 @@ void MenuBar::draw()
 
         if (ImGui::BeginMenu("Game##MenuItemGame"))
         {
-            if (ImGui::MenuItem("Enter Game...##MenuItemGameEnterGame", 0, false, isInGame == false))
+            if (ImGui::MenuItem("Enter Game...##MenuItemGameEnterGame", 0, false, gameState == tb::GameState::EnterGame))
             {
-                //
+                g_EnterGameWindow.setIsVisible(true);
             }
 
-            if (ImGui::MenuItem("End Game##MenuItemGameEndGame", 0, false, isInGame == true))
+            if (ImGui::MenuItem("End Game##MenuItemGameEndGame", 0, false, gameState == tb::GameState::InGame))
             {
-                //
+                g_Game.endGame();
             }
 
             ImGui::EndMenu();
@@ -71,7 +71,7 @@ void MenuBar::draw()
 
         if (ImGui::BeginMenu("Info##MenuItemInfo"))
         {
-            if (ImGui::MenuItem("Set Outfit...##MenuItemInfoSetOutfit", 0, false, isInGame == true)) {}
+            if (ImGui::MenuItem("Set Outfit...##MenuItemInfoSetOutfit", 0, false, gameState == tb::GameState::InGame)) {}
             ImGui::EndMenu();
         }
 
@@ -129,7 +129,7 @@ void MenuBar::draw()
                 g_SpriteDataWindow.toggleIsVisible();
             }
 
-            if (ImGui::MenuItem("Overlay...##MenuItemDeveloperOverlayWindow", 0))
+            if (ImGui::MenuItem("Overlay...##MenuItemDeveloperOverlayWindow", 0, false, gameState == tb::GameState::InGame))
             {
                 g_OverlayWindow.toggleIsVisible();
             }

@@ -15,7 +15,9 @@ LogWindow::~LogWindow()
 
 void LogWindow::draw()
 {
-    centerAndResizeOnFirstUseEver();
+    centerOnFirstUseEver();
+
+    ImGui::SetNextWindowSize(ImVec2(640, 480), ImGuiCond_FirstUseEver);
 
     bool* isVisible = getIsVisible();
 

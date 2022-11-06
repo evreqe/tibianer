@@ -28,86 +28,171 @@ void Game::initImGui()
     imguiIO.ConfigDockingWithShift = true;
 }
 
+bool Game::loadData()
+{
+    g_Log.write("Loading map data\n");
+    if (g_MapData.load() == false)
+    {
+        g_Log.write("ERROR: Failed to load map data\n");
+        return false;
+    }
+
+    g_Log.write("Loading texture data\n");
+    if (g_TextureData.load() == false)
+    {
+        g_Log.write("ERROR: Failed to load texture data\n");
+        return false;
+    }
+
+    g_Log.write("Loading sprite data\n");
+    if (g_SpriteData.load() == false)
+    {
+        g_Log.write("ERROR: Failed to load sprite data\n");
+        return false;
+    }
+
+    g_Log.write("Loading bitmap font data\n");
+    if (g_BitmapFontData.load() == false)
+    {
+        g_Log.write("ERROR: Failed to load bitmap font data\n");
+        return false;
+    }
+
+    g_Log.write("Loading pattern data\n");
+    if (g_PatternData.load() == false)
+    {
+        g_Log.write("ERROR: Failed to load pattern data\n");
+        return false;
+    }
+
+    g_Log.write("Loading water animation data\n");
+    if (g_WaterAnimationData.load() == false)
+    {
+        g_Log.write("ERROR: Failed to load water animation data\n");
+        return false;
+    }
+
+    g_Log.write("Loading outfit data\n");
+    if (g_OutfitData.load() == false)
+    {
+        g_Log.write("ERROR: Failed to load outfit data\n");
+        return false;
+    }
+
+    return true;
+}
+
 bool Game::loadTextures()
 {
     unsigned int maximumTextureSize = sf::Texture::getMaximumSize();
 
     if (maximumTextureSize < m_minimumTextureSizeRequiredToRun)
     {
-        g_Log.write("Your computer supports a maximum texture size of {}\n", maximumTextureSize);
-        g_Log.write("ERROR: This game requires at least {} texture size in order to play\n", m_minimumTextureSizeRequiredToRun);
+        g_Log.write("ERROR: Your computer supports a maximum texture size of {}\n", maximumTextureSize);
+        g_Log.write("----> This game requires at least {} texture size in order to run\n", m_minimumTextureSizeRequiredToRun);
         return false;
     }
 
-    for (auto& [textureFileName, texture] : tb::KeyValues::Textures)
+    if (g_TextureData.isLoaded() == false)
     {
-        if (std::filesystem::exists(textureFileName) == false)
+        g_Log.write("ERROR: Texture data is not loaded\n");
+        return false;
+    }
+
+    tb::TextureData::DataList* textureDataList = g_TextureData.getDataList();
+
+    for (auto& textureData : *textureDataList)
+    {
+        bool isFound = false;
+
+        for (auto& [textureName, textureObject] : tb::Textures::Names)
         {
-            g_Log.write("ERROR: File does not exist: {}\n", textureFileName);
-            return false;
+            if (textureData.Name == textureName)
+            {
+                if (textureObject.loadFromFile(textureData.FileName, sf::IntRect(0, 0, textureData.Width, textureData.Height)) == true)
+                {
+                    // tiled textures
+                    if (textureData.Repeated == true)
+                    {
+                        textureObject.setRepeated(true);
+                    }
+
+                    isFound = true;
+
+                    break;
+                }
+            }
         }
 
-        if (texture.loadFromFile(textureFileName) == false)
+        if (isFound == true)
         {
-            g_Log.write("ERROR: Failed to load texture file: {}\n", textureFileName);
+            g_Log.write("Loaded texture '{}' from file: {}\n", textureData.Name, textureData.FileName);
+        }
+        else
+        {
+            g_Log.write("ERROR: Failed to load texture '{}' from file: {}\n", textureData.Name, textureData.FileName);
             return false;
         }
     }
-
-    // tiled textures
-    tb::Textures::Scroll.setRepeated(true);
-
-    tb::Textures::Wood.setRepeated(true);
-    tb::Textures::WoodHorizontal1.setRepeated(true);
-    tb::Textures::WoodHorizontal2.setRepeated(true);
-    tb::Textures::WoodVertical1.setRepeated(true);
-    tb::Textures::WoodVertical2.setRepeated(true);
 
     return true;
 }
 
 bool Game::loadBitmapFonts()
 {
+    if (g_BitmapFontData.isLoaded() == false)
+    {
+        g_Log.write("ERROR: Bitmap font data is not loaded\n");
+        return false;
+    }
+
     tb::BitmapFontData::DataList* bitmapFontDataList = g_BitmapFontData.getDataList();
-
-    if (bitmapFontDataList == nullptr)
-    {
-        g_Log.write("ERROR: nullptr\n");
-        return false;
-    }
-
-    if (bitmapFontDataList->size() == 0)
-    {
-        g_Log.write("ERROR: Bitmap font data list is empty\n");
-        return false;
-    }
 
     for (auto& bitmapFont : *bitmapFontDataList)
     {
-        if (bitmapFont.Name == "Default")
+        bool isFound = false;
+
+        for (auto& [bitmapFontName, bitmapFontObject] : m_bitmapFontNames)
         {
-            if (m_defaultBitmapFont.load(bitmapFont.FileName, sf::Vector2u(bitmapFont.GlyphWidth, bitmapFont.GlyphHeight), bitmapFont.TextHeight, &bitmapFont.GlyphWidthList) == false)
+            if (bitmapFont.Name == bitmapFontName)
             {
-                g_Log.write("ERROR: Failed to load 'Default' bitmap font\n");
-                return false;
+                if (bitmapFontObject.load(bitmapFont.FileName, sf::Vector2u(bitmapFont.GlyphWidth, bitmapFont.GlyphHeight), bitmapFont.TextHeight, &bitmapFont.GlyphWidthList) == true)
+                {
+                    isFound = true;
+
+                    break;
+                }
             }
         }
-        else if (bitmapFont.Name == "Tiny")
+
+        if (isFound == true)
         {
-            if (m_tinyBitmapFont.load(bitmapFont.FileName, sf::Vector2u(bitmapFont.GlyphWidth, bitmapFont.GlyphHeight), bitmapFont.TextHeight, &bitmapFont.GlyphWidthList) == false)
-            {
-                g_Log.write("ERROR: Failed to load 'Tiny' bitmap font\n");
-                return false;
-            }
+            g_Log.write("Loaded bitmap font '{}' from file: {}\n", bitmapFont.Name, bitmapFont.FileName);
         }
-        else if (bitmapFont.Name == "Modern")
+        else
         {
-            if (m_modernBitmapFont.load(bitmapFont.FileName, sf::Vector2u(bitmapFont.GlyphWidth, bitmapFont.GlyphHeight), bitmapFont.TextHeight, &bitmapFont.GlyphWidthList) == false)
-            {
-                g_Log.write("ERROR: Failed to load 'Modern' bitmap font\n");
-                return false;
-            }
+            g_Log.write("ERROR: Failed to load bitmap font '{}' from file: {}\n", bitmapFont.Name, bitmapFont.FileName);
+            return false;
         }
+    }
+
+    return true;
+}
+
+bool Game::loadMap(const std::string& fileName)
+{
+    g_Log.write("Loading map\n");
+    if (g_Map.load(fileName) == false)
+    {
+        g_Log.write("ERROR: Failed to load map\n");
+        return false;
+    }
+
+    g_Log.write("Creating player\n");
+    if (createPlayer() == false)
+    {
+        g_Log.write("ERROR: Failed to create player\n");
+        return false;
     }
 
     return true;
@@ -178,17 +263,23 @@ void Game::drawWoodBorder(sf::FloatRect rect)
     woodVertical1.setTexture(tb::Textures::WoodVertical1);
     woodVertical2.setTexture(tb::Textures::WoodVertical2);
 
+    unsigned int woodHorizontal1Height = tb::Textures::WoodHorizontal1.getSize().y;
+    unsigned int woodHorizontal2Height = tb::Textures::WoodHorizontal2.getSize().y;
+
+    unsigned int woodVertical1Width = tb::Textures::WoodVertical1.getSize().x;
+    unsigned int woodVertical2Width = tb::Textures::WoodVertical2.getSize().x;
+
     woodHorizontal1.setPosition(sf::Vector2f(rect.left - 3.0f, rect.top - 3.0f));
-    woodHorizontal1.setTextureRect(sf::IntRect(0, 0, (int)(rect.width + 6.0f), 3));
+    woodHorizontal1.setTextureRect(sf::IntRect(0, 0, static_cast<int>(rect.width + 6.0f), woodHorizontal1Height));
 
     woodHorizontal2.setPosition(sf::Vector2f(rect.left - 3.0f, rect.top + rect.height));
-    woodHorizontal2.setTextureRect(sf::IntRect(0, 0, (int)(rect.width + 6.0f), 3));
+    woodHorizontal2.setTextureRect(sf::IntRect(0, 0, static_cast<int>(rect.width + 6.0f), woodHorizontal2Height));
 
     woodVertical1.setPosition(sf::Vector2f(rect.left - 3.0f, rect.top));
-    woodVertical1.setTextureRect(sf::IntRect(0, 0, 3, (int)(rect.height)));
+    woodVertical1.setTextureRect(sf::IntRect(0, 0, woodVertical1Width, static_cast<int>(rect.height)));
 
     woodVertical2.setPosition(sf::Vector2f(rect.left + rect.width, rect.top));
-    woodVertical2.setTextureRect(sf::IntRect(0, 0, 3, (int)(rect.height)));
+    woodVertical2.setTextureRect(sf::IntRect(0, 0, woodVertical2Width, static_cast<int>(rect.height)));
 
     sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
 
@@ -447,16 +538,55 @@ void Game::drawBackgroundTextureWithWoodBorder(const sf::Texture& texture)
 void Game::doGameStateEnterGame()
 {
     drawBackgroundTextureWithWoodBorder(tb::Textures::EnterGame);
+
+    if (*g_EnterGameWindow.getIsVisible() == true)
+    {
+        g_EnterGameWindow.draw();
+    }
 }
 
 void Game::doGameStateLoading()
 {
     drawBackgroundTextureWithWoodBorder(tb::Textures::Loading);
+
+    if (m_numLoadingFrames > 1)
+    {
+        if (m_loadMapFileName.size() != 0)
+        {
+            if (loadMap(m_loadMapFileName) == true)
+            {
+                setGameState(tb::GameState::InGame);
+            }
+            else
+            {
+                setGameState(tb::GameState::MapSelect);
+
+                g_MapSelectWindow.setIsVisible(true);
+            }
+
+            m_loadMapFileName = "";
+
+            m_loadMapFileName.clear();
+        }
+
+        m_numLoadingFrames = 0;
+    }
+
+    m_numLoadingFrames++;
 }
 
 void Game::doGameStateMapSelect()
 {
     drawBackgroundTextureWithWoodBorder(tb::Textures::MapSelect);
+
+    if (*g_MapSelectWindow.getIsVisible() == true)
+    {
+        g_MapSelectWindow.draw();
+    }
+    else
+    {
+        setGameState(tb::GameState::EnterGame);
+    }
 }
 
 void Game::doGameStateInGame()
@@ -477,13 +607,37 @@ void Game::doAnimatedWater()
     sf::Time timeElapsed = m_animatedWaterClock.getElapsedTime();
     if (timeElapsed >= tb::Constants::WaterAnimationFrameTime)
     {
-        if (g_Map.getTileMapTiles(tb::ZAxis::Default)->doAnimatedWater() == false)
+        sf::IntRect gameWindowTileRect = g_GameWindow.getTileRect();
+
+        if (g_Map.getTileMapTiles(tb::ZAxis::Default)->doAnimatedWater(gameWindowTileRect) == false)
         {
             g_Log.write("ERROR: animated water failed\n");
         }
 
         m_animatedWaterClock.restart();
     }
+}
+
+bool Game::isMouseInsideImGuiWindow()
+{
+    auto io = ImGui::GetIO();
+
+    if (io.WantCaptureKeyboard == true || io.WantCaptureMouse == true)
+    {
+        return true;
+    }
+
+    if (ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow) == true)
+    {
+        return true;
+    }
+
+    if (ImGui::IsAnyItemHovered() == true)
+    {
+        return true;
+    }
+
+    return false;
 }
 
 sf::Vector2i Game::getMousePositionInDesktop()
@@ -506,7 +660,13 @@ bool Game::createPlayer()
     playerProperties->IsPlayer = true;
     playerProperties->HasOutfit = true;
 
-    player->setName(tb::Constants::PlayerNameDefault);
+    std::string playerName = g_EnterGameWindow.getCharacterName();
+    if (playerName.size() == 0)
+    {
+        playerName = tb::Constants::PlayerNameDefault;
+    }
+
+    player->setName(playerName);
 
     m_player = player;
 
@@ -514,7 +674,7 @@ bool Game::createPlayer()
 
     if (tile == nullptr)
     {
-        g_Log.write("ERROR: nullptr\n");
+        g_Log.write("ERROR: tile == nullptr\n");
         return false;
     }
 
@@ -546,6 +706,29 @@ void Game::handleMouseWheelMovedEvent(sf::Event event)
     g_GameWindow.handleMouseWheelMovedEvent(event);
 }
 
+void Game::handleMouseButtonPressedEvent(sf::Event event)
+{
+    g_GameWindow.handleMouseButtonPressedEvent(event);
+
+    if (event.mouseButton.button == sf::Mouse::Left)
+    {
+        //
+    }
+}
+
+void Game::handleMouseButtonReleasedEvent(sf::Event event)
+{
+    g_GameWindow.handleMouseButtonReleasedEvent(event);
+
+    if (event.mouseButton.button == sf::Mouse::Left)
+    {
+        if (m_gameState == tb::GameState::EnterGame)
+        {
+            g_EnterGameWindow.setIsVisible(true);
+        }
+    }
+}
+
 void Game::processEvents()
 {
     sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
@@ -563,26 +746,26 @@ void Game::processEvents()
         {
             handleResizedEvent(event);
         }
+        else if (event.type == sf::Event::MouseButtonPressed)
+        {
+            if (isMouseInsideImGuiWindow() == false)
+            {
+                handleMouseButtonPressedEvent(event);
+            }
+        }
         else if (event.type == sf::Event::MouseButtonReleased)
         {
-            if (event.mouseButton.button == sf::Mouse::Right)
+            if (isMouseInsideImGuiWindow() == false)
             {
-                auto io = ImGui::GetIO();
-                if (io.WantCaptureKeyboard == false && io.WantCaptureMouse == false)
-                {
-                    if (ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow) == false)
-                    {
-                        if (ImGui::IsAnyItemHovered() == false)
-                        {
-                            ::MessageBoxA(NULL, "Right Mouse Button Released", "Mouse", MB_ICONINFORMATION);
-                        }
-                    }
-                }
+                handleMouseButtonReleasedEvent(event);
             }
         }
         else if (event.type == sf::Event::MouseWheelMoved)
         {
-            handleMouseWheelMovedEvent(event);
+            if (isMouseInsideImGuiWindow() == false)
+            {
+                handleMouseWheelMovedEvent(event);
+            }
         }
     }
 }
@@ -651,7 +834,7 @@ void Game::createTileFileFromImageFile(const std::string& fileName)
             if (pixelColor.r == 0 && pixelColor.g == 0 && pixelColor.b == 0)
             {
                 // black = void
-                spriteID = 54;
+                spriteID = 0;
             }
             else if (pixelColor.r == 255 && pixelColor.g == 255 && pixelColor.b == 255)
             {
@@ -797,42 +980,10 @@ void Game::run()
     g_Log.write("Initializing ImGui\n");
     initImGui();
 
-    g_Log.write("Loading sprite data\n");
-    if (g_SpriteData.load() == false)
+    g_Log.write("Loading data\n");
+    if (loadData() == false)
     {
-        g_Log.write("ERROR: Failed to load sprite data\n");
-        exit();
-        return;
-    }
-
-    g_Log.write("Loading bitmap font data\n");
-    if (g_BitmapFontData.load() == false)
-    {
-        g_Log.write("ERROR: Failed to load bitmap font data\n");
-        exit();
-        return;
-    }
-
-    g_Log.write("Loading pattern data\n");
-    if (g_PatternData.load() == false)
-    {
-        g_Log.write("ERROR: Failed to load pattern data\n");
-        exit();
-        return;
-    }
-
-    g_Log.write("Loading water data\n");
-    if (g_WaterData.load() == false)
-    {
-        g_Log.write("ERROR: Failed to load water data\n");
-        exit();
-        return;
-    }
-
-    g_Log.write("Loading outfit data\n");
-    if (g_OutfitData.load() == false)
-    {
-        g_Log.write("ERROR: Failed to load outfit data\n");
+        g_Log.write("ERROR: Failed to load data\n");
         exit();
         return;
     }
@@ -854,23 +1005,8 @@ void Game::run()
     }
 
     g_Log.write("Loading mouse cursors\n");
+    // TODO: load all the cursors
     m_arrowCursor.loadFromSystem(sf::Cursor::Arrow);
-
-    g_Log.write("Loading map\n");
-    if (g_Map.load("maps/test/test.tmx") == false)
-    {
-        g_Log.write("ERROR: Failed to load map\n");
-        exit();
-        return;
-    }
-
-    g_Log.write("Creating player\n");
-    if (createPlayer() == false)
-    {
-        g_Log.write("ERROR: Failed to create player\n");
-        exit();
-        return;
-    }
 
     sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
     if (renderWindow == nullptr)
@@ -909,14 +1045,9 @@ void Game::run()
         else if (m_gameState == tb::GameState::InGame)
         {
             doGameStateInGame();
+
+            doOverlayText();
         }
-
-        tb::BitmapFontText bitmapFontText;
-        bitmapFontText.setText(&m_defaultBitmapFont, "!@#$%^&*()ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890", sf::Color::Yellow, false);
-        bitmapFontText.setPosition(32.0f, 32.0f);
-        g_RenderWindow.getWindow()->draw(bitmapFontText);
-
-        doOverlayText();
 
         g_MenuBar.draw();
         g_StatusBar.draw();
@@ -964,6 +1095,11 @@ void Game::run()
     exit();
 }
 
+void Game::endGame()
+{
+    g_Game.setGameState(tb::GameState::EnterGame);
+}
+
 void Game::toggleDemoWindow()
 {
     tb::Utility::toggleBool(m_showDemoWindow);
@@ -979,9 +1115,19 @@ tb::GameState Game::getGameState()
     return m_gameState;
 }
 
+void Game::setGameState(tb::GameState gameState)
+{
+    m_gameState = gameState;
+}
+
 tb::Creature::Ptr Game::getPlayer()
 {
     return m_player;
+}
+
+void Game::setLoadMapFileName(const std::string& fileName)
+{
+    m_loadMapFileName = fileName;
 }
 
 }

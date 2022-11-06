@@ -111,10 +111,12 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;SPDLOG_COMPILED_LIB;SPDLOG_FMT_EXTERNAL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalIncludeDirectories>Z:\Code\!libraries\boost_1_78_0;Z:\Code\!libraries\tomlplusplus-3.2.0;Z:\Code\!libraries\tomlplusplus-3.2.0\include;Z:\Code\!libraries\fmt-8.1.1\include;Z:\Code\!libraries\sol2-3.2.2\include;Z:\Code\!libraries\luajit-2.0.5\src;Z:\Code\!libraries\SFML-2.5.1\include;Z:\Code\!libraries\Thor-2.0\include;Z:\Code\tibianer\tibianer;Z:\Code\tibianer\tibianer\boost_zlib;Z:\Code\tibianer\tibianer\boost_base64;Z:\Code\tibianer\tibianer\pugixml;Z:\Code\tibianer\tibianer\imgui;Z:\Code\tibianer\tibianer\imgui-sfml;Z:\Code\tibianer\tibianer\magic_enum;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <EnableModules>true</EnableModules>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -150,6 +152,7 @@
     <ClCompile Include="imgui\imgui.cpp" />
     <ClCompile Include="imgui\imgui_demo.cpp" />
     <ClCompile Include="imgui\imgui_draw.cpp" />
+    <ClCompile Include="imgui\imgui_stdlib.cpp" />
     <ClCompile Include="imgui\imgui_tables.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
@@ -158,6 +161,7 @@
     <ClCompile Include="tb\BitmapFontData.cpp" />
     <ClCompile Include="tb\BitmapFontText.cpp" />
     <ClCompile Include="tb\Creature.cpp" />
+    <ClCompile Include="tb\EnterGameWindow.cpp" />
     <ClCompile Include="tb\Entity.cpp" />
     <ClCompile Include="tb\GameWindow.cpp" />
     <ClCompile Include="tb\LogWindow.cpp" />
@@ -165,6 +169,8 @@
     <ClCompile Include="tb\GameText.cpp" />
     <ClCompile Include="tb\Log.cpp" />
     <ClCompile Include="tb\Map.cpp" />
+    <ClCompile Include="tb\MapData.cpp" />
+    <ClCompile Include="tb\MapSelectWindow.cpp" />
     <ClCompile Include="tb\MenuBar.cpp" />
     <ClCompile Include="tb\Object.cpp" />
     <ClCompile Include="tb\OutfitData.cpp" />
@@ -178,10 +184,11 @@
     <ClCompile Include="tb\SpriteEditorWindow.cpp" />
     <ClCompile Include="tb\SpriteFlags.cpp" />
     <ClCompile Include="tb\StatusBar.cpp" />
+    <ClCompile Include="tb\TextureData.cpp" />
     <ClCompile Include="tb\Thing.cpp" />
     <ClCompile Include="tb\Tile.cpp" />
     <ClCompile Include="tb\TileMap.cpp" />
-    <ClCompile Include="tb\WaterData.cpp" />
+    <ClCompile Include="tb\WaterAnimationData.cpp" />
     <ClCompile Include="tb\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -194,6 +201,7 @@
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui.h" />
     <ClInclude Include="imgui\imgui_internal.h" />
+    <ClInclude Include="imgui\imgui_stdlib.h" />
     <ClInclude Include="imgui\imstb_rectpack.h" />
     <ClInclude Include="imgui\imstb_textedit.h" />
     <ClInclude Include="imgui\imstb_truetype.h" />
@@ -208,6 +216,7 @@
     <ClInclude Include="tb\BitmapFontText.h" />
     <ClInclude Include="tb\Constants.h" />
     <ClInclude Include="tb\Creature.h" />
+    <ClInclude Include="tb\EnterGameWindow.h" />
     <ClInclude Include="tb\Entity.h" />
     <ClInclude Include="tb\GameWindow.h" />
     <ClInclude Include="tb\LogWindow.h" />
@@ -215,6 +224,8 @@
     <ClInclude Include="tb\GameText.h" />
     <ClInclude Include="tb\Log.h" />
     <ClInclude Include="tb\Map.h" />
+    <ClInclude Include="tb\MapData.h" />
+    <ClInclude Include="tb\MapSelectWindow.h" />
     <ClInclude Include="tb\MenuBar.h" />
     <ClInclude Include="tb\Object.h" />
     <ClInclude Include="tb\OutfitData.h" />
@@ -228,11 +239,12 @@
     <ClInclude Include="tb\SpriteEditorWindow.h" />
     <ClInclude Include="tb\SpriteFlags.h" />
     <ClInclude Include="tb\StatusBar.h" />
+    <ClInclude Include="tb\TextureData.h" />
     <ClInclude Include="tb\Thing.h" />
     <ClInclude Include="tb\Tile.h" />
     <ClInclude Include="tb\TileMap.h" />
     <ClInclude Include="tb\Utility.h" />
-    <ClInclude Include="tb\WaterData.h" />
+    <ClInclude Include="tb\WaterAnimationData.h" />
     <ClInclude Include="tb\Window.h" />
   </ItemGroup>
   <ItemGroup>

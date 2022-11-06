@@ -20,7 +20,9 @@ public:
     void setIsVisible(bool b);
     void toggleIsVisible();
 
-    void centerAndResizeOnFirstUseEver();
+    void center();
+    void centerOnAppearing();
+    void centerOnFirstUseEver();
 
 private:
 
