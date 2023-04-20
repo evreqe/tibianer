@@ -44,8 +44,6 @@ namespace tb
 
     private:
 
-        //
-
         const ImVec2 m_buttonSize = ImVec2(105.0f, 29.0f);
 
     };

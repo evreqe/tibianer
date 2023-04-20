@@ -25,20 +25,16 @@ void Sprite::setID(tb::SpriteID_t spriteID)
     updateTextureRect();
 }
 
+void Sprite::setIDByName(const std::string& spriteName)
+{
+    tb::SpriteID_t spriteID = g_SpriteData.getSpriteIDBySpriteName(spriteName);
+
+    setID(spriteID);
+}
+
 void Sprite::setTileWidthAndHeightByID(tb::SpriteID_t spriteID)
 {
-    if (g_SpriteData.isLoaded() == false)
-    {
-        g_Log.write("ERROR: Sprite data is not loaded\n");
-        return;
-    }
-
     tb::SpriteData::Data* spriteData = &g_SpriteData.getDataList()->at(spriteID);
-    if (spriteData == nullptr)
-    {
-        g_Log.write("ERROR: spriteData == nullptr\n");
-        return;
-    }
 
     m_tileWidth = spriteData->TileWidth;
     m_tileHeight = spriteData->TileHeight;

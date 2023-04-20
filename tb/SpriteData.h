@@ -36,17 +36,21 @@ private:
 
 public:
 
-    typedef struct _Data
+    struct Data
     {
         tb::SpriteID_t SpriteID = 0;
         tb::SpriteFlags SpriteFlags;
-        std::string Article = ""; // '' or 'a' or 'an'
+
         std::string Name;
-        float Weight = 0.0f; // cap
+        std::string Article = ""; // '' or 'a' or 'an'
+        std::string Description;
+
         uint8_t TileWidth = 1;
         uint8_t TileHeight = 1;
 
-    } Data, *Data_ptr;
+        float Weight = 0.0f; // cap
+        float LightRadius = 0.0f;
+    };
 
     using DataList = std::vector<tb::SpriteData::Data>;
 
@@ -56,13 +60,17 @@ public:
 
     tb::SpriteData::DataList* getDataList();
 
+    tb::SpriteID_t getSpriteIDBySpriteName(const std::string& spriteName);
+
 private:
 
     std::string m_fileName = "data/sprites.txt";
 
-    toml::table m_data;
+    toml::table m_table;
 
     tb::SpriteData::DataList m_dataList;
+
+    std::unordered_map<std::string, tb::SpriteID_t> m_spriteNameToSpriteIDMap;
 
     const unsigned int m_numToLoad = tb::Constants::NumSprites;
 

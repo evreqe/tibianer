@@ -56,13 +56,18 @@ private:
 
     tb::SpriteFlag m_highlightComboSpriteFlag = tb::SpriteFlag::Null;
 
-    char m_inputName[128 + 1] = {0};
-    char m_inputArticle[8 + 1] = {0};
-    float m_inputWeight = 0.0f;
+    const ImVec2 m_buttonSize = ImVec2(105.0f, 29.0f);
+
+    std::string m_inputName;
+    std::string m_inputArticle;
+    std::string m_inputDescription;
+
     int m_inputTileWidth = 1;
     int m_inputTileHeight = 1;
 
-    const ImVec2 m_buttonSize = ImVec2(105.0f, 29.0f);
+    float m_inputWeight = 0.0f;
+    float m_inputLightRadius = 0.0f;
+
 };
 
 }

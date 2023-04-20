@@ -57,7 +57,7 @@ private:
 
     std::string m_fileName = "data/bitmap_fonts.txt";
 
-    toml::table m_data;
+    toml::table m_table;
 
     tb::BitmapFontData::DataList m_dataList;
 

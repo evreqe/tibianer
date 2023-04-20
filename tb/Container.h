@@ -1,3 +1,6 @@
+#pragma once
+
+/*
 #ifndef TIBIA_CONTAINER_HPP
 #define TIBIA_CONTAINER_HPP
 
@@ -263,3 +266,4 @@ private:
 } // namespace tb
 
 #endif // TIBIA_CONTAINER_HPP
+*/

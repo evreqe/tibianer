@@ -1,3 +1,6 @@
+#pragma once
+
+/*
 #ifndef TIBIA_FLOATINGTEXT_HPP
 #define TIBIA_FLOATINGTEXT_HPP
 
@@ -90,3 +93,4 @@ private:
 } // namespace tb
 
 #endif // TIBIA_FLOATINGTEXT_HPP
+*/

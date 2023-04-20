@@ -8,6 +8,15 @@ GameWindow::GameWindow()
     m_window.create(m_pixelWidth, m_pixelHeight);
     m_windowLayer.create(m_pixelWidth, m_pixelHeight);
 
+    m_lightLayer.create(m_pixelWidth, m_pixelHeight);
+
+    m_lightBlendMode.colorEquation = sf::BlendMode::Equation::ReverseSubtract;
+    m_lightBlendMode.alphaEquation = sf::BlendMode::Equation::Add;
+    m_lightBlendMode.colorSrcFactor = sf::BlendMode::Factor::OneMinusSrcColor;
+    m_lightBlendMode.colorDstFactor = sf::BlendMode::Factor::SrcColor;
+    m_lightBlendMode.alphaSrcFactor = sf::BlendMode::Factor::DstAlpha;
+    m_lightBlendMode.alphaDstFactor = sf::BlendMode::Factor::DstAlpha;
+
     m_view.reset(sf::FloatRect(0.0f, 0.0f, m_pixelWidth, m_pixelHeight));
 }
 
@@ -33,9 +42,29 @@ void GameWindow::setPosition(const sf::Vector2f& position)
     m_position.y = m_position.y + g_MenuBar.getHeight();
 }
 
+sf::FloatRect GameWindow::getRect()
+{
+    sf::FloatRect rect;
+
+    rect.left = m_position.x;
+    rect.top = m_position.y;
+
+    rect.width = m_window.getSize().x * m_scale;
+    rect.height = m_window.getSize().y * m_scale;
+
+    return rect;
+}
+
+void GameWindow::drawRect()
+{
+    sf::FloatRect gameWindowRect = GameWindow::getRect();
+
+    g_Game.drawDebugRect(gameWindowRect);
+}
+
 sf::Vector2f GameWindow::getMousePixelCoords()
 {
-    sf::Vector2f mousePosition2f = g_RenderWindow.getMousePosition();
+    sf::Vector2f mousePosition2f = g_RenderWindow.getMousePosition2f();
 
     // game window is offset inside render window
     mousePosition2f.x = mousePosition2f.x - m_position.x;
@@ -88,49 +117,17 @@ sf::Vector2i GameWindow::getMouseTileCoords()
     return tileCoords;
 }
 
-sf::FloatRect GameWindow::getRect()
-{
-    sf::FloatRect rect;
-
-    rect.left = m_position.x;
-    rect.top = m_position.y;
-
-    rect.width = m_window.getSize().x * m_scale;
-    rect.height = m_window.getSize().y * m_scale;
-
-    return rect;
-}
-
-void GameWindow::drawRect()
-{
-    sf::FloatRect rect = GameWindow::getRect();
-
-    sf::RectangleShape rs;
-    rs.setPosition(sf::Vector2f(rect.left, rect.top));
-    rs.setSize(sf::Vector2f(rect.width, rect.height));
-    rs.setFillColor(sf::Color::Transparent);
-    rs.setOutlineColor(sf::Color::Blue);
-    rs.setOutlineThickness(1.0f);
-
-    g_RenderWindow.getWindow()->draw(rs);
-}
-
 bool GameWindow::isMouseInsideWindow()
 {
-    sf::Vector2f position = g_RenderWindow.getMousePosition();
+    sf::Vector2f mousePosition = g_RenderWindow.getMousePosition2f();
 
-    sf::FloatRect rect = GameWindow::getRect();
+    sf::FloatRect gameWindowRect = GameWindow::getRect();
 
-    return tb::Utility::isPositionInsideRectangle<float, float>(position, rect);
+    return gameWindowRect.contains(mousePosition);
 }
 
 void GameWindow::handleMouseWheelMovedEvent(sf::Event event)
 {
-    if (isMouseInsideWindow() == false)
-    {
-        return;
-    }
-
     // scroll up
     if (event.mouseWheel.delta > 0)
     {
@@ -155,21 +152,11 @@ void GameWindow::handleMouseWheelMovedEvent(sf::Event event)
 
 void GameWindow::handleMouseButtonPressedEvent(sf::Event event)
 {
-    if (isMouseInsideWindow() == false)
-    {
-        return;
-    }
-
     //
 }
 
 void GameWindow::handleMouseButtonReleasedEvent(sf::Event event)
 {
-    if (isMouseInsideWindow() == false)
-    {
-        return;
-    }
-
     //
 }
 
@@ -177,7 +164,7 @@ void GameWindow::drawTileHighlight()
 {
     sf::Vector2f mousePixelCoords = getMousePixelCoords();
 
-    m_tileHighlightSprite.setID(m_tileHighlightSpriteID);
+    m_tileHighlightSprite.setIDByName(m_tileHightlightSpriteName);
     m_tileHighlightSprite.setPosition(mousePixelCoords);
 
     m_window.draw(m_tileHighlightSprite);
@@ -188,10 +175,27 @@ void GameWindow::drawLayer(tb::ZAxis_t z)
     m_windowLayer.setView(m_view);
     m_windowLayer.clear(sf::Color::Transparent);
 
+    m_lightLayer.setView(m_view);
+    m_lightLayer.clear(sf::Color(64, 64, 64, 255));
+
     sf::IntRect tileRect = getTileRect();
 
     g_Map.getTileMapTiles(z)->draw(tileRect, m_windowLayer);
     g_Map.getTileMapTileEdges(z)->draw(tileRect, m_windowLayer);
+
+    g_Map.getTileMapTiles(z)->drawLights(tileRect, m_lightLayer);
+
+    m_lightLayer.display();
+
+    m_lightLayerSprite.setTexture(m_lightLayer.getTexture());
+
+    m_lightLayerSprite.setPosition
+    (
+        static_cast<float>((tileRect.left + m_numTilesToDrawFromOffscreen) * tb::Constants::TileSize),
+        static_cast<float>((tileRect.top  + m_numTilesToDrawFromOffscreen) * tb::Constants::TileSize)
+    );
+
+    m_windowLayer.draw(m_lightLayerSprite, m_lightBlendMode);
 
     m_windowLayer.display();
 
@@ -199,8 +203,8 @@ void GameWindow::drawLayer(tb::ZAxis_t z)
 
     m_windowLayerSprite.setPosition
     (
-        static_cast<float>((tileRect.left + 1) * tb::Constants::TileSize),
-        static_cast<float>((tileRect.top  + 1) * tb::Constants::TileSize)
+        static_cast<float>((tileRect.left + m_numTilesToDrawFromOffscreen) * tb::Constants::TileSize),
+        static_cast<float>((tileRect.top  + m_numTilesToDrawFromOffscreen) * tb::Constants::TileSize)
     );
 
     m_window.draw(m_windowLayerSprite);
@@ -208,18 +212,38 @@ void GameWindow::drawLayer(tb::ZAxis_t z)
 
 void GameWindow::draw()
 {
+    bool isDebugModeEnabled = g_Game.isDebugModeEnabled();
+
     setPosition(sf::Vector2f(32.0f, 32.0f));
 
     tb::Creature::Ptr player = g_Game.getPlayer();
 
-    m_view.setCenter
+    if (isDebugModeEnabled == false)
+    {
+        resetViewPositionOffset();
+    }
+
+    setViewPosition
     (
-        player->getPixelX() + tb::Constants::TileSizeHalf,
-        player->getPixelY() + tb::Constants::TileSizeHalf
+        sf::Vector2f
+        (
+            player->getPixelX() + tb::Constants::TileSizeHalfFloat,
+            player->getPixelY() + tb::Constants::TileSizeHalfFloat
+        )
     );
 
+    m_view.setCenter(m_viewPosition.x, m_viewPosition.y);
+
     m_window.setView(m_view);
-    m_window.clear(sf::Color::Red);
+
+    if (isDebugModeEnabled == true)
+    {
+        m_window.clear(sf::Color::Magenta);
+    }
+    else
+    {
+        m_window.clear(sf::Color::Black);
+    }
 
     tb::ZAxis_t zBegin = tb::ZAxis::Min;
     tb::ZAxis_t zEnd = tb::ZAxis::Max;
@@ -254,31 +278,18 @@ void GameWindow::draw()
 
             drawLayer(i);
         }
+
+        // check for ceilings and rooftops above the player
+        //if (i < tb::Constants::NumZAxis)
+        //{
+        //    if (findTilesAboveThing(m_player, i + 1) == true)
+        //    {
+        //        break;
+        //    }
+        //}
     }
 
-    /*
-        for (unsigned int i = zBegin; i < zEnd + 1; i++)
-        {
-            if (isTileMapVisible(&m_map.tileMapTiles[i]) == true)
-            {
-                drawGameLayer(i);
-
-                //std::cout << "drawGameLayer: " << i << std::endl;
-            }
-
-            if (i == tibia::ZAxis::max)
-            {
-                break;
-            }
-
-            if (findTilesAboveThing(m_player, i + 1) == true)
-            {
-                break;
-            }
-        }
-    */
-
-    if (m_properties.ShowTileHighlight== true)
+    if (m_properties.ShowTileHighlight == true)
     {
         drawTileHighlight();
     }
@@ -292,8 +303,6 @@ void GameWindow::draw()
     sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
 
     renderWindow->draw(m_windowSprite);
-
-    //drawRect();
 }
 
 sf::IntRect GameWindow::getTileRect()
@@ -303,6 +312,14 @@ sf::IntRect GameWindow::getTileRect()
     int x1 = player->getTileX();
     int y1 = player->getTileY();
 
+    sf::Vector2f viewPositionOffset = getViewPositionOffset();
+
+    viewPositionOffset.x /= tb::Constants::TileSize;
+    viewPositionOffset.y /= tb::Constants::TileSize;
+
+    x1 += static_cast<int>(viewPositionOffset.x);
+    y1 += static_cast<int>(viewPositionOffset.y);
+
     x1 = x1 - m_numTilesFromCenterX - m_numTilesToDrawFromOffscreen;
     y1 = y1 - m_numTilesFromCenterY - m_numTilesToDrawFromOffscreen;
 
@@ -310,6 +327,32 @@ sf::IntRect GameWindow::getTileRect()
     int y2 = m_tileHeight + (m_numTilesToDrawFromOffscreen + 1);
 
     return sf::IntRect(x1, y1, x2, y2);
+}
+
+sf::Vector2f GameWindow::getViewPosition()
+{
+    return m_viewPosition + m_viewPositionOffset;
+}
+
+void GameWindow::setViewPosition(sf::Vector2f position)
+{
+    m_viewPosition = position + m_viewPositionOffset;
+}
+
+sf::Vector2f GameWindow::getViewPositionOffset()
+{
+    return m_viewPositionOffset;
+}
+
+void GameWindow::setViewPositionOffset(sf::Vector2f offset)
+{
+    m_viewPositionOffset = offset;
+}
+
+void GameWindow::resetViewPositionOffset()
+{
+    m_viewPositionOffset.x = 0.0f;
+    m_viewPositionOffset.y = 0.0f;
 }
 
 }

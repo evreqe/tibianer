@@ -51,11 +51,11 @@ public:
     sf::Vector2f getPosition();
     void setPosition(const sf::Vector2f& position);
 
-    sf::Vector2f getMousePixelCoords();
-    sf::Vector2i getMouseTileCoords();
-
     sf::FloatRect getRect();
     void drawRect();
+
+    sf::Vector2f getMousePixelCoords();
+    sf::Vector2i getMouseTileCoords();
 
     bool isMouseInsideWindow();
 
@@ -70,6 +70,14 @@ public:
 
     sf::IntRect getTileRect();
 
+    sf::Vector2f getViewPosition();
+    void setViewPosition(sf::Vector2f position);
+
+    sf::Vector2f getViewPositionOffset();
+    void setViewPositionOffset(sf::Vector2f offset);
+
+    void resetViewPositionOffset();
+
 private:
 
     Properties_t m_properties;
@@ -77,6 +85,8 @@ private:
     sf::Vector2f m_position;
 
     sf::View m_view;
+    sf::Vector2f m_viewPosition;
+    sf::Vector2f m_viewPositionOffset;
 
     sf::RenderTexture m_window;
     sf::Sprite m_windowSprite;
@@ -84,14 +94,18 @@ private:
     sf::RenderTexture m_windowLayer;
     sf::Sprite m_windowLayerSprite;
 
+    sf::RenderTexture m_lightLayer;
+    sf::Sprite m_lightLayerSprite;
+    sf::BlendMode m_lightBlendMode;
+
     float m_zoomScale = 1.0f;
     float m_zoomScaleMinimum = 1.0f;
     float m_zoomFactor = 0.2f;
 
-    float m_scale = 1.5f;
+    float m_scale = 2.0f;
 
     tb::Sprite m_tileHighlightSprite;
-    tb::SpriteID_t m_tileHighlightSpriteID = 3960; // TODO: magic number
+    const std::string m_tileHightlightSpriteName = "TileHighlight";
 
     const int m_tileWidth = 13; // number of tiles visible on the x-axis
     const int m_tileHeight = 9; // number of tiles visible on the y-axis

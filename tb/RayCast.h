@@ -1,3 +1,6 @@
+#pragma once
+
+/*
 #ifndef TIBIA_RAYCAST_HPP
 #define TIBIA_RAYCAST_HPP
 
@@ -111,3 +114,4 @@ private:
 } // namespace Tibia
 
 #endif // TIBIA_RAYCAST_HPP
+*/

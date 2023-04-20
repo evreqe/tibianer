@@ -39,7 +39,7 @@ void StatusBar::draw()
 
     ImGui::SetCursorPosX(8.0f);
 
-    ImGui::Text(m_text.c_str());
+    ImGui::TextUnformatted(m_text.c_str());
 
     if (g_Game.getGameState() == tb::GameState::InGame)
     {
@@ -52,7 +52,7 @@ void StatusBar::draw()
         // apply right-justify alignment
         ImGui::SetCursorPosX(renderWindowSize2f.x - bottomRightTextSize.x - m_bottomRightTextPadding);
 
-        ImGui::Text(bottomRightText.c_str());
+        ImGui::TextUnformatted(bottomRightText.c_str());
     }
 
     ImGui::End();

@@ -22,6 +22,22 @@ namespace tb
             return true;
         }
 
+        static bool isPositionInsideCircle(sf::Vector2f center, sf::Vector2f position, float radius, float& distance)
+        {
+            float dx = center.x - position.x;
+            float dy = center.y - position.y;
+
+            distance = std::sqrtf(dx * dx + dy * dy);
+
+            return distance <= radius;
+
+            //float distanceSquared = dx * dx + dy * dy;
+
+            //distance = ?
+
+            //return distanceSquared <= radius * radius;
+        }
+
         template <typename E>
         constexpr auto toUnderlying(E e) noexcept
         {

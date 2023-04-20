@@ -21,11 +21,16 @@ bool PatternData::load()
         return false;
     }
 
-    m_data.clear();
-    m_data = toml::parse_file(m_fileName);
-    if (m_data.size() == 0)
+    m_table.clear();
+
+    try
+    {
+        m_table = toml::parse_file(m_fileName);
+    }
+    catch (const toml::parse_error& parseError)
     {
         g_Log.write("ERROR: Failed to load data from file: {}\n", m_fileName);
+        g_Log.write("{}\n{}\n", parseError.description(), parseError.source().begin);
         return false;
     }
 
@@ -38,7 +43,7 @@ bool PatternData::load()
     {
         std::string index = std::to_string(i);
 
-        if (!m_data[index])
+        if (!m_table[index])
         {
             break;
         }
@@ -49,7 +54,7 @@ bool PatternData::load()
 
         data.Index = i;
 
-        data.Name = m_data[index]["Name"].value_or("");
+        data.Name = m_table[index]["Name"].value_or("");
 
         if (data.Name.size() == 0)
         {
@@ -59,7 +64,7 @@ bool PatternData::load()
 
         g_Log.write("Name: {}\n", data.Name);
 
-        std::string_view patternType = m_data[index]["Type"].value_or("");
+        std::string_view patternType = m_table[index]["Type"].value_or("");
 
         auto patternTypeE = magic_enum::enum_cast<tb::PatternType>(patternType);
         if (patternTypeE.has_value())
@@ -74,8 +79,8 @@ bool PatternData::load()
             return false;
         }
 
-        data.Width = static_cast<uint8_t>(m_data[index]["Width"].value_or(0));
-        data.Height = static_cast<uint8_t>(m_data[index]["Height"].value_or(0));
+        data.Width = static_cast<uint8_t>(m_table[index]["Width"].value_or(0));
+        data.Height = static_cast<uint8_t>(m_table[index]["Height"].value_or(0));
 
         if (data.Width == 0 || data.Height == 0)
         {
@@ -90,7 +95,7 @@ bool PatternData::load()
 
         data.SpriteIDList.reserve(numSpritesRequired);
 
-        auto spritesArray = m_data[index]["Sprites"].as_array();
+        auto spritesArray = m_table[index]["Sprites"].as_array();
 
         if (spritesArray == nullptr)
         {
@@ -144,7 +149,7 @@ bool PatternData::load()
 
 bool PatternData::isLoaded()
 {
-    if (m_data.size() == 0) return false;
+    if (m_table.size() == 0) return false;
     if (m_dataList.size() == 0) return false;
 
     return true;

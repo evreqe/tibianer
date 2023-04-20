@@ -1,0 +1,1 @@
+#include "tb/MoveObjectsWindow.h"

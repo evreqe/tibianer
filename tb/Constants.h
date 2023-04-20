@@ -21,13 +21,16 @@ namespace tb
         inline const uint32_t NumWaterAnimationFrames = 16;
         inline const uint32_t NumWaterSpritesPerAnimationFrame = 8;
 
-        inline const sf::Time WaterAnimationFrameTime = sf::seconds(0.5f);
-
         inline const uint32_t WaterPatternWidth = 4;
         inline const uint32_t WaterPatternHeight = 2;
 
         inline const uint32_t NumOutfitSpriteIndex = 4; // head, body, legs, feet
         inline const uint32_t NumOutfitSpriteDirections = 4; // up, right, down, left
+
+        inline const uint32_t NumOutfitSpriteIDListHead = 11;
+        inline const uint32_t NumOutfitSpriteIDListBody = 11;
+        inline const uint32_t NumOutfitSpriteIDListLegs = 9;
+        inline const uint32_t NumOutfitSpriteIDListFeet = 9;
 
         inline const SpriteID_t SpriteIDNull = 0;
         inline const SpriteID_t SpriteIDDefault = 1;
@@ -36,6 +39,8 @@ namespace tb
         inline const int TileSizeHalf = 16;
         inline const float TileSizeFloat = 32.0f;
         inline const float TileSizeHalfFloat = 16.0f;
+
+        inline const float TileCreatureOffset = 8.0f;
 
         inline const uint32_t NumZAxis = 16;
 
@@ -56,7 +61,6 @@ namespace tb
         inline sf::Texture MapEditor;
         inline sf::Texture Sprites;
         inline sf::Texture GUI;
-        inline sf::Texture Lights;
         inline sf::Texture Scroll;
         inline sf::Texture Wood;
         inline sf::Texture WoodHorizontal1;
@@ -74,7 +78,6 @@ namespace tb
             {"Map Editor",                 tb::Textures::MapEditor},
             {"Sprites",                    tb::Textures::Sprites},
             {"GUI",                        tb::Textures::GUI},
-            {"Lights",                     tb::Textures::Lights},
             {"Scroll",                     tb::Textures::Scroll},
             {"Wood",                       tb::Textures::Wood},
             {"Wood Horizontal 1",          tb::Textures::WoodHorizontal1},

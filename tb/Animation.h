@@ -1,3 +1,6 @@
+#pragma once
+
+/*
 #ifndef TIBIA_ANIMATION_HPP
 #define TIBIA_ANIMATION_HPP
 
@@ -178,3 +181,4 @@ private:
 } // namespace tb
 
 #endif // TIBIA_ANIMATION_HPP
+*/

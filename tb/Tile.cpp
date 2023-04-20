@@ -195,6 +195,33 @@ void Tile::removeObject(tb::Object::Ptr object)
     std::erase(m_objectList, object);
 }
 
+void Tile::addTileEdgeObject(tb::Object::Ptr object)
+{
+    /*
+            if (object->getFlags().test(tb::SpriteFlags::decal))
+            {
+                m_objectList.insert(m_objectList.begin(), object);
+            }
+            else
+            {
+                m_objectList.push_back(object);
+            }
+    */
+
+    m_tileEdgeObjectList.push_back(object);
+}
+
+void Tile::removeTileEdgeObject(tb::Object::Ptr object)
+{
+    //auto it = std::find(m_objectList.begin(), m_objectList.end(), object);
+    //if (it != m_objectList.end())
+    //{
+        //m_objectList.erase(it);
+    //}
+
+    std::erase(m_tileEdgeObjectList, object);
+}
+
 void Tile::addCreature(tb::Creature::Ptr creature)
 {
     m_creatureList.push_back(creature);

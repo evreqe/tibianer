@@ -43,7 +43,7 @@ private:
 
     std::string m_fileName = "data/water_animations.txt";
 
-    toml::table m_data;
+    toml::table m_table;
 
     std::vector<tb::SpriteIDList> m_spriteIDList_List;
 

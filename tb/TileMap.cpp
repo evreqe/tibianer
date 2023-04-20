@@ -66,42 +66,44 @@ bool TileMap::load(uint32_t tileWidth, uint32_t tileHeight, const tb::SpriteIDLi
     g_Log.write("tile sprite ID list size: {}\n", m_tileSpriteIDList.size());
     g_Log.write("tile map type: {}\n", magic_enum::enum_name(m_tileMapType));
 
-    for (int tileX = 0; tileX < m_tileWidth; tileX++)
+    for (uint32_t tileIndex = 0; tb::SpriteID_t& tileSpriteID : m_tileSpriteIDList)
     {
-        for (int tileY = 0; tileY < m_tileHeight; tileY++)
+        //g_Log.write("tileIndex: {}\n", tileIndex);
+
+        //g_Log.write("tileSpriteID: {}\n", tileSpriteID);
+
+        int tileX = tileIndex % m_tileWidth;
+        int tileY = 0;
+
+        if (tileIndex > 0)
         {
-            uint32_t tileIndex = tileX + tileY * m_tileWidth;
-
-            if (tileIndex > m_tileSpriteIDList.size())
-            {
-                g_Log.write("ERROR: Tile index is out of bounds: {}\n", tileIndex);
-                continue;
-            }
-
-            tb::SpriteID_t tileSpriteID = m_tileSpriteIDList.at(tileIndex);
-
-            tb::SpriteFlags* tileSpriteFlags = &g_SpriteData.getDataList()->at(tileSpriteID).SpriteFlags;
-
-            if (tileSpriteID == tb::Constants::SpriteIDNull && m_tileMapType == tb::TileMapType::Tiles)
-            {
-                tileSpriteFlags->setFlag(tb::SpriteFlag::Null, true);
-            }
-
-            tb::Tile::Ptr tile = std::make_shared<tb::Tile>();
-            tile->setTileIndex(tileIndex);
-            tile->setSpriteID(tileSpriteID);
-            tile->setSpriteFlags(*tileSpriteFlags);
-            tile->setTileCoords(sf::Vector2i(tileX, tileY));
-            tile->setZ(z);
-            m_tileList.push_back(tile);
+            tileY = tileIndex / m_tileHeight;
         }
-    }
 
-    std::sort(m_tileList.begin(), m_tileList.end(), tb::Tile::SortByTileIndex_t());
+        //g_Log.write("tileX: {}\n", tileX);
+        //g_Log.write("tileY: {}\n", tileY);
+
+        tb::SpriteFlags* tileSpriteFlags = &g_SpriteData.getDataList()->at(tileSpriteID).SpriteFlags;
+
+        if (tileSpriteID == tb::Constants::SpriteIDNull && m_tileMapType == tb::TileMapType::Tiles)
+        {
+            tileSpriteFlags->setFlag(tb::SpriteFlag::Null, true);
+        }
+
+        tb::Tile::Ptr tile = std::make_shared<tb::Tile>();
+        tile->setTileIndex(tileIndex);
+        tile->setSpriteID(tileSpriteID);
+        tile->setSpriteFlags(*tileSpriteFlags);
+        tile->setTileCoords(sf::Vector2i(tileX, tileY));
+        tile->setZ(z);
+        m_tileList.push_back(tile);
+
+        tileIndex++;
+    }
 
     if (m_tileMapType == tb::TileMapType::Tiles)
     {
-        loadWaterTiles();
+        //loadWaterTiles();
 
         sf::Clock timeToApplyTilePatterns;
 
@@ -303,16 +305,16 @@ bool TileMap::doAnimatedWater(const sf::IntRect& tileRect)
 
 bool TileMap::applyTilePatterns()
 {
-    auto patternList = g_PatternData.getDataList();
-    if (patternList == nullptr)
+    tb::PatternData::DataList* patternDataList = g_PatternData.getDataList();
+    if (patternDataList == nullptr)
     {
-        g_Log.write("ERROR: patternList == nullptr\n");
+        g_Log.write("ERROR: patternDataList == nullptr\n");
         return false;
     }
 
-    for (auto& pattern : *patternList)
+    for (auto& patternData : *patternDataList)
     {
-        if (pattern.PatternType != PatternType::Tile)
+        if (patternData.PatternType != PatternType::Tile)
         {
             continue;
         }
@@ -321,7 +323,7 @@ bool TileMap::applyTilePatterns()
 
         tb::Tile::List* tileList = &m_tileList;
 
-        if (pattern.Name == "Water")
+        if (patternData.Name == "Water")
         {
             tileList = &m_waterTileList;
 
@@ -334,7 +336,7 @@ bool TileMap::applyTilePatterns()
             {
                 tb::SpriteID_t tileSpriteID = tile->getSpriteID();
 
-                if (std::find(pattern.SpriteIDList.begin(), pattern.SpriteIDList.end(), tileSpriteID) == pattern.SpriteIDList.end())
+                if (std::find(patternData.SpriteIDList.begin(), patternData.SpriteIDList.end(), tileSpriteID) == patternData.SpriteIDList.end())
                 {
                     continue;
                 }
@@ -350,24 +352,24 @@ bool TileMap::applyTilePatterns()
 
             uint32_t spriteIndex = tileColumnIndex;
 
-            while (spriteIndex > static_cast<unsigned int>(pattern.Width - 1))
+            while (spriteIndex > static_cast<unsigned int>(patternData.Width - 1))
             {
-                spriteIndex = spriteIndex - pattern.Width;
+                spriteIndex = spriteIndex - patternData.Width;
             }
 
-            while (tileRowIndex > static_cast<unsigned int>(pattern.Height - 1))
+            while (tileRowIndex > static_cast<unsigned int>(patternData.Height - 1))
             {
-                tileRowIndex = tileRowIndex - pattern.Height;
+                tileRowIndex = tileRowIndex - patternData.Height;
             }
 
             if (tileRowIndex > 0)
             {
-                spriteIndex += pattern.Width * tileRowIndex;
+                spriteIndex += patternData.Width * tileRowIndex;
             }
 
-            if (spriteIndex < pattern.SpriteIDList.size())
+            if (spriteIndex < patternData.SpriteIDList.size())
             {
-                updateTileSpriteID(tile, pattern.SpriteIDList.at(spriteIndex));
+                updateTileSpriteID(tile, patternData.SpriteIDList.at(spriteIndex));
             }
         }
     }
@@ -377,23 +379,23 @@ bool TileMap::applyTilePatterns()
 
 bool TileMap::applyTileObjectPatterns()
 {
-    auto patternList = g_PatternData.getDataList();
-    if (patternList == nullptr)
+    auto patternDataList = g_PatternData.getDataList();
+    if (patternDataList == nullptr)
     {
-        g_Log.write("ERROR: patternList == nullptr\n");
+        g_Log.write("ERROR: patternDataList == nullptr\n");
         return false;
     }
 
-    for (auto& pattern : *patternList)
+    for (auto& patternData : *patternDataList)
     {
-        if (pattern.PatternType != PatternType::Object)
+        if (patternData.PatternType != PatternType::Object)
         {
             continue;
         }
 
         for (auto& tile : m_tileList)
         {
-            auto tileObjectList = tile->getObjectList();
+            tb::Object::List* tileObjectList = tile->getObjectList();
             if (tileObjectList == nullptr)
             {
                 continue;
@@ -401,11 +403,11 @@ bool TileMap::applyTileObjectPatterns()
 
             for (auto& object : *tileObjectList)
             {
-                auto objectSpriteID = object->getSpriteID();
+                tb::SpriteID_t objectSpriteID = object->getSpriteID();
 
-                if (std::find(pattern.SpriteIDList.begin(), pattern.SpriteIDList.end(), objectSpriteID) != pattern.SpriteIDList.end())
+                if (std::find(patternData.SpriteIDList.begin(), patternData.SpriteIDList.end(), objectSpriteID) != patternData.SpriteIDList.end())
                 {
-                    if (pattern.Width > pattern.Height) // horizontal
+                    if (patternData.Width > patternData.Height) // horizontal
                     {
                         int objectTileX = object->getTileX();
 
@@ -413,26 +415,26 @@ bool TileMap::applyTileObjectPatterns()
                         {
                             if (objectTileX & 1)
                             {
-                                object->setSpriteID(pattern.SpriteIDList.front());
+                                object->setSpriteID(patternData.SpriteIDList.front());
                             }
                             else
                             {
-                                object->setSpriteID(pattern.SpriteIDList.back());
+                                object->setSpriteID(patternData.SpriteIDList.back());
                             }
                         }
                         else
                         {
                             if (objectTileX & 1)
                             {
-                                object->setSpriteID(pattern.SpriteIDList.back());
+                                object->setSpriteID(patternData.SpriteIDList.back());
                             }
                             else
                             {
-                                object->setSpriteID(pattern.SpriteIDList.front());
+                                object->setSpriteID(patternData.SpriteIDList.front());
                             }
                         }
                     }
-                    else if (pattern.Height > pattern.Width) // vertical
+                    else if (patternData.Height > patternData.Width) // vertical
                     {
                         int objectTileY = object->getTileY();
 
@@ -440,22 +442,22 @@ bool TileMap::applyTileObjectPatterns()
                         {
                             if (objectTileY & 1)
                             {
-                                object->setSpriteID(pattern.SpriteIDList.front());
+                                object->setSpriteID(patternData.SpriteIDList.front());
                             }
                             else
                             {
-                                object->setSpriteID(pattern.SpriteIDList.back());
+                                object->setSpriteID(patternData.SpriteIDList.back());
                             }
                         }
                         else
                         {
                             if (objectTileY & 1)
                             {
-                                object->setSpriteID(pattern.SpriteIDList.back());
+                                object->setSpriteID(patternData.SpriteIDList.back());
                             }
                             else
                             {
-                                object->setSpriteID(pattern.SpriteIDList.front());
+                                object->setSpriteID(patternData.SpriteIDList.front());
                             }
                         }
                     }
@@ -566,8 +568,7 @@ void TileMap::draw(const sf::IntRect& tileRect, sf::RenderTarget& renderTarget)
     m_vertexList.clear();
     m_vertexList.reserve(m_numTiles * 4);
 
-    unsigned int spritesSizeX = tb::Textures::Sprites.getSize().x;
-    unsigned int spritesSizeY = tb::Textures::Sprites.getSize().y;
+    sf::Vector2u spriteTextureSize = tb::Textures::Sprites.getSize();
 
     for (auto& tile : tileList)
     {
@@ -575,14 +576,14 @@ void TileMap::draw(const sf::IntRect& tileRect, sf::RenderTarget& renderTarget)
 
         if (tileSpriteID == tb::Constants::SpriteIDNull)
         {
-            continue;
+            return;
         }
 
         int tileX = tile->getTileX();
         int tileY = tile->getTileY();
 
-        unsigned int u = (tileSpriteID - 1) % (spritesSizeX / tb::Constants::TileSize);
-        unsigned int v = (tileSpriteID - 1) / (spritesSizeY / tb::Constants::TileSize);
+        unsigned int u = (tileSpriteID - 1) % (spriteTextureSize.x / tb::Constants::TileSize);
+        unsigned int v = (tileSpriteID - 1) / (spriteTextureSize.y / tb::Constants::TileSize);
 
         sf::Vertex vertex[4];
 
@@ -623,6 +624,18 @@ void TileMap::draw(const sf::IntRect& tileRect, sf::RenderTarget& renderTarget)
 
     for (auto& tile : tileList)
     {
+        tb::Object::List* tileEdgeObjectList = tile->getTileEdgeObjectList();
+
+        for (auto& tileEdgeObject : *tileEdgeObjectList)
+        {
+            tb::Sprite* tileEdgeObjectSprite = tileEdgeObject->getSprite();
+
+            spriteBatch.addSprite(tileEdgeObjectSprite, false);
+        }
+    }
+
+    for (auto& tile : tileList)
+    {
         tb::Thing::List thingList;
 
         tb::Object::List* objectList = tile->getObjectList();
@@ -632,10 +645,12 @@ void TileMap::draw(const sf::IntRect& tileRect, sf::RenderTarget& renderTarget)
 
         thingList.reserve(thingListReserveSize);
 
-        std::copy(objectList->begin(), objectList->end(), std::back_inserter(thingList));
-        std::copy(creatureList->begin(), creatureList->end(), std::back_inserter(thingList));
+        //std::copy(objectList->begin(), objectList->end(), std::back_inserter(thingList));
+        //std::copy(creatureList->begin(), creatureList->end(), std::back_inserter(thingList));
+        std::ranges::copy(objectList->begin(), objectList->end(), std::back_inserter(thingList));
+        std::ranges::copy(creatureList->begin(), creatureList->end(), std::back_inserter(thingList));
 
-        std::stable_sort(thingList.begin(), thingList.end(), tb::Thing::SortByTileCoords_t());
+        std::stable_sort(std::execution::par, thingList.begin(), thingList.end(), tb::Thing::SortByTileCoords_t());
 
         for (auto& thing : thingList)
         {
@@ -645,9 +660,9 @@ void TileMap::draw(const sf::IntRect& tileRect, sf::RenderTarget& renderTarget)
 
                 object->update();
 
-                tb::Sprite* sprite = object->getSprite();
+                tb::Sprite* objectSprite = object->getSprite();
 
-                spriteBatch.addSprite(sprite, true);
+                spriteBatch.addSprite(objectSprite, true);
             }
             else if (thing->getThingType() == tb::ThingType::Creature)
             {
@@ -655,9 +670,12 @@ void TileMap::draw(const sf::IntRect& tileRect, sf::RenderTarget& renderTarget)
 
                 creature->update();
 
-                tb::Sprite* sprite = creature->getDummySprite();
+                std::vector<tb::Sprite*> creatureSpriteList = creature->getSpriteList();
 
-                spriteBatch.addSprite(sprite, true);
+                for (auto& creatureSprite : creatureSpriteList)
+                {
+                    spriteBatch.addSprite(creatureSprite, false);
+                }
             }
         }
     }
@@ -665,6 +683,68 @@ void TileMap::draw(const sf::IntRect& tileRect, sf::RenderTarget& renderTarget)
     if (spriteBatch.getNumSprites() != 0)
     {
         spriteBatch.draw(renderTarget, renderStates);
+    }
+}
+
+void TileMap::drawLights(const sf::IntRect& tileRect, sf::RenderTarget& renderTarget)
+{
+    tb::Tile::List tileList = getTileListWithinTileRect(tileRect);
+
+    if (tileList.size() == 0)
+    {
+        return;
+    }
+
+    tb::LightBatch lightBatch;
+
+    for (auto& tile1 : tileList)
+    {
+        sf::Vector2f tile1Position = tile1->getPixelCoords();
+
+        tb::Object::List* objectList = tile1->getObjectList();
+
+        for (auto& object : *objectList)
+        {
+            tb::SpriteID_t objectSpriteID = object->getSpriteID();
+
+            tb::SpriteData::Data* objectSpriteData = &g_SpriteData.getDataList()->at(objectSpriteID);
+
+            float objectLightRadius = objectSpriteData->LightRadius;
+
+            if (objectLightRadius < 1.0f)
+            {
+                continue;
+            }
+
+            objectLightRadius = objectLightRadius * tb::Constants::TileSizeFloat;
+
+            for (auto& tile2 : tileList)
+            {
+                sf::Vector2f tile2Position = tile2->getPixelCoords();
+
+                float distance = -1.0f;
+
+                if (tb::Utility::isPositionInsideCircle(tile1Position, tile2Position, objectLightRadius, distance) == false)
+                {
+                    continue;
+                }
+
+                float brightness = objectLightRadius - distance;
+
+                float fixedBrightness = (brightness * 255.0f) / objectLightRadius;
+
+                uint8_t rgb = static_cast<uint8_t>(fixedBrightness);
+
+                sf::Color lightColor = sf::Color(rgb, rgb, rgb, 255);
+
+                lightBatch.addLight(tile2Position, lightColor);
+            }
+        }
+    }
+
+    if (lightBatch.getNumLights() != 0)
+    {
+        lightBatch.draw(renderTarget, sf::BlendAdd);
     }
 }
 

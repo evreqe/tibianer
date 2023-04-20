@@ -27,6 +27,8 @@ Object::Object(const sf::Vector2i& tileCoords, tb::ZAxis_t z, tb::SpriteID_t spr
 
     setSpriteID(spriteID);
 
+    update();
+
     //if (m_flags.test(tb::SpriteFlags::groupable))
     //{
         //setCountById();
@@ -39,7 +41,9 @@ Object::Object(const sf::Vector2i& tileCoords, tb::ZAxis_t z, tb::SpriteID_t spr
 
 void Object::update()
 {
-    m_sprite.setPosition(getPixelX(), getPixelY());
+    sf::Vector2f pixelCoords = getPixelCoords();
+
+    m_sprite.setPosition(pixelCoords);
 }
 
 /*
@@ -141,12 +145,6 @@ tb::SpriteID_t Object::getSpriteID()
 
 void Object::setSpriteID(tb::SpriteID_t spriteID)
 {
-    if (g_SpriteData.isLoaded() == false)
-    {
-        g_Log.write("ERROR: Sprite data is not loaded\n");
-        return;
-    }
-
     m_sprite.setID(spriteID);
 
     m_sprite.setTileWidthAndHeightByID(spriteID);

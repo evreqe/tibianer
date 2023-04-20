@@ -278,6 +278,8 @@ bool Map::load(const std::string& fileName)
                 {
                     tb::SpriteID_t spriteID = static_cast<tb::SpriteID_t>(std::stoi(token));
 
+                    //g_Log.write("spriteID: {}\n", spriteID);
+
                     tileSpriteIDList.push_back(spriteID);
                 }
             }
@@ -365,7 +367,7 @@ bool Map::load(const std::string& fileName)
 
                     //g_Log.write("object tile coords: {}x{}\n", objectTileCoords.x, objectTileCoords.y);
 
-                    if (mapObjectLayerType == tb::MapObjectLayerType::Objects)
+                    if (mapObjectLayerType == tb::MapObjectLayerType::Objects || mapObjectLayerType == tb::MapObjectLayerType::TileEdgeObjects)
                     {
                         tb::Object::Ptr object = std::make_shared<tb::Object>(objectTileCoords, tileMapZ, objectSpriteID);
 
@@ -373,7 +375,7 @@ bool Map::load(const std::string& fileName)
 
                         if (tileMap == nullptr)
                         {
-                            g_Log.write("Skipping object because tile map is nullptr\n");
+                            g_Log.write("Skipping object because tileMap == nullptr\n");
                             continue;
                         }
 
@@ -381,13 +383,13 @@ bool Map::load(const std::string& fileName)
 
                         if (tileList == nullptr)
                         {
-                            g_Log.write("Skipping object because tile list is nullptr\n");
+                            g_Log.write("Skipping object because tileList == nullptr\n");
                             continue;
                         }
 
                         if (tileList->size() == 0)
                         {
-                            g_Log.write("Skipping object because tile list is empty\n");
+                            g_Log.write("Skipping object because tileList is empty\n");
                             continue;
                         }
 
@@ -395,11 +397,18 @@ bool Map::load(const std::string& fileName)
 
                         if (tile == nullptr)
                         {
-                            g_Log.write("Skipping object because tile is nullptr\n");
+                            g_Log.write("Skipping object because tile == nullptr\n");
                             continue;
                         }
 
-                        tile->addObject(object);
+                        if (mapObjectLayerType == tb::MapObjectLayerType::Objects)
+                        {
+                            tile->addObject(object);
+                        }
+                        else if (mapObjectLayerType == tb::MapObjectLayerType::TileEdgeObjects)
+                        {
+                            tile->addTileEdgeObject(object);
+                        }
                     }
                 }
             }
@@ -409,6 +418,7 @@ bool Map::load(const std::string& fileName)
     sf::Clock timeToApplyObjectPatterns;
 
     g_Log.write("Applying tile object patterns to tile maps...\n");
+
     for (unsigned int i = tb::ZAxis::Min; i < tb::ZAxis::Max; i++)
     {
         if (m_tileMapTiles[i].applyTileObjectPatterns() == false)

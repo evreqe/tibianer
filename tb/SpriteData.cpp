@@ -21,11 +21,16 @@ bool SpriteData::load()
         return false;
     }
 
-    m_data.clear();
-    m_data = toml::parse_file(m_fileName);
-    if (m_data.size() == 0)
+    m_table.clear();
+
+    try
+    {
+        m_table = toml::parse_file(m_fileName);
+    }
+    catch (const toml::parse_error& parseError)
     {
         g_Log.write("ERROR: Failed to load data from file: {}\n", m_fileName);
+        g_Log.write("{}\n{}\n", parseError.description(), parseError.source().begin);
         return false;
     }
 
@@ -33,6 +38,9 @@ bool SpriteData::load()
 
     m_dataList.clear();
     m_dataList.reserve(m_numToLoad);
+
+    m_spriteNameToSpriteIDMap.clear();
+    m_spriteNameToSpriteIDMap.reserve(m_numToLoad);
 
     tb::SpriteData::Data firstData;
     firstData.SpriteID = 0;
@@ -44,7 +52,7 @@ bool SpriteData::load()
     {
         std::string index = std::to_string(i);
 
-        if (!m_data[index])
+        if (!m_table[index])
         {
             g_Log.write("ERROR: {} is missing data at index: [{}]\n", m_fileName, i);
             return false;
@@ -54,14 +62,15 @@ bool SpriteData::load()
 
         data.SpriteID = static_cast<tb::SpriteID_t>(i);
 
-        data.Name = m_data[index]["Name"].value_or("");
+        data.Name = m_table[index]["Name"].value_or("");
+        data.Article = m_table[index]["Article"].value_or("");
+        data.Description = m_table[index]["Description"].value_or("");
 
-        data.Article = m_data[index]["Article"].value_or("");
+        data.TileWidth = static_cast<uint8_t>(m_table[index]["TileWidth"].value_or(1));
+        data.TileHeight = static_cast<uint8_t>(m_table[index]["TileHeight"].value_or(1));
 
-        data.Weight = m_data[index]["Weight"].value_or(0.0f);
-
-        data.TileWidth = static_cast<uint8_t>(m_data[index]["TileWidth"].value_or(1));
-        data.TileHeight = static_cast<uint8_t>(m_data[index]["TileHeight"].value_or(1));
+        data.Weight = m_table[index]["Weight"].value_or(0.0f);
+        data.LightRadius = m_table[index]["LightRadius"].value_or(0.0f);
 
         tb::SpriteFlags spriteFlags;
 
@@ -69,7 +78,7 @@ bool SpriteData::load()
         {
             std::string spriteFlagKey = std::format("Flag{}", spriteFlagName);
 
-            bool spriteFlagValue = m_data[index][spriteFlagKey].value_or(false);
+            bool spriteFlagValue = m_table[index][spriteFlagKey].value_or(false);
 
             if (spriteFlagValue == true)
             {
@@ -85,6 +94,11 @@ bool SpriteData::load()
         data.SpriteFlags = spriteFlags;
 
         m_dataList.push_back(data);
+
+        if (data.Name.size() != 0)
+        {
+            m_spriteNameToSpriteIDMap.insert({data.Name, data.SpriteID});
+        }
     }
 
     g_Log.write("Loaded data size: {}\n", m_dataList.size());
@@ -100,7 +114,7 @@ bool SpriteData::load()
 
 bool SpriteData::isLoaded()
 {
-    if (m_data.size() == 0) return false;
+    if (m_table.size() == 0) return false;
     if (m_dataList.size() == 0) return false;
 
     return true;
@@ -128,13 +142,14 @@ bool SpriteData::save()
         file << std::format("[{}]\n", data.SpriteID);
 
         file << std::format("Name=\"{}\"\n", data.Name);
-
         file << std::format("Article=\"{}\"\n", data.Article);
-
-        file << std::format("Weight={:.2f}\n", data.Weight);
+        file << std::format("Description=\"{}\"\n", data.Description);
 
         file << std::format("TileWidth={}\n", data.TileWidth);
         file << std::format("TileHeight={}\n", data.TileHeight);
+
+        file << std::format("Weight={:.2f}\n", data.Weight);
+        file << std::format("LightRadius={:.2f}\n", data.LightRadius);
 
         for (auto& [spriteFlag, spriteFlagName] : tb::SpriteFlagEntries)
         {
@@ -155,6 +170,19 @@ bool SpriteData::save()
 tb::SpriteData::DataList* SpriteData::getDataList()
 {
     return &m_dataList;
+}
+
+tb::SpriteID_t SpriteData::getSpriteIDBySpriteName(const std::string& spriteName)
+{
+    auto it = m_spriteNameToSpriteIDMap.find(spriteName);
+    if (it != m_spriteNameToSpriteIDMap.end())
+    {
+        return it->second;
+    }
+    else
+    {
+        return 1;
+    }
 }
 
 }

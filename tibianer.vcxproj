@@ -117,6 +117,7 @@
       <AdditionalIncludeDirectories>Z:\Code\!libraries\boost_1_78_0;Z:\Code\!libraries\tomlplusplus-3.2.0;Z:\Code\!libraries\tomlplusplus-3.2.0\include;Z:\Code\!libraries\fmt-8.1.1\include;Z:\Code\!libraries\sol2-3.2.2\include;Z:\Code\!libraries\luajit-2.0.5\src;Z:\Code\!libraries\SFML-2.5.1\include;Z:\Code\!libraries\Thor-2.0\include;Z:\Code\tibianer\tibianer;Z:\Code\tibianer\tibianer\boost_zlib;Z:\Code\tibianer\tibianer\boost_base64;Z:\Code\tibianer\tibianer\pugixml;Z:\Code\tibianer\tibianer\imgui;Z:\Code\tibianer\tibianer\imgui-sfml;Z:\Code\tibianer\tibianer\magic_enum;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <EnableModules>true</EnableModules>
+      <OpenMPSupport>false</OpenMPSupport>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -157,13 +158,32 @@
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="pugixml\pugixml.cpp" />
+    <ClCompile Include="tb\AboutTibianerWindow.cpp" />
+    <ClCompile Include="tb\AboutTibiaWindow.cpp" />
+    <ClCompile Include="tb\Animation.cpp" />
+    <ClCompile Include="tb\AnimationData.cpp" />
+    <ClCompile Include="tb\BattleWindow.cpp" />
     <ClCompile Include="tb\BitmapFont.cpp" />
     <ClCompile Include="tb\BitmapFontData.cpp" />
     <ClCompile Include="tb\BitmapFontText.cpp" />
+    <ClCompile Include="tb\ClickRectData.cpp" />
+    <ClCompile Include="tb\CommentsWindow.cpp" />
+    <ClCompile Include="tb\ConnectionWindow.cpp" />
+    <ClCompile Include="tb\Container.cpp" />
+    <ClCompile Include="tb\ControlsWindow.cpp" />
     <ClCompile Include="tb\Creature.cpp" />
+    <ClCompile Include="tb\CreatureData.cpp" />
+    <ClCompile Include="tb\CursorData.cpp" />
+    <ClCompile Include="tb\EditTextWindow.cpp" />
     <ClCompile Include="tb\EnterGameWindow.cpp" />
     <ClCompile Include="tb\Entity.cpp" />
+    <ClCompile Include="tb\EquipmentWindow.cpp" />
+    <ClCompile Include="tb\FloatingText.cpp" />
     <ClCompile Include="tb\GameWindow.cpp" />
+    <ClCompile Include="tb\GuiData.cpp" />
+    <ClCompile Include="tb\HotkeysData.cpp" />
+    <ClCompile Include="tb\HotkeysWindow.cpp" />
+    <ClCompile Include="tb\LightBatch.cpp" />
     <ClCompile Include="tb\LogWindow.cpp" />
     <ClCompile Include="tb\Game.cpp" />
     <ClCompile Include="tb\GameText.cpp" />
@@ -172,11 +192,24 @@
     <ClCompile Include="tb\MapData.cpp" />
     <ClCompile Include="tb\MapSelectWindow.cpp" />
     <ClCompile Include="tb\MenuBar.cpp" />
+    <ClCompile Include="tb\MessageOfTheDayData.cpp" />
+    <ClCompile Include="tb\MessageOfTheDayWindow.cpp" />
+    <ClCompile Include="tb\MiniMapWindow.cpp" />
+    <ClCompile Include="tb\MoveObjectsWindow.cpp" />
     <ClCompile Include="tb\Object.cpp" />
+    <ClCompile Include="tb\OptionsData.cpp" />
+    <ClCompile Include="tb\OptionsWindow.cpp" />
     <ClCompile Include="tb\OutfitData.cpp" />
     <ClCompile Include="tb\OverlayWindow.cpp" />
     <ClCompile Include="tb\PatternData.cpp" />
+    <ClCompile Include="tb\Projectile.cpp" />
+    <ClCompile Include="tb\RayCast.cpp" />
     <ClCompile Include="tb\RenderWindow.cpp" />
+    <ClCompile Include="tb\Script.cpp" />
+    <ClCompile Include="tb\ScriptManager.cpp" />
+    <ClCompile Include="tb\SetOutfitWindow.cpp" />
+    <ClCompile Include="tb\SkillsWindow.cpp" />
+    <ClCompile Include="tb\SpellData.cpp" />
     <ClCompile Include="tb\Sprite.cpp" />
     <ClCompile Include="tb\SpriteBatch.cpp" />
     <ClCompile Include="tb\SpriteData.cpp" />
@@ -184,10 +217,14 @@
     <ClCompile Include="tb\SpriteEditorWindow.cpp" />
     <ClCompile Include="tb\SpriteFlags.cpp" />
     <ClCompile Include="tb\StatusBar.cpp" />
+    <ClCompile Include="tb\StatusEffect.cpp" />
+    <ClCompile Include="tb\StatusWindow.cpp" />
     <ClCompile Include="tb\TextureData.cpp" />
     <ClCompile Include="tb\Thing.cpp" />
     <ClCompile Include="tb\Tile.cpp" />
     <ClCompile Include="tb\TileMap.cpp" />
+    <ClCompile Include="tb\TipsAndTricksData.cpp" />
+    <ClCompile Include="tb\TipsAndTricksWindow.cpp" />
     <ClCompile Include="tb\WaterAnimationData.cpp" />
     <ClCompile Include="tb\Window.cpp" />
   </ItemGroup>
@@ -211,14 +248,33 @@
     <ClInclude Include="pugixml\pugiconfig.hpp" />
     <ClInclude Include="pugixml\pugixml.hpp" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="tb\AboutTibianerWindow.h" />
+    <ClInclude Include="tb\AboutTibiaWindow.h" />
+    <ClInclude Include="tb\Animation.h" />
+    <ClInclude Include="tb\AnimationData.h" />
+    <ClInclude Include="tb\BattleWindow.h" />
     <ClInclude Include="tb\BitmapFont.h" />
     <ClInclude Include="tb\BitmapFontData.h" />
     <ClInclude Include="tb\BitmapFontText.h" />
+    <ClInclude Include="tb\ClickRectData.h" />
+    <ClInclude Include="tb\CommentsWindow.h" />
+    <ClInclude Include="tb\ConnectionWindow.h" />
     <ClInclude Include="tb\Constants.h" />
+    <ClInclude Include="tb\Container.h" />
+    <ClInclude Include="tb\ControlsWindow.h" />
     <ClInclude Include="tb\Creature.h" />
+    <ClInclude Include="tb\CreatureData.h" />
+    <ClInclude Include="tb\CursorData.h" />
+    <ClInclude Include="tb\EditTextWindow.h" />
     <ClInclude Include="tb\EnterGameWindow.h" />
     <ClInclude Include="tb\Entity.h" />
+    <ClInclude Include="tb\EquipmentWindow.h" />
+    <ClInclude Include="tb\FloatingText.h" />
     <ClInclude Include="tb\GameWindow.h" />
+    <ClInclude Include="tb\GuiData.h" />
+    <ClInclude Include="tb\HotkeysData.h" />
+    <ClInclude Include="tb\HotkeysWindow.h" />
+    <ClInclude Include="tb\LightBatch.h" />
     <ClInclude Include="tb\LogWindow.h" />
     <ClInclude Include="tb\Game.h" />
     <ClInclude Include="tb\GameText.h" />
@@ -227,11 +283,24 @@
     <ClInclude Include="tb\MapData.h" />
     <ClInclude Include="tb\MapSelectWindow.h" />
     <ClInclude Include="tb\MenuBar.h" />
+    <ClInclude Include="tb\MessageOfTheDayData.h" />
+    <ClInclude Include="tb\MessageOfTheDayWindow.h" />
+    <ClInclude Include="tb\MiniMapWindow.h" />
+    <ClInclude Include="tb\MoveObjectsWindow.h" />
     <ClInclude Include="tb\Object.h" />
+    <ClInclude Include="tb\OptionsData.h" />
+    <ClInclude Include="tb\OptionsWindow.h" />
     <ClInclude Include="tb\OutfitData.h" />
     <ClInclude Include="tb\OverlayWindow.h" />
     <ClInclude Include="tb\PatternData.h" />
+    <ClInclude Include="tb\Projectile.h" />
+    <ClInclude Include="tb\RayCast.h" />
     <ClInclude Include="tb\RenderWindow.h" />
+    <ClInclude Include="tb\Script.h" />
+    <ClInclude Include="tb\ScriptManager.h" />
+    <ClInclude Include="tb\SetOutfitWindow.h" />
+    <ClInclude Include="tb\SkillsWindow.h" />
+    <ClInclude Include="tb\SpellData.h" />
     <ClInclude Include="tb\Sprite.h" />
     <ClInclude Include="tb\SpriteBatch.h" />
     <ClInclude Include="tb\SpriteData.h" />
@@ -239,10 +308,14 @@
     <ClInclude Include="tb\SpriteEditorWindow.h" />
     <ClInclude Include="tb\SpriteFlags.h" />
     <ClInclude Include="tb\StatusBar.h" />
+    <ClInclude Include="tb\StatusEffect.h" />
+    <ClInclude Include="tb\StatusWindow.h" />
     <ClInclude Include="tb\TextureData.h" />
     <ClInclude Include="tb\Thing.h" />
     <ClInclude Include="tb\Tile.h" />
     <ClInclude Include="tb\TileMap.h" />
+    <ClInclude Include="tb\TipsAndTricksData.h" />
+    <ClInclude Include="tb\TipsAndTricksWindow.h" />
     <ClInclude Include="tb\Utility.h" />
     <ClInclude Include="tb\WaterAnimationData.h" />
     <ClInclude Include="tb\Window.h" />

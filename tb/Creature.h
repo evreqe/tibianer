@@ -26,6 +26,9 @@ public:
     using Ptr = std::shared_ptr<tb::Creature>;
     using List = std::vector<tb::Creature::Ptr>;
 
+    using OutfitSpriteIDArray = std::array<tb::SpriteIDList, tb::Constants::NumOutfitSpriteIndex>;
+    using OutfitSpriteList = std::array<tb::Sprite::List, tb::Constants::NumOutfitSpriteIndex>;
+
     struct Properties_t
     {
         bool IsPlayer = false;
@@ -46,8 +49,17 @@ public:
         uint32_t Fishing             = tb::Constants::SkillLevelDefault;
     };
 
+    struct Outfit_t
+    {
+        uint8_t Head = 0;
+        uint8_t Body = 0;
+        uint8_t Legs = 0;
+        uint8_t Feet = 0;
+    };
+
     Properties_t* getProperties();
     Skills_t* getSkills();
+    Outfit_t* getOutfit();
 
     void update();
 
@@ -71,17 +83,19 @@ public:
 
     tb::Sprite* getDummySprite();
 
-    tb::SpriteID_t getOutfitSpriteID(tb::OutfitIndex_t outfitIndex);
-    void setOutfitSpriteID(tb::OutfitIndex_t outfitIndex, tb::SpriteID_t spriteID);
+    OutfitSpriteIDArray* getOutfitSpriteIDArray();
+    OutfitSpriteList* getOutfitSpriteList();
 
-    tb::Sprite* getOutfitSprite(tb::OutfitIndex_t outfitIndex);
-    void setOutfitSprite(tb::OutfitIndex_t outfitIndex, const tb::Sprite& sprite);
+    void setOutfitSprites(uint8_t head, uint8_t body, uint8_t legs, uint8_t feet);
+    void setOutfit(uint8_t head, uint8_t body, uint8_t legs, uint8_t feet);
+
+    std::vector<tb::Sprite*> getSpriteList();
 
 private:
 
     Properties_t m_properties;
-
     Skills_t m_skills;
+    Outfit_t m_outfit;
 
     uint8_t m_tileOffset;
     uint8_t m_tileWidth;
@@ -89,7 +103,7 @@ private:
 
     std::string m_name;
 
-    tb::Direction m_direction;
+    tb::Direction m_direction = tb::Direction::Down;
 
     tb::BloodType m_bloodType;
 
@@ -123,10 +137,9 @@ private:
     //tb::Sprite m_spriteCorpse[tb::NUM_CREATURE_SPRITES];
 
     // head, body, legs, feet
-    std::array<tb::SpriteID_t, tb::Constants::NumOutfitSpriteIndex> m_outfitSpriteIDList;
+    tb::Creature::OutfitSpriteIDArray m_outfitSpriteIDArray;
 
-    // up, right, down, left
-    std::array<tb::Sprite, tb::Constants::NumOutfitSpriteDirections> m_outfitSpriteList;
+    tb::Creature::OutfitSpriteList m_outfitSpriteList;
 
 /*
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const

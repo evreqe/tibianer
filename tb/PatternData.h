@@ -56,7 +56,7 @@ private:
 
     std::string m_fileName = "data/patterns.txt";
 
-    toml::table m_data;
+    toml::table m_table;
 
     tb::PatternData::DataList m_dataList;
 

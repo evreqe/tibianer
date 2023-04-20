@@ -1,3 +1,6 @@
+#pragma once
+
+/*
 #ifndef TIBIA_SCRIPT_HPP
 #define TIBIA_SCRIPT_HPP
 
@@ -121,3 +124,4 @@ private:
 } // namespace tibia
 
 #endif // TIBIA_SCRIPT_HPP
+*/

@@ -21,11 +21,16 @@ bool WaterAnimationData::load()
         return false;
     }
 
-    m_data.clear();
-    m_data = toml::parse_file(m_fileName);
-    if (m_data.size() == 0)
+    m_table.clear();
+
+    try
+    {
+        m_table = toml::parse_file(m_fileName);
+    }
+    catch (const toml::parse_error& parseError)
     {
         g_Log.write("ERROR: Failed to load data from file: {}\n", m_fileName);
+        g_Log.write("{}\n{}\n", parseError.description(), parseError.source().begin);
         return false;
     }
 
@@ -38,7 +43,7 @@ bool WaterAnimationData::load()
     {
         std::string index = std::to_string(i);
 
-        if (!m_data[index])
+        if (!m_table[index])
         {
             g_Log.write("ERROR: {} is missing data at index: [{}]\n", m_fileName, i);
             return false;
@@ -49,7 +54,7 @@ bool WaterAnimationData::load()
         tb::SpriteIDList spriteIDList;
         spriteIDList.reserve(tb::Constants::NumWaterSpritesPerAnimationFrame);
 
-        auto spritesArray = m_data[index]["Sprites"].as_array();
+        auto spritesArray = m_table[index]["Sprites"].as_array();
 
         if (spritesArray == nullptr)
         {
@@ -115,7 +120,7 @@ bool WaterAnimationData::load()
 
 bool WaterAnimationData::isLoaded()
 {
-    if (m_data.size() == 0) return false;
+    if (m_table.size() == 0) return false;
     if (m_spriteIDList_List.size() == 0) return false;
 
     return true;

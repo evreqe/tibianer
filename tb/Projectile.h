@@ -1,3 +1,6 @@
+#pragma once
+
+/*
 #ifndef TIBIA_PROJECTILE_HPP
 #define TIBIA_PROJECTILE_HPP
 
@@ -420,3 +423,4 @@ private:
 } // namespace tb
 
 #endif // TIBIA_PROJECTILE_HPP
+*/

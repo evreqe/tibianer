@@ -15,11 +15,18 @@ EnterGameWindow::~EnterGameWindow()
 
 void EnterGameWindow::draw()
 {
+    std::string playerName = g_OptionsData.getData()->PlayerName;
+
+    if (m_characterName.size() == 0)
+    {
+        m_characterName = playerName;
+    }
+
     center();
 
     bool* isVisible = getIsVisible();
 
-    ImGui::Begin("Enter Game##EnterGameWindow", isVisible, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove);
+    ImGui::Begin("Enter Game##EnterGameWindow", isVisible, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
 
     if (ImGui::BeginTable("##EnterGameWindowTable", 2, ImGuiTableFlags_BordersInnerV | ImGuiTableFlags_SizingStretchProp))
     {

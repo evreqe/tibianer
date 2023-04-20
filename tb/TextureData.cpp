@@ -21,11 +21,16 @@ bool TextureData::load()
         return false;
     }
 
-    m_data.clear();
-    m_data = toml::parse_file(m_fileName);
-    if (m_data.size() == 0)
+    m_table.clear();
+
+    try
+    {
+        m_table = toml::parse_file(m_fileName);
+    }
+    catch (const toml::parse_error& parseError)
     {
         g_Log.write("ERROR: Failed to load data from file: {}\n", m_fileName);
+        g_Log.write("{}\n{}\n", parseError.description(), parseError.source().begin);
         return false;
     }
 
@@ -38,7 +43,7 @@ bool TextureData::load()
     {
         std::string index = std::to_string(i);
 
-        if (!m_data[index])
+        if (!m_table[index])
         {
             break;
         }
@@ -49,7 +54,7 @@ bool TextureData::load()
 
         data.Index = i;
 
-        data.Name = m_data[index]["Name"].value_or("");
+        data.Name = m_table[index]["Name"].value_or("");
 
         if (data.Name.size() == 0)
         {
@@ -59,7 +64,7 @@ bool TextureData::load()
 
         g_Log.write("Name: {}\n", data.Name);
 
-        data.FileName = m_data[index]["FileName"].value_or("");
+        data.FileName = m_table[index]["FileName"].value_or("");
 
         if (data.FileName.size() == 0)
         {
@@ -69,8 +74,8 @@ bool TextureData::load()
 
         g_Log.write("FileName: {}\n", data.FileName);
 
-        data.Width = m_data[index]["Width"].value_or(0);
-        data.Height = m_data[index]["Height"].value_or(0);
+        data.Width = m_table[index]["Width"].value_or(0);
+        data.Height = m_table[index]["Height"].value_or(0);
 
         if (data.Width == 0 || data.Height == 0)
         {
@@ -81,7 +86,7 @@ bool TextureData::load()
         g_Log.write("Width: {}\n", data.Width);
         g_Log.write("Height: {}\n", data.Height);
 
-        data.Repeated = m_data[index]["Repeated"].value_or(false);
+        data.Repeated = m_table[index]["Repeated"].value_or(false);
 
         g_Log.write("Repeated: {}\n", data.Repeated);
 
@@ -101,7 +106,7 @@ bool TextureData::load()
 
 bool TextureData::isLoaded()
 {
-    if (m_data.size() == 0) return false;
+    if (m_table.size() == 0) return false;
     if (m_dataList.size() == 0) return false;
 
     return true;

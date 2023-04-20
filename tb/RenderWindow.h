@@ -38,7 +38,7 @@ public:
     {
         unsigned int FrameRateLimit = 60;
 
-        bool VerticalSync = false;
+        bool VerticalSync = true;
         bool StartMaximized = true;
     };
 
@@ -51,9 +51,12 @@ public:
     void handleClosedEvent(sf::Event event);
     void handleResizedEvent(sf::Event event);
 
-    sf::Vector2f getMousePosition();
+    sf::Vector2f getMousePosition2f();
+    sf::Vector2i getMousePosition2i();
 
     sf::RenderWindow* getWindow();
+
+    sf::Vector2u getDefaultSize();
 
 private:
 
@@ -61,8 +64,8 @@ private:
 
     sf::RenderWindow m_window;
 
-    unsigned int m_width = 1280;
-    unsigned int m_height = 720;
+    unsigned int m_widthDefault = 1280;
+    unsigned int m_heightDefault = 720;
 
     sf::Uint32 m_style = sf::Style::Titlebar | sf::Style::Close | sf::Style::Resize;
 

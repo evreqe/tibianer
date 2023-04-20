@@ -92,6 +92,7 @@ void MapSelectWindow::draw()
                 ImGui::EndChild();
             }
             ImGui::TextUnformatted(std::format("Size: {}x{}", selectedMapData->TileWidth, selectedMapData->TileHeight).c_str());
+            ImGui::TextUnformatted(std::format("File: {}", selectedMapData->FileName).c_str());
         }
 
         ImGui::EndTable();

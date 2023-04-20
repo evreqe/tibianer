@@ -91,6 +91,12 @@ bool MapData::load()
         data.TileWidth = xmlNode_map.attribute("width").as_uint(); // number of tiles hortizontally
         data.TileHeight = xmlNode_map.attribute("height").as_uint(); // number of tiles vertically
 
+        if (data.TileWidth == 0 || data.TileHeight == 0)
+        {
+            g_Log.write("ERROR: 'TileWidth' or 'TileHeight' is zero\n");
+            return false;
+        }
+
         g_Log.write("TileWidth: {}\n", data.TileWidth);
         g_Log.write("TileHeight: {}\n", data.TileHeight);
 
@@ -110,17 +116,32 @@ bool MapData::load()
             {
                 data.Name = xmlNode_map_properties_property__value;
 
+                if (data.Name.size() == 0)
+                {
+                    data.Name = "No name found";
+                }
+
                 g_Log.write("Name: {}\n", data.Name);
             }
             else if (xmlNode_map_properties_property__name == "Description")
             {
                 data.Description = xmlNode_map_properties_property__value;
 
+                if (data.Description.size() == 0)
+                {
+                    data.Description = "No description found";
+                }
+
                 g_Log.write("Description: {}\n", data.Description);
             }
             else if (xmlNode_map_properties_property__name == "Author")
             {
                 data.Author = xmlNode_map_properties_property__value;
+
+                if (data.Author.size() == 0)
+                {
+                    data.Author = "No author found";
+                }
 
                 g_Log.write("Author: {}\n", data.Author);
             }

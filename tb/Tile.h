@@ -74,6 +74,9 @@ public:
     void addObject(tb::Object::Ptr object);
     void removeObject(tb::Object::Ptr object);
 
+    void addTileEdgeObject(tb::Object::Ptr object);
+    void removeTileEdgeObject(tb::Object::Ptr object);
+
     void addCreature(tb::Creature::Ptr creature);
 
 /*

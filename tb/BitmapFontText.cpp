@@ -17,7 +17,7 @@ bool BitmapFontText::setText(tb::BitmapFont* bitmapFont, const std::string& text
 {
     if (bitmapFont == nullptr)
     {
-        g_Log.write("ERROR: nullptr\n");
+        g_Log.write("ERROR: bitmapFont == nullptr\n");
         return false;
     }
 

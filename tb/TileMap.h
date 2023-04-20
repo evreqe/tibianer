@@ -13,6 +13,11 @@
 #include "tb/Tile.h"
 #include "tb/Sprite.h"
 #include "tb/SpriteBatch.h"
+#include "tb/LightBatch.h"
+
+#include "tb/Thing.h"
+#include "tb/Object.h"
+#include "tb/Creature.h"
 
 namespace tb
 {
@@ -60,6 +65,8 @@ public:
     bool isVisibleWithinTileRect(const sf::IntRect& tileRect);
 
     void draw(const sf::IntRect& tileRect, sf::RenderTarget& renderTarget);
+
+    void drawLights(const sf::IntRect& tileRect, sf::RenderTarget& renderTarget);
 
 private:
 

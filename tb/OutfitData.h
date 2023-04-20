@@ -52,7 +52,7 @@ private:
 
     std::string m_fileName = "data/outfits.txt";
 
-    toml::table m_data;
+    toml::table m_table;
 
     tb::OutfitData::DataList m_dataList;
 

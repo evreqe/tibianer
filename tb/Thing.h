@@ -15,7 +15,7 @@ class Thing
 public:
 
     Thing();
-    virtual ~Thing(); // TODO: why is this virtual?
+    ~Thing();
 
     using Ptr = std::shared_ptr<tb::Thing>;
     using List = std::vector<tb::Thing::Ptr>;

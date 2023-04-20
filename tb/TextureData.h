@@ -57,11 +57,11 @@ namespace tb
 
         std::string m_fileName = "data/textures.txt";
 
-        toml::table m_data;
+        toml::table m_table;
 
         tb::TextureData::DataList m_dataList;
 
-        const unsigned int m_numToLoad = 16;
+        const unsigned int m_numToLoad = 32;
 
     };
 

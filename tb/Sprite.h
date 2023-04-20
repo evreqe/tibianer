@@ -19,8 +19,12 @@ public:
     Sprite();
     ~Sprite();
 
+    using List = std::vector<tb::Sprite>;
+
     tb::SpriteID_t getID();
     void setID(tb::SpriteID_t spriteID);
+
+    void setIDByName(const std::string& spriteName);
 
     void setTileWidthAndHeightByID(tb::SpriteID_t spriteID);
 

@@ -30,6 +30,13 @@ void Game::initImGui()
 
 bool Game::loadData()
 {
+    g_Log.write("Loading options data\n");
+    if (g_OptionsData.load() == false)
+    {
+        g_Log.write("ERROR: Failed to load options data\n");
+        return false;
+    }
+
     g_Log.write("Loading map data\n");
     if (g_MapData.load() == false)
     {
@@ -76,6 +83,20 @@ bool Game::loadData()
     if (g_OutfitData.load() == false)
     {
         g_Log.write("ERROR: Failed to load outfit data\n");
+        return false;
+    }
+
+    g_Log.write("Loading message of the day data\n");
+    if (g_MessageOfTheDayData.load() == false)
+    {
+        g_Log.write("ERROR: Failed to load message of the day data\n");
+        return false;
+    }
+
+    g_Log.write("Loading click rect data\n");
+    if (g_ClickRectData.load() == false)
+    {
+        g_Log.write("ERROR: Failed to load click rect data\n");
         return false;
     }
 
@@ -184,9 +205,11 @@ bool Game::loadMap(const std::string& fileName)
     g_Log.write("Loading map\n");
     if (g_Map.load(fileName) == false)
     {
-        g_Log.write("ERROR: Failed to load map\n");
+        g_Log.write("ERROR: Failed to load map from file: {}\n", fileName);
         return false;
     }
+
+    g_GameWindow.resetViewPositionOffset();
 
     g_Log.write("Creating player\n");
     if (createPlayer() == false)
@@ -398,12 +421,12 @@ void Game::drawBackgroundTextureWithWoodBorder(const sf::Texture& texture)
 
     ImGui::Separator();
 
-    ImGui::Text("colorEquation: %d", colorEquation);
-    ImGui::Text("alphaEquation: %d", alphaEquation);
-    ImGui::Text("colorSrcFactor: %d", colorSrcFactor);
-    ImGui::Text("colorDstFactor: %d", colorDstFactor);
-    ImGui::Text("alphaSrcFactor: %d", alphaSrcFactor);
-    ImGui::Text("alphaDstFactor: %d", alphaDstFactor);
+    ImGui::TextUnformatted("colorEquation: %d", colorEquation);
+    ImGui::TextUnformatted("alphaEquation: %d", alphaEquation);
+    ImGui::TextUnformatted("colorSrcFactor: %d", colorSrcFactor);
+    ImGui::TextUnformatted("colorDstFactor: %d", colorDstFactor);
+    ImGui::TextUnformatted("alphaSrcFactor: %d", alphaSrcFactor);
+    ImGui::TextUnformatted("alphaDstFactor: %d", alphaDstFactor);
 
     ImGui::Separator();
 
@@ -525,19 +548,96 @@ void Game::drawBackgroundTextureWithWoodBorder(const sf::Texture& texture)
     blackBorder.setFillColor(sf::Color(0, 0, 0));
     blackBorder.setPosition(sf::Vector2f(10.0f, 10.0f + menuBarHeight));
 
-    sf::RectangleShape backgroundTexture(sf::Vector2f(renderWindowWidth - 20.0f - 2.0f, renderWindowHeight - 20.0f - 2.0f - menuBarHeight - statusBarHeight));
-    backgroundTexture.setTexture(&texture);
-    backgroundTexture.setPosition(sf::Vector2f(10.0f + 1.0f, 10.0f + 1.0f + menuBarHeight));
+    m_backgroundTexture.setSize(sf::Vector2f(renderWindowWidth - 20.0f - 2.0f, renderWindowHeight - 20.0f - 2.0f - menuBarHeight - statusBarHeight));
+    m_backgroundTexture.setTexture(&texture);
+    m_backgroundTexture.setPosition(sf::Vector2f(10.0f + 1.0f, 10.0f + 1.0f + menuBarHeight));
 
     renderWindow->draw(blackBorder);
-    renderWindow->draw(backgroundTexture);
+    renderWindow->draw(m_backgroundTexture);
 
     drawWoodBorder(blackBorder.getGlobalBounds());
+}
+
+sf::FloatRect Game::getClickRect(const sf::Texture& texture, const std::string& name)
+{
+    sf::FloatRect clickRect;
+
+    tb::ClickRectData::Data* clickRectData = g_ClickRectData.getDataByName(name);
+
+    if (clickRectData == nullptr)
+    {
+        g_Log.write("ERROR: clickRectData == nullptr with name '{}'\n", name);
+
+        clickRect.left = 0.0f;
+        clickRect.top = 0.0f;
+        clickRect.width = 0.0f;
+        clickRect.height = 0.0f;
+
+        return clickRect;
+    }
+
+    sf::Vector2u textureSize = texture.getSize();
+
+    sf::Vector2f backgroundTextureSize = m_backgroundTexture.getSize();
+
+    sf::Vector2f backgroundTextureScale;
+    backgroundTextureScale.x = backgroundTextureSize.x / static_cast<float>(textureSize.x);
+    backgroundTextureScale.y = backgroundTextureSize.y / static_cast<float>(textureSize.y);
+
+    sf::Vector2f backgroundTexturePosition = m_backgroundTexture.getPosition();
+
+    clickRect.left = backgroundTexturePosition.x + (static_cast<float>(clickRectData->X) * backgroundTextureScale.x);
+    clickRect.top  = backgroundTexturePosition.y + (static_cast<float>(clickRectData->Y) * backgroundTextureScale.y);
+
+    clickRect.width  = static_cast<float>(clickRectData->Width)  * backgroundTextureScale.x;
+    clickRect.height = static_cast<float>(clickRectData->Height) * backgroundTextureScale.y;
+
+    return clickRect;
+}
+
+void Game::drawDebugRect(sf::FloatRect rect)
+{
+    sf::RectangleShape clickRectShape;
+    clickRectShape.setPosition(sf::Vector2f(rect.left, rect.top));
+    clickRectShape.setSize(sf::Vector2f(rect.width, rect.height));
+    clickRectShape.setFillColor(sf::Color::Transparent);
+    clickRectShape.setOutlineColor(sf::Color::Magenta);
+    clickRectShape.setOutlineThickness(1.0f);
+
+    sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
+
+    renderWindow->draw(clickRectShape);
+}
+
+void Game::drawDebugRectForWindows()
+{
+   if (isImGuiActive() == false)
+    {
+        if (g_GameWindow.isMouseInsideWindow() == true)
+        {
+            g_GameWindow.drawRect();
+        }
+    }
 }
 
 void Game::doGameStateEnterGame()
 {
     drawBackgroundTextureWithWoodBorder(tb::Textures::EnterGame);
+
+    if (isDebugModeEnabled() == true)
+    {
+        if (isImGuiActive() == false)
+        {
+            sf::FloatRect enterGameClickRect = getClickRect(tb::Textures::EnterGame, "EnterGame");
+
+            sf::Vector2f mousePosition = g_RenderWindow.getMousePosition2f();
+
+            if (enterGameClickRect.contains(mousePosition) == true)
+            {
+                drawDebugRect(enterGameClickRect);
+            }
+        }
+    }
 
     if (*g_EnterGameWindow.getIsVisible() == true)
     {
@@ -559,14 +659,14 @@ void Game::doGameStateLoading()
             }
             else
             {
+                ImGui::OpenPopup("Error##ErrorLoadingMap");
+
                 setGameState(tb::GameState::MapSelect);
 
                 g_MapSelectWindow.setIsVisible(true);
             }
 
             m_loadMapFileName = "";
-
-            m_loadMapFileName.clear();
         }
 
         m_numLoadingFrames = 0;
@@ -587,11 +687,33 @@ void Game::doGameStateMapSelect()
     {
         setGameState(tb::GameState::EnterGame);
     }
+
+    ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+    ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+    if (ImGui::BeginPopupModal("Error##ErrorLoadingMap", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove))
+    {
+        ImGui::TextUnformatted("Failed to load map file!\nSee log for details.");
+
+        ImGui::Separator();
+
+        if (ImGui::Button("OK##ErrorButtonOK", ImVec2(105.0f, 29.0f)))
+        {
+            ImGui::CloseCurrentPopup();
+        }
+
+        ImGui::EndPopup();
+    }
 }
 
 void Game::doGameStateInGame()
 {
     g_GameWindow.draw();
+
+    if (isDebugModeEnabled() == true)
+    {
+        drawDebugRectForWindows();
+    }
 
     doAnimatedWater();
 }
@@ -604,21 +726,21 @@ void Game::doAnimatedWater()
         return;
     }
 
-    sf::Time timeElapsed = m_animatedWaterClock.getElapsedTime();
-    if (timeElapsed >= tb::Constants::WaterAnimationFrameTime)
+    sf::Time animatedWaterTimeElapsed = m_animatedWaterClock.getElapsedTime();
+    if (animatedWaterTimeElapsed >= m_animatedWaterTime)
     {
         sf::IntRect gameWindowTileRect = g_GameWindow.getTileRect();
 
         if (g_Map.getTileMapTiles(tb::ZAxis::Default)->doAnimatedWater(gameWindowTileRect) == false)
         {
-            g_Log.write("ERROR: animated water failed\n");
+            g_Log.write("ERROR: Failed to animate water\n");
         }
 
         m_animatedWaterClock.restart();
     }
 }
 
-bool Game::isMouseInsideImGuiWindow()
+bool Game::isImGuiActive()
 {
     auto io = ImGui::GetIO();
 
@@ -659,6 +781,8 @@ bool Game::createPlayer()
     tb::Creature::Properties_t* playerProperties = player->getProperties();
     playerProperties->IsPlayer = true;
     playerProperties->HasOutfit = true;
+
+    player->setOutfit(0, 0, 0, 0);
 
     std::string playerName = g_EnterGameWindow.getCharacterName();
     if (playerName.size() == 0)
@@ -703,12 +827,18 @@ void Game::handleResizedEvent(sf::Event event)
 
 void Game::handleMouseWheelMovedEvent(sf::Event event)
 {
-    g_GameWindow.handleMouseWheelMovedEvent(event);
+    if (g_GameWindow.isMouseInsideWindow() == true)
+    {
+        g_GameWindow.handleMouseWheelMovedEvent(event);
+    }
 }
 
 void Game::handleMouseButtonPressedEvent(sf::Event event)
 {
-    g_GameWindow.handleMouseButtonPressedEvent(event);
+    if (g_GameWindow.isMouseInsideWindow() == true)
+    {
+        g_GameWindow.handleMouseButtonPressedEvent(event);
+    }
 
     if (event.mouseButton.button == sf::Mouse::Left)
     {
@@ -718,13 +848,105 @@ void Game::handleMouseButtonPressedEvent(sf::Event event)
 
 void Game::handleMouseButtonReleasedEvent(sf::Event event)
 {
-    g_GameWindow.handleMouseButtonReleasedEvent(event);
+    sf::Vector2f mousePosition;
+    mousePosition.x = static_cast<float>(event.mouseButton.x);
+    mousePosition.y = static_cast<float>(event.mouseButton.y);
+
+    if (g_GameWindow.isMouseInsideWindow() == true)
+    {
+        g_GameWindow.handleMouseButtonReleasedEvent(event);
+    }
 
     if (event.mouseButton.button == sf::Mouse::Left)
     {
         if (m_gameState == tb::GameState::EnterGame)
         {
-            g_EnterGameWindow.setIsVisible(true);
+            sf::FloatRect enterGameClickRect = getClickRect(tb::Textures::EnterGame, "EnterGame");
+
+            if (enterGameClickRect.contains(mousePosition) == true)
+            {
+                g_EnterGameWindow.setIsVisible(true);
+            }
+        }
+    }
+}
+
+void Game::handleKeyPressedEvent(sf::Event event)
+{
+    m_isAnyKeyPressed = true;
+}
+
+void Game::handleKeyReleasedEvent(sf::Event event)
+{
+    m_isAnyKeyPressed = false;
+}
+
+void Game::handleKeyboardInput()
+{
+    if (isDebugModeEnabled() == true)
+    {
+        if (m_gameState == tb::GameState::InGame)
+        {
+            sf::Time cameraKeyPressedTimeElapsed = m_cameraKeyPressedClock.getElapsedTime();
+
+            if (cameraKeyPressedTimeElapsed >= m_cameraKeyPressedTime)
+            {
+                // camera reset
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad5) == true || sf::Keyboard::isKeyPressed(sf::Keyboard::Num5) == true)
+                {
+                    g_GameWindow.resetViewPositionOffset();
+
+                    m_cameraKeyPressedClock.restart();
+                }
+
+                // camera up
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad8) == true || sf::Keyboard::isKeyPressed(sf::Keyboard::Num8) == true)
+                {
+                    sf::Vector2f viewPositionOffset = g_GameWindow.getViewPositionOffset();
+
+                    viewPositionOffset.y -= tb::Constants::TileSizeFloat;
+
+                    g_GameWindow.setViewPositionOffset(viewPositionOffset);
+
+                    m_cameraKeyPressedClock.restart();
+                }
+
+                // camera right
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad6) == true || sf::Keyboard::isKeyPressed(sf::Keyboard::Num6) == true)
+                {
+                    sf::Vector2f viewPositionOffset = g_GameWindow.getViewPositionOffset();
+
+                    viewPositionOffset.x += tb::Constants::TileSizeFloat;
+
+                    g_GameWindow.setViewPositionOffset(viewPositionOffset);
+
+                    m_cameraKeyPressedClock.restart();
+                }
+
+                // camera down
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad2) == true || sf::Keyboard::isKeyPressed(sf::Keyboard::Num2) == true)
+                {
+                    sf::Vector2f viewPositionOffset = g_GameWindow.getViewPositionOffset();
+
+                    viewPositionOffset.y += tb::Constants::TileSizeFloat;
+
+                    g_GameWindow.setViewPositionOffset(viewPositionOffset);
+
+                    m_cameraKeyPressedClock.restart();
+                }
+
+                // camera left
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad4) == true || sf::Keyboard::isKeyPressed(sf::Keyboard::Num4) == true)
+                {
+                    sf::Vector2f viewPositionOffset = g_GameWindow.getViewPositionOffset();
+
+                    viewPositionOffset.x -= tb::Constants::TileSizeFloat;
+
+                    g_GameWindow.setViewPositionOffset(viewPositionOffset);
+
+                    m_cameraKeyPressedClock.restart();
+                }
+            }
         }
     }
 }
@@ -746,28 +968,33 @@ void Game::processEvents()
         {
             handleResizedEvent(event);
         }
-        else if (event.type == sf::Event::MouseButtonPressed)
+
+        if (isImGuiActive() == false)
         {
-            if (isMouseInsideImGuiWindow() == false)
+            if (event.type == sf::Event::MouseButtonPressed)
             {
                 handleMouseButtonPressedEvent(event);
             }
-        }
-        else if (event.type == sf::Event::MouseButtonReleased)
-        {
-            if (isMouseInsideImGuiWindow() == false)
+            else if (event.type == sf::Event::MouseButtonReleased)
             {
                 handleMouseButtonReleasedEvent(event);
             }
-        }
-        else if (event.type == sf::Event::MouseWheelMoved)
-        {
-            if (isMouseInsideImGuiWindow() == false)
+            else if (event.type == sf::Event::MouseWheelMoved)
             {
                 handleMouseWheelMovedEvent(event);
             }
+            else if (event.type == sf::Event::KeyPressed)
+            {
+                 handleKeyPressedEvent(event);
+            }
+            else if (event.type == sf::Event::KeyReleased)
+            {
+                handleKeyReleasedEvent(event);
+            }
         }
     }
+
+    handleKeyboardInput();
 }
 
 void Game::fixMouseCursorForWindowResize(sf::RenderWindow* renderWindow)
@@ -916,15 +1143,21 @@ void Game::doOverlayText()
 
     g_OverlayWindow.addTextToList(playerCoordsText);
 
+    tb::Creature::Outfit_t* playerOutfit = m_player->getOutfit();
+
+    std::string playerOutfitText = std::format("Player Outfit: {},{},{},{}\n", playerOutfit->Head, playerOutfit->Body, playerOutfit->Legs, playerOutfit->Feet);
+
+    g_OverlayWindow.addTextToList(playerOutfitText);
+
     sf::Vector2i mousePositionInDesktop = getMousePositionInDesktop();
 
     std::string mousePositionInDesktopText = std::format("Desktop Mouse Position: {},{}\n", mousePositionInDesktop.x, mousePositionInDesktop.y);
 
     g_OverlayWindow.addTextToList(mousePositionInDesktopText);
 
-    sf::Vector2f mousePositionInRenderWindow = g_RenderWindow.getMousePosition();
+    sf::Vector2i mousePositionInRenderWindow = g_RenderWindow.getMousePosition2i();
 
-    std::string mousePositionInRenderWindowText = std::format("Render Window Mouse Position: {},{}\n", static_cast<int>(mousePositionInRenderWindow.x), static_cast<int>(mousePositionInRenderWindow.y));
+    std::string mousePositionInRenderWindowText = std::format("Render Window Mouse Position: {},{}\n", mousePositionInRenderWindow.x, mousePositionInRenderWindow.y);
 
     g_OverlayWindow.addTextToList(mousePositionInRenderWindowText);
 
@@ -1011,12 +1244,14 @@ void Game::run()
     sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
     if (renderWindow == nullptr)
     {
-        g_Log.write("ERROR: Render window not found\n");
+        g_Log.write("ERROR: renderWindow == nullptr\n");
         exit();
         return;
     }
 
     g_Log.write("Start rendering...\n");
+
+    sf::Time framesPerSecondPreviousTime = m_framesPerSecondClock.getElapsedTime();
 
     while (renderWindow->isOpen() == true)
     {
@@ -1026,7 +1261,7 @@ void Game::run()
 
         ImGui::SFML::Update(*renderWindow, m_deltaClock.restart());
 
-        renderWindow->clear(sf::Color::Magenta);
+        renderWindow->clear(sf::Color::Black);
 
         drawWoodBackground();
 
@@ -1079,6 +1314,56 @@ void Game::run()
             g_LogWindow.draw();
         }
 
+        if (*g_OptionsWindow.getIsVisible() == true)
+        {
+            g_OptionsWindow.draw();
+        }
+
+        if (*g_HotkeysWindow.getIsVisible() == true)
+        {
+            g_HotkeysWindow.draw();
+        }
+
+        if (*g_SetOutfitWindow.getIsVisible() == true)
+        {
+            g_SetOutfitWindow.draw();
+        }
+
+        if (*g_CommentsWindow.getIsVisible() == true)
+        {
+            g_CommentsWindow.draw();
+        }
+
+        if (*g_MessageOfTheDayWindow.getIsVisible() == true)
+        {
+            g_MessageOfTheDayWindow.draw();
+        }
+
+        if (*g_ConnectionWindow.getIsVisible() == true)
+        {
+            g_ConnectionWindow.draw();
+        }
+
+        if (*g_ControlsWindow.getIsVisible() == true)
+        {
+            g_ControlsWindow.draw();
+        }
+
+        if (*g_TipsAndTricksWindow.getIsVisible() == true)
+        {
+            g_TipsAndTricksWindow.draw();
+        }
+
+        if (*g_AboutTibiaWindow.getIsVisible() == true)
+        {
+            g_AboutTibiaWindow.draw();
+        }
+
+        if (*g_AboutTibianerWindow.getIsVisible() == true)
+        {
+            g_AboutTibianerWindow.draw();
+        }
+
         if (m_gameState == tb::GameState::InGame)
         {
             if (*g_OverlayWindow.getIsVisible() == true)
@@ -1086,6 +1371,20 @@ void Game::run()
                 g_OverlayWindow.draw();
             }
         }
+
+        sf::Time framesPerSecondCurrentTime = m_framesPerSecondClock.getElapsedTime();
+
+        float framesPerSecond = 1.0f / (framesPerSecondCurrentTime.asSeconds() - framesPerSecondPreviousTime.asSeconds());
+
+        std::string framesPerSecondText = std::format("{} FPS", std::floorf(framesPerSecond));
+
+        tb::BitmapFontText framesPerSecondBitmapFontText;
+        framesPerSecondBitmapFontText.setText(&m_tinyBitmapFont, framesPerSecondText, sf::Color::Green, false);
+        framesPerSecondBitmapFontText.setPosition(sf::Vector2f(0.0f, 0.0f + g_MenuBar.getHeight()));
+
+        renderWindow->draw(framesPerSecondBitmapFontText);
+
+        framesPerSecondPreviousTime = framesPerSecondCurrentTime;
 
         ImGui::SFML::Render(*renderWindow);
 
@@ -1097,7 +1396,17 @@ void Game::run()
 
 void Game::endGame()
 {
-    g_Game.setGameState(tb::GameState::EnterGame);
+    setGameState(tb::GameState::EnterGame);
+}
+
+bool Game::isDebugModeEnabled()
+{
+    return m_debugMode;
+}
+
+void Game::toggleDebugMode()
+{
+    tb::Utility::toggleBool(m_debugMode);
 }
 
 void Game::toggleDemoWindow()

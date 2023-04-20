@@ -20,6 +20,8 @@ void MenuBar::draw()
         return;
     }
 
+    bool isDebugModeEnabled = g_Game.isDebugModeEnabled();
+
     tb::GameState gameState = g_Game.getGameState();
 
     sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
@@ -41,8 +43,17 @@ void MenuBar::draw()
     {
         if (ImGui::BeginMenu("File##MenuItemFile"))
         {
-            if (ImGui::MenuItem("Options...##MenuItemFileOptions", 0)) {}
-            if (ImGui::MenuItem("Hotkeys...##MenuItemFileHotkeys", 0)) {}
+            if (ImGui::MenuItem("Options...##MenuItemFileOptions", 0))
+            {
+                g_OptionsWindow.load();
+
+                g_OptionsWindow.setIsVisible(true);
+            }
+
+            if (ImGui::MenuItem("Hotkeys...##MenuItemFileHotkeys", 0))
+            {
+                g_HotkeysWindow.setIsVisible(true);
+            }
 
             ImGui::Separator();
 
@@ -56,12 +67,12 @@ void MenuBar::draw()
 
         if (ImGui::BeginMenu("Game##MenuItemGame"))
         {
-            if (ImGui::MenuItem("Enter Game...##MenuItemGameEnterGame", 0, false, gameState == tb::GameState::EnterGame))
+            if (ImGui::MenuItem("Enter Game...##MenuItemGameEnterGame", 0, nullptr, gameState == tb::GameState::EnterGame))
             {
                 g_EnterGameWindow.setIsVisible(true);
             }
 
-            if (ImGui::MenuItem("End Game##MenuItemGameEndGame", 0, false, gameState == tb::GameState::InGame))
+            if (ImGui::MenuItem("End Game##MenuItemGameEndGame", 0, nullptr, gameState == tb::GameState::InGame))
             {
                 g_Game.endGame();
             }
@@ -71,7 +82,21 @@ void MenuBar::draw()
 
         if (ImGui::BeginMenu("Info##MenuItemInfo"))
         {
-            if (ImGui::MenuItem("Set Outfit...##MenuItemInfoSetOutfit", 0, false, gameState == tb::GameState::InGame)) {}
+            if (ImGui::MenuItem("Set Outfit...##MenuItemInfoSetOutfit", 0, nullptr, gameState == tb::GameState::InGame))
+            {
+                g_SetOutfitWindow.toggleIsVisible();
+            }
+
+            if (ImGui::MenuItem("Comments...##MenuItemInfoComments", 0, nullptr, isDebugModeEnabled == true))
+            {
+                g_CommentsWindow.toggleIsVisible();
+            }
+
+            if (ImGui::MenuItem("Message of the Day...##MenuItemInfoMessageOfTheDay", 0))
+            {
+                g_MessageOfTheDayWindow.toggleIsVisible();
+            }
+
             ImGui::EndMenu();
         }
 
@@ -119,6 +144,13 @@ void MenuBar::draw()
 
         if (ImGui::BeginMenu("Developer##MenuItemDeveloper"))
         {
+            if (ImGui::MenuItem("Debug Mode##MenuItemDeveloperDebugMode", 0, isDebugModeEnabled == true))
+            {
+                g_Game.toggleDebugMode();
+            }
+
+            ImGui::Separator();
+
             if (ImGui::MenuItem("Sprite Editor...##MenuItemDeveloperSpriteEditor", 0))
             {
                 g_SpriteEditorWindow.toggleIsVisible();
@@ -129,7 +161,7 @@ void MenuBar::draw()
                 g_SpriteDataWindow.toggleIsVisible();
             }
 
-            if (ImGui::MenuItem("Overlay...##MenuItemDeveloperOverlayWindow", 0, false, gameState == tb::GameState::InGame))
+            if (ImGui::MenuItem("Overlay...##MenuItemDeveloperOverlayWindow", 0, nullptr, gameState == tb::GameState::InGame))
             {
                 g_OverlayWindow.toggleIsVisible();
             }
@@ -159,10 +191,33 @@ void MenuBar::draw()
 
         if (ImGui::BeginMenu("Help##MenuItemHelp"))
         {
-            if (ImGui::MenuItem("Controls...##MenuItemHelpControls", 0)) {}
+            if (ImGui::MenuItem("Connection...##MenuItemHelpConnection", 0, nullptr, isDebugModeEnabled == true))
+            {
+                g_ConnectionWindow.toggleIsVisible();
+            }
+
+            if (ImGui::MenuItem("Controls...##MenuItemHelpControls", 0))
+            {
+                g_ControlsWindow.toggleIsVisible();
+            }
+
+            if (ImGui::MenuItem("Tips & Tricks...##MenuItemHelpTipsAndTricks", 0))
+            {
+                g_TipsAndTricksWindow.toggleIsVisible();
+            }
+
             ImGui::Separator();
-            if (ImGui::MenuItem("About Tibianer...##MenuItemHelpAboutTibianer", 0)) {}
-            if (ImGui::MenuItem("About Tibia...##MenuItemHelpAboutTibia", 0)) {}
+
+            if (ImGui::MenuItem("About Tibia...##MenuItemHelpAboutTibia", 0))
+            {
+                g_AboutTibiaWindow.toggleIsVisible();
+            }
+
+            if (ImGui::MenuItem("About Tibianer...##MenuItemHelpAboutTibianer", 0))
+            {
+                g_AboutTibianerWindow.toggleIsVisible();
+            }
+
             ImGui::EndMenu();
         }
 

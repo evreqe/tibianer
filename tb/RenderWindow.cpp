@@ -20,7 +20,7 @@ RenderWindow::Properties_t* RenderWindow::getProperties()
 
 bool RenderWindow::create()
 {
-    m_window.create(sf::VideoMode(m_width, m_height), tb::Constants::GameTitle, m_style);
+    m_window.create(sf::VideoMode(m_widthDefault, m_heightDefault), tb::Constants::GameTitle, m_style);
 
     if (m_icon.loadFromFile(m_iconFileName) == true)
     {
@@ -34,14 +34,21 @@ bool RenderWindow::create()
 
     unsigned int frameRateLimit = m_properties.FrameRateLimit;
 
-    if (frameRateLimit != 0)
-    {
-        m_window.setFramerateLimit(frameRateLimit);
-    }
+    m_window.setFramerateLimit(frameRateLimit);
 
-    m_window.setVerticalSyncEnabled(m_properties.VerticalSync);
+    g_Log.write("Frame Rate Limit: {}\n", frameRateLimit);
 
-    if (m_properties.StartMaximized == true)
+    bool verticalSync = m_properties.VerticalSync;
+
+    m_window.setVerticalSyncEnabled(verticalSync);
+
+    g_Log.write("Vertical Sync: {}\n", verticalSync);
+
+    bool startMaximized = m_properties.StartMaximized;
+
+    g_Log.write("Start Maximized: {}\n", verticalSync);
+
+    if (startMaximized == true)
     {
         //m_renderWindow.setSize(sf::Vector2u(sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height));
         //m_renderWindow.setPosition(sf::Vector2i(0, 0));
@@ -155,7 +162,7 @@ void RenderWindow::handleResizedEvent(sf::Event event)
     m_window.setView(sf::View(visibleArea));
 }
 
-sf::Vector2f RenderWindow::getMousePosition()
+sf::Vector2f RenderWindow::getMousePosition2f()
 {
     sf::Vector2i mousePosition2i = sf::Mouse::getPosition(m_window);
 
@@ -164,9 +171,26 @@ sf::Vector2f RenderWindow::getMousePosition()
     return mousePosition2f;
 }
 
+sf::Vector2i RenderWindow::getMousePosition2i()
+{
+    sf::Vector2f mousePosition2f = getMousePosition2f();
+
+    sf::Vector2i mousePosition2i;
+
+    mousePosition2i.x = static_cast<int>(mousePosition2f.x);
+    mousePosition2i.y = static_cast<int>(mousePosition2f.y);
+
+    return mousePosition2i;
+}
+
 sf::RenderWindow* RenderWindow::getWindow()
 {
     return &m_window;
+}
+
+sf::Vector2u RenderWindow::getDefaultSize()
+{
+    return {m_widthDefault, m_heightDefault};
 }
 
 }

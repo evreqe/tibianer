@@ -21,9 +21,9 @@ bool OutfitData::load()
         return false;
     }
 
-    m_data.clear();
-    m_data = toml::parse_file(m_fileName);
-    if (m_data.size() == 0)
+    m_table.clear();
+    m_table = toml::parse_file(m_fileName);
+    if (m_table.size() == 0)
     {
         g_Log.write("ERROR: Failed to load data from file: {}\n", m_fileName);
         return false;
@@ -38,7 +38,7 @@ bool OutfitData::load()
     {
         std::string index = std::to_string(i);
 
-        if (!m_data[index])
+        if (!m_table[index])
         {
             g_Log.write("ERROR: {} is missing data at index: [{}]\n", m_fileName, i);
             return false;
@@ -51,7 +51,7 @@ bool OutfitData::load()
 
         data.Index = i;
 
-        data.Name = m_data[index]["Name"].value_or("");
+        data.Name = m_table[index]["Name"].value_or("");
 
         if (data.Name.size() == 0)
         {
@@ -65,14 +65,14 @@ bool OutfitData::load()
         {
             std::string spritesIndex = std::format("Sprites{}", j);
 
-            if (!m_data[index][spritesIndex])
+            if (!m_table[index][spritesIndex])
             {
                 break;
             }
 
             //g_Log.write("Sprites# index: {}\n", j);
 
-            auto spritesArray = m_data[index][spritesIndex].as_array();
+            auto spritesArray = m_table[index][spritesIndex].as_array();
 
             if (spritesArray == nullptr)
             {
@@ -131,7 +131,7 @@ bool OutfitData::load()
 
 bool OutfitData::isLoaded()
 {
-    if (m_data.size() == 0) return false;
+    if (m_table.size() == 0) return false;
     if (m_dataList.size() == 0) return false;
 
     return true;
