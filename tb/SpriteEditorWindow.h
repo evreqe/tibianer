@@ -2,10 +2,6 @@
 
 #include "common.h"
 
-#include "imgui.h"
-#include "imgui_stdlib.h"
-#include "imgui-SFML.h"
-
 #include "tb/Window.h"
 
 #include "tb/MenuBar.h"
@@ -41,9 +37,11 @@ private:
 
 public:
 
-    void resetInputs();
-    void updateInputsFromSpriteData(tb::SpriteID_t spriteID);
-    void updateSpriteDataFromInputs(tb::SpriteID_t spriteID);
+    void onOpen();
+    void onClose();
+
+    void loadData();
+    void saveData();
 
     void draw();
 
@@ -52,21 +50,19 @@ public:
 
 private:
 
+    bool m_isOpen = false;
+
+    tb::SpriteData::DataList* m_spriteDataList = nullptr;
+
+    tb::SpriteData::Data* m_spriteData = nullptr;
+
     tb::SpriteID_t m_selectedSpriteID = 1;
 
-    tb::SpriteFlag m_highlightComboSpriteFlag = tb::SpriteFlag::Null;
+    tb::SpriteFlag m_highlightSpriteFlag = tb::SpriteFlag::Null;
+
+    const uint8_t m_scalarU8StepOne = 1;
 
     const ImVec2 m_buttonSize = ImVec2(105.0f, 29.0f);
-
-    std::string m_inputName;
-    std::string m_inputArticle;
-    std::string m_inputDescription;
-
-    int m_inputTileWidth = 1;
-    int m_inputTileHeight = 1;
-
-    float m_inputWeight = 0.0f;
-    float m_inputLightRadius = 0.0f;
 
 };
 

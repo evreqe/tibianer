@@ -2,10 +2,6 @@
 
 #include "common.h"
 
-#include "imgui.h"
-#include "imgui_stdlib.h"
-#include "imgui-SFML.h"
-
 #include "tb/Window.h"
 
 #include "tb/SpriteData.h"
@@ -42,7 +38,8 @@ public:
 
 private:
 
-    //
+    const ImVec2 m_windowSize = ImVec2(320.0f, 240.0f);
+
 };
 
 }

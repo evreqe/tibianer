@@ -64,9 +64,9 @@ public:
 
     bool isVisibleWithinTileRect(const sf::IntRect& tileRect);
 
-    void draw(const sf::IntRect& tileRect, sf::RenderTarget& renderTarget);
-
-    void drawLights(const sf::IntRect& tileRect, sf::RenderTarget& renderTarget);
+    void drawTiles(const sf::IntRect& tileRect, sf::RenderTarget& renderTarget);
+    void drawObjects(const sf::IntRect& tileRect, sf::RenderTarget& renderTarget);
+    void drawLights(const sf::IntRect& tileRect, sf::RenderTarget& renderTarget, tb::LightBrightness_t lightBrightness);
 
 private:
 
@@ -88,7 +88,7 @@ private:
 
     uint32_t m_waterAnimationFrame = 0;
 
-    std::vector<sf::Vertex> m_vertexList;
+    std::vector<sf::Vertex> m_tileVertexList;
 
 };
 

@@ -138,6 +138,8 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalIncludeDirectories>D:\Code\!libraries\boost_1_73_0;D:\Code\!libraries\fmt-6.2.1\include;D:\Code\!libraries\sol2-3.0.3\include;D:\Code\!libraries\SFML\include;D:\Code\!libraries\Thor\include;D:\Code\!libraries\Thor\extlibs\aurora\include;D:\Code\tibianer\tibianer\;D:\Code\tibianer\tibianer\boost_zlib;D:\Code\tibianer\tibianer\boost_base64;D:\Code\tibianer\tibianer\pugixml;D:\Code\tibianer\tibianer\imgui;D:\Code\tibianer\tibianer\imgui-sfml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+      <EnableModules>false</EnableModules>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -179,6 +181,7 @@
     <ClCompile Include="tb\Entity.cpp" />
     <ClCompile Include="tb\EquipmentWindow.cpp" />
     <ClCompile Include="tb\FloatingText.cpp" />
+    <ClCompile Include="tb\FontData.cpp" />
     <ClCompile Include="tb\GameWindow.cpp" />
     <ClCompile Include="tb\GuiData.cpp" />
     <ClCompile Include="tb\HotkeysData.cpp" />
@@ -270,6 +273,7 @@
     <ClInclude Include="tb\Entity.h" />
     <ClInclude Include="tb\EquipmentWindow.h" />
     <ClInclude Include="tb\FloatingText.h" />
+    <ClInclude Include="tb\FontData.h" />
     <ClInclude Include="tb\GameWindow.h" />
     <ClInclude Include="tb\GuiData.h" />
     <ClInclude Include="tb\HotkeysData.h" />

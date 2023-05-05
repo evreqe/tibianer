@@ -13,12 +13,21 @@ Game::~Game()
     //
 }
 
+Game::GuiState_t* Game::getGuiState()
+{
+    return &m_guiState;
+}
+
 void Game::initImGui()
 {
     ImGui::SFML::Init(*g_RenderWindow.getWindow());
 
-    // TODO: light mode vs dark mode
     ImGui::StyleColorsLight();
+
+    ImGuiStyle* style = &ImGui::GetStyle();
+
+    style->FrameBorderSize = 1.0f;
+    style->TabBorderSize = 1.0f;
 
     ImGuiIO& imguiIO = ImGui::GetIO();
 
@@ -28,7 +37,7 @@ void Game::initImGui()
     imguiIO.ConfigDockingWithShift = true;
 }
 
-bool Game::loadData()
+bool Game::loadConfig()
 {
     g_Log.write("Loading options data\n");
     if (g_OptionsData.load() == false)
@@ -37,6 +46,18 @@ bool Game::loadData()
         return false;
     }
 
+    g_Log.write("Loading hotkeys data\n");
+    if (g_HotkeysData.load() == false)
+    {
+        g_Log.write("ERROR: Failed to load hotkeys data\n");
+        return false;
+    }
+
+    return true;
+}
+
+bool Game::loadData()
+{
     g_Log.write("Loading map data\n");
     if (g_MapData.load() == false)
     {
@@ -55,6 +76,13 @@ bool Game::loadData()
     if (g_SpriteData.load() == false)
     {
         g_Log.write("ERROR: Failed to load sprite data\n");
+        return false;
+    }
+
+    g_Log.write("Loading font data\n");
+    if (g_FontData.load() == false)
+    {
+        g_Log.write("ERROR: Failed to load font data\n");
         return false;
     }
 
@@ -100,6 +128,20 @@ bool Game::loadData()
         return false;
     }
 
+    g_Log.write("Loading gui data\n");
+    if (g_GuiData.load() == false)
+    {
+        g_Log.write("ERROR: Failed to load gui data\n");
+        return false;
+    }
+
+    g_Log.write("Loading cursor data\n");
+    if (g_CursorData.load() == false)
+    {
+        g_Log.write("ERROR: Failed to load cursor data\n");
+        return false;
+    }
+
     return true;
 }
 
@@ -139,7 +181,6 @@ bool Game::loadTextures()
                     }
 
                     isFound = true;
-
                     break;
                 }
             }
@@ -152,6 +193,46 @@ bool Game::loadTextures()
         else
         {
             g_Log.write("ERROR: Failed to load texture '{}' from file: {}\n", textureData.Name, textureData.FileName);
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool Game::loadFonts()
+{
+    if (g_FontData.isLoaded() == false)
+    {
+        g_Log.write("ERROR: Font data is not loaded\n");
+        return false;
+    }
+
+    tb::FontData::DataList* fontDataList = g_FontData.getDataList();
+
+    for (auto& font : *fontDataList)
+    {
+        bool isFound = false;
+
+        for (auto& [fontName, fontObject] : tb::Fonts::Names)
+        {
+            if (font.Name == fontName)
+            {
+                if (fontObject.loadFromFile(font.FileName) == true)
+                {
+                    isFound = true;
+                    break;
+                }
+            }
+        }
+
+        if (isFound == true)
+        {
+            g_Log.write("Loaded font '{}' from file: {}\n", font.Name, font.FileName);
+        }
+        else
+        {
+            g_Log.write("ERROR: Failed to load font '{}' from file: {}\n", font.Name, font.FileName);
             return false;
         }
     }
@@ -180,7 +261,6 @@ bool Game::loadBitmapFonts()
                 if (bitmapFontObject.load(bitmapFont.FileName, sf::Vector2u(bitmapFont.GlyphWidth, bitmapFont.GlyphHeight), bitmapFont.TextHeight, &bitmapFont.GlyphWidthList) == true)
                 {
                     isFound = true;
-
                     break;
                 }
             }
@@ -193,6 +273,59 @@ bool Game::loadBitmapFonts()
         else
         {
             g_Log.write("ERROR: Failed to load bitmap font '{}' from file: {}\n", bitmapFont.Name, bitmapFont.FileName);
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool Game::loadCursors()
+{
+    if (g_CursorData.isLoaded() == false)
+    {
+        g_Log.write("ERROR: Cursor data is not loaded\n");
+        return false;
+    }
+
+    // system cursors
+    for (auto& [cursorType, cursorObject] : tb::Cursors::SystemCursorTypes)
+    {
+        cursorObject.loadFromSystem(cursorType);
+    }
+
+    tb::CursorData::DataList* cursorDataList = g_CursorData.getDataList();
+
+    // custom cursors
+    for (auto& cursor : *cursorDataList)
+    {
+        bool isFound = false;
+
+        for (auto& [cursorName, cursorObject] : tb::Cursors::CustomCursorNames)
+        {
+            if (cursor.Name == cursorName)
+            {
+                const sf::Uint8* cursorPixels = cursor.Image.getPixelsPtr();
+
+                sf::Vector2u cursorWidth = sf::Vector2u(cursor.Width, cursor.Height);
+
+                sf::Vector2u cursorHotSpot = sf::Vector2u(cursor.HotSpotX, cursor.HotSpotY);
+
+                if (cursorObject.loadFromPixels(cursorPixels, cursorWidth, cursorHotSpot) == true)
+                {
+                    isFound = true;
+                    break;
+                }
+            }
+        }
+
+        if (isFound == true)
+        {
+            g_Log.write("Loaded cursor '{}' from file: {}\n", cursor.Name, cursor.FileName);
+        }
+        else
+        {
+            g_Log.write("ERROR: Failed to load cursor '{}' from file: {}\n", cursor.Name, cursor.FileName);
             return false;
         }
     }
@@ -251,7 +384,7 @@ void Game::drawDockSpace()
 
     bool isDockSpaceVisible = true;
 
-    ImGui::Begin("DockSpace", &isDockSpaceVisible, dockSpaceWindowFlags);
+    ImGui::Begin("DockSpace##DockSpaceWindow", &isDockSpaceVisible, dockSpaceWindowFlags);
 
     ImGui::PopStyleVar(3);
 
@@ -259,6 +392,56 @@ void Game::drawDockSpace()
     ImGui::DockSpace(dockSpaceID, ImVec2(0.0f, 0.0f), dockSpaceFlags);
 
     ImGui::End();
+}
+
+void Game::drawFramesPerSecond()
+{
+    m_framesPerSecondCurrentTime = m_framesPerSecondClock.getElapsedTime();
+
+    m_framesPerSecond = 1.0f / (m_framesPerSecondCurrentTime.asSeconds() - m_framesPerSecondPreviousTime.asSeconds());
+
+    std::string framesPerSecondText = std::format("{} FPS", std::floorf(m_framesPerSecond));
+
+    tb::BitmapFontText framesPerSecondBitmapFontText;
+    framesPerSecondBitmapFontText.setText(&m_tinyBitmapFont, framesPerSecondText, sf::Color::Green, false);
+    framesPerSecondBitmapFontText.setPosition(sf::Vector2f(0.0f, 0.0f + g_MenuBar.getHeight()));
+
+    sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
+
+    renderWindow->draw(framesPerSecondBitmapFontText);
+
+    m_framesPerSecondPreviousTime = m_framesPerSecondCurrentTime;
+}
+
+void Game::drawLoadingText()
+{
+    sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
+
+    sf::Font renderWindowFont;
+    if (renderWindowFont.loadFromFile("fonts/arial.ttf") == false)
+    {
+        g_Log.write("ERROR: Failed to draw loading text\n");
+
+        renderWindow->clear(sf::Color::Blue);
+        renderWindow->display();
+
+        return;
+    }
+
+    sf::Text loadingText;
+    loadingText.setFont(renderWindowFont);
+    loadingText.setCharacterSize(64);
+    loadingText.setFillColor(sf::Color::White);
+    loadingText.setString("Loading...");
+
+    sf::FloatRect loadingTextRect = loadingText.getLocalBounds();
+
+    loadingText.setOrigin(sf::Vector2f(loadingTextRect.left + loadingTextRect.width / 2.0f, loadingTextRect.top + loadingTextRect.height / 2.0f));
+    loadingText.setPosition(renderWindow->getView().getCenter());
+
+    renderWindow->clear(sf::Color::Black);
+    renderWindow->draw(loadingText);
+    renderWindow->display();
 }
 
 void Game::drawWoodBackground()
@@ -274,8 +457,28 @@ void Game::drawWoodBackground()
     renderWindow->draw(wood);
 }
 
-void Game::drawWoodBorder(sf::FloatRect rect)
+void Game::drawWoodBorder(sf::FloatRect rect, bool drawBlackRectangle)
 {
+    sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
+
+    if (drawBlackRectangle == true)
+    {
+        sf::RectangleShape blackRect;
+        blackRect.setPosition(sf::Vector2f(rect.left, rect.top));
+        blackRect.setSize(sf::Vector2f(rect.width, rect.height));
+        blackRect.setFillColor(sf::Color::Transparent);
+        blackRect.setOutlineColor(sf::Color(0, 0, 0));
+        blackRect.setOutlineThickness(1.0f);
+
+        renderWindow->draw(blackRect);
+
+        // enlarge the rectangle by 1 pixel to account for the black rectangle
+        rect.left -= 1.0f;
+        rect.top -= 1.0f;
+        rect.width += 2.0f;
+        rect.height += 2.0f;
+    }
+
     sf::Sprite woodHorizontal1;
     sf::Sprite woodHorizontal2;
     sf::Sprite woodVertical1;
@@ -286,25 +489,27 @@ void Game::drawWoodBorder(sf::FloatRect rect)
     woodVertical1.setTexture(tb::Textures::WoodVertical1);
     woodVertical2.setTexture(tb::Textures::WoodVertical2);
 
-    unsigned int woodHorizontal1Height = tb::Textures::WoodHorizontal1.getSize().y;
-    unsigned int woodHorizontal2Height = tb::Textures::WoodHorizontal2.getSize().y;
+    sf::Vector2u woodHorizontal1Size = tb::Textures::WoodHorizontal1.getSize();
+    sf::Vector2u woodHorizontal2Size = tb::Textures::WoodHorizontal2.getSize();
 
-    unsigned int woodVertical1Width = tb::Textures::WoodVertical1.getSize().x;
-    unsigned int woodVertical2Width = tb::Textures::WoodVertical2.getSize().x;
+    sf::Vector2u woodVertical1Size = tb::Textures::WoodVertical1.getSize();
+    sf::Vector2u woodVertical2Size = tb::Textures::WoodVertical2.getSize();
 
-    woodHorizontal1.setPosition(sf::Vector2f(rect.left - 3.0f, rect.top - 3.0f));
-    woodHorizontal1.setTextureRect(sf::IntRect(0, 0, static_cast<int>(rect.width + 6.0f), woodHorizontal1Height));
+    // top
+    woodHorizontal1.setPosition(sf::Vector2f(rect.left - woodVertical1Size.x, rect.top - woodHorizontal1Size.y));
+    woodHorizontal1.setTextureRect(sf::IntRect(0, 0, rect.width + (woodVertical1Size.x * 2), woodHorizontal1Size.y));
 
-    woodHorizontal2.setPosition(sf::Vector2f(rect.left - 3.0f, rect.top + rect.height));
-    woodHorizontal2.setTextureRect(sf::IntRect(0, 0, static_cast<int>(rect.width + 6.0f), woodHorizontal2Height));
+    // bottom
+    woodHorizontal2.setPosition(sf::Vector2f(rect.left - woodVertical2Size.x, rect.top + rect.height));
+    woodHorizontal2.setTextureRect(sf::IntRect(0, 0, rect.width + (woodVertical2Size.x * 2), woodHorizontal2Size.y));
 
-    woodVertical1.setPosition(sf::Vector2f(rect.left - 3.0f, rect.top));
-    woodVertical1.setTextureRect(sf::IntRect(0, 0, woodVertical1Width, static_cast<int>(rect.height)));
+    // left
+    woodVertical1.setPosition(sf::Vector2f(rect.left - woodVertical1Size.x, rect.top));
+    woodVertical1.setTextureRect(sf::IntRect(0, 0, woodVertical1Size.x, rect.height));
 
+    // right
     woodVertical2.setPosition(sf::Vector2f(rect.left + rect.width, rect.top));
-    woodVertical2.setTextureRect(sf::IntRect(0, 0, woodVertical2Width, static_cast<int>(rect.height)));
-
-    sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
+    woodVertical2.setTextureRect(sf::IntRect(0, 0, woodHorizontal2Size.y, rect.height));
 
     renderWindow->draw(woodHorizontal1);
     renderWindow->draw(woodHorizontal2);
@@ -314,248 +519,22 @@ void Game::drawWoodBorder(sf::FloatRect rect)
 
 void Game::drawBackgroundTextureWithWoodBorder(const sf::Texture& texture)
 {
-/*
-        m_img = tb::Textures::InGame.copyToImage();
-
-        float levels = 3.0f;
-
-        float sr, sg, sb;
-        sf::Uint8 dr, dg, db;
-
-        for (unsigned int i = 0; i < m_img.getSize().x; ++i)
-        {
-            for (unsigned int j = 0; j < m_img.getSize().y; ++j)
-            {
-                auto pxl = m_img.getPixel(i, j);
-
-                pxl.r *= 0.75f;
-                pxl.g *= 0.75f;
-                pxl.b *= 0.75f;
-
-                sr = (float)(pxl.r) / 255.0f;
-                sg = (float)(pxl.g) / 255.0f;
-                sb = (float)(pxl.b) / 255.0f;
-
-                dr = 255 * std::roundf(sr * levels) / levels;
-                dg = 255 * std::roundf(sg * levels) / levels;
-                db = 255 * std::roundf(sb * levels) / levels;
-
-                m_img.setPixel(i, j, sf::Color(dr, dg, db));
-            }
-        }
-
-        m_tex.loadFromImage(m_img);
-
-        sf::Sprite spr;
-        spr.setTexture(m_tex);
-
-        m_renderWindow.draw(spr);
-
-        tb::Sprite spr2;
-        spr2.setID(4);
-
-        m_renderWindow.draw(spr2);
-
-        return;
-*/
-
-/*
-    sf::Sprite sprInGame2;
-    sprInGame2.setTexture(tb::Textures::InGame2);
-
-    m_renderWindow.draw(sprInGame2);
-
-    sf::RenderTexture rt;
-    rt.create(416, 288);
-    rt.clear(sf::Color::Transparent);
-
-    sf::Sprite sprLight;
-    sprLight.setTexture(tb::Textures::Light);
-    sprLight.setPosition(128, 128);
-
-    rt.draw(sprLight, sf::BlendAdd);
-
-    sprLight.setPosition(0, 0);
-
-    rt.draw(sprLight, sf::BlendAdd);
-
-    sf::RectangleShape rect;
-    rect.setSize(sf::Vector2f(416.0f, 288.0f));
-    rect.setFillColor(sf::Color(255, 255, 255, 64));
-
-    rt.draw(rect, sf::BlendAdd);
-
-    rt.display();
-
-    sf::Sprite sprRt;
-    sprRt.setTexture(rt.getTexture());
-
-    sf::BlendMode linearBurn = sf::BlendMultiply;
-    //linearBurn.colorEquation = sf::BlendMode::Equation::Add;
-    //linearBurn.alphaEquation = sf::BlendMode::Equation::Add;
-    //linearBurn.colorSrcFactor = sf::BlendMode::Factor::One;
-    //linearBurn.colorDstFactor = sf::BlendMode::Factor::SrcColor;
-    //linearBurn.alphaSrcFactor = sf::BlendMode::Factor::One;
-    //linearBurn.alphaDstFactor = sf::BlendMode::Factor::SrcColor;
-
-    static uint32_t colorEquation = 2; // sf::BlendMode::Equation::Add;
-    static uint32_t alphaEquation = 2; // sf::BlendMode::Equation::Add;
-    static uint32_t colorSrcFactor = 3; // sf::BlendMode::Factor::One;
-    static uint32_t colorDstFactor = 2; // sf::BlendMode::Factor::SrcColor;
-    static uint32_t alphaSrcFactor = 8; // sf::BlendMode::Factor::One;
-    static uint32_t alphaDstFactor = 8; // sf::BlendMode::Factor::SrcColor;
-
-    bool isVisible = true;
-    ImGui::Begin("Blend Mode##BlendModeWindow", &isVisible);
-
-    if (ImGui::Button("Random##BlendModeRandom"))
-    {
-        colorEquation = tb::Utility::getRandomNumber(0, 2);
-        alphaEquation = tb::Utility::getRandomNumber(0, 2);
-
-        colorSrcFactor = tb::Utility::getRandomNumber(0, 9);
-        colorDstFactor = tb::Utility::getRandomNumber(0, 9);
-        alphaSrcFactor = tb::Utility::getRandomNumber(0, 9);
-        alphaDstFactor = tb::Utility::getRandomNumber(0, 9);
-    }
-
-    ImGui::Separator();
-
-    ImGui::TextUnformatted("colorEquation: %d", colorEquation);
-    ImGui::TextUnformatted("alphaEquation: %d", alphaEquation);
-    ImGui::TextUnformatted("colorSrcFactor: %d", colorSrcFactor);
-    ImGui::TextUnformatted("colorDstFactor: %d", colorDstFactor);
-    ImGui::TextUnformatted("alphaSrcFactor: %d", alphaSrcFactor);
-    ImGui::TextUnformatted("alphaDstFactor: %d", alphaDstFactor);
-
-    ImGui::Separator();
-
-    if (ImGui::BeginTable("##BlendModeTable", 2, ImGuiTableFlags_BordersOuter))
-    {
-        ImGui::TableNextRow();
-
-        ImGui::TableSetColumnIndex(0);
-
-        if (ImGui::Button("ColorEquationAdd##BlendModeColorEquationAdd")) { colorEquation = sf::BlendMode::Equation::Add; }
-        if (ImGui::Button("ColorEquationSubtract##BlendModeColorEquationSubtract")) { colorEquation = sf::BlendMode::Equation::Subtract; }
-        if (ImGui::Button("ColorEquationReverseSubtract##BlendModeColorEquationReverseSubtract")) { colorEquation = sf::BlendMode::Equation::ReverseSubtract; }
-
-        ImGui::Separator();
-
-        ImGui::TableSetColumnIndex(1);
-
-        if (ImGui::Button("AlphaEquationAdd##BlendModeAlphaEquationAdd")) { alphaEquation = sf::BlendMode::Equation::Add; }
-        if (ImGui::Button("AlphaEquationSubtract##BlendModeAlphaEquationSubtract")) { alphaEquation = sf::BlendMode::Equation::Subtract; }
-        if (ImGui::Button("AlphaEquationReverseSubtract##BlendModeAlphaEquationReverseSubtract")) { alphaEquation = sf::BlendMode::Equation::ReverseSubtract; }
-
-        ImGui::Separator();
-
-        ImGui::TableNextRow();
-
-        ImGui::TableSetColumnIndex(0);
-
-        if (ImGui::Button("ColorSrcFactorDstAlpha##BlendModeColorSrcFactorDstAlpha")) { colorSrcFactor = sf::BlendMode::Factor::DstAlpha; }
-        if (ImGui::Button("ColorSrcFactorDstColor##BlendModeColorSrcFactorDstColor")) { colorSrcFactor = sf::BlendMode::Factor::DstColor; }
-        if (ImGui::Button("ColorSrcFactorOne##BlendModeColorSrcFactorOne")) { colorSrcFactor = sf::BlendMode::Factor::One; }
-        if (ImGui::Button("ColorSrcFactorOneMinusDstAlpha##BlendModeColorSrcFactorOneMinusDstAlpha")) { colorSrcFactor = sf::BlendMode::Factor::OneMinusDstAlpha; }
-        if (ImGui::Button("ColorSrcFactorOneMinusDstColor##BlendModeColorSrcFactorOneMinusDstColor")) { colorSrcFactor = sf::BlendMode::Factor::OneMinusDstColor; }
-        if (ImGui::Button("ColorSrcFactorOneMinusSrcAlpha##BlendModeColorSrcFactorOneMinusSrcAlpha")) { colorSrcFactor = sf::BlendMode::Factor::OneMinusSrcAlpha; }
-        if (ImGui::Button("ColorSrcFactorOneMinusSrcColor##BlendModeColorSrcFactorOneMinusSrcColor")) { colorSrcFactor = sf::BlendMode::Factor::OneMinusSrcColor; }
-        if (ImGui::Button("ColorSrcFactorSrcAlpha##BlendModeColorSrcFactorSrcAlpha")) { colorSrcFactor = sf::BlendMode::Factor::SrcAlpha; }
-        if (ImGui::Button("ColorSrcFactorSrcColor##BlendModeColorSrcFactorSrcColor")) { colorSrcFactor = sf::BlendMode::Factor::SrcColor; }
-        if (ImGui::Button("ColorSrcFactorZero##BlendModeColorSrcFactorZero")) { colorSrcFactor = sf::BlendMode::Factor::Zero; }
-
-        ImGui::Separator();
-
-        ImGui::TableSetColumnIndex(1);
-
-        if (ImGui::Button("ColorDstFactorDstAlpha##BlendModeColorDstFactorDstAlpha")) { colorDstFactor = sf::BlendMode::Factor::DstAlpha; }
-        if (ImGui::Button("ColorDstFactorDstColor##BlendModeColorDstFactorDstColor")) { colorDstFactor = sf::BlendMode::Factor::DstColor; }
-        if (ImGui::Button("ColorDstFactorOne##BlendModeColorDstFactorOne")) { colorDstFactor = sf::BlendMode::Factor::One; }
-        if (ImGui::Button("ColorDstFactorOneMinusDstAlpha##BlendModeColorDstFactorOneMinusDstAlpha")) { colorDstFactor = sf::BlendMode::Factor::OneMinusDstAlpha; }
-        if (ImGui::Button("ColorDstFactorOneMinusDstColor##BlendModeColorDstFactorOneMinusDstColor")) { colorDstFactor = sf::BlendMode::Factor::OneMinusDstColor; }
-        if (ImGui::Button("ColorDstFactorOneMinusSrcAlpha##BlendModeColorDstFactorOneMinusSrcAlpha")) { colorDstFactor = sf::BlendMode::Factor::OneMinusSrcAlpha; }
-        if (ImGui::Button("ColorDstFactorOneMinusSrcColor##BlendModeColorDstFactorOneMinusSrcColor")) { colorDstFactor = sf::BlendMode::Factor::OneMinusSrcColor; }
-        if (ImGui::Button("ColorDstFactorSrcAlpha##BlendModeColorDstFactorSrcAlpha")) { colorDstFactor = sf::BlendMode::Factor::SrcAlpha; }
-        if (ImGui::Button("ColorDstFactorSrcColor##BlendModeColorDstFactorSrcColor")) { colorDstFactor = sf::BlendMode::Factor::SrcColor; }
-        if (ImGui::Button("ColorDstFactorZero##BlendModeColorDstFactorZero")) { colorDstFactor = sf::BlendMode::Factor::Zero; }
-
-        ImGui::Separator();
-
-        ImGui::TableNextRow();
-
-        ImGui::TableSetColumnIndex(0);
-
-        if (ImGui::Button("AlphaSrcFactorDstAlpha##BlendModeAlphaSrcFactorDstAlpha")) { alphaSrcFactor = sf::BlendMode::Factor::DstAlpha; }
-        if (ImGui::Button("AlphaSrcFactorDstColor##BlendModeAlphaSrcFactorDstColor")) { alphaSrcFactor = sf::BlendMode::Factor::DstColor; }
-        if (ImGui::Button("AlphaSrcFactorOne##BlendModeAlphaSrcFactorOne")) { alphaSrcFactor = sf::BlendMode::Factor::One; }
-        if (ImGui::Button("AlphaSrcFactorOneMinusDstAlpha##BlendModeAlphaSrcFactorOneMinusDstAlpha")) { alphaSrcFactor = sf::BlendMode::Factor::OneMinusDstAlpha; }
-        if (ImGui::Button("AlphaSrcFactorOneMinusDstColor##BlendModeAlphaSrcFactorOneMinusDstColor")) { alphaSrcFactor = sf::BlendMode::Factor::OneMinusDstColor; }
-        if (ImGui::Button("AlphaSrcFactorOneMinusSrcAlpha##BlendModeAlphaSrcFactorOneMinusSrcAlpha")) { alphaSrcFactor = sf::BlendMode::Factor::OneMinusSrcAlpha; }
-        if (ImGui::Button("AlphaSrcFactorOneMinusSrcColor##BlendModeAlphaSrcFactorOneMinusSrcColor")) { alphaSrcFactor = sf::BlendMode::Factor::OneMinusSrcColor; }
-        if (ImGui::Button("AlphaSrcFactorSrcAlpha##BlendModeAlphaSrcFactorSrcAlpha")) { alphaSrcFactor = sf::BlendMode::Factor::SrcAlpha; }
-        if (ImGui::Button("AlphaSrcFactorSrcColor##BlendModeAlphaSrcFactorSrcColor")) { alphaSrcFactor = sf::BlendMode::Factor::SrcColor; }
-        if (ImGui::Button("AlphaSrcFactorZero##BlendModeAlphaSrcFactorZero")) { alphaSrcFactor = sf::BlendMode::Factor::Zero; }
-
-        ImGui::TableSetColumnIndex(1);
-
-        if (ImGui::Button("AlphaDstFactorDstAlpha##BlendModeAlphaDstFactorDstAlpha")) { alphaDstFactor = sf::BlendMode::Factor::DstAlpha; }
-        if (ImGui::Button("AlphaDstFactorDstColor##BlendModeAlphaDstFactorDstColor")) { alphaDstFactor = sf::BlendMode::Factor::DstColor; }
-        if (ImGui::Button("AlphaDstFactorOne##BlendModeAlphaDstFactorOne")) { alphaDstFactor = sf::BlendMode::Factor::One; }
-        if (ImGui::Button("AlphaDstFactorOneMinusDstAlpha##BlendModeAlphaDstFactorOneMinusDstAlpha")) { alphaDstFactor = sf::BlendMode::Factor::OneMinusDstAlpha; }
-        if (ImGui::Button("AlphaDstFactorOneMinusDstColor##BlendModeAlphaDstFactorOneMinusDstColor")) { alphaDstFactor = sf::BlendMode::Factor::OneMinusDstColor; }
-        if (ImGui::Button("AlphaDstFactorOneMinusSrcAlpha##BlendModeAlphaDstFactorOneMinusSrcAlpha")) { alphaDstFactor = sf::BlendMode::Factor::OneMinusSrcAlpha; }
-        if (ImGui::Button("AlphaDstFactorOneMinusSrcColor##BlendModeAlphaDstFactorOneMinusSrcColor")) { alphaDstFactor = sf::BlendMode::Factor::OneMinusSrcColor; }
-        if (ImGui::Button("AlphaDstFactorSrcAlpha##BlendModeAlphaDstFactorSrcAlpha")) { alphaDstFactor = sf::BlendMode::Factor::SrcAlpha; }
-        if (ImGui::Button("AlphaDstFactorSrcColor##BlendModeAlphaDstFactorSrcColor")) { alphaDstFactor = sf::BlendMode::Factor::SrcColor; }
-        if (ImGui::Button("AlphaDstFactorZero##BlendModeAlphaDstFactorZero")) { alphaDstFactor = sf::BlendMode::Factor::Zero; }
-
-        ImGui::EndTable();
-    }
-
-    ImGui::End();
-
-    linearBurn.colorEquation = (sf::BlendMode::Equation)colorEquation;
-    linearBurn.alphaEquation = (sf::BlendMode::Equation)alphaEquation;
-    linearBurn.colorSrcFactor = (sf::BlendMode::Factor)colorSrcFactor;
-    linearBurn.colorDstFactor = (sf::BlendMode::Factor)colorDstFactor;
-    linearBurn.alphaSrcFactor = (sf::BlendMode::Factor)alphaSrcFactor;
-    linearBurn.alphaDstFactor = (sf::BlendMode::Factor)alphaDstFactor;
-
-    // light.png
-    // 2 2 3 2 8 8
-    // 2 0 3 2 8 8
-
-    // light2.png
-    // 2 2 8 8 8 8
-    // 2 2 5 8 8 8
-    // 2 2 2 8 8 8
-
-    m_renderWindow.draw(sprRt, linearBurn);
-
-    return;
-*/
-
     sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
 
-    float renderWindowWidth = static_cast<float>(renderWindow->getSize().x);
-    float renderWindowHeight = static_cast<float>(renderWindow->getSize().y);
+    sf::Vector2f renderWindowSize = static_cast<sf::Vector2f>(renderWindow->getSize());
 
     float menuBarHeight = g_MenuBar.getHeight();
     float statusBarHeight = g_StatusBar.getHeight();
 
-    sf::RectangleShape blackBorder(sf::Vector2f(renderWindowWidth - 20.0f, renderWindowHeight - 20.0f - menuBarHeight - statusBarHeight));
-    blackBorder.setFillColor(sf::Color(0, 0, 0));
-    blackBorder.setPosition(sf::Vector2f(10.0f, 10.0f + menuBarHeight));
+    float padding = tb::Constants::PaddingBackgroundTexture + tb::Constants::PaddingWoodBorder + tb::Constants::PaddingBlackRectangle;
 
-    m_backgroundTexture.setSize(sf::Vector2f(renderWindowWidth - 20.0f - 2.0f, renderWindowHeight - 20.0f - 2.0f - menuBarHeight - statusBarHeight));
-    m_backgroundTexture.setTexture(&texture);
-    m_backgroundTexture.setPosition(sf::Vector2f(10.0f + 1.0f, 10.0f + 1.0f + menuBarHeight));
+    m_backgroundTextureShape.setTexture(&texture, true);
+    m_backgroundTextureShape.setPosition(sf::Vector2f(padding, padding + menuBarHeight));
+    m_backgroundTextureShape.setSize(sf::Vector2f(renderWindowSize.x - (padding * 2.0f), renderWindowSize.y - (padding * 2.0f) - menuBarHeight - statusBarHeight));
 
-    renderWindow->draw(blackBorder);
-    renderWindow->draw(m_backgroundTexture);
+    renderWindow->draw(m_backgroundTextureShape);
 
-    drawWoodBorder(blackBorder.getGlobalBounds());
+    drawWoodBorder(m_backgroundTextureShape.getGlobalBounds(), true);
 }
 
 sf::FloatRect Game::getClickRect(const sf::Texture& texture, const std::string& name)
@@ -576,15 +555,15 @@ sf::FloatRect Game::getClickRect(const sf::Texture& texture, const std::string& 
         return clickRect;
     }
 
-    sf::Vector2u textureSize = texture.getSize();
+    sf::Vector2f textureSize = static_cast<sf::Vector2f>(texture.getSize());
 
-    sf::Vector2f backgroundTextureSize = m_backgroundTexture.getSize();
+    sf::Vector2f backgroundTextureSize = m_backgroundTextureShape.getSize();
 
     sf::Vector2f backgroundTextureScale;
-    backgroundTextureScale.x = backgroundTextureSize.x / static_cast<float>(textureSize.x);
-    backgroundTextureScale.y = backgroundTextureSize.y / static_cast<float>(textureSize.y);
+    backgroundTextureScale.x = backgroundTextureSize.x / textureSize.x;
+    backgroundTextureScale.y = backgroundTextureSize.y / textureSize.y;
 
-    sf::Vector2f backgroundTexturePosition = m_backgroundTexture.getPosition();
+    sf::Vector2f backgroundTexturePosition = m_backgroundTextureShape.getPosition();
 
     clickRect.left = backgroundTexturePosition.x + (static_cast<float>(clickRectData->X) * backgroundTextureScale.x);
     clickRect.top  = backgroundTexturePosition.y + (static_cast<float>(clickRectData->Y) * backgroundTextureScale.y);
@@ -611,11 +590,16 @@ void Game::drawDebugRect(sf::FloatRect rect)
 
 void Game::drawDebugRectForWindows()
 {
-   if (isImGuiActive() == false)
+   if (tb::Utility::MyImGui::isActive() == false)
     {
         if (g_GameWindow.isMouseInsideWindow() == true)
         {
-            g_GameWindow.drawRect();
+            g_GameWindow.drawDebugRect();
+        }
+
+        if (g_MiniMapWindow.isMouseInsideWindow() == true)
+        {
+            g_MiniMapWindow.drawDebugRect();
         }
     }
 }
@@ -626,7 +610,7 @@ void Game::doGameStateEnterGame()
 
     if (isDebugModeEnabled() == true)
     {
-        if (isImGuiActive() == false)
+        if (tb::Utility::MyImGui::isActive() == false)
         {
             sf::FloatRect enterGameClickRect = getClickRect(tb::Textures::EnterGame, "EnterGame");
 
@@ -649,7 +633,7 @@ void Game::doGameStateLoading()
 {
     drawBackgroundTextureWithWoodBorder(tb::Textures::Loading);
 
-    if (m_numLoadingFrames > 1)
+    if (m_numLoadingFrames > m_numLoadingFramesMax)
     {
         if (m_loadMapFileName.size() != 0)
         {
@@ -709,6 +693,7 @@ void Game::doGameStateMapSelect()
 void Game::doGameStateInGame()
 {
     g_GameWindow.draw();
+    g_MiniMapWindow.draw();
 
     if (isDebugModeEnabled() == true)
     {
@@ -740,28 +725,6 @@ void Game::doAnimatedWater()
     }
 }
 
-bool Game::isImGuiActive()
-{
-    auto io = ImGui::GetIO();
-
-    if (io.WantCaptureKeyboard == true || io.WantCaptureMouse == true)
-    {
-        return true;
-    }
-
-    if (ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow) == true)
-    {
-        return true;
-    }
-
-    if (ImGui::IsAnyItemHovered() == true)
-    {
-        return true;
-    }
-
-    return false;
-}
-
 sf::Vector2i Game::getMousePositionInDesktop()
 {
     // get mouse position in operating system desktop
@@ -782,9 +745,11 @@ bool Game::createPlayer()
     playerProperties->IsPlayer = true;
     playerProperties->HasOutfit = true;
 
-    player->setOutfit(0, 0, 0, 0);
+    tb::OptionsData::Data* optionsData = g_OptionsData.getData();
 
-    std::string playerName = g_EnterGameWindow.getCharacterName();
+    player->setOutfit(optionsData->PlayerOutfitHead, optionsData->PlayerOutfitBody, optionsData->PlayerOutfitLegs, optionsData->PlayerOutfitFeet);
+
+    std::string playerName = optionsData->PlayerName;
     if (playerName.size() == 0)
     {
         playerName = tb::Constants::PlayerNameDefault;
@@ -892,7 +857,7 @@ void Game::handleKeyboardInput()
             if (cameraKeyPressedTimeElapsed >= m_cameraKeyPressedTime)
             {
                 // camera reset
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad5) == true || sf::Keyboard::isKeyPressed(sf::Keyboard::Num5) == true)
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad0) == true || sf::Keyboard::isKeyPressed(sf::Keyboard::Num0) == true)
                 {
                     g_GameWindow.resetViewPositionOffset();
 
@@ -924,7 +889,7 @@ void Game::handleKeyboardInput()
                 }
 
                 // camera down
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad2) == true || sf::Keyboard::isKeyPressed(sf::Keyboard::Num2) == true)
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad5) == true || sf::Keyboard::isKeyPressed(sf::Keyboard::Num5) == true)
                 {
                     sf::Vector2f viewPositionOffset = g_GameWindow.getViewPositionOffset();
 
@@ -969,7 +934,7 @@ void Game::processEvents()
             handleResizedEvent(event);
         }
 
-        if (isImGuiActive() == false)
+        if (tb::Utility::MyImGui::isActive() == false)
         {
             if (event.type == sf::Event::MouseButtonPressed)
             {
@@ -997,6 +962,13 @@ void Game::processEvents()
     handleKeyboardInput();
 }
 
+void Game::setMouseCursor(const sf::Cursor& cursor)
+{
+    sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
+
+    renderWindow->setMouseCursor(cursor);
+}
+
 void Game::fixMouseCursorForWindowResize(sf::RenderWindow* renderWindow)
 {
     // this function fixes a bug between imgui, SFML and imgui-SFML
@@ -1016,7 +988,7 @@ void Game::fixMouseCursorForWindowResize(sf::RenderWindow* renderWindow)
         {
             imguiIO.ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange;
 
-            renderWindow->setMouseCursor(m_arrowCursor);
+            renderWindow->setMouseCursor(tb::Cursors::Arrow);
         }
         imguiHasCursorPrev = imguiHasCursor;
     }
@@ -1161,6 +1133,12 @@ void Game::doOverlayText()
 
     g_OverlayWindow.addTextToList(mousePositionInRenderWindowText);
 
+    sf::Vector2f mousePixelPositionInGameWindow = g_GameWindow.getMousePixelPosition();
+
+    std::string mousePixelPositionInGameWindowText = std::format("Game Window Mouse Pixel Position: {},{}\n", mousePixelPositionInGameWindow.x, mousePixelPositionInGameWindow.y);
+
+    g_OverlayWindow.addTextToList(mousePixelPositionInGameWindowText);
+
     sf::Vector2f mousePixelCoordsInGameWindow = g_GameWindow.getMousePixelCoords();
 
     std::string mousePixelCoordsInGameWindowText = std::format("Game Window Mouse Pixel Coords: {},{}\n", mousePixelCoordsInGameWindow.x, mousePixelCoordsInGameWindow.y);
@@ -1195,12 +1173,16 @@ void Game::exit()
 void Game::run()
 {
     g_Log.deleteContents();
-
     g_Log.open();
-
     g_Log.write("{} (Build: {} {})\n", tb::Constants::GameTitle, __DATE__, __TIME__);
 
-    // TODO: LOAD CONFIG
+    g_Log.write("Loading config\n");
+    if (loadConfig() == false)
+    {
+        g_Log.write("ERROR: Failed to load config\n");
+        exit();
+        return;
+    }
 
     g_Log.write("Creating render window\n");
     if (g_RenderWindow.create() == false)
@@ -1209,6 +1191,16 @@ void Game::run()
         exit();
         return;
     }
+
+    sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
+    if (renderWindow == nullptr)
+    {
+        g_Log.write("ERROR: renderWindow == nullptr\n");
+        exit();
+        return;
+    }
+
+    drawLoadingText();
 
     g_Log.write("Initializing ImGui\n");
     initImGui();
@@ -1229,6 +1221,14 @@ void Game::run()
         return;
     }
 
+    g_Log.write("Loading fonts\n");
+    if (loadFonts() == false)
+    {
+        g_Log.write("ERROR: Failed to load fonts\n");
+        exit();
+        return;
+    }
+
     g_Log.write("Loading bitmap fonts\n");
     if (loadBitmapFonts() == false)
     {
@@ -1237,21 +1237,17 @@ void Game::run()
         return;
     }
 
-    g_Log.write("Loading mouse cursors\n");
-    // TODO: load all the cursors
-    m_arrowCursor.loadFromSystem(sf::Cursor::Arrow);
-
-    sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
-    if (renderWindow == nullptr)
+    g_Log.write("Loading cursors\n");
+    if (loadCursors() == false)
     {
-        g_Log.write("ERROR: renderWindow == nullptr\n");
+        g_Log.write("ERROR: Failed to load cursors\n");
         exit();
         return;
     }
 
     g_Log.write("Start rendering...\n");
 
-    sf::Time framesPerSecondPreviousTime = m_framesPerSecondClock.getElapsedTime();
+    m_framesPerSecondPreviousTime = m_framesPerSecondClock.getElapsedTime();
 
     while (renderWindow->isOpen() == true)
     {
@@ -1372,19 +1368,7 @@ void Game::run()
             }
         }
 
-        sf::Time framesPerSecondCurrentTime = m_framesPerSecondClock.getElapsedTime();
-
-        float framesPerSecond = 1.0f / (framesPerSecondCurrentTime.asSeconds() - framesPerSecondPreviousTime.asSeconds());
-
-        std::string framesPerSecondText = std::format("{} FPS", std::floorf(framesPerSecond));
-
-        tb::BitmapFontText framesPerSecondBitmapFontText;
-        framesPerSecondBitmapFontText.setText(&m_tinyBitmapFont, framesPerSecondText, sf::Color::Green, false);
-        framesPerSecondBitmapFontText.setPosition(sf::Vector2f(0.0f, 0.0f + g_MenuBar.getHeight()));
-
-        renderWindow->draw(framesPerSecondBitmapFontText);
-
-        framesPerSecondPreviousTime = framesPerSecondCurrentTime;
+        drawFramesPerSecond();
 
         ImGui::SFML::Render(*renderWindow);
 
@@ -1399,14 +1383,36 @@ void Game::endGame()
     setGameState(tb::GameState::EnterGame);
 }
 
+bool Game::isDeveloperModeEnabled()
+{
+    tb::OptionsData::Data* optionsData = g_OptionsData.getData();
+
+    return optionsData->GameDeveloperMode;
+}
+
+void Game::toggleDeveloperMode()
+{
+    tb::OptionsData::Data* optionsData = g_OptionsData.getData();
+
+    tb::Utility::toggleBool(optionsData->GameDeveloperMode);
+
+    g_OptionsData.save();
+}
+
 bool Game::isDebugModeEnabled()
 {
-    return m_debugMode;
+    tb::OptionsData::Data* optionsData = g_OptionsData.getData();
+
+    return optionsData->GameDebugMode;
 }
 
 void Game::toggleDebugMode()
 {
-    tb::Utility::toggleBool(m_debugMode);
+    tb::OptionsData::Data* optionsData = g_OptionsData.getData();
+
+    tb::Utility::toggleBool(optionsData->GameDebugMode);
+
+    g_OptionsData.save();
 }
 
 void Game::toggleDemoWindow()

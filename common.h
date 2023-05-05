@@ -44,6 +44,12 @@
 #include "fmt/ostream.h"
 #include "fmt/ranges.h"
 
+#include "imgui.h"
+#include "imgui_stdlib.h"
+#include "imgui-SFML.h"
+
+#include "toml.hpp"
+
 #include "magic_enum.hpp"
 using namespace magic_enum::bitwise_operators;
 

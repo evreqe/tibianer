@@ -172,12 +172,12 @@ tb::Tile::List TileMap::getTileListWithinTileRect(const sf::IntRect& tileRect)
     int x1 = tileRect.left;
     int y1 = tileRect.top;
 
-    int x2 = tileRect.width;
-    int y2 = tileRect.height;
+    int x2 = x1 + tileRect.width;
+    int y2 = y1 + tileRect.height;
 
-    for (int tileX = x1; tileX < x1 + x2; tileX++)
+    for (int tileX = x1; tileX < x2; tileX++)
     {
-        for (int tileY = y1; tileY < y1 + y2; tileY++)
+        for (int tileY = y1; tileY < y2; tileY++)
         {
             if (tileX < 0) continue;
             if (tileY < 0) continue;
@@ -512,12 +512,12 @@ bool TileMap::isVisibleWithinTileRect(const sf::IntRect& tileRect)
     int x1 = tileRect.left;
     int y1 = tileRect.top;
 
-    int x2 = tileRect.width;
-    int y2 = tileRect.height;
+    int x2 = x1 + tileRect.width;
+    int y2 = y1 + tileRect.height;
 
-    for (int tileX = x1; tileX < x1 + x2; tileX++)
+    for (int tileX = x1; tileX < x2; tileX++)
     {
-        for (int tileY = y1; tileY < y1 + y2; tileY++)
+        for (int tileY = y1; tileY < y2; tileY++)
         {
             if (tileX < 0) continue;
             if (tileY < 0) continue;
@@ -553,7 +553,7 @@ bool TileMap::isVisibleWithinTileRect(const sf::IntRect& tileRect)
     return false;
 }
 
-void TileMap::draw(const sf::IntRect& tileRect, sf::RenderTarget& renderTarget)
+void TileMap::drawTiles(const sf::IntRect& tileRect, sf::RenderTarget& renderTarget)
 {
     tb::Tile::List tileList = getTileListWithinTileRect(tileRect);
 
@@ -562,11 +562,8 @@ void TileMap::draw(const sf::IntRect& tileRect, sf::RenderTarget& renderTarget)
         return;
     }
 
-    sf::RenderStates renderStates;
-    renderStates.texture = &tb::Textures::Sprites;
-
-    m_vertexList.clear();
-    m_vertexList.reserve(m_numTiles * 4);
+    m_tileVertexList.clear();
+    m_tileVertexList.reserve(m_numTiles * 4);
 
     sf::Vector2u spriteTextureSize = tb::Textures::Sprites.getSize();
 
@@ -607,17 +604,30 @@ void TileMap::draw(const sf::IntRect& tileRect, sf::RenderTarget& renderTarget)
             vertex[3].color = sf::Color::Transparent;
         }
 
-        m_vertexList.push_back(vertex[0]);
-        m_vertexList.push_back(vertex[1]);
-        m_vertexList.push_back(vertex[2]);
-        m_vertexList.push_back(vertex[3]);
+        m_tileVertexList.push_back(vertex[0]);
+        m_tileVertexList.push_back(vertex[1]);
+        m_tileVertexList.push_back(vertex[2]);
+        m_tileVertexList.push_back(vertex[3]);
     }
 
-    //g_Log.write("m_vertexList.size(): {}\n", m_vertexList.size());
+    //g_Log.write("m_tileVertexList.size(): {}\n", m_tileVertexList.size());
 
-    if (m_vertexList.size() != 0)
+    if (m_tileVertexList.size() != 0)
     {
-        renderTarget.draw(&m_vertexList[0], m_vertexList.size(), sf::Quads, renderStates);
+        sf::RenderStates renderStates;
+        renderStates.texture = &tb::Textures::Sprites;
+
+        renderTarget.draw(&m_tileVertexList[0], m_tileVertexList.size(), sf::Quads, renderStates);
+    }
+}
+
+void TileMap::drawObjects(const sf::IntRect& tileRect, sf::RenderTarget& renderTarget)
+{
+    tb::Tile::List tileList = getTileListWithinTileRect(tileRect);
+
+    if (tileList.size() == 0)
+    {
+        return;
     }
 
     tb::SpriteBatch spriteBatch;
@@ -632,10 +642,7 @@ void TileMap::draw(const sf::IntRect& tileRect, sf::RenderTarget& renderTarget)
 
             spriteBatch.addSprite(tileEdgeObjectSprite, false);
         }
-    }
 
-    for (auto& tile : tileList)
-    {
         tb::Thing::List thingList;
 
         tb::Object::List* objectList = tile->getObjectList();
@@ -645,10 +652,8 @@ void TileMap::draw(const sf::IntRect& tileRect, sf::RenderTarget& renderTarget)
 
         thingList.reserve(thingListReserveSize);
 
-        //std::copy(objectList->begin(), objectList->end(), std::back_inserter(thingList));
-        //std::copy(creatureList->begin(), creatureList->end(), std::back_inserter(thingList));
-        std::ranges::copy(objectList->begin(), objectList->end(), std::back_inserter(thingList));
-        std::ranges::copy(creatureList->begin(), creatureList->end(), std::back_inserter(thingList));
+        std::copy(objectList->begin(), objectList->end(), std::back_inserter(thingList));
+        std::copy(creatureList->begin(), creatureList->end(), std::back_inserter(thingList));
 
         std::stable_sort(std::execution::par, thingList.begin(), thingList.end(), tb::Thing::SortByTileCoords_t());
 
@@ -682,11 +687,14 @@ void TileMap::draw(const sf::IntRect& tileRect, sf::RenderTarget& renderTarget)
 
     if (spriteBatch.getNumSprites() != 0)
     {
+        sf::RenderStates renderStates;
+        renderStates.texture = &tb::Textures::Sprites;
+
         spriteBatch.draw(renderTarget, renderStates);
     }
 }
 
-void TileMap::drawLights(const sf::IntRect& tileRect, sf::RenderTarget& renderTarget)
+void TileMap::drawLights(const sf::IntRect& tileRect, sf::RenderTarget& renderTarget, tb::LightBrightness_t lightBrightness)
 {
     tb::Tile::List tileList = getTileListWithinTileRect(tileRect);
 
@@ -729,11 +737,9 @@ void TileMap::drawLights(const sf::IntRect& tileRect, sf::RenderTarget& renderTa
                     continue;
                 }
 
-                float brightness = objectLightRadius - distance;
+                float brightness = ((objectLightRadius - distance) / objectLightRadius) * 255.0f;
 
-                float fixedBrightness = (brightness * 255.0f) / objectLightRadius;
-
-                uint8_t rgb = static_cast<uint8_t>(fixedBrightness);
+                uint8_t rgb = static_cast<uint8_t>(brightness);
 
                 sf::Color lightColor = sf::Color(rgb, rgb, rgb, 255);
 

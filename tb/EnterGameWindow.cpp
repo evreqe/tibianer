@@ -13,13 +13,21 @@ EnterGameWindow::~EnterGameWindow()
     //
 }
 
+void EnterGameWindow::onOpen()
+{
+    m_optionsData = g_OptionsData.getData();
+}
+
+void EnterGameWindow::onClose()
+{
+    m_isOpen = false;
+}
+
 void EnterGameWindow::draw()
 {
-    std::string playerName = g_OptionsData.getData()->PlayerName;
-
-    if (m_characterName.size() == 0)
+    if (m_isOpen == false)
     {
-        m_characterName = playerName;
+        onOpen();
     }
 
     center();
@@ -48,14 +56,18 @@ void EnterGameWindow::draw()
             ImGui::SetKeyboardFocusHere(0);
         }
 
-        ImGui::InputText("##EnterGameWindowInputTextCharacterName", &m_characterName);
+        ImGui::InputText("##EnterGameWindowInputCharacterName", &m_optionsData->PlayerName);
 
         ImGui::TableSetColumnIndex(1);
 
         if (ImGui::Button("Let's Go##EnterGameWindowButtonLetsGo", m_buttonSize))
         {
-            if (m_characterName.size() != 0)
+            if (m_optionsData->PlayerName.size() != 0)
             {
+                g_OptionsData.save();
+
+                onClose();
+
                 setIsVisible(false);
 
                 g_Game.setGameState(tb::GameState::MapSelect);
@@ -73,11 +85,6 @@ void EnterGameWindow::draw()
     }
 
     ImGui::End();
-}
-
-std::string EnterGameWindow::getCharacterName()
-{
-    return m_characterName;
 }
 
 }

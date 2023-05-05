@@ -2,45 +2,53 @@
 
 #include "common.h"
 
-#include "imgui.h"
-#include "imgui_stdlib.h"
-#include "imgui-SFML.h"
-
 #include "tb/Window.h"
+
+#include "tb/HotkeysData.h"
 
 namespace tb
 {
 
-    class HotkeysWindow : public Window
+class HotkeysWindow : public Window
+{
+
+public:
+
+    HotkeysWindow();
+    ~HotkeysWindow();
+
+    static HotkeysWindow& getInstance()
     {
+        static HotkeysWindow instance;
+        return instance;
+    }
 
-    public:
+private:
 
-        HotkeysWindow();
-        ~HotkeysWindow();
+    HotkeysWindow(const HotkeysWindow&) = delete;
+    HotkeysWindow(HotkeysWindow&&) = delete;
+    HotkeysWindow& operator=(const HotkeysWindow&) = delete;
+    HotkeysWindow& operator=(HotkeysWindow&&) = delete;
 
-        static HotkeysWindow& getInstance()
-        {
-            static HotkeysWindow instance;
-            return instance;
-        }
+public:
 
-    private:
+    void onOpen();
+    void onClose();
 
-        HotkeysWindow(const HotkeysWindow&) = delete;
-        HotkeysWindow(HotkeysWindow&&) = delete;
-        HotkeysWindow& operator=(const HotkeysWindow&) = delete;
-        HotkeysWindow& operator=(HotkeysWindow&&) = delete;
+    void loadData();
+    void saveData();
 
-    public:
+    void draw();
 
-        void draw();
+private:
 
-    private:
+    bool m_isOpen = false;
 
-        const ImVec2 m_buttonSize = ImVec2(88.0f, 23.0f);
+    tb::HotkeysData::Data m_hotkeysData;
 
-    };
+    const ImVec2 m_buttonSize = ImVec2(88.0f, 23.0f);
+
+};
 
 }
 

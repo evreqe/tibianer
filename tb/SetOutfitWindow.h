@@ -2,18 +2,12 @@
 
 #include "common.h"
 
-#include "imgui.h"
-#include "imgui_stdlib.h"
-#include "imgui-SFML.h"
-
 #include "tb/Window.h"
 
 #include "tb/SpriteData.h"
-
+#include "tb/OptionsData.h"
 #include "tb/Sprite.h"
-
 #include "tb/Game.h"
-
 #include "tb/Creature.h"
 
 namespace tb
@@ -45,6 +39,11 @@ namespace tb
         void onOpen();
         void onClose();
 
+        void load();
+        void save();
+
+        void setOutfitSprites();
+
         void draw();
 
     private:
@@ -52,6 +51,8 @@ namespace tb
         bool m_isOpen = false;
 
         tb::Creature::Ptr m_creature = nullptr;
+
+        tb::Creature::Outfit_t* m_creatureOutfit = nullptr;
 
         const ImVec2 m_buttonSize = ImVec2(123.0f, 29.0f);
 

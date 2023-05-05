@@ -2,16 +2,12 @@
 
 #include "common.h"
 
-#include "imgui.h"
-#include "imgui_stdlib.h"
-#include "imgui-SFML.h"
-
 #include "tb/Window.h"
 
 #include "tb/Log.h"
 
+#include "tb/OptionsData.h"
 #include "tb/Game.h"
-
 #include "tb/MapSelectWindow.h"
 
 namespace tb
@@ -40,13 +36,16 @@ namespace tb
 
     public:
 
-        void draw();
+        void onOpen();
+        void onClose();
 
-        std::string getCharacterName();
+        void draw();
 
     private:
 
-        std::string m_characterName;
+        bool m_isOpen = false;
+
+        tb::OptionsData::Data* m_optionsData = nullptr;
 
         const float m_inputTextWidth = 131.0f;
 

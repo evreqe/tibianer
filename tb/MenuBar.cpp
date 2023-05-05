@@ -45,8 +45,6 @@ void MenuBar::draw()
         {
             if (ImGui::MenuItem("Options...##MenuItemFileOptions", 0))
             {
-                g_OptionsWindow.load();
-
                 g_OptionsWindow.setIsVisible(true);
             }
 
@@ -100,41 +98,73 @@ void MenuBar::draw()
             ImGui::EndMenu();
         }
 
-        if (ImGui::BeginMenu("Window##MenuItemWindow"))
+        if (ImGui::BeginMenu("Game Window##MenuItemGameWindow"))
         {
-            if (ImGui::MenuItem("4:3 640x480##MenuItemWindowResolution1", 0))
+            ImGui::MenuItem("---- Scale ----##MenuItemGameWindowSeparatorScale", 0, nullptr, false);
+
+            if (ImGui::MenuItem("1x##MenuItemGameWindowScale1", 0))
+            {
+                g_GameWindow.setScale(1.0f);
+            }
+
+            if (ImGui::MenuItem("1.5x##MenuItemGameWindowScale2", 0))
+            {
+                g_GameWindow.setScale(1.5f);
+            }
+
+            if (ImGui::MenuItem("2x##MenuItemGameWindowScale3", 0))
+            {
+                g_GameWindow.setScale(2.0f);
+            }
+
+            ImGui::MenuItem("---- Light Brightness ----##MenuItemGameWindowSeparatorLightBrightness", 0, nullptr, false);
+
+            static int lightBrightness = tb::LightBrightness::Max;
+            if (ImGui::DragInt("##MenuItemGameWindowDragIntLightBrightness", &lightBrightness, 1.0f, tb::LightBrightness::Min, tb::LightBrightness::Max))
+            {
+                g_GameWindow.setLightBrightness(lightBrightness);
+            }
+
+            ImGui::EndMenu();
+        }
+
+        if (ImGui::BeginMenu("Render Window##MenuItemRenderWindow"))
+        {
+            ImGui::MenuItem("---- 4:3 ----##MenuItemRenderWindowResolutionSeparator4by3", 0, nullptr, false);
+
+            if (ImGui::MenuItem("640x480##MenuItemRenderWindowResolution1", 0))
             {
                 g_RenderWindow.setSizeAndCenter(sf::Vector2u(640, 480));
             }
 
-            if (ImGui::MenuItem("4:3 800x600##MenuItemWindowResolution2", 0))
+            if (ImGui::MenuItem("800x600##MenuItemRenderWindowResolution2", 0))
             {
                 g_RenderWindow.setSizeAndCenter(sf::Vector2u(800, 600));
             }
 
-            if (ImGui::MenuItem("4:3 1024x768##MenuItemWindowResolution3", 0))
+            if (ImGui::MenuItem("1024x768##MenuItemRenderWindowResolution3", 0))
             {
                 g_RenderWindow.setSizeAndCenter(sf::Vector2u(1024, 768));
             }
 
-            ImGui::Separator();
+            ImGui::MenuItem("---- 16:9 ----##MenuItemRenderWindowResolutionSeparator16by9", 0, nullptr, false);
 
-            if (ImGui::MenuItem("16:9 720p##MenuItemWindowResolution4", 0))
+            if (ImGui::MenuItem("720p##MenuItemRenderWindowResolution4", 0))
             {
                 g_RenderWindow.setSizeAndCenter(sf::Vector2u(1280, 720));
             }
 
-            if (ImGui::MenuItem("16:9 1080p##MenuItemWindowResolution5", 0))
+            if (ImGui::MenuItem("1080p##MenuItemRenderWindowResolution5", 0))
             {
                 g_RenderWindow.setSizeAndCenter(sf::Vector2u(1920, 1080));
             }
 
-            if (ImGui::MenuItem("16:9 1440p##MenuItemWindowResolution6", 0))
+            if (ImGui::MenuItem("1440p##MenuItemRenderWindowResolution6", 0))
             {
                 g_RenderWindow.setSizeAndCenter(sf::Vector2u(2560, 1440));
             }
 
-            if (ImGui::MenuItem("16:9 4k##MenuItemWindowResolution7", 0))
+            if (ImGui::MenuItem("4k##MenuItemRenderWindowResolution7", 0))
             {
                 g_RenderWindow.setSizeAndCenter(sf::Vector2u(2160, 3840));
             }
@@ -169,6 +199,25 @@ void MenuBar::draw()
             if (ImGui::MenuItem("Log...##MenuItemDeveloperLogWindow", 0))
             {
                 g_LogWindow.toggleIsVisible();
+            }
+
+            ImGui::Separator();
+
+            ImGui::MenuItem("---- GUI ----##MenuItemDeveloperSeparatorGUI", 0, nullptr, false);
+
+            if (ImGui::MenuItem("Light Mode##MenuItemDeveloperGUILightMode", 0))
+            {
+                ImGui::StyleColorsLight();
+            }
+
+            if (ImGui::MenuItem("Dark Mode##MenuItemDeveloperGUIDarkMode", 0))
+            {
+                ImGui::StyleColorsDark();
+            }
+
+            if (ImGui::MenuItem("Classic Mode##MenuItemDeveloperGUIClassicMode", 0))
+            {
+                ImGui::StyleColorsClassic();
             }
 
             ImGui::Separator();

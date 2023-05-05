@@ -5,6 +5,7 @@
 namespace tb
 {
     using ZAxis_t = uint8_t;
+    using LightBrightness_t = uint8_t;
     using OutfitIndex_t = uint8_t;
     using SpriteID_t = uint16_t;
 
@@ -42,6 +43,11 @@ namespace tb
 
         inline const float TileCreatureOffset = 8.0f;
 
+        inline const float PaddingBackgroundTexture = 7.0f;
+        inline const float PaddingRenderWindow = 5.0f;
+        inline const float PaddingWoodBorder = 3.0f;
+        inline const float PaddingBlackRectangle = 1.0f;
+
         inline const uint32_t NumZAxis = 16;
 
         inline const uint32_t TileHeightMovementDifference = 2; // player cannot move to a tile if it has vertical objects stacked 2 axis higher than the player
@@ -70,30 +76,118 @@ namespace tb
 
         inline const std::unordered_map<std::string, sf::Texture&> Names =
         {
-            {"Introduction",               tb::Textures::Introduction},
-            {"Enter Game",                 tb::Textures::EnterGame},
-            {"New Game Journey Onward",    tb::Textures::NewGameJourneyOnward},
-            {"Map Select",                 tb::Textures::MapSelect},
-            {"Loading",                    tb::Textures::Loading},
-            {"Map Editor",                 tb::Textures::MapEditor},
-            {"Sprites",                    tb::Textures::Sprites},
-            {"GUI",                        tb::Textures::GUI},
-            {"Scroll",                     tb::Textures::Scroll},
-            {"Wood",                       tb::Textures::Wood},
-            {"Wood Horizontal 1",          tb::Textures::WoodHorizontal1},
-            {"Wood Horizontal 2",          tb::Textures::WoodHorizontal2},
-            {"Wood Vertical 1",            tb::Textures::WoodVertical1},
-            {"Wood Vertical 2",            tb::Textures::WoodVertical2},
+            {"Introduction",            tb::Textures::Introduction},
+            {"EnterGame",               tb::Textures::EnterGame},
+            {"NewGameJourneyOnward",    tb::Textures::NewGameJourneyOnward},
+            {"MapSelect",               tb::Textures::MapSelect},
+            {"Loading",                 tb::Textures::Loading},
+            {"MapEditor",               tb::Textures::MapEditor},
+            {"Sprites",                 tb::Textures::Sprites},
+            {"GUI",                     tb::Textures::GUI},
+            {"Scroll",                  tb::Textures::Scroll},
+            {"Wood",                    tb::Textures::Wood},
+            {"WoodHorizontal1",         tb::Textures::WoodHorizontal1},
+            {"WoodHorizontal2",         tb::Textures::WoodHorizontal2},
+            {"WoodVertical1",           tb::Textures::WoodVertical1},
+            {"WoodVertical2",           tb::Textures::WoodVertical2},
+        };
+    }
+
+    namespace Fonts
+    {
+        inline sf::Font Arial;
+        inline sf::Font CourierNew;
+        inline sf::Font Helvetica;
+        inline sf::Font MarcoPolo;
+        inline sf::Font Martel;
+        inline sf::Font Roboto;
+        inline sf::Font Supernatural1001;
+        inline sf::Font Supernatural1002;
+        inline sf::Font System;
+        inline sf::Font TimesNewRoman;
+        inline sf::Font Verdana;
+
+        inline const std::unordered_map<std::string, sf::Font&> Names =
+        {
+            {"Arial",               tb::Fonts::Arial},
+            {"CourierNew",          tb::Fonts::CourierNew},
+            {"Helvetica",           tb::Fonts::Helvetica},
+            {"MarcoPolo",           tb::Fonts::MarcoPolo},
+            {"Martel",              tb::Fonts::Martel},
+            {"Roboto",              tb::Fonts::Roboto},
+            {"Supernatural1001",    tb::Fonts::Supernatural1001},
+            {"Supernatural1002",    tb::Fonts::Supernatural1002},
+            {"System",              tb::Fonts::System},
+            {"TimesNewRoman",       tb::Fonts::TimesNewRoman},
+            {"Verdana",             tb::Fonts::Verdana},
         };
     }
 
     namespace Cursors
     {
+        // system
         inline sf::Cursor Arrow;
+        inline sf::Cursor ArrowWait;
+        inline sf::Cursor Wait;
+        inline sf::Cursor Text;
+        inline sf::Cursor Hand;
+        inline sf::Cursor SizeHorizontal;
+        inline sf::Cursor SizeVertical;
+        inline sf::Cursor SizeTopLeftBottomRight;
+        inline sf::Cursor SizeBottomLeftTopRight;
+        inline sf::Cursor SizeAll;
+        inline sf::Cursor Cross;
+        inline sf::Cursor Help;
+        inline sf::Cursor NotAllowed;
 
-        inline const std::unordered_map<std::string, sf::Cursor&> Names =
+        // custom
+        inline sf::Cursor Crosshair;
+        inline sf::Cursor CrosshairModern;
+        inline sf::Cursor Drag;
+        inline sf::Cursor Inspect;
+        inline sf::Cursor Sword;
+
+        inline const std::unordered_map<std::string, sf::Cursor&> SystemCursorNames =
         {
-            {"Arrow",               tb::Cursors::Arrow},
+            {"Arrow",                     tb::Cursors::Arrow},
+            {"ArrowWait",                 tb::Cursors::ArrowWait},
+            {"Wait",                      tb::Cursors::Wait},
+            {"Text",                      tb::Cursors::Text},
+            {"Hand",                      tb::Cursors::Hand},
+            {"SizeHorizontal",            tb::Cursors::SizeHorizontal},
+            {"SizeVertical",              tb::Cursors::SizeVertical},
+            {"SizeTopLeftBottomRight",    tb::Cursors::SizeTopLeftBottomRight},
+            {"SizeBottomLeftTopRight",    tb::Cursors::SizeBottomLeftTopRight},
+            {"SizeAll",                   tb::Cursors::SizeAll},
+            {"Cross",                     tb::Cursors::Cross},
+            {"Help",                      tb::Cursors::Help},
+            {"NotAllowed",                tb::Cursors::NotAllowed},
+        };
+
+        inline const std::unordered_map<sf::Cursor::Type, sf::Cursor&> SystemCursorTypes =
+        {
+            {sf::Cursor::Arrow,                     tb::Cursors::Arrow},
+            {sf::Cursor::ArrowWait,                 tb::Cursors::ArrowWait},
+            {sf::Cursor::Wait,                      tb::Cursors::Wait},
+            {sf::Cursor::Text,                      tb::Cursors::Text},
+            {sf::Cursor::Hand,                      tb::Cursors::Hand},
+            {sf::Cursor::SizeHorizontal,            tb::Cursors::SizeHorizontal},
+            {sf::Cursor::SizeVertical,              tb::Cursors::SizeVertical},
+            {sf::Cursor::SizeTopLeftBottomRight,    tb::Cursors::SizeTopLeftBottomRight},
+            {sf::Cursor::SizeBottomLeftTopRight,    tb::Cursors::SizeBottomLeftTopRight},
+            {sf::Cursor::SizeAll,                   tb::Cursors::SizeAll},
+            {sf::Cursor::Cross,                     tb::Cursors::Cross},
+            {sf::Cursor::Help,                      tb::Cursors::Help},
+            {sf::Cursor::NotAllowed,                tb::Cursors::NotAllowed},
+        };
+
+        inline const std::unordered_map<std::string, sf::Cursor&> CustomCursorNames =
+        {
+            {"Crosshair",                 tb::Cursors::Crosshair},
+            {"CrosshairModern",           tb::Cursors::CrosshairModern},
+            {"Drag",                      tb::Cursors::Drag},
+            {"Inspect",                   tb::Cursors::Inspect},
+            {"Sword",                     tb::Cursors::Sword},
         };
     }
 
@@ -143,6 +237,16 @@ namespace tb
             Min     = 0,
             Default = 7,
             Max     = 15,
+        };
+    }
+
+    namespace LightBrightness
+    {
+        enum : LightBrightness_t
+        {
+            Min         = 0,
+            UnderGround = 32,
+            Max         = 255,
         };
     }
 

@@ -16,6 +16,10 @@
 #include "tb/OutfitData.h"
 #include "tb/MessageOfTheDayData.h"
 #include "tb/ClickRectData.h"
+#include "tb/GuiData.h"
+#include "tb/CursorData.h"
+#include "tb/FontData.h"
+#include "tb/HotkeysData.h"
 
 #include "tb/Sprite.h"
 #include "tb/Creature.h"
@@ -28,6 +32,7 @@
 
 #include "tb/RenderWindow.h"
 #include "tb/GameWindow.h"
+#include "tb/MiniMapWindow.h"
 
 #include "tb/OverlayWindow.h"
 #include "tb/LogWindow.h"
@@ -74,19 +79,39 @@ private:
 
 public:
 
+    struct GuiState_t
+    {
+        bool ShowMiniMapWindow = true;
+        bool ShowEquipmentWindow = false;
+        bool ShowStatusWindow = false;
+
+        bool ShowInventoryWindow = false;
+        bool ShowCombatWindow = false;
+        bool ShowSkillsWindow = false;
+    };
+
+    GuiState_t* getGuiState();
+
     void initImGui();
 
+    bool loadConfig();
     bool loadData();
 
     bool loadTextures();
+    bool loadFonts();
     bool loadBitmapFonts();
+    bool loadCursors();
 
     bool loadMap(const std::string& fileName);
 
     void drawDockSpace();
 
+    void drawFramesPerSecond();
+
+    void drawLoadingText();
+
     void drawWoodBackground();
-    void drawWoodBorder(sf::FloatRect rect);
+    void drawWoodBorder(sf::FloatRect rect, bool drawBlackRectangle);
     void drawBackgroundTextureWithWoodBorder(const sf::Texture& texture);
 
     sf::FloatRect getClickRect(const sf::Texture& texture, const std::string& name);
@@ -98,8 +123,6 @@ public:
     void doGameStateLoading();
     void doGameStateMapSelect();
     void doGameStateInGame();
-
-    bool isImGuiActive();
 
     sf::Vector2i getMousePositionInDesktop();
 
@@ -117,6 +140,7 @@ public:
     void handleKeyboardInput();
     void processEvents();
 
+    void setMouseCursor(const sf::Cursor& cursor);
     void fixMouseCursorForWindowResize(sf::RenderWindow* renderWindow);
 
     void createTileFileFromImageFile(const std::string& fileName);
@@ -127,6 +151,9 @@ public:
     void exit();
     void run();
     void endGame();
+
+    bool isDeveloperModeEnabled();
+    void toggleDeveloperMode();
 
     bool isDebugModeEnabled();
     void toggleDebugMode();
@@ -143,7 +170,7 @@ public:
 
 private:
 
-    bool m_debugMode = true;
+    GuiState_t m_guiState;
 
     bool m_showDemoWindow = false;
     bool m_showStackToolWindow = false;
@@ -153,24 +180,26 @@ private:
     tb::GameState m_gameState = tb::GameState::EnterGame;
 
     uint32_t m_numLoadingFrames = 0;
+    uint32_t m_numLoadingFramesMax = 2;
 
     std::string m_loadMapFileName;
 
     const unsigned int m_minimumTextureSizeRequiredToRun = 2048;
 
-    sf::RectangleShape m_backgroundTexture;
+    sf::RectangleShape m_backgroundTextureShape;
 
     sf::Clock m_deltaClock;
 
     sf::Clock m_framesPerSecondClock;
+    sf::Time m_framesPerSecondCurrentTime;
+    sf::Time m_framesPerSecondPreviousTime;
+    float m_framesPerSecond;
 
     sf::Clock m_animatedWaterClock;
     const sf::Time m_animatedWaterTime = sf::seconds(0.5f);
 
     sf::Clock m_cameraKeyPressedClock;
     const sf::Time m_cameraKeyPressedTime = sf::milliseconds(100);
-
-    sf::Cursor m_arrowCursor;
 
     tb::BitmapFont m_defaultBitmapFont;
     tb::BitmapFont m_tinyBitmapFont;

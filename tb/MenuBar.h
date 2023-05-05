@@ -2,9 +2,6 @@
 
 #include "common.h"
 
-#include "imgui.h"
-#include "imgui-SFML.h"
-
 #include "tb/Constants.h"
 
 #include "tb/OverlayWindow.h"

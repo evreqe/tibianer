@@ -91,5 +91,30 @@ namespace tb
                 );
             }
         }
+
+        namespace MyImGui
+        {
+            static bool isActive()
+            {
+                auto io = ImGui::GetIO();
+
+                if (io.WantCaptureKeyboard == true || io.WantCaptureMouse == true)
+                {
+                    return true;
+                }
+
+                if (ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow) == true)
+                {
+                    return true;
+                }
+
+                if (ImGui::IsAnyItemHovered() == true)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+        }
     }
 }

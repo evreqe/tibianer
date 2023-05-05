@@ -23,13 +23,13 @@ void SpriteDataWindow::draw()
 
     centerOnFirstUseEver();
 
-    ImGui::SetNextWindowSize(ImVec2(640, 480), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(m_windowSize, ImGuiCond_FirstUseEver);
 
     bool* isVisible = getIsVisible();
 
-    ImGui::Begin("Sprite Data##SpriteDataWindow", isVisible, ImGuiWindowFlags_AlwaysHorizontalScrollbar | ImGuiWindowFlags_AlwaysVerticalScrollbar);
+    ImGui::Begin("Sprite Data##SpriteDataWindow", isVisible, ImGuiWindowFlags_NoScrollbar);
 
-    if (ImGui::BeginChild("##SpriteDataWindowChild1", ImVec2(0, 0), true, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_AlwaysVerticalScrollbar))
+    if (ImGui::BeginChild("##SpriteDataWindowChildData", ImVec2(0, 0), true, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_AlwaysVerticalScrollbar))
     {
         tb::SpriteData::DataList* spriteDataList = g_SpriteData.getDataList();
         if (spriteDataList != nullptr)

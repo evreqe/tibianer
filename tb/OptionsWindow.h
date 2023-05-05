@@ -2,10 +2,6 @@
 
 #include "common.h"
 
-#include "imgui.h"
-#include "imgui_stdlib.h"
-#include "imgui-SFML.h"
-
 #include "tb/Window.h"
 
 #include "tb/OptionsData.h"
@@ -36,14 +32,21 @@ namespace tb
 
     public:
 
-        void load();
-        void save();
+        void onOpen();
+        void onClose();
+
+        void loadData();
+        void saveData();
 
         void draw();
 
     private:
 
-        std::string m_inputPlayerName;
+        bool m_isOpen = false;
+
+        tb::OptionsData::Data m_optionsData;
+
+        const ImVec2 m_tabChildSize = ImVec2(320.0f, 320.0f);
 
         const ImVec2 m_buttonSize = ImVec2(88.0f, 23.0f);
 

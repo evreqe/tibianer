@@ -50,11 +50,21 @@ bool RenderWindow::create()
 
     if (startMaximized == true)
     {
-        //m_renderWindow.setSize(sf::Vector2u(sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height));
-        //m_renderWindow.setPosition(sf::Vector2i(0, 0));
+        m_window.setSize(sf::Vector2u(sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height));
+        m_window.setPosition(sf::Vector2i(0, 0));
 
         ::ShowWindow(m_window.getSystemHandle(), SW_MAXIMIZE);
     }
+
+    sf::Cursor arrowCursor;
+    if (arrowCursor.loadFromSystem(sf::Cursor::Arrow) == false)
+    {
+        g_Log.write("ERROR: Failed to load arrow cursor\n");
+        return false;
+    }
+
+    m_window.setMouseCursor(arrowCursor);
+    m_window.setMouseCursorVisible(true);
 
     return true;
 }
@@ -175,10 +185,7 @@ sf::Vector2i RenderWindow::getMousePosition2i()
 {
     sf::Vector2f mousePosition2f = getMousePosition2f();
 
-    sf::Vector2i mousePosition2i;
-
-    mousePosition2i.x = static_cast<int>(mousePosition2f.x);
-    mousePosition2i.y = static_cast<int>(mousePosition2f.y);
+    sf::Vector2i mousePosition2i = static_cast<sf::Vector2i>(mousePosition2f);
 
     return mousePosition2i;
 }

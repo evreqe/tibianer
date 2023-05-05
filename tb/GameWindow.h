@@ -52,7 +52,11 @@ public:
     void setPosition(const sf::Vector2f& position);
 
     sf::FloatRect getRect();
-    void drawRect();
+    void drawDebugRect();
+
+    void drawBorder();
+
+    sf::Vector2f getMousePixelPosition();
 
     sf::Vector2f getMousePixelCoords();
     sf::Vector2i getMouseTileCoords();
@@ -70,6 +74,8 @@ public:
 
     sf::IntRect getTileRect();
 
+    sf::View* getView();
+
     sf::Vector2f getViewPosition();
     void setViewPosition(sf::Vector2f position);
 
@@ -77,6 +83,11 @@ public:
     void setViewPositionOffset(sf::Vector2f offset);
 
     void resetViewPositionOffset();
+
+    void setScale(float scale);
+
+    void setLightBrightness(tb::LightBrightness_t lightBrightness);
+    tb::LightBrightness_t getLightBrightness();
 
 private:
 
@@ -97,26 +108,28 @@ private:
     sf::RenderTexture m_lightLayer;
     sf::Sprite m_lightLayerSprite;
     sf::BlendMode m_lightBlendMode;
+    tb::LightBrightness_t m_lightBrightness = tb::LightBrightness::Max;
 
     float m_zoomScale = 1.0f;
     float m_zoomScaleMinimum = 1.0f;
-    float m_zoomFactor = 0.2f;
+    float m_zoomScaleMaximum = 2.0f;
+    float m_zoomStep = 0.2f;
 
     float m_scale = 2.0f;
 
     tb::Sprite m_tileHighlightSprite;
     const std::string m_tileHightlightSpriteName = "TileHighlight";
 
-    const int m_tileWidth = 13; // number of tiles visible on the x-axis
-    const int m_tileHeight = 9; // number of tiles visible on the y-axis
+    const int m_numTilesX = 13; // number of tiles visible on the x-axis
+    const int m_numTilesY = 9; // number of tiles visible on the y-axis
 
     const int m_numTilesFromCenterX = 6; // number of tiles visible to the west or east of the player on the x-axis
     const int m_numTilesFromCenterY = 4; // number of tiles visible to the north or south of the player on the y-axis
 
     const int m_numTilesToDrawFromOffscreen = 1; // need to draw some tiles that are not visible in order to account for large objects that take up 4 tiles
 
-    const float m_pixelWidth = 416.0f; // number of pixels visible on the x-axis
-    const float m_pixelHeight = 288.0f; // number of pixels visible on the y-axis
+    const float m_pixelWidth = 416.0f; // size of the window
+    const float m_pixelHeight = 288.0f; // size of the window
 
 };
 

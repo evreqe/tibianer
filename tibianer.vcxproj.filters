@@ -282,6 +282,9 @@
     <ClCompile Include="tb\LightBatch.cpp">
       <Filter>Source Files\tb</Filter>
     </ClCompile>
+    <ClCompile Include="tb\FontData.cpp">
+      <Filter>Source Files\tb</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -552,6 +555,9 @@
       <Filter>Header Files\tb</Filter>
     </ClInclude>
     <ClInclude Include="tb\LightBatch.h">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\FontData.h">
       <Filter>Header Files\tb</Filter>
     </ClInclude>
   </ItemGroup>

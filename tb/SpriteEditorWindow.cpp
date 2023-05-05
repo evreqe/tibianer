@@ -13,49 +13,28 @@ SpriteEditorWindow::~SpriteEditorWindow()
     //
 }
 
-void SpriteEditorWindow::resetInputs()
+void SpriteEditorWindow::onOpen()
 {
-    m_inputName = "";
-    m_inputArticle = "";
-    m_inputDescription = "";
+    loadData();
 
-    m_inputTileWidth = 1;
-    m_inputTileHeight = 1;
-
-    m_inputWeight = 0.0f;
-    m_inputLightRadius = 0.0f;
+    m_isOpen = true;
 }
 
-void SpriteEditorWindow::updateInputsFromSpriteData(tb::SpriteID_t spriteID)
+void SpriteEditorWindow::onClose()
 {
-    tb::SpriteData::Data* spriteData = &g_SpriteData.getDataList()->at(spriteID);
-
-    resetInputs();
-
-    m_inputName = spriteData->Name;
-    m_inputArticle = spriteData->Article;
-    m_inputDescription = spriteData->Description;
-
-    m_inputTileWidth = spriteData->TileWidth;
-    m_inputTileHeight = spriteData->TileHeight;
-
-    m_inputWeight = spriteData->Weight;
-    m_inputLightRadius = spriteData->LightRadius;
+    m_isOpen = false;
 }
 
-void SpriteEditorWindow::updateSpriteDataFromInputs(tb::SpriteID_t spriteID)
+void SpriteEditorWindow::loadData()
 {
-    tb::SpriteData::Data* spriteData = &g_SpriteData.getDataList()->at(spriteID);
+    m_spriteDataList = g_SpriteData.getDataList();
 
-    spriteData->Name = m_inputName;
-    spriteData->Article = m_inputArticle;
-    spriteData->Description = m_inputDescription;
+    m_spriteData = &m_spriteDataList->at(m_selectedSpriteID);
+}
 
-    spriteData->TileWidth = static_cast<uint8_t>(m_inputTileWidth);
-    spriteData->TileHeight = static_cast<uint8_t>(m_inputTileHeight);
-
-    spriteData->Weight = m_inputWeight;
-    spriteData->LightRadius = m_inputLightRadius;
+void SpriteEditorWindow::saveData()
+{
+    g_SpriteData.save();
 }
 
 void SpriteEditorWindow::draw()
@@ -66,7 +45,10 @@ void SpriteEditorWindow::draw()
         return;
     }
 
-    tb::SpriteData::DataList* spriteDataList = g_SpriteData.getDataList();
+    if (m_isOpen == false)
+    {
+        onOpen();
+    }
 
     const ImGuiViewport* viewport = ImGui::GetMainViewport();
 
@@ -84,28 +66,28 @@ void SpriteEditorWindow::draw()
 
     bool* isVisible = getIsVisible();
 
-    ImGui::Begin("Sprite Editor##SpriteEditorWindow", isVisible, ImGuiWindowFlags_AlwaysHorizontalScrollbar | ImGuiWindowFlags_AlwaysVerticalScrollbar);
+    ImGui::Begin("Sprite Editor##SpriteEditorWindow", isVisible, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoScrollbar);
 
     if (ImGui::BeginTable("##SpriteEditorWindowTable", 3, ImGuiTableFlags_BordersOuter | ImGuiTableFlags_Resizable))
     {
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
 
-        if (ImGui::BeginChild("##SpriteEditorWindowChild1", ImVec2(0, 0), true, ImGuiWindowFlags_AlwaysHorizontalScrollbar | ImGuiWindowFlags_AlwaysVerticalScrollbar))
+        if (ImGui::BeginChild("##SpriteEditorWindowChildSpritesheet", ImVec2(0, 0), true, ImGuiWindowFlags_AlwaysHorizontalScrollbar | ImGuiWindowFlags_AlwaysVerticalScrollbar))
         {
             for (tb::SpriteID_t i = 1; i < tb::Constants::NumSprites + 1; i++)
             {
                 tb::Sprite sprite;
                 sprite.setID(i);
 
-                ImGui::PushID(std::format("##SpriteEditorWindowChild1Button{}", i).c_str());
+                ImGui::PushID(std::format("##SpriteEditorWindowChildSpritesheetButton{}", i).c_str());
 
                 // clicked on sprite
                 if (ImGui::ImageButton(sprite))
                 {
                     m_selectedSpriteID = i;
 
-                    updateInputsFromSpriteData(i);
+                    loadData();
                 }
 
                 if (i == m_selectedSpriteID)
@@ -116,9 +98,9 @@ void SpriteEditorWindow::draw()
                     ImGui::GetWindowDrawList()->AddRect(min, max, ImColor(255, 0, 255));
                 }
 
-                tb::SpriteFlags* spriteFlags = &spriteDataList->at(i).SpriteFlags;
+                tb::SpriteFlags* spriteFlags = &m_spriteDataList->at(i).SpriteFlags;
 
-                if (spriteFlags->hasFlag(m_highlightComboSpriteFlag) == true)
+                if (spriteFlags->hasFlag(m_highlightSpriteFlag) == true)
                 {
                     auto min = ImGui::GetItemRectMin();
                     auto max = ImGui::GetItemRectMax();
@@ -150,17 +132,17 @@ void SpriteEditorWindow::draw()
 
         ImGui::SameLine();
 
-        std::string_view highlightComboPreviewText = magic_enum::enum_name(m_highlightComboSpriteFlag);
+        std::string_view comboPreviewText = magic_enum::enum_name(m_highlightSpriteFlag);
 
-        if (ImGui::BeginCombo("##SpriteEditorWindowComboHighlight", highlightComboPreviewText.data()))
+        if (ImGui::BeginCombo("##SpriteEditorWindowComboHighlight", comboPreviewText.data()))
         {
             for (auto& [spriteFlag, spriteFlagName] : tb::SpriteFlagEntries)
             {
-                bool isSelected = (m_highlightComboSpriteFlag == spriteFlag);
+                bool isSelected = (m_highlightSpriteFlag == spriteFlag);
 
                 if (ImGui::Selectable(std::format("{0}##SpriteEditorWindowComboHighlight{0}", spriteFlagName).c_str(), &isSelected))
                 {
-                    m_highlightComboSpriteFlag = spriteFlag;
+                    m_highlightSpriteFlag = spriteFlag;
                 }
 
                 if (isSelected == true)
@@ -176,15 +158,15 @@ void SpriteEditorWindow::draw()
 
         ImGui::TextUnformatted("Flags:");
 
-        if (ImGui::BeginChild("##SpriteEditorWindowChild2", ImVec2(0, 0), true, ImGuiWindowFlags_AlwaysAutoResize))
+        if (ImGui::BeginChild("##SpriteEditorWindowChildFlags", ImVec2(0, 0), true, ImGuiWindowFlags_AlwaysAutoResize))
         {
-            tb::SpriteFlags* spriteFlags = &spriteDataList->at(m_selectedSpriteID).SpriteFlags;
+            tb::SpriteFlags* spriteFlags = &m_spriteDataList->at(m_selectedSpriteID).SpriteFlags;
 
             for (auto& [spriteFlag, spriteFlagName] : tb::SpriteFlagEntries)
             {
                 bool isChecked = spriteFlags->hasFlag(spriteFlag);
 
-                if (ImGui::Checkbox(std::format("{0}##SpriteEditorWindowChild2Checkbox{1}{0}", spriteFlagName, m_selectedSpriteID).c_str(), &isChecked))
+                if (ImGui::Checkbox(std::format("{0}##SpriteEditorWindowChildFlagsCheckbox{1}{0}", spriteFlagName, m_selectedSpriteID).c_str(), &isChecked))
                 {
                     spriteFlags->flipFlag(spriteFlag);
                 }
@@ -197,69 +179,24 @@ void SpriteEditorWindow::draw()
 
         if (ImGui::Button("Save##SpriteEditorWindowButtonSave", m_buttonSize))
         {
-            g_SpriteData.save();
+            saveData();
         }
 
         ImGui::Separator();
 
         ImGui::TextUnformatted("Properties:");
 
-        if (ImGui::BeginChild("##SpriteEditorWindowChild3", ImVec2(0, 0), true, ImGuiWindowFlags_AlwaysAutoResize))
+        if (ImGui::BeginChild("##SpriteEditorWindowChildProperties", ImVec2(0, 0), true, ImGuiWindowFlags_AlwaysAutoResize))
         {
-            if (ImGui::InputText("Name:##SpriteEditorWindowInputName", &m_inputName))
-            {
-                updateSpriteDataFromInputs(m_selectedSpriteID);
-            }
+            ImGui::InputText("Name##SpriteEditorWindowInputName", &m_spriteData->Name);
+            ImGui::InputText("Article##SpriteEditorWindowInputArticle", &m_spriteData->Article);
+            ImGui::InputText("Description##SpriteEditorWindowInputDescription", &m_spriteData->Description);
 
-            if (ImGui::InputText("Article:##SpriteEditorWindowInputArticle", &m_inputArticle))
-            {
-                updateSpriteDataFromInputs(m_selectedSpriteID);
-            }
+            ImGui::InputScalar("Tile Width##SpriteEditorWindowInputTileWidth", ImGuiDataType_U8, &m_spriteData->TileWidth, &m_scalarU8StepOne);
+            ImGui::InputScalar("Tile Height##SpriteEditorWindowInputTileHeight", ImGuiDataType_U8, &m_spriteData->TileHeight, &m_scalarU8StepOne);
 
-            if (ImGui::InputText("Description:##SpriteEditorWindowInputDescription", &m_inputDescription))
-            {
-                updateSpriteDataFromInputs(m_selectedSpriteID);
-            }
-
-            if (ImGui::InputInt("Tile Width:##SpriteEditorWindowInputTileWidth", &m_inputTileWidth))
-            {
-                if (m_inputTileWidth < 1)
-                {
-                    m_inputTileWidth = 1;
-                }
-
-                updateSpriteDataFromInputs(m_selectedSpriteID);
-            }
-
-            if (ImGui::InputInt("Tile Height:##SpriteEditorWindowInputTileHeight", &m_inputTileHeight))
-            {
-                if (m_inputTileHeight < 1)
-                {
-                    m_inputTileHeight = 1;
-                }
-
-                updateSpriteDataFromInputs(m_selectedSpriteID);
-            }
-
-            if (ImGui::InputFloat("Weight:##SpriteEditorWindowInputWeight", &m_inputWeight, 0.0f, 0.0f, "%.2f"))
-            {
-                if (m_inputWeight < 0.0f)
-                {
-                    m_inputWeight = 0.0f;
-                }
-
-                updateSpriteDataFromInputs(m_selectedSpriteID);
-            }
-
-            if (ImGui::InputFloat("Light Radius:##SpriteEditorWindowInputLightRadius", &m_inputLightRadius, 0.0f, 0.0f, "%.2f"))
-            {
-                if (m_inputLightRadius < 0.0f)
-                {
-                    m_inputLightRadius = 0.0f;
-                }
-
-                updateSpriteDataFromInputs(m_selectedSpriteID);
-            }
+            ImGui::InputFloat("Weight##SpriteEditorWindowInputWeight", &m_spriteData->Weight, 1.0f, 10.0f, "%.2f");
+            ImGui::InputFloat("Light Radius##SpriteEditorWindowInputLightRadius", &m_spriteData->LightRadius, 1.0f, 10.0f, "%.2f");
 
             ImGui::EndChild();
         }
