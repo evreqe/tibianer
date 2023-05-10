@@ -16,6 +16,8 @@ EnterGameWindow::~EnterGameWindow()
 void EnterGameWindow::onOpen()
 {
     m_optionsData = g_OptionsData.getData();
+
+    m_isOpen = true;
 }
 
 void EnterGameWindow::onClose()

@@ -93,8 +93,8 @@ public:
 
     uint32_t getNumTiles();
 
-    tb::TileMap* getTileMapTiles(tb::ZAxis_t z);
-    tb::TileMap* getTileMapTileEdges(tb::ZAxis_t z);
+    tb::TileMap::Ptr getTileMapOfTilesAtZ(tb::ZAxis_t z);
+    tb::TileMap::Ptr getTileMapOfTileEdgesAtZ(tb::ZAxis_t z);
 
 private:
 
@@ -112,8 +112,8 @@ private:
 
     uint32_t m_numTiles = 0; // = m_tileWidth * m_tileHeight
 
-    tb::TileMap::Array m_tileMapTiles;
-    tb::TileMap::Array m_tileMapTileEdges;
+    tb::TileMap::List m_tileMapOfTilesList;
+    tb::TileMap::List m_tileMapOfTileEdgesList;
 
 };
 

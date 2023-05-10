@@ -5,6 +5,7 @@
 #include "tb/Window.h"
 
 #include "tb/OptionsData.h"
+#include "tb/Game.h"
 
 namespace tb
 {
@@ -46,7 +47,7 @@ namespace tb
 
         tb::OptionsData::Data m_optionsData;
 
-        const ImVec2 m_tabChildSize = ImVec2(320.0f, 320.0f);
+        const ImVec2 m_tabChildSize = ImVec2(640.0f, 480.0f);
 
         const ImVec2 m_buttonSize = ImVec2(88.0f, 23.0f);
 

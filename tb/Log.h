@@ -31,6 +31,14 @@ private:
 
 public:
 
+    struct Properties_t
+    {
+        bool IsEnabled = true;
+
+        bool PrintToConsole = true;
+        bool WriteToFile = true;
+    };
+
     typedef struct _FormatString
     {
         fmt::string_view str;
@@ -41,14 +49,14 @@ public:
             const char* str,
             const std::source_location& loc = std::source_location::current()
         ) : str(str), loc(loc) {}
-    } FormatString, * FormatString_ptr;
+    } FormatString, *FormatString_ptr;
 
     void vwrite(const FormatString& format, fmt::format_args args);
 
     template <typename... Args>
     void write(const FormatString& format, Args&&... args)
     {
-        if (m_isEnabled == false)
+        if (m_properties.IsEnabled == false)
         {
             return;
         }
@@ -56,9 +64,11 @@ public:
         vwrite(format, fmt::make_format_args(args...));
     }
 
+    Properties_t* getProperties();
+
     void open();
     void close();
-    void deleteContents();
+    void deleteFileContents();
 
     bool isEnabled();
     void setIsEnabled(bool b);
@@ -67,13 +77,20 @@ public:
 
 private:
 
-    bool m_isEnabled = true;
+    Properties_t m_properties;
 
     const std::string m_fileName = "log.txt";
 
     std::ofstream m_file;
 
     std::string m_text;
+    std::size_t m_textReserveSize = 4096 * 1000;
+
+    std::string m_sourceText;
+    std::size_t m_sourceTextReserveSize = 128;
+
+    std::string m_logText;
+    std::size_t m_logTextReserveSize = 256;
 
 };
 

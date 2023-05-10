@@ -25,23 +25,45 @@ void Log::vwrite(const FormatString& format, fmt::format_args args)
         fileName = fileName.substr(fileName.rfind("\\") + 1);
     }
 
-    std::string sourceText = fmt::format("[{}:{}:{}()] ", fileName, loc.line(), loc.function_name());
-
-    fmt::print("{}", sourceText);
-    fmt::vprint(format.str, args);
-
-    m_file << sourceText;
-    fmt::vprint(m_file, format.str, args);
+    m_sourceText = fmt::format(FMT_COMPILE("[{}:{}:{}()] "), fileName, loc.line(), loc.function_name());
 
     std::stringstream ss;
-    ss << sourceText;
+    ss << m_sourceText;
     fmt::vprint(ss, format.str, args);
-    m_text.append(ss.str());
+
+    m_logText = ss.str();
+
+    // append to internal string
+    m_text.append(m_logText);
+
+    // print to console
+    if (m_properties.PrintToConsole == true)
+    {
+        std::cout << m_logText;
+    }
+
+    // write to file
+    if (m_properties.WriteToFile == true)
+    {
+        m_file << m_logText;
+    }
+}
+
+Log::Properties_t* Log::getProperties()
+{
+    return &m_properties;
 }
 
 void Log::open()
 {
     m_text.clear();
+    m_text.reserve(m_textReserveSize);
+
+    m_sourceText.clear();
+    m_sourceText.reserve(m_sourceTextReserveSize);
+
+    m_logText.clear();
+    m_logText.reserve(m_logTextReserveSize);
 
     m_file.open(m_fileName, std::ofstream::out | std::ofstream::app);
 }
@@ -49,27 +71,27 @@ void Log::open()
 void Log::close()
 {
     m_text.clear();
+    m_sourceText.clear();
+    m_logText.clear();
 
     m_file.flush();
     m_file.close();
 }
 
-void Log::deleteContents()
+void Log::deleteFileContents()
 {
-    m_text.clear();
-
     m_file.open(m_fileName, std::ofstream::out | std::ofstream::trunc);
     m_file.close();
 }
 
 bool Log::isEnabled()
 {
-    return m_isEnabled;
+    return m_properties.IsEnabled;
 }
 
 void Log::setIsEnabled(bool b)
 {
-    m_isEnabled = b;
+    m_properties.IsEnabled = b;
 }
 
 std::string Log::getText()

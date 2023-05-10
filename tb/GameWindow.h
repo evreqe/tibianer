@@ -54,7 +54,7 @@ public:
     sf::FloatRect getRect();
     void drawDebugRect();
 
-    void drawBorder();
+    void drawWoodBorder();
 
     sf::Vector2f getMousePixelPosition();
 
@@ -88,6 +88,9 @@ public:
 
     void setLightBrightness(tb::LightBrightness_t lightBrightness);
     tb::LightBrightness_t getLightBrightness();
+
+    int getNumTilesX();
+    int getNumTilesY();
 
 private:
 

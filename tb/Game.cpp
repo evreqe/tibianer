@@ -13,6 +13,11 @@ Game::~Game()
     //
 }
 
+Game::Properties_t* Game::getProperties()
+{
+    return &m_properties;
+}
+
 Game::GuiState_t* Game::getGuiState()
 {
     return &m_guiState;
@@ -354,6 +359,11 @@ bool Game::loadMap(const std::string& fileName)
     return true;
 }
 
+void Game::loadMapUsingThread(const std::string& fileName)
+{
+    m_loadMapThread = std::async(std::launch::async, &Game::loadMap, &g_Game, fileName);
+}
+
 void Game::drawDockSpace()
 {
     ImGuiDockNodeFlags dockSpaceFlags = ImGuiDockNodeFlags_PassthruCentralNode;
@@ -417,8 +427,8 @@ void Game::drawLoadingText()
 {
     sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
 
-    sf::Font renderWindowFont;
-    if (renderWindowFont.loadFromFile("fonts/arial.ttf") == false)
+    sf::Font loadingTextFont;
+    if (loadingTextFont.loadFromFile("fonts/arial.ttf") == false)
     {
         g_Log.write("ERROR: Failed to draw loading text\n");
 
@@ -429,7 +439,7 @@ void Game::drawLoadingText()
     }
 
     sf::Text loadingText;
-    loadingText.setFont(renderWindowFont);
+    loadingText.setFont(loadingTextFont);
     loadingText.setCharacterSize(64);
     loadingText.setFillColor(sf::Color::White);
     loadingText.setString("Loading...");
@@ -590,7 +600,7 @@ void Game::drawDebugRect(sf::FloatRect rect)
 
 void Game::drawDebugRectForWindows()
 {
-   if (tb::Utility::MyImGui::isActive() == false)
+    if (tb::Utility::MyImGui::isActive() == false)
     {
         if (g_GameWindow.isMouseInsideWindow() == true)
         {
@@ -602,6 +612,12 @@ void Game::drawDebugRectForWindows()
             g_MiniMapWindow.drawDebugRect();
         }
     }
+}
+
+void Game::drawWoodBorderForWindows()
+{
+    g_GameWindow.drawWoodBorder();
+    g_MiniMapWindow.drawWoodBorder();
 }
 
 void Game::doGameStateEnterGame()
@@ -629,34 +645,29 @@ void Game::doGameStateEnterGame()
     }
 }
 
-void Game::doGameStateLoading()
+void Game::doGameStateLoadingMap()
 {
     drawBackgroundTextureWithWoodBorder(tb::Textures::Loading);
 
-    if (m_numLoadingFrames > m_numLoadingFramesMax)
+    m_loadMapThreadStatus = m_loadMapThread.wait_for(std::chrono::milliseconds(1));
+
+    if (m_loadMapThreadStatus == std::future_status::ready)
     {
-        if (m_loadMapFileName.size() != 0)
+        bool isMapLoaded = m_loadMapThread.get();
+
+        if (isMapLoaded == true)
         {
-            if (loadMap(m_loadMapFileName) == true)
-            {
-                setGameState(tb::GameState::InGame);
-            }
-            else
-            {
-                ImGui::OpenPopup("Error##ErrorLoadingMap");
-
-                setGameState(tb::GameState::MapSelect);
-
-                g_MapSelectWindow.setIsVisible(true);
-            }
-
-            m_loadMapFileName = "";
+            setGameState(tb::GameState::InGame);
         }
+        else
+        {
+            m_properties.ShowErrorLoadingMapPopup = true;
 
-        m_numLoadingFrames = 0;
+            setGameState(tb::GameState::MapSelect);
+
+            g_MapSelectWindow.setIsVisible(true);
+        }
     }
-
-    m_numLoadingFrames++;
 }
 
 void Game::doGameStateMapSelect()
@@ -672,17 +683,24 @@ void Game::doGameStateMapSelect()
         setGameState(tb::GameState::EnterGame);
     }
 
+    if (m_properties.ShowErrorLoadingMapPopup == true)
+    {
+        ImGui::OpenPopup("Error##ErrorLoadingMapPopup");
+    }
+
     ImVec2 center = ImGui::GetMainViewport()->GetCenter();
     ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
 
-    if (ImGui::BeginPopupModal("Error##ErrorLoadingMap", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove))
+    if (ImGui::BeginPopupModal("Error##ErrorLoadingMapPopup", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings))
     {
         ImGui::TextUnformatted("Failed to load map file!\nSee log for details.");
 
         ImGui::Separator();
 
-        if (ImGui::Button("OK##ErrorButtonOK", ImVec2(105.0f, 29.0f)))
+        if (ImGui::Button("OK##ErrorLoadingMapPopupButtonOK", tb::Constants::MyImGui::PopupButtonSize))
         {
+            m_properties.ShowErrorLoadingMapPopup = false;
+
             ImGui::CloseCurrentPopup();
         }
 
@@ -695,12 +713,49 @@ void Game::doGameStateInGame()
     g_GameWindow.draw();
     g_MiniMapWindow.draw();
 
+    drawWoodBorderForWindows();
+
     if (isDebugModeEnabled() == true)
     {
         drawDebugRectForWindows();
     }
 
     doAnimatedWater();
+
+    if (m_properties.ShowEndGamePopup == true)
+    {
+        ImGui::OpenPopup("End Game##EndGamePopup");
+    }
+
+    ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+    ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+    if (ImGui::BeginPopupModal("End Game##EndGamePopup", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings))
+    {
+        ImGui::TextUnformatted("Are you sure you want to end this game?");
+
+        ImGui::Separator();
+
+        if (ImGui::Button("Yes##EndGamePopupButtonYes", tb::Constants::MyImGui::PopupButtonSize))
+        {
+            ImGui::CloseCurrentPopup();
+
+            m_properties.ShowEndGamePopup = false;
+
+            endGame();
+        }
+
+        ImGui::SameLine();
+
+        if (ImGui::Button("No##EndGamePopupButtonNo", tb::Constants::MyImGui::PopupButtonSize))
+        {
+            ImGui::CloseCurrentPopup();
+
+            m_properties.ShowEndGamePopup = false;
+        }
+
+        ImGui::EndPopup();
+    }
 }
 
 void Game::doAnimatedWater()
@@ -716,7 +771,24 @@ void Game::doAnimatedWater()
     {
         sf::IntRect gameWindowTileRect = g_GameWindow.getTileRect();
 
-        if (g_Map.getTileMapTiles(tb::ZAxis::Default)->doAnimatedWater(gameWindowTileRect) == false)
+        // increase the rect to account for the player walking too fast
+        // and seeing the water animation being applied as it appears
+        int numTilesX = g_GameWindow.getNumTilesX() + 1;
+        int numTilesY = g_GameWindow.getNumTilesY() + 1;
+
+        gameWindowTileRect.left   -= numTilesX;
+        gameWindowTileRect.top    -= numTilesY;
+        gameWindowTileRect.width  += numTilesX * 2;
+        gameWindowTileRect.height += numTilesY * 2;
+
+        tb::TileMap::Ptr tileMap = g_Map.getTileMapOfTilesAtZ(tb::ZAxis::Default);
+
+        if (tileMap == nullptr)
+        {
+            return;
+        }
+
+        if (tileMap->doAnimatedWater(gameWindowTileRect) == false)
         {
             g_Log.write("ERROR: Failed to animate water\n");
         }
@@ -757,6 +829,8 @@ bool Game::createPlayer()
 
     player->setName(playerName);
 
+    player->setMovementSpeed(0.1f);
+
     m_player = player;
 
     tb::Tile::Ptr tile = g_Map.getTileOfThing(m_player);
@@ -769,13 +843,13 @@ bool Game::createPlayer()
 
     tile->addCreature(m_player);
 
-    g_Log.write("tile index: {}\n", tile->getTileIndex());
-    g_Log.write("tile x: {}\n", tile->getTileX());
-    g_Log.write("tile y: {}\n", tile->getTileY());
-    g_Log.write("tile z: {}\n", tile->getZ());
-    g_Log.write("tile sprite id: {}\n", tile->getSpriteID());
+    g_Log.write("Tile Index: {}\n", tile->getTileIndex());
+    g_Log.write("Tile X: {}\n", tile->getTileX());
+    g_Log.write("Tile Y: {}\n", tile->getTileY());
+    g_Log.write("Tile Z: {}\n", tile->getZ());
+    g_Log.write("Tile Sprite ID: {}\n", tile->getSpriteID());
 
-    g_Log.write("player coords: {},{},{}\n", m_player->getTileX(), m_player->getTileY(), m_player->getZ());
+    g_Log.write("Player Coords: {},{},{}\n", m_player->getTileX(), m_player->getTileY(), m_player->getZ());
 
     return true;
 }
@@ -838,16 +912,36 @@ void Game::handleMouseButtonReleasedEvent(sf::Event event)
 
 void Game::handleKeyPressedEvent(sf::Event event)
 {
-    m_isAnyKeyPressed = true;
+    m_properties.IsAnyKeyPressed = true;
 }
 
 void Game::handleKeyReleasedEvent(sf::Event event)
 {
-    m_isAnyKeyPressed = false;
+    m_properties.IsAnyKeyPressed = false;
 }
 
 void Game::handleKeyboardInput()
 {
+    if (m_gameState == tb::GameState::InGame)
+    {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W))
+        {
+            handleCreatureMovement(m_player, tb::MovementDirection::Up);
+        }
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D))
+        {
+            handleCreatureMovement(m_player, tb::MovementDirection::Right);
+        }
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S))
+        {
+            handleCreatureMovement(m_player, tb::MovementDirection::Down);
+        }
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A))
+        {
+            handleCreatureMovement(m_player, tb::MovementDirection::Left);
+        }
+    }
+
     if (isDebugModeEnabled() == true)
     {
         if (m_gameState == tb::GameState::InGame)
@@ -1172,7 +1266,7 @@ void Game::exit()
 
 void Game::run()
 {
-    g_Log.deleteContents();
+    g_Log.deleteFileContents();
     g_Log.open();
     g_Log.write("{} (Build: {} {})\n", tb::Constants::GameTitle, __DATE__, __TIME__);
 
@@ -1183,6 +1277,13 @@ void Game::run()
         exit();
         return;
     }
+
+    tb::OptionsData::Data* optionsData = g_OptionsData.getData();
+
+    tb::Log::Properties_t* logProperties = g_Log.getProperties();
+    logProperties->IsEnabled = optionsData->LogIsEnabled;
+    logProperties->PrintToConsole = optionsData->LogPrintToConsole;
+    logProperties->WriteToFile = optionsData->LogWriteToFile;
 
     g_Log.write("Creating render window\n");
     if (g_RenderWindow.create() == false)
@@ -1269,9 +1370,9 @@ void Game::run()
         {
             doGameStateMapSelect();
         }
-        else if (m_gameState == tb::GameState::Loading)
+        else if (m_gameState == tb::GameState::LoadingMap)
         {
-            doGameStateLoading();
+            doGameStateLoadingMap();
         }
         else if (m_gameState == tb::GameState::InGame)
         {
@@ -1280,19 +1381,26 @@ void Game::run()
             doOverlayText();
         }
 
-        g_MenuBar.draw();
-        g_StatusBar.draw();
+        if (*g_MenuBar.getIsVisible() == true)
+        {
+            g_MenuBar.draw();
+        }
+
+        if (*g_StatusBar.getIsVisible() == true)
+        {
+            g_StatusBar.draw();
+        }
 
         drawDockSpace();
 
-        if (m_showDemoWindow == true)
+        if (m_properties.ShowDemoWindow == true)
         {
-            ImGui::ShowDemoWindow(&m_showDemoWindow);
+            ImGui::ShowDemoWindow(&m_properties.ShowDemoWindow);
         }
 
-        if (m_showStackToolWindow == true)
+        if (m_properties.ShowStackToolWindow == true)
         {
-            ImGui::ShowStackToolWindow(&m_showStackToolWindow);
+            ImGui::ShowStackToolWindow(&m_properties.ShowStackToolWindow);
         }
 
         if (*g_SpriteEditorWindow.getIsVisible() == true)
@@ -1417,12 +1525,12 @@ void Game::toggleDebugMode()
 
 void Game::toggleDemoWindow()
 {
-    tb::Utility::toggleBool(m_showDemoWindow);
+    tb::Utility::toggleBool(m_properties.ShowDemoWindow);
 }
 
 void Game::toggleStackToolWindow()
 {
-    tb::Utility::toggleBool(m_showStackToolWindow);
+    tb::Utility::toggleBool(m_properties.ShowStackToolWindow);
 }
 
 tb::GameState Game::getGameState()
@@ -1440,9 +1548,311 @@ tb::Creature::Ptr Game::getPlayer()
     return m_player;
 }
 
-void Game::setLoadMapFileName(const std::string& fileName)
+sf::Vector2i Game::getVectorByMovementDirection(tb::MovementDirection movementDirection)
 {
-    m_loadMapFileName = fileName;
+    sf::Vector2i vector(0, 0);
+
+    switch (movementDirection)
+    {
+        case tb::MovementDirection::Up:
+            vector.y = -1;
+            break;
+
+        case tb::MovementDirection::Right:
+            vector.x = 1;
+            break;
+
+        case tb::MovementDirection::Down:
+            vector.y = 1;
+            break;
+
+        case tb::MovementDirection::Left:
+            vector.x = -1;
+            break;
+
+        case tb::MovementDirection::UpLeft:
+            vector.x = -1;
+            vector.y = -1;
+            break;
+
+        case tb::MovementDirection::UpRight:
+            vector.x++;
+            vector.y = -1;
+            break;
+
+        case tb::MovementDirection::DownLeft:
+            vector.x = -1;
+            vector.y = 1;
+            break;
+
+        case tb::MovementDirection::DownRight:
+            vector.x = 1;
+            vector.y = 1;
+            break;
+    }
+
+    return vector;
+}
+
+tb::MovementDirection Game::getMovementDirectionByVector(sf::Vector2i vector)
+{
+    tb::MovementDirection movementDirection = tb::MovementDirection::Null;
+
+    if (vector.x == 0 && vector.y < 0)
+    {
+        movementDirection = tb::MovementDirection::Up;
+    }
+    else if (vector.x > 0 && vector.y == 0)
+    {
+        movementDirection = tb::MovementDirection::Right;
+    }
+    else if (vector.x == 0 && vector.y > 0)
+    {
+        movementDirection = tb::MovementDirection::Down;
+    }
+    else if (vector.x < 0 && vector.y == 0)
+    {
+        movementDirection = tb::MovementDirection::Left;
+    }
+    else if (vector.x < 0 && vector.y < 0)
+    {
+        movementDirection = tb::MovementDirection::UpLeft;
+    }
+    else if (vector.x > 0 && vector.y < 0)
+    {
+        movementDirection = tb::MovementDirection::UpRight;
+    }
+    else if (vector.x < 0 && vector.y > 0)
+    {
+        movementDirection = tb::MovementDirection::DownLeft;
+    }
+    else if (vector.x > 0 && vector.y > 0)
+    {
+        movementDirection = tb::MovementDirection::DownRight;
+    }
+
+    return movementDirection;
+}
+
+tb::Tile::Ptr Game::getTileByThingMovementDirection(tb::Thing::Ptr thing, tb::MovementDirection movementDirection)
+{
+    sf::Vector2i vectorByMovementDirection = getVectorByMovementDirection(movementDirection);
+
+    tb::TileMap::Ptr tileMap = g_Map.getTileMapOfTilesAtZ(thing->getZ());
+
+    if (tileMap == nullptr)
+    {
+        return nullptr;
+    }
+
+    tb::Tile::List* tileList = tileMap->getTileList();
+
+    if (tileList == nullptr)
+    {
+        return nullptr;
+    }
+
+    sf::Vector2i tileCoords = sf::Vector2i(thing->getTileX() + vectorByMovementDirection.x, thing->getTileY() + vectorByMovementDirection.y);
+
+    if (g_Map.isTileCoordsOutOfBounds(tileCoords) == true)
+    {
+        return nullptr;
+    }
+
+    uint32_t tileIndex = g_Map.getTileIndexByTileCoords(tileCoords);
+
+    if (g_Map.isTileIndexOutOfBounds(tileIndex) == true)
+    {
+        return nullptr;
+    }
+
+    return tileList->at(tileIndex);
+}
+
+bool Game::findTilesAboveThing(tb::Thing::Ptr thing, tb::ZAxis_t tileMapZ)
+{
+    tb::TileMap::Ptr tileMap = g_Map.getTileMapOfTilesAtZ(tileMapZ);
+
+    if (tileMap == nullptr)
+    {
+        return false;
+    }
+
+    tb::Tile::List* tileList = tileMap->getTileList();
+
+    if (tileList == nullptr)
+    {
+        return false;
+    }
+
+    if (tileList->size() == 0)
+    {
+        return false;
+    }
+
+    int thingX = thing->getTileX();
+    int thingY = thing->getTileY();
+
+    std::vector<uint32_t> aboveThingTileIndexList;
+
+    for (int i = -2; i < 2; i++)
+    {
+        sf::Vector2i tileCoords1 = sf::Vector2i(thingX - 2, thingY + i);
+        sf::Vector2i tileCoords2 = sf::Vector2i(thingX - 1, thingY + i);
+        sf::Vector2i tileCoords3 = sf::Vector2i(thingX,     thingY + i);
+        sf::Vector2i tileCoords4 = sf::Vector2i(thingX + 1, thingY + i);
+
+        if (g_Map.isTileCoordsOutOfBounds(tileCoords1) == false)
+        {
+            aboveThingTileIndexList.push_back(g_Map.getTileIndexByTileCoords(tileCoords1));
+        }
+
+        if (g_Map.isTileCoordsOutOfBounds(tileCoords2) == false)
+        {
+            aboveThingTileIndexList.push_back(g_Map.getTileIndexByTileCoords(tileCoords2));
+        }
+
+        if (g_Map.isTileCoordsOutOfBounds(tileCoords3) == false)
+        {
+            aboveThingTileIndexList.push_back(g_Map.getTileIndexByTileCoords(tileCoords3));
+        }
+
+        if (g_Map.isTileCoordsOutOfBounds(tileCoords4) == false)
+        {
+            aboveThingTileIndexList.push_back(g_Map.getTileIndexByTileCoords(tileCoords4));
+        }
+    }
+
+    for (uint32_t tileIndex : aboveThingTileIndexList)
+    {
+        if (g_Map.isTileIndexOutOfBounds(tileIndex) == true)
+        {
+            continue;
+        }
+
+        tb::Tile::Ptr tile = tileList->at(tileIndex);
+
+        if (tile->getSpriteID() == tb::Constants::SpriteIDNull)
+        {
+            continue;
+        }
+
+        if (tile->getZ() > thing->getZ())
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+void Game::handleCreatureMovement(tb::Creature::Ptr creature, tb::MovementDirection movementDirection)
+{
+    if (movementDirection == tb::MovementDirection::Null)
+    {
+        return;
+    }
+
+    tb::Creature::Properties_t* creatureProperties = creature->getProperties();
+
+    if (creatureProperties->IsDead == true || creatureProperties->IsSleeping == true)
+    {
+        return;
+    }
+
+    sf::Time timeMovement = creature->getMovementClock()->getElapsedTime();
+
+    if (timeMovement.asSeconds() < creature->getMovementSpeed())
+    {
+        return;
+    }
+
+    creature->setDirectionByMovementDirection(movementDirection);
+
+    tb::Tile::Ptr toTile = getTileByThingMovementDirection(creature, movementDirection);
+
+    if (toTile == nullptr)
+    {
+        return;
+    }
+
+    doMoveThingToTile(creature, toTile);
+
+    creature->getMovementClock()->restart();
+
+    creature->update();
+}
+
+bool Game::doMoveThingToTile(tb::Thing::Ptr thing, tb::Tile::Ptr toTile)
+{
+    tb::Tile::Ptr fromTile = g_Map.getTileOfThing(thing);
+
+    if (fromTile == nullptr || toTile == nullptr)
+    {
+        return false;
+    }
+
+    tb::SpriteID_t toTileSpriteID = toTile->getSpriteID();
+
+    if (toTileSpriteID == tb::Constants::SpriteIDNull)
+    {
+        return false;
+    }
+
+    tb::ThingType thingType = thing->getThingType();
+
+    tb::ZAxis_t fromTileZ = fromTile->getZ();
+    tb::ZAxis_t toTileZ = toTile->getZ();
+
+    tb::SpriteData::DataList* spriteDataList = g_SpriteData.getDataList();
+
+    tb::Object::List* toTileObjectList = toTile->getObjectList();
+
+    for (auto& toTileObject : *toTileObjectList)
+    {
+        tb::SpriteID_t toTileObjectSpriteID = toTileObject->getSpriteID();
+
+        tb::SpriteData::Data* toTileObjectSpriteData = &spriteDataList->at(toTileObjectSpriteID);
+
+        tb::SpriteFlags* toTileObjectSpriteFlags = &toTileObjectSpriteData->SpriteFlags;
+
+        // TODO: account for throwing items in water or dustbin, etc
+
+        if (toTileObjectSpriteFlags->hasFlag(tb::SpriteFlag::Solid) == true)
+        {
+            return false;
+        }
+    }
+
+    if (thingType == tb::ThingType::Creature)
+    {
+        tb::Creature::Ptr creature = std::static_pointer_cast<tb::Creature>(thing);
+
+        tb::Creature::List* fromTileCreatureList = fromTile->getCreatureList();
+
+        if (fromTileCreatureList->size() == 0)
+        {
+            return false;
+        }
+
+        auto fromTileCreatureIt = std::find(fromTileCreatureList->begin(), fromTileCreatureList->end(), creature);
+
+        if (fromTileCreatureIt == fromTileCreatureList->end())
+        {
+            return false;
+        }
+
+        toTile->addCreature(creature);
+
+        fromTileCreatureList->erase(fromTileCreatureIt);
+
+        thing->setTileCoords(toTile->getTileCoords());
+        thing->setZ(toTileZ);
+    }
+
+    // Object
+
+    return true;
 }
 
 }

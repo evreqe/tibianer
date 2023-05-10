@@ -57,14 +57,13 @@ bool TileMap::load(uint32_t tileWidth, uint32_t tileHeight, const tb::SpriteIDLi
 
     m_tileSpriteIDList.clear();
     m_tileSpriteIDList.reserve(m_numTiles);
-    //m_tileSpriteIDList.swap(tileSpriteIDList); // cannot use swap with const reference
     m_tileSpriteIDList = tileSpriteIDList;
 
-    g_Log.write("z: {}\n", z);
-    g_Log.write("name: {}\n", m_name);
-    g_Log.write("tile width and height: {}x{}\n", m_tileWidth, m_tileHeight);
-    g_Log.write("tile sprite ID list size: {}\n", m_tileSpriteIDList.size());
-    g_Log.write("tile map type: {}\n", magic_enum::enum_name(m_tileMapType));
+    g_Log.write("Tile Map Z: {}\n", z);
+    g_Log.write("Tile Map Name: {}\n", m_name);
+    g_Log.write("Tile Map Width and Height: {}x{}\n", m_tileWidth, m_tileHeight);
+    g_Log.write("Tile Map Sprite ID List Size: {}\n", m_tileSpriteIDList.size());
+    g_Log.write("Tile Map Type: {}\n", magic_enum::enum_name(m_tileMapType));
 
     for (uint32_t tileIndex = 0; tb::SpriteID_t& tileSpriteID : m_tileSpriteIDList)
     {
@@ -85,6 +84,7 @@ bool TileMap::load(uint32_t tileWidth, uint32_t tileHeight, const tb::SpriteIDLi
 
         tb::SpriteFlags* tileSpriteFlags = &g_SpriteData.getDataList()->at(tileSpriteID).SpriteFlags;
 
+        // TODO: this might not be needed
         if (tileSpriteID == tb::Constants::SpriteIDNull && m_tileMapType == tb::TileMapType::Tiles)
         {
             tileSpriteFlags->setFlag(tb::SpriteFlag::Null, true);
@@ -114,8 +114,10 @@ bool TileMap::load(uint32_t tileWidth, uint32_t tileHeight, const tb::SpriteIDLi
             return false;
         }
 
-        g_Log.write("Tile patterns applied in {} seconds\n", timeToApplyTilePatterns.getElapsedTime().asSeconds());
+        g_Log.write("Tile patterns applied in {:.2f} seconds\n", timeToApplyTilePatterns.getElapsedTime().asSeconds());
     }
+
+    m_isLoaded = true;
 
     return true;
 }
@@ -469,6 +471,11 @@ bool TileMap::applyTileObjectPatterns()
     return true;
 }
 
+bool TileMap::isLoaded()
+{
+    return m_isLoaded;
+}
+
 const std::string& TileMap::getName()
 {
     return m_name;
@@ -667,6 +674,11 @@ void TileMap::drawObjects(const sf::IntRect& tileRect, sf::RenderTarget& renderT
 
                 tb::Sprite* objectSprite = object->getSprite();
 
+                if (objectSprite == nullptr)
+                {
+                    continue;
+                }
+
                 spriteBatch.addSprite(objectSprite, true);
             }
             else if (thing->getThingType() == tb::ThingType::Creature)
@@ -679,6 +691,11 @@ void TileMap::drawObjects(const sf::IntRect& tileRect, sf::RenderTarget& renderT
 
                 for (auto& creatureSprite : creatureSpriteList)
                 {
+                    if (creatureSprite == nullptr)
+                    {
+                        continue;
+                    }
+
                     spriteBatch.addSprite(creatureSprite, false);
                 }
             }

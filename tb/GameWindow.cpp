@@ -63,7 +63,7 @@ void GameWindow::drawDebugRect()
     g_Game.drawDebugRect(windowRect);
 }
 
-void GameWindow::drawBorder()
+void GameWindow::drawWoodBorder()
 {
     sf::FloatRect windowRect = getRect();
 
@@ -195,14 +195,24 @@ void GameWindow::drawLayer(tb::ZAxis_t z)
         static_cast<float>((tileRect.top  + m_numTilesToDrawFromOffscreen) * tb::Constants::TileSize)
     );
 
-    tb::TileMap* tileMapTiles = g_Map.getTileMapTiles(z);
-    tb::TileMap* tileMapTileEdges = g_Map.getTileMapTileEdges(z);
+    tb::TileMap::Ptr tileMapTiles = g_Map.getTileMapOfTilesAtZ(z);
+
+    if (tileMapTiles == nullptr)
+    {
+        return;
+    }
 
     m_windowLayer.setView(m_view);
     m_windowLayer.clear(sf::Color::Transparent);
 
     tileMapTiles->drawTiles(tileRect, m_windowLayer);
-    tileMapTileEdges->drawTiles(tileRect, m_windowLayer);
+
+    tb::TileMap::Ptr tileMapTileEdges = g_Map.getTileMapOfTileEdgesAtZ(z);
+
+    if (tileMapTileEdges != nullptr)
+    {
+        tileMapTileEdges->drawTiles(tileRect, m_windowLayer);
+    }
 
     tileMapTiles->drawObjects(tileRect, m_windowLayer);
 
@@ -231,8 +241,6 @@ void GameWindow::draw()
     bool isDebugModeEnabled = g_Game.isDebugModeEnabled();
 
     setPosition(sf::Vector2f(32.0f, 32.0f + g_MenuBar.getHeight()));
-
-    drawBorder();
 
     tb::Creature::Ptr player = g_Game.getPlayer();
 
@@ -286,25 +294,30 @@ void GameWindow::draw()
 
     sf::IntRect tileRect = getTileRect();
 
-    for (tb::ZAxis_t i = zBegin; i < zEnd + 1; i++)
+    for (tb::ZAxis_t i = zBegin; i < zEnd; i++)
     {
-        bool tileMapIsVisible = g_Map.getTileMapTiles(i)->isVisibleWithinTileRect(tileRect);
+        tb::TileMap::Ptr tileMap = g_Map.getTileMapOfTilesAtZ(i);
+
+        if (tileMap == nullptr)
+        {
+            continue;
+        }
+
+        bool tileMapIsVisible = tileMap->isVisibleWithinTileRect(tileRect);
 
         if (tileMapIsVisible == true)
         {
-            //g_Log.write("drawGameWindowLayer: {}\n", i);
-
             drawLayer(i);
         }
 
         // check for ceilings and rooftops above the player
-        //if (i < tb::Constants::NumZAxis)
-        //{
-        //    if (findTilesAboveThing(m_player, i + 1) == true)
-        //    {
-        //        break;
-        //    }
-        //}
+        if (i < tb::Constants::NumZAxis)
+        {
+            if (g_Game.findTilesAboveThing(player, i + 1) == true)
+            {
+                break;
+            }
+        }
     }
 
     if (m_properties.ShowTileHighlight == true)
@@ -401,6 +414,16 @@ void GameWindow::setLightBrightness(tb::LightBrightness_t lightBrightness)
 tb::LightBrightness_t GameWindow::getLightBrightness()
 {
     return m_lightBrightness;
+}
+
+int GameWindow::getNumTilesX()
+{
+    return m_numTilesX;
+}
+
+int GameWindow::getNumTilesY()
+{
+    return m_numTilesY;
 }
 
 }

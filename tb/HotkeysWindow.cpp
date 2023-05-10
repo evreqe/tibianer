@@ -52,51 +52,51 @@ void HotkeysWindow::draw()
 
     ImGui::TextUnformatted("F1: ");
     ImGui::SameLine();
-    ImGui::InputText("##HotkeysWindowInputTextF1", &m_hotkeysData.F1);
+    ImGui::InputText("##HotkeysWindowInputF1", &m_hotkeysData.F1);
 
     ImGui::TextUnformatted("F2: ");
     ImGui::SameLine();
-    ImGui::InputText("##HotkeysWindowInputTextF2", &m_hotkeysData.F2);
+    ImGui::InputText("##HotkeysWindowInputF2", &m_hotkeysData.F2);
 
     ImGui::TextUnformatted("F3: ");
     ImGui::SameLine();
-    ImGui::InputText("##HotkeysWindowInputTextF3", &m_hotkeysData.F3);
+    ImGui::InputText("##HotkeysWindowInputF3", &m_hotkeysData.F3);
 
     ImGui::TextUnformatted("F4: ");
     ImGui::SameLine();
-    ImGui::InputText("##HotkeysWindowInputTextF4", &m_hotkeysData.F4);
+    ImGui::InputText("##HotkeysWindowInputF4", &m_hotkeysData.F4);
 
     ImGui::TextUnformatted("F5: ");
     ImGui::SameLine();
-    ImGui::InputText("##HotkeysWindowInputTextF5", &m_hotkeysData.F5);
+    ImGui::InputText("##HotkeysWindowInputF5", &m_hotkeysData.F5);
 
     ImGui::TextUnformatted("F6: ");
     ImGui::SameLine();
-    ImGui::InputText("##HotkeysWindowInputTextF6", &m_hotkeysData.F6);
+    ImGui::InputText("##HotkeysWindowInputF6", &m_hotkeysData.F6);
 
     ImGui::TextUnformatted("F7: ");
     ImGui::SameLine();
-    ImGui::InputText("##HotkeysWindowInputTextF7", &m_hotkeysData.F7);
+    ImGui::InputText("##HotkeysWindowInputF7", &m_hotkeysData.F7);
 
     ImGui::TextUnformatted("F8: ");
     ImGui::SameLine();
-    ImGui::InputText("##HotkeysWindowInputTextF8", &m_hotkeysData.F8);
+    ImGui::InputText("##HotkeysWindowInputF8", &m_hotkeysData.F8);
 
     ImGui::TextUnformatted("F9: ");
     ImGui::SameLine();
-    ImGui::InputText("##HotkeysWindowInputTextF9", &m_hotkeysData.F9);
+    ImGui::InputText("##HotkeysWindowInputF9", &m_hotkeysData.F9);
 
     ImGui::TextUnformatted("F10:");
     ImGui::SameLine();
-    ImGui::InputText("##HotkeysWindowInputTextF10", &m_hotkeysData.F10);
+    ImGui::InputText("##HotkeysWindowInputF10", &m_hotkeysData.F10);
 
     ImGui::TextUnformatted("F11:");
     ImGui::SameLine();
-    ImGui::InputText("##HotkeysWindowInputTextF11", &m_hotkeysData.F11);
+    ImGui::InputText("##HotkeysWindowInputF11", &m_hotkeysData.F11);
 
     ImGui::TextUnformatted("F12:");
     ImGui::SameLine();
-    ImGui::InputText("##HotkeysWindowInputTextF12", &m_hotkeysData.F12);
+    ImGui::InputText("##HotkeysWindowInputF12", &m_hotkeysData.F12);
 
     ImGui::Separator();
 

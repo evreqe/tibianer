@@ -39,12 +39,6 @@ void SpriteEditorWindow::saveData()
 
 void SpriteEditorWindow::draw()
 {
-    if (g_SpriteData.isLoaded() == false)
-    {
-        g_Log.write("ERROR: Sprite data is not loaded");
-        return;
-    }
-
     if (m_isOpen == false)
     {
         onOpen();
@@ -192,8 +186,8 @@ void SpriteEditorWindow::draw()
             ImGui::InputText("Article##SpriteEditorWindowInputArticle", &m_spriteData->Article);
             ImGui::InputText("Description##SpriteEditorWindowInputDescription", &m_spriteData->Description);
 
-            ImGui::InputScalar("Tile Width##SpriteEditorWindowInputTileWidth", ImGuiDataType_U8, &m_spriteData->TileWidth, &m_scalarU8StepOne);
-            ImGui::InputScalar("Tile Height##SpriteEditorWindowInputTileHeight", ImGuiDataType_U8, &m_spriteData->TileHeight, &m_scalarU8StepOne);
+            ImGui::InputScalar("Tile Width##SpriteEditorWindowInputTileWidth", ImGuiDataType_U8, &m_spriteData->TileWidth, &tb::Constants::MyImGui::InputScalarU8StepOne);
+            ImGui::InputScalar("Tile Height##SpriteEditorWindowInputTileHeight", ImGuiDataType_U8, &m_spriteData->TileHeight, &tb::Constants::MyImGui::InputScalarU8StepOne);
 
             ImGui::InputFloat("Weight##SpriteEditorWindowInputWeight", &m_spriteData->Weight, 1.0f, 10.0f, "%.2f");
             ImGui::InputFloat("Light Radius##SpriteEditorWindowInputLightRadius", &m_spriteData->LightRadius, 1.0f, 10.0f, "%.2f");

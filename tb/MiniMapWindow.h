@@ -48,7 +48,7 @@ namespace tb
         sf::FloatRect getRect();
         void drawDebugRect();
 
-        void drawBorder();
+        void drawWoodBorder();
 
         //sf::Vector2f getMousePixelCoords();
         //sf::Vector2i getMouseTileCoords();

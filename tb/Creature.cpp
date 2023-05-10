@@ -60,6 +60,37 @@ void Creature::update()
     }
 }
 
+void Creature::setDirectionByMovementDirection(tb::MovementDirection movementDirection)
+{
+    if (movementDirection == tb::MovementDirection::Null)
+    {
+        return;
+    }
+
+    tb::Direction direction = tb::Direction::Down;
+
+    switch (movementDirection)
+    {
+        case tb::MovementDirection::Up:
+            direction = tb::Direction::Up;
+            break;
+
+        case tb::MovementDirection::Right:
+            direction = tb::Direction::Right;
+            break;
+
+        case tb::MovementDirection::Down:
+            direction = tb::Direction::Down;
+            break;
+
+        case tb::MovementDirection::Left:
+            direction = tb::Direction::Left;
+            break;
+    }
+
+    setDirection(direction);
+}
+
 std::string Creature::getName()
 {
     return m_name;
@@ -108,6 +139,21 @@ tb::BloodType Creature::getBloodType()
 void Creature::setBloodType(tb::BloodType bloodType)
 {
     m_bloodType = bloodType;
+}
+
+float Creature::getMovementSpeed()
+{
+    return m_movementSpeed;
+}
+
+void Creature::setMovementSpeed(float movementSpeed)
+{
+    m_movementSpeed = movementSpeed;
+}
+
+sf::Clock* Creature::getMovementClock()
+{
+    return &m_movementClock;
 }
 
 tb::Sprite* Creature::getDummySprite()

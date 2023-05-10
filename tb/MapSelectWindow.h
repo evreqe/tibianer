@@ -40,6 +40,10 @@ namespace tb
 
     private:
 
+        unsigned int m_selectedListBoxIndex = 0;
+
+        tb::MapData::Data* m_selectedMapData = nullptr;
+
         const ImVec2 m_buttonSize = ImVec2(105.0f, 29.0f);
 
     };

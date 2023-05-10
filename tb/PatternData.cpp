@@ -30,7 +30,7 @@ bool PatternData::load()
     catch (const toml::parse_error& parseError)
     {
         g_Log.write("ERROR: Failed to load data from file: {}\n", m_fileName);
-        g_Log.write("{}\n{}\n", parseError.description(), parseError.source().begin);
+        g_Log.write("Description: {}\nLine: {}\nColumn: {}\n", parseError.description(), parseError.source().begin.line, parseError.source().begin.column);
         return false;
     }
 
@@ -129,9 +129,9 @@ bool PatternData::load()
             return false;
         }
 
-        std::string spriteIDListStr = fmt::format("{}", data.SpriteIDList);
+        //std::string spriteIDListStr = fmt::format("{}", data.SpriteIDList);
 
-        g_Log.write("Sprites: {}\n", spriteIDListStr);
+        //g_Log.write("Sprites: {}\n", spriteIDListStr);
 
         m_dataList.push_back(data);
     }

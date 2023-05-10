@@ -30,6 +30,8 @@ public:
     TileMap();
     ~TileMap();
 
+    using Ptr = std::shared_ptr<tb::TileMap>;
+    using List = std::vector<tb::TileMap::Ptr>;
     using Array = std::array<tb::TileMap, tb::Constants::NumZAxis>;
 
     bool load(uint32_t tileWidth, uint32_t tileHeight, const tb::SpriteIDList& tileSpriteIDList, const std::string& name, tb::TileMapType tileMapType, tb::ZAxis_t z);
@@ -53,6 +55,8 @@ public:
     bool applyTilePatterns();
     bool applyTileObjectPatterns();
 
+    bool isLoaded();
+
     const std::string& getName();
     void setName(const std::string& name);
 
@@ -69,6 +73,8 @@ public:
     void drawLights(const sf::IntRect& tileRect, sf::RenderTarget& renderTarget, tb::LightBrightness_t lightBrightness);
 
 private:
+
+    bool m_isLoaded = false;
 
     std::string m_name;
 

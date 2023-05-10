@@ -55,6 +55,16 @@ namespace tb
         inline const uint32_t TileHeightClimbDifference = 3; // height needed to climb up or down a z-axis level using stacked vertical objects, like going from the ground to the roof of a house
 
         inline const uint32_t SkillLevelDefault = 10;
+
+        namespace MyImGui
+        {
+            inline const uint8_t InputScalarU8StepOne = 1;
+            inline const uint16_t InputScalarU16StepOne = 1;
+            inline const uint32_t InputScalarU32StepOne = 1;
+            inline const uint64_t InputScalarU64StepOne = 1;
+
+            inline const ImVec2 PopupButtonSize(105.0f, 29.0f);
+        }
     }
 
     namespace Textures
@@ -263,9 +273,10 @@ namespace tb
 
     enum class GameState : uint8_t
     {
-        Loading,
         EnterGame,
+        NewGameJourneyOnward,
         MapSelect,
+        LoadingMap,
         InGame,
         Paused,
     };
@@ -278,6 +289,15 @@ namespace tb
 
     enum class Direction : uint8_t
     {
+        Up,
+        Right,
+        Down,
+        Left,
+    };
+
+    enum class MovementDirection : uint8_t
+    {
+        Null,
         Up,
         Right,
         Down,

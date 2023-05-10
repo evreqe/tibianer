@@ -36,7 +36,7 @@ public:
 
 private:
 
-    //
+    const ImVec2 m_windowSize = ImVec2(320.0f, 240.0f);
 
 };
 

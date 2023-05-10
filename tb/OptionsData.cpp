@@ -30,11 +30,15 @@ bool OptionsData::load()
     catch (const toml::parse_error& parseError)
     {
         g_Log.write("ERROR: Failed to load data from file: {}\n", m_fileName);
-        g_Log.write("{}\n{}\n", parseError.description(), parseError.source().begin);
+        g_Log.write("Description: {}\nLine: {}\nColumn: {}\n", parseError.description(), parseError.source().begin.line, parseError.source().begin.column);
         return false;
     }
 
     g_Log.write("Loaded data from file: {}\n", m_fileName);
+
+    m_data.LogIsEnabled = m_table["Log"]["IsEnabled"].value_or(true);
+    m_data.LogPrintToConsole = m_table["Log"]["PrintToConsole"].value_or(true);
+    m_data.LogWriteToFile = m_table["Log"]["WriteToFile"].value_or(true);
 
     m_data.PlayerName = m_table["Player"]["Name"].value_or("");
     m_data.PlayerOutfitHead = m_table["Player"]["OutfitHead"].value_or(0);
@@ -71,6 +75,8 @@ bool OptionsData::load()
     m_data.CheatsInfiniteHealth = m_table["Cheats"]["InfiniteHealth"].value_or(false);
     m_data.CheatsInfiniteMana = m_table["Cheats"]["InfiniteMana"].value_or(false);
     m_data.CheatsInfiniteCap = m_table["Cheats"]["InfiniteCap"].value_or(false);
+
+    g_Log.write("LogIsEnabled: {}\n", m_data.LogIsEnabled);
 
     g_Log.write("PlayerName: {}\n", m_data.PlayerName);
     g_Log.write("PlayerOutfitHead: {}\n", m_data.PlayerOutfitHead);
@@ -129,6 +135,12 @@ bool OptionsData::save()
         g_Log.write("ERROR: Cannot open file: {}\n", m_fileName);
         return false;
     }
+
+    file << "[Log]\n";
+
+    file << std::format("IsEnabled={}\n", m_data.LogIsEnabled);
+    file << std::format("PrintToConsole={}\n", m_data.LogPrintToConsole);
+    file << std::format("WriteToFile={}\n", m_data.LogWriteToFile);
 
     file << "[Player]\n";
 

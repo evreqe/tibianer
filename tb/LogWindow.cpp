@@ -17,13 +17,13 @@ void LogWindow::draw()
 {
     centerOnFirstUseEver();
 
-    ImGui::SetNextWindowSize(ImVec2(640, 480), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(m_windowSize, ImGuiCond_FirstUseEver);
 
     bool* isVisible = getIsVisible();
 
-    ImGui::Begin("Log##LogWindow", isVisible);
+    ImGui::Begin("Log##LogWindow", isVisible, ImGuiWindowFlags_NoScrollbar);
 
-    ImGui::BeginChild("##LogWindowScrollableArea", ImVec2(0, 0), true, ImGuiWindowFlags_HorizontalScrollbar);
+    ImGui::BeginChild("##LogWindowChildText", ImVec2(0, 0), true, ImGuiWindowFlags_HorizontalScrollbar);
 
     const std::string logText = g_Log.getText();
 

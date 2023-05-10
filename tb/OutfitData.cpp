@@ -22,10 +22,15 @@ bool OutfitData::load()
     }
 
     m_table.clear();
-    m_table = toml::parse_file(m_fileName);
-    if (m_table.size() == 0)
+
+    try
+    {
+        m_table = toml::parse_file(m_fileName);
+    }
+    catch (const toml::parse_error& parseError)
     {
         g_Log.write("ERROR: Failed to load data from file: {}\n", m_fileName);
+        g_Log.write("Description: {}\nLine: {}\nColumn: {}\n", parseError.description(), parseError.source().begin.line, parseError.source().begin.column);
         return false;
     }
 

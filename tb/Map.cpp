@@ -92,6 +92,9 @@ bool Map::load(const std::string& fileName)
     g_Log.write("Map size: {}x{} tiles ({} tiles total)\n", m_tileWidth, m_tileHeight, m_numTiles);
     g_Log.write("Map size: {}x{} pixels ({} pixels total)\n", m_pixelWidth, m_pixelHeight, m_numPixels);
 
+    m_tileMapOfTilesList.clear();
+    m_tileMapOfTileEdgesList.clear();
+
     pugi::xml_node xmlNode_map_properties = xmlNode_map.child("properties");
     if (xmlNode_map_properties == NULL)
     {
@@ -219,7 +222,7 @@ bool Map::load(const std::string& fileName)
 
             if (xmlNode_map_group_layer_data__string.size() == 0)
             {
-                g_Log.write("Skipping layer because size it is empty\n");
+                g_Log.write("Skipping layer because it is empty\n");
                 continue;
             }
 
@@ -278,7 +281,7 @@ bool Map::load(const std::string& fileName)
                 {
                     tb::SpriteID_t spriteID = static_cast<tb::SpriteID_t>(std::stoi(token));
 
-                    //g_Log.write("spriteID: {}\n", spriteID);
+                    //g_Log.write("Sprite ID: {}\n", spriteID);
 
                     tileSpriteIDList.push_back(spriteID);
                 }
@@ -302,13 +305,16 @@ bool Map::load(const std::string& fileName)
                 tileMapType = tb::TileMapType::TileEdges;
             }
 
+            tb::TileMap::Ptr tileMap = std::make_shared<tb::TileMap>();
+            tileMap->load(m_tileWidth, m_tileHeight, tileSpriteIDList, xmlNode_map_group_layer__name, tileMapType, tileMapZ);
+
             if (tileMapType == tb::TileMapType::Tiles)
             {
-                m_tileMapTiles[tileMapZ].load(m_tileWidth, m_tileHeight, tileSpriteIDList, xmlNode_map_group_layer__name, tileMapType, tileMapZ);
+                m_tileMapOfTilesList.push_back(tileMap);
             }
             else if (tileMapType == tb::TileMapType::TileEdges)
             {
-                m_tileMapTileEdges[tileMapZ].load(m_tileWidth, m_tileHeight, tileSpriteIDList, xmlNode_map_group_layer__name, tileMapType, tileMapZ);
+                m_tileMapOfTileEdgesList.push_back(tileMap);
             }
         }
 
@@ -371,7 +377,7 @@ bool Map::load(const std::string& fileName)
                     {
                         tb::Object::Ptr object = std::make_shared<tb::Object>(objectTileCoords, tileMapZ, objectSpriteID);
 
-                        tb::TileMap* tileMap = &m_tileMapTiles[tileMapZ];
+                        tb::TileMap::Ptr tileMap = getTileMapOfTilesAtZ(tileMapZ);
 
                         if (tileMap == nullptr)
                         {
@@ -419,11 +425,11 @@ bool Map::load(const std::string& fileName)
 
     g_Log.write("Applying tile object patterns to tile maps...\n");
 
-    for (unsigned int i = tb::ZAxis::Min; i < tb::ZAxis::Max; i++)
+    for (auto& tileMap : m_tileMapOfTilesList)
     {
-        if (m_tileMapTiles[i].applyTileObjectPatterns() == false)
+        if (tileMap->applyTileObjectPatterns() == false)
         {
-            g_Log.write("ERROR: Failed to apply tile object patterns to tile map index: {}\n", i);
+            g_Log.write("ERROR: Failed to apply tile object patterns to tile map at z: {}\n", tileMap->getZ());
             return false;
         }
     }
@@ -522,8 +528,10 @@ bool Map::isTileIndexOutOfBounds(uint32_t tileIndex)
 
 bool Map::isTileCoordsOutOfBounds(const sf::Vector2i& tileCoords)
 {
-    if (tileCoords.x > (m_tileWidth - tb::Constants::TileSize)) return true;
-    if (tileCoords.y > (m_tileHeight - tb::Constants::TileSize)) return true;
+    if (tileCoords.x < 0) return true;
+    if (tileCoords.y < 0) return true;
+    if (tileCoords.x > (m_tileWidth - 1)) return true;
+    if (tileCoords.y > (m_tileHeight - 1)) return true;
 
     return false;
 }
@@ -535,9 +543,16 @@ tb::Tile::Ptr Map::getTileOfThing(tb::Thing::Ptr thing)
         return nullptr;
     }
 
-    tb::Tile::List* tileList = m_tileMapTiles.at(thing->getZ()).getTileList();
+    tb::TileMap::Ptr tileMap = getTileMapOfTilesAtZ(thing->getZ());
 
-    if (tileList->size() == 0)
+    if (tileMap == nullptr)
+    {
+        return nullptr;
+    }
+
+    tb::Tile::List* tileList = tileMap->getTileList();
+
+    if (tileList == nullptr)
     {
         return nullptr;
     }
@@ -588,14 +603,42 @@ uint32_t Map::getNumTiles()
     return m_numTiles;
 }
 
-tb::TileMap* Map::getTileMapTiles(tb::ZAxis_t z)
+tb::TileMap::Ptr Map::getTileMapOfTilesAtZ(tb::ZAxis_t z)
 {
-    return &m_tileMapTiles.at(z);
+    auto it = std::find_if
+    (
+        m_tileMapOfTilesList.begin(), m_tileMapOfTilesList.end(),
+        [&z](const tb::TileMap::Ptr& tileMap)
+        {
+            return tileMap->getZ() == z;
+        }
+    );
+
+    if (it == m_tileMapOfTilesList.end())
+    {
+        return nullptr;
+    }
+
+    return *it;
 }
 
-tb::TileMap* Map::getTileMapTileEdges(tb::ZAxis_t z)
+tb::TileMap::Ptr Map::getTileMapOfTileEdgesAtZ(tb::ZAxis_t z)
 {
-    return &m_tileMapTileEdges.at(z);
+    auto it = std::find_if
+    (
+        m_tileMapOfTileEdgesList.begin(), m_tileMapOfTileEdgesList.end(),
+        [&z](const tb::TileMap::Ptr& tileMap)
+        {
+            return tileMap->getZ() == z;
+        }
+    );
+
+    if (it == m_tileMapOfTileEdgesList.end())
+    {
+        return nullptr;
+    }
+
+    return *it;
 }
 
 }

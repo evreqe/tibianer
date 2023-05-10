@@ -5,7 +5,7 @@ namespace tb
 
 MenuBar::MenuBar()
 {
-    //
+    setIsVisible(true);
 }
 
 MenuBar::~MenuBar()
@@ -15,27 +15,25 @@ MenuBar::~MenuBar()
 
 void MenuBar::draw()
 {
-    if (m_isVisible == false)
-    {
-        return;
-    }
-
     bool isDebugModeEnabled = g_Game.isDebugModeEnabled();
 
     tb::GameState gameState = g_Game.getGameState();
 
+    tb::Game::Properties_t* gameProperties = g_Game.getProperties();
+
     sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
 
-    float renderWinndowWidth = static_cast<float>(renderWindow->getSize().x);
+    float renderWindowWidth = static_cast<float>(renderWindow->getSize().x);
 
     ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f));
-    ImGui::SetNextWindowSize(ImVec2(renderWinndowWidth, m_height));
+    ImGui::SetNextWindowSize(ImVec2(renderWindowWidth, m_height));
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 
-    bool isVisible = true;
-    ImGui::Begin("##MenuBar", &isVisible, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize);
+    bool* isVisible = getIsVisible();
+
+    ImGui::Begin("##MenuBarWindow", isVisible, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize);
 
     ImGui::PopStyleVar(2);
 
@@ -72,7 +70,7 @@ void MenuBar::draw()
 
             if (ImGui::MenuItem("End Game##MenuItemGameEndGame", 0, nullptr, gameState == tb::GameState::InGame))
             {
-                g_Game.endGame();
+                gameProperties->ShowEndGamePopup = true;
             }
 
             ImGui::EndMenu();
@@ -278,7 +276,7 @@ void MenuBar::draw()
 
 float MenuBar::getHeight()
 {
-    if (m_isVisible == false)
+    if (*getIsVisible() == false)
     {
         return 0.0f;
     }
@@ -289,21 +287,6 @@ float MenuBar::getHeight()
 void MenuBar::setHeight(float height)
 {
     m_height = height;
-}
-
-bool MenuBar::getIsVisible()
-{
-    return m_isVisible;
-}
-
-void MenuBar::setIsVisible(bool b)
-{
-    m_isVisible = b;
-}
-
-void MenuBar::toggleIsVisible()
-{
-    m_isVisible = !m_isVisible;
 }
 
 }

@@ -47,14 +47,12 @@ void MiniMapWindow::drawDebugRect()
     g_Game.drawDebugRect(windowRect);
 }
 
-void MiniMapWindow::drawBorder()
+void MiniMapWindow::drawWoodBorder()
 {
     sf::FloatRect windowRect = getRect();
 
     g_Game.drawWoodBorder(windowRect, true);
 }
-
-//
 
 bool MiniMapWindow::isMouseInsideWindow()
 {
@@ -97,8 +95,6 @@ void MiniMapWindow::draw()
     windowPosition.y = g_MenuBar.getHeight() + padding;
 
     setPosition(windowPosition);
-
-    drawBorder();
 
 /*
     tb::Creature::Ptr player = g_Game.getPlayer();

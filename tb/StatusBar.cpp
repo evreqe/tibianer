@@ -5,7 +5,7 @@ namespace tb
 
 StatusBar::StatusBar()
 {
-    //
+    setIsVisible(true);
 }
 
 StatusBar::~StatusBar()
@@ -15,11 +15,6 @@ StatusBar::~StatusBar()
 
 void StatusBar::draw()
 {
-    if (m_isVisible == false)
-    {
-        return;
-    }
-
     sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
 
     sf::Vector2u renderWindowSize2u = renderWindow->getSize();
@@ -32,8 +27,9 @@ void StatusBar::draw()
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 2.0f));
 
-    bool isVisible = true;
-    ImGui::Begin("##StatusBar", &isVisible, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize);
+    bool* isVisible = getIsVisible();
+
+    ImGui::Begin("##StatusBarWindow", isVisible, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize);
 
     ImGui::PopStyleVar(2);
 
@@ -60,7 +56,7 @@ void StatusBar::draw()
 
 float StatusBar::getHeight()
 {
-    if (m_isVisible == false)
+    if (*getIsVisible() == false)
     {
         return 0.0f;
     }
@@ -81,21 +77,6 @@ std::string_view StatusBar::getText()
 void StatusBar::setText(const std::string& text)
 {
     m_text = text;
-}
-
-bool StatusBar::getIsVisible()
-{
-    return m_isVisible;
-}
-
-void StatusBar::setIsVisible(bool b)
-{
-    m_isVisible = b;
-}
-
-void StatusBar::toggleIsVisible()
-{
-    m_isVisible = !m_isVisible;
 }
 
 }

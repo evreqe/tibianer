@@ -30,7 +30,7 @@ bool ClickRectData::load()
     catch (const toml::parse_error& parseError)
     {
         g_Log.write("ERROR: Failed to load data from file: {}\n", m_fileName);
-        g_Log.write("{}\n{}\n", parseError.description(), parseError.source().begin);
+        g_Log.write("Description: {}\nLine: {}\nColumn: {}\n", parseError.description(), parseError.source().begin.line, parseError.source().begin.column);
         return false;
     }
 

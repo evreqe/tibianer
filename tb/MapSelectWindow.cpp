@@ -24,30 +24,29 @@ void MapSelectWindow::draw()
     if (ImGui::BeginTable("##MapSelectWindowTable", 2, ImGuiTableFlags_BordersInnerV | ImGuiTableFlags_SizingStretchProp))
     {
         ImGui::TableNextRow();
+
         ImGui::TableSetColumnIndex(0);
 
-        static unsigned int selectedListBoxIndex = 0;
-
-        static tb::MapData::Data* selectedMapData;
-
-        if (ImGui::BeginListBox("##MapSelectWindowListBox", ImVec2(240.0f, 10.0f * ImGui::GetTextLineHeightWithSpacing())))
+        if (ImGui::BeginListBox("##MapSelectWindowListBoxData", ImVec2(320.0f, 10.0f * ImGui::GetTextLineHeightWithSpacing())))
         {
             tb::MapData::DataList* mapDataList = g_MapData.getDataList();
 
             for (unsigned int i = 0; auto& data : *mapDataList)
             {
-                const bool isSelected = (selectedListBoxIndex == i);
+                const bool isSelected = (m_selectedListBoxIndex == i);
 
-                if (ImGui::Selectable(data.FileName.c_str(), isSelected))
+                std::string listText = std::format("{}##MapSelectWindowSelectable{}", data.Name, i);
+
+                if (ImGui::Selectable(listText.c_str(), isSelected))
                 {
-                    selectedListBoxIndex = i;
+                    m_selectedListBoxIndex = i;
                 }
 
                 if (isSelected == true)
                 {
                     ImGui::SetItemDefaultFocus();
 
-                    selectedMapData = &data;
+                    m_selectedMapData = &data;
                 }
 
                 i++;
@@ -60,13 +59,13 @@ void MapSelectWindow::draw()
 
         if (ImGui::Button("OK##MapSelectWindowButtonOK", m_buttonSize))
         {
-            if (selectedMapData != nullptr)
+            if (m_selectedMapData != nullptr)
             {
                 setIsVisible(false);
 
-                g_Game.setGameState(tb::GameState::Loading);
+                g_Game.setGameState(tb::GameState::LoadingMap);
 
-                g_Game.setLoadMapFileName(selectedMapData->FileName);
+                g_Game.loadMapUsingThread(m_selectedMapData->FileName);
             }
         }
 
@@ -77,22 +76,23 @@ void MapSelectWindow::draw()
             g_Game.setGameState(tb::GameState::EnterGame);
         }
 
-        if (selectedMapData != nullptr)
+        if (m_selectedMapData != nullptr)
         {
             ImGui::TableNextRow();
+
             ImGui::TableSetColumnIndex(0);
 
-            ImGui::TextUnformatted(std::format("Name: {}", selectedMapData->Name).c_str());
-            ImGui::TextUnformatted(std::format("Author: {}", selectedMapData->Author).c_str());
+            ImGui::TextUnformatted(std::format("Name: {}", m_selectedMapData->Name).c_str());
+            ImGui::TextUnformatted(std::format("Author: {}", m_selectedMapData->Author).c_str());
             ImGui::TextUnformatted("Description:");
-            if (ImGui::BeginChild("##MapSelectWindowChildDescription", ImVec2(0.0f, 100.0f), true))
+            if (ImGui::BeginChild("##MapSelectWindowChildDescription", ImVec2(0.0f, 240.0f), true))
             {
-                ImGui::TextUnformatted(std::format("{}", selectedMapData->Description).c_str());
+                ImGui::TextUnformatted(std::format("{}", m_selectedMapData->Description).c_str());
 
                 ImGui::EndChild();
             }
-            ImGui::TextUnformatted(std::format("Size: {}x{}", selectedMapData->TileWidth, selectedMapData->TileHeight).c_str());
-            ImGui::TextUnformatted(std::format("File: {}", selectedMapData->FileName).c_str());
+            ImGui::TextUnformatted(std::format("Size: {}x{}", m_selectedMapData->TileWidth, m_selectedMapData->TileHeight).c_str());
+            ImGui::TextUnformatted(std::format("File: {}", m_selectedMapData->FileName).c_str());
         }
 
         ImGui::EndTable();

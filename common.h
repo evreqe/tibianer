@@ -21,6 +21,7 @@
 #include <format>
 #include <fstream>
 #include <functional>
+#include <future>
 #include <list>
 #include <map>
 #include <memory>
@@ -34,6 +35,7 @@
 #include <string>
 #include <string_view>
 #include <sstream>
+#include <thread>
 #include <type_traits>
 #include <unordered_map>
 #include <utility>
@@ -43,6 +45,7 @@
 #include "fmt/format.h"
 #include "fmt/ostream.h"
 #include "fmt/ranges.h"
+#include "fmt/compile.h"
 
 #include "imgui.h"
 #include "imgui_stdlib.h"

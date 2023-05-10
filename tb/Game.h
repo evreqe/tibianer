@@ -21,8 +21,12 @@
 #include "tb/FontData.h"
 #include "tb/HotkeysData.h"
 
-#include "tb/Sprite.h"
+#include "tb/Thing.h"
 #include "tb/Creature.h"
+#include "tb/Object.h"
+#include "tb/Tile.h"
+#include "tb/TileMap.h"
+#include "tb/Sprite.h"
 #include "tb/BitmapFont.h"
 #include "tb/GameText.h"
 #include "tb/Map.h"
@@ -79,6 +83,20 @@ private:
 
 public:
 
+    struct Properties_t
+    {
+        bool ShowMenuBar = true;
+        bool ShowStatusBar = true;
+
+        bool ShowDemoWindow = false;
+        bool ShowStackToolWindow = false;
+
+        bool ShowErrorLoadingMapPopup = false;
+        bool ShowEndGamePopup = false;
+
+        bool IsAnyKeyPressed = false;
+    };
+
     struct GuiState_t
     {
         bool ShowMiniMapWindow = true;
@@ -90,6 +108,7 @@ public:
         bool ShowSkillsWindow = false;
     };
 
+    Properties_t* getProperties();
     GuiState_t* getGuiState();
 
     void initImGui();
@@ -103,6 +122,7 @@ public:
     bool loadCursors();
 
     bool loadMap(const std::string& fileName);
+    void loadMapUsingThread(const std::string& fileName);
 
     void drawDockSpace();
 
@@ -119,8 +139,10 @@ public:
     void drawDebugRect(sf::FloatRect rect);
     void drawDebugRectForWindows();
 
+    void drawWoodBorderForWindows();
+
     void doGameStateEnterGame();
-    void doGameStateLoading();
+    void doGameStateLoadingMap();
     void doGameStateMapSelect();
     void doGameStateInGame();
 
@@ -166,23 +188,26 @@ public:
 
     tb::Creature::Ptr getPlayer();
 
-    void setLoadMapFileName(const std::string& fileName);
+    sf::Vector2i getVectorByMovementDirection(tb::MovementDirection movementDirection);
+    tb::MovementDirection getMovementDirectionByVector(sf::Vector2i vector);
+
+    tb::Tile::Ptr getTileByThingMovementDirection(tb::Thing::Ptr thing, tb::MovementDirection direction);
+
+    bool findTilesAboveThing(tb::Thing::Ptr thing, tb::ZAxis_t tileMapZ);
+
+    void handleCreatureMovement(tb::Creature::Ptr creature, tb::MovementDirection movementDirection);
+
+    bool doMoveThingToTile(tb::Thing::Ptr thing, tb::Tile::Ptr toTile);
 
 private:
 
+    Properties_t m_properties;
     GuiState_t m_guiState;
-
-    bool m_showDemoWindow = false;
-    bool m_showStackToolWindow = false;
-
-    bool m_isAnyKeyPressed = false;
 
     tb::GameState m_gameState = tb::GameState::EnterGame;
 
-    uint32_t m_numLoadingFrames = 0;
-    uint32_t m_numLoadingFramesMax = 2;
-
-    std::string m_loadMapFileName;
+    std::future<bool> m_loadMapThread;
+    std::future_status m_loadMapThreadStatus;
 
     const unsigned int m_minimumTextureSizeRequiredToRun = 2048;
 

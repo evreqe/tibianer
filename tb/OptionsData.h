@@ -34,7 +34,11 @@ namespace tb
 
         typedef struct _Data
         {
-            std::string PlayerName;
+            bool LogIsEnabled = true;
+            bool LogPrintToConsole = true;
+            bool LogWriteToFile = true;
+
+            std::string PlayerName = "ABC";
             uint8_t PlayerOutfitHead = 0;
             uint8_t PlayerOutfitBody = 0;
             uint8_t PlayerOutfitLegs = 0;

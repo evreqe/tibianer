@@ -114,7 +114,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalIncludeDirectories>Z:\Code\!libraries\boost_1_78_0;Z:\Code\!libraries\tomlplusplus-3.2.0;Z:\Code\!libraries\tomlplusplus-3.2.0\include;Z:\Code\!libraries\fmt-8.1.1\include;Z:\Code\!libraries\sol2-3.2.2\include;Z:\Code\!libraries\luajit-2.0.5\src;Z:\Code\!libraries\SFML-2.5.1\include;Z:\Code\!libraries\Thor-2.0\include;Z:\Code\tibianer\tibianer;Z:\Code\tibianer\tibianer\boost_zlib;Z:\Code\tibianer\tibianer\boost_base64;Z:\Code\tibianer\tibianer\pugixml;Z:\Code\tibianer\tibianer\imgui;Z:\Code\tibianer\tibianer\imgui-sfml;Z:\Code\tibianer\tibianer\magic_enum;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Z:\Code\!libraries\boost_1_78_0;Z:\Code\!libraries\tomlplusplus-3.2.0;Z:\Code\!libraries\tomlplusplus-3.2.0\include;Z:\Code\!libraries\fmt-9.1.0\include;Z:\Code\!libraries\sol2-3.3.0\include;Z:\Code\!libraries\luajit-2.0.5\src;Z:\Code\!libraries\SFML-2.5.1\include;Z:\Code\!libraries\Thor-2.0\include;Z:\Code\tibianer\tibianer;Z:\Code\tibianer\tibianer\boost_zlib;Z:\Code\tibianer\tibianer\boost_base64;Z:\Code\tibianer\tibianer\pugixml;Z:\Code\tibianer\tibianer\imgui;Z:\Code\tibianer\tibianer\imgui-sfml;Z:\Code\tibianer\tibianer\magic_enum;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <EnableModules>true</EnableModules>
       <OpenMPSupport>false</OpenMPSupport>
@@ -125,7 +125,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>opengl32.lib;openal32.lib;freetype.lib;ogg.lib;vorbis.lib;vorbisenc.lib;vorbisfile.lib;flac.lib;sfml-audio.lib;sfml-graphics.lib;sfml-main.lib;sfml-network.lib;sfml-system.lib;sfml-window.lib;thor.lib;fmt.lib;pugixml.lib;lua51.lib;libboost_iostreams-vc143-mt-x32-1_78.lib;libboost_zlib-vc143-mt-x32-1_78.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>Z:\Code\!libraries\boost_1_78_0\stage\lib;Z:\Code\!libraries\SFML-2.5.1\lib;Z:\Code\!libraries\Thor-2.0\lib;Z:\Code\!libraries\fmt-8.1.1\lib;Z:\Code\!libraries\pugixml-1.11\lib;Z:\Code\!libraries\luajit-2.0.5\src;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>Z:\Code\!libraries\boost_1_78_0\stage\lib;Z:\Code\!libraries\SFML-2.5.1\lib;Z:\Code\!libraries\Thor-2.0\lib;Z:\Code\!libraries\fmt-9.1.0\lib;Z:\Code\!libraries\pugixml-1.11\lib;Z:\Code\!libraries\luajit-2.0.5\src;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -137,7 +137,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalIncludeDirectories>D:\Code\!libraries\boost_1_73_0;D:\Code\!libraries\fmt-6.2.1\include;D:\Code\!libraries\sol2-3.0.3\include;D:\Code\!libraries\SFML\include;D:\Code\!libraries\Thor\include;D:\Code\!libraries\Thor\extlibs\aurora\include;D:\Code\tibianer\tibianer\;D:\Code\tibianer\tibianer\boost_zlib;D:\Code\tibianer\tibianer\boost_base64;D:\Code\tibianer\tibianer\pugixml;D:\Code\tibianer\tibianer\imgui;D:\Code\tibianer\tibianer\imgui-sfml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Z:\Code\!libraries\boost_1_80_0;Z:\Code\!libraries\fmt-9.1.0;Z:\Code\!libraries\fmtlog-2.2.1;Z:\Code\!libraries\sol2-3.3.0\include;Z:\Code\!libraries\SFML\include;Z:\Code\!libraries\Thor\include;Z:\Code\!libraries\Thor\extlibs\aurora\include;Z:\Code\tibianer\tibianer\;Z:\Code\tibianer\tibianer\boost_zlib;Z:\Code\tibianer\tibianer\boost_base64;Z:\Code\tibianer\tibianer\pugixml;Z:\Code\tibianer\tibianer\imgui;Z:\Code\tibianer\tibianer\imgui-sfml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
       <EnableModules>false</EnableModules>
     </ClCompile>

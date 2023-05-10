@@ -60,8 +60,6 @@ private:
 
     tb::SpriteFlag m_highlightSpriteFlag = tb::SpriteFlag::Null;
 
-    const uint8_t m_scalarU8StepOne = 1;
-
     const ImVec2 m_buttonSize = ImVec2(105.0f, 29.0f);
 
 };

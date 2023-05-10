@@ -4,13 +4,15 @@
 
 #include "tb/Constants.h"
 
+#include "tb/Window.h"
+
 #include "tb/RenderWindow.h"
 #include "tb/Game.h"
 
 namespace tb
 {
 
-class StatusBar
+class StatusBar : public Window
 {
 
 public:
@@ -41,13 +43,7 @@ public:
     std::string_view getText();
     void setText(const std::string& text);
 
-    bool getIsVisible();
-    void setIsVisible(bool b);
-    void toggleIsVisible();
-
 private:
-
-    bool m_isVisible = true;
 
     const float m_heightDefault = 19.0f;
 

@@ -63,6 +63,8 @@ public:
 
     void update();
 
+    void setDirectionByMovementDirection(tb::MovementDirection movementDirection);
+
     uint8_t getTileOffset();
     void setTileOffset(uint8_t tileOffset);
 
@@ -80,6 +82,11 @@ public:
 
     tb::BloodType getBloodType();
     void setBloodType(tb::BloodType bloodType);
+
+    float getMovementSpeed();
+    void setMovementSpeed(float movementSpeed);
+
+    sf::Clock* getMovementClock();
 
     tb::Sprite* getDummySprite();
 
@@ -105,11 +112,11 @@ private:
 
     tb::Direction m_direction = tb::Direction::Down;
 
-    tb::BloodType m_bloodType;
-
     uint8_t m_teamIndex;
 
     tb::Vocation m_vocation;
+
+    tb::BloodType m_bloodType;
 
     uint32_t m_healthPoints;
     uint32_t m_healthPointsMax;
@@ -127,6 +134,9 @@ private:
     uint32_t m_magicLevel;
 
     uint32_t m_capacity; // encumbrance
+
+    float m_movementSpeed = 0.5f;
+    sf::Clock m_movementClock;
 
     tb::Sprite m_dummySprite;
 

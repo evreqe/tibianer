@@ -4,6 +4,8 @@
 
 #include "tb/Constants.h"
 
+#include "tb/Window.h"
+
 #include "tb/OverlayWindow.h"
 #include "tb/LogWindow.h"
 #include "tb/SpriteDataWindow.h"
@@ -26,7 +28,7 @@
 namespace tb
 {
 
-class MenuBar
+class MenuBar : public Window
 {
 
 public:
@@ -54,13 +56,7 @@ public:
     float getHeight();
     void setHeight(float height);
 
-    bool getIsVisible();
-    void setIsVisible(bool b);
-    void toggleIsVisible();
-
 private:
-
-    bool m_isVisible = true;
 
     const float m_heightDefault = 19.0f;
 

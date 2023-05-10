@@ -48,27 +48,20 @@ void OptionsWindow::draw()
 
     bool* isVisible = getIsVisible();
 
-    //ImGui::SetNextWindowSizeConstraints(m_windowSize, ImVec2(FLT_MAX, FLT_MAX));
-
     ImGui::Begin("Options##OptionsWindow", isVisible, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
 
     if (ImGui::BeginTabBar("##OptionsWindowTabBar", ImGuiTabBarFlags_NoCloseWithMiddleMouseButton))
     {
         if (ImGui::BeginTabItem("Player##OptionsWindowTabItemPlayer"))
         {
-            ImGui::BeginChild("child", m_tabChildSize, false, ImGuiWindowFlags_HorizontalScrollbar);
+            ImGui::BeginChild("##OptionsWindowTabChildPlayer", m_tabChildSize);
 
             ImGui::TextUnformatted("Name:");
-            ImGui::SameLine();
             ImGui::InputText("##OptionsWindowInputPlayerName", &m_optionsData.PlayerName);
 
-            std::string outfitText = std::format("{}, {}, {}, {}", m_optionsData.PlayerOutfitHead, m_optionsData.PlayerOutfitBody, m_optionsData.PlayerOutfitLegs, m_optionsData.PlayerOutfitFeet);
+            std::string outfitText = std::format("Outfit: {}, {}, {}, {}", m_optionsData.PlayerOutfitHead, m_optionsData.PlayerOutfitBody, m_optionsData.PlayerOutfitLegs, m_optionsData.PlayerOutfitFeet);
 
-            ImGui::TextUnformatted("Outfit:");
-            ImGui::SameLine();
             ImGui::TextUnformatted(outfitText.c_str());
-
-            //ImGui::InputInt("##OptionsWindowInputPlayerOutfitHead", (int*)&m_optionsData.PlayerOutfitHead);
 
             ImGui::EndChild();
 
@@ -77,22 +70,91 @@ void OptionsWindow::draw()
 
         if (ImGui::BeginTabItem("Window##OptionsWindowTabItemWindow"))
         {
-            ImGui::BeginChild("child", m_tabChildSize, false, ImGuiWindowFlags_HorizontalScrollbar);
+            ImGui::BeginChild("##OptionsWindowTabChildWindow", m_tabChildSize);
 
-            ImGui::TextUnformatted("Start Maximized:");
-            ImGui::SameLine();
-            //ImGui::Checkbox("##OptionsWindowCheckboxWindowStartMaximized", 0);
-            ImGui::TextUnformatted("TODO");
+            ImGui::Checkbox("Start Maximized##OptionsWindowCheckboxWindowStartMaximized", &m_optionsData.WindowStartMaximized);
+            ImGui::Checkbox("Vertical Sync##OptionsWindowCheckboxWindowVerticalSync", &m_optionsData.WindowVerticalSync);
 
             ImGui::TextUnformatted("Frame Rate Limit:");
-            ImGui::SameLine();
-            //ImGui::InputInt("##OptionsWindowInputIntWindowFrameRateLimit", 0);
-            ImGui::TextUnformatted("TODO");
+            ImGui::InputScalar("##OptionsWindowInputWindowFrameRateLimit", ImGuiDataType_U32, &m_optionsData.WindowFrameRateLimit, &tb::Constants::MyImGui::InputScalarU32StepOne);
 
-            ImGui::TextUnformatted("Vertical Sync:");
-            ImGui::SameLine();
-            //ImGui::Checkbox("##OptionsWindowCheckboxWindowVerticalSync", 0);
-            ImGui::TextUnformatted("TODO");
+            ImGui::EndChild();
+
+            ImGui::EndTabItem();
+        }
+
+        if (ImGui::BeginTabItem("Map##OptionsWindowTabItemMap"))
+        {
+            ImGui::BeginChild("##OptionsWindowTabChildMap", m_tabChildSize);
+
+            ImGui::Checkbox("Skip Map Select##OptionsWindowCheckboxMapSkipSelect", &m_optionsData.MapSkipSelect);  
+
+            ImGui::TextUnformatted("Skip Map Select File:");
+            ImGui::InputText("##OptionsWindowInputMapSkipSelectFileName", &m_optionsData.MapSkipSelectFileName);
+
+            ImGui::EndChild();
+
+            ImGui::EndTabItem();
+        }
+
+        if (ImGui::BeginTabItem("Game##OptionsWindowTabItemGame"))
+        {
+            ImGui::BeginChild("##OptionsWindowTabChildGame", m_tabChildSize);
+
+            ImGui::Checkbox("Developer Mode##OptionsWindowCheckboxGameDeveloperMode", &m_optionsData.GameDeveloperMode);
+            ImGui::Checkbox("Debug Mode##OptionsWindowCheckboxGameDebugMode", &m_optionsData.GameDebugMode);
+
+            ImGui::Separator();
+
+            ImGui::Checkbox("Show Floating Text##OptionsWindowCheckboxGameShowFloatingText", &m_optionsData.GameShowFloatingText);
+            ImGui::Checkbox("Show Player Names##OptionsWindowCheckboxGameShowPlayerNames", &m_optionsData.GameShowPlayerNames);
+            ImGui::Checkbox("Show Player Health Bar##OptionsWindowCheckboxGameShowPlayerHealthBar", &m_optionsData.GameShowPlayerHealthBar);
+            ImGui::Checkbox("Show Player Mana Bar##OptionsWindowCheckboxGameShowPlayerManaBar", &m_optionsData.GameShowPlayerManaBar);
+            ImGui::Checkbox("Show NPC Names##OptionsWindowCheckboxGameShowNPCNames", &m_optionsData.GameShowNPCNames);
+            ImGui::Checkbox("Show NPC Health Bar##OptionsWindowCheckboxGameShowNPCHealthBar", &m_optionsData.GameShowNPCHealthBar);
+            ImGui::Checkbox("Show NPC Mana Bar##OptionsWindowCheckboxGameShowNPCManaBar", &m_optionsData.GameShowNPCManaBar);
+            ImGui::Checkbox("Show Monster Names##OptionsWindowCheckboxGameShowMonsterNames", &m_optionsData.GameShowMonsterNames);
+            ImGui::Checkbox("Show Monster Health Bar##OptionsWindowCheckboxGameShowMonsterHealthBar", &m_optionsData.GameShowMonsterHealthBar);
+            ImGui::Checkbox("Show Monster Mana Bar##OptionsWindowCheckboxGameShowMonsterManaBar", &m_optionsData.GameShowMonsterManaBar);
+
+            ImGui::Separator();
+
+            ImGui::Checkbox("Friendly Fire##OptionsWindowCheckboxGameFriendlyFire", &m_optionsData.GameFriendlyFire);
+
+            ImGui::EndChild();
+
+            ImGui::EndTabItem();
+        }
+
+        if (ImGui::BeginTabItem("Audio##OptionsWindowTabItemAudio"))
+        {
+            ImGui::BeginChild("##OptionsWindowTabChildAudio", m_tabChildSize);
+
+            ImGui::Checkbox("Sound##OptionsWindowCheckboxAudioSound", &m_optionsData.AudioSound);
+            ImGui::Checkbox("Music##OptionsWindowCheckboxAudioMusic", &m_optionsData.AudioMusic);
+
+            ImGui::TextUnformatted("Sound Volume:");
+            ImGui::InputScalar("##OptionsWindowInputAudioSoundVolume", ImGuiDataType_U8, &m_optionsData.AudioSoundVolume, &tb::Constants::MyImGui::InputScalarU8StepOne);
+
+            ImGui::TextUnformatted("Music Volume:");
+            ImGui::InputScalar("##OptionsWindowInputAudioMusicVolume", ImGuiDataType_U8, &m_optionsData.AudioMusicVolume, &tb::Constants::MyImGui::InputScalarU8StepOne);
+
+            ImGui::Separator();
+
+            ImGui::EndChild();
+
+            ImGui::EndTabItem();
+        }
+
+        if (ImGui::BeginTabItem("Cheats##OptionsWindowTabItemCheats"))
+        {
+            ImGui::BeginChild("##OptionsWindowTabChildCheats", m_tabChildSize);
+
+            ImGui::Checkbox("Infinite Health##OptionsWindowCheckboxCheatsInfiniteHealth", &m_optionsData.CheatsInfiniteHealth);
+            ImGui::Checkbox("Infinite Mana##OptionsWindowCheckboxCheatsInfiniteMana", &m_optionsData.CheatsInfiniteMana);
+            ImGui::Checkbox("Infinite Cap##OptionsWindowCheckboxCheatsInfiniteCap", &m_optionsData.CheatsInfiniteCap);
+
+            ImGui::Separator();
 
             ImGui::EndChild();
 
