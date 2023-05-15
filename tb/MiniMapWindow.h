@@ -50,8 +50,10 @@ namespace tb
 
         void drawWoodBorder();
 
-        //sf::Vector2f getMousePixelCoords();
-        //sf::Vector2i getMouseTileCoords();
+        sf::Vector2f getMousePixelPosition();
+
+        sf::Vector2f getMousePixelCoords();
+        sf::Vector2i getMouseTileCoords();
 
         bool isMouseInsideWindow();
 
@@ -60,20 +62,44 @@ namespace tb
         void handleMouseButtonReleasedEvent(sf::Event event);
 
         void draw();
+        void drawTileMap(const sf::IntRect& tileRect, tb::TileMap::Ptr tileMap);
+        void drawTileHighlight();
 
         sf::View* getView();
+
+        sf::Vector2f getViewPosition();
+        void setViewPosition(sf::Vector2f position);
+
+        sf::Vector2f getViewPositionOffset();
+        void setViewPositionOffset(sf::Vector2f offset);
+
+        void resetViewPositionOffset();
+
+        float getZoomScale();
+        float getZoomScaleMinimum();
+        float getZoomScaleMaximum();
+        bool isZoomed();
 
     private:
 
         sf::Vector2f m_position;
 
         sf::View m_view;
+        sf::Vector2f m_viewPosition;
+        sf::Vector2f m_viewPositionOffset;
+        const sf::Vector2f m_viewSize = sf::Vector2f(416.0f, 416.0f);
+
+        float m_zoomScale = 1.0f;
+        const float m_zoomScaleMinimum = 1.0f;
+        const float m_zoomScaleMaximum = 10.0f;
+        const float m_zoomStep = 1.0f;
+
+        const sf::Vector2i m_windowSize = sf::Vector2i(108, 108);
 
         sf::RenderTexture m_window;
         sf::Sprite m_windowSprite;
 
-        const float m_pixelWidth = 108.0f; // size of the window
-        const float m_pixelHeight = 108.0f; // size of the window
+        sf::VertexArray m_vertexArray;
 
     };
 

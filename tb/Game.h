@@ -197,7 +197,7 @@ public:
 
     void handleCreatureMovement(tb::Creature::Ptr creature, tb::MovementDirection movementDirection);
 
-    bool doMoveThingToTile(tb::Thing::Ptr thing, tb::Tile::Ptr toTile);
+    bool doMoveThingFromTileToTile(tb::Thing::Ptr thing, tb::Tile::Ptr toTile);
 
 private:
 

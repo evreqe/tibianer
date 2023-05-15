@@ -83,6 +83,7 @@ namespace tb
         inline sf::Texture WoodHorizontal2;
         inline sf::Texture WoodVertical1;
         inline sf::Texture WoodVertical2;
+        inline sf::Texture Water;
 
         inline const std::unordered_map<std::string, sf::Texture&> Names =
         {
@@ -100,6 +101,7 @@ namespace tb
             {"WoodHorizontal2",         tb::Textures::WoodHorizontal2},
             {"WoodVertical1",           tb::Textures::WoodVertical1},
             {"WoodVertical2",           tb::Textures::WoodVertical2},
+            {"Water",                   tb::Textures::Water},
         };
     }
 

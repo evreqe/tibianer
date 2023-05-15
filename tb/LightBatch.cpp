@@ -5,7 +5,6 @@ namespace tb
 
     LightBatch::LightBatch()
     {
-        m_vertexArray.clear();
         m_vertexArray.setPrimitiveType(sf::Quads);
         m_vertexArray.resize(m_maxVertices);
 
@@ -50,7 +49,6 @@ namespace tb
     void LightBatch::clear()
     {
         m_vertexArray.clear();
-        m_vertexArray.resize(m_maxVertices);
 
         m_numLights = 0;
     }

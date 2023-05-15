@@ -5,12 +5,11 @@ namespace tb
 
 GameWindow::GameWindow()
 {
-    m_window.create(m_pixelWidth, m_pixelHeight);
-    m_windowLayer.create(m_pixelWidth, m_pixelHeight);
+    m_window.create(m_windowSize.x, m_windowSize.y);
+    m_windowLayer.create(m_windowSize.x, m_windowSize.y);
+    m_lightLayer.create(m_windowSize.x, m_windowSize.y);
 
-    m_lightLayer.create(m_pixelWidth, m_pixelHeight);
-
-    // this gives the lighting a deep fried burnt effect
+    // this makes the lighting look like old tibia
     m_lightBlendMode.colorEquation = sf::BlendMode::Equation::ReverseSubtract;
     m_lightBlendMode.alphaEquation = sf::BlendMode::Equation::Add;
     m_lightBlendMode.colorSrcFactor = sf::BlendMode::Factor::OneMinusSrcColor;
@@ -18,7 +17,7 @@ GameWindow::GameWindow()
     m_lightBlendMode.alphaSrcFactor = sf::BlendMode::Factor::DstAlpha;
     m_lightBlendMode.alphaDstFactor = sf::BlendMode::Factor::DstAlpha;
 
-    m_view.reset(sf::FloatRect(0.0f, 0.0f, m_pixelWidth, m_pixelHeight));
+    m_view.reset(sf::FloatRect(0.0f, 0.0f, m_viewSize.x, m_viewSize.y));
 }
 
 GameWindow::~GameWindow()
@@ -50,8 +49,8 @@ sf::FloatRect GameWindow::getRect()
 
     sf::Vector2f windowSize = static_cast<sf::Vector2f>(m_window.getSize());
 
-    rect.width  = windowSize.x * m_scale;
-    rect.height = windowSize.y * m_scale;
+    rect.width  = windowSize.x * m_windowScale;
+    rect.height = windowSize.y * m_windowScale;
 
     return rect;
 }
@@ -79,8 +78,8 @@ sf::Vector2f GameWindow::getMousePixelPosition()
     mousePosition2f.y -= m_position.y;
 
     // apply scale
-    mousePosition2f.x /= m_scale;
-    mousePosition2f.y /= m_scale;
+    mousePosition2f.x /= m_windowScale;
+    mousePosition2f.y /= m_windowScale;
 
     sf::Vector2i mousePosition2i = static_cast<sf::Vector2i>(mousePosition2f);
 
@@ -93,24 +92,22 @@ sf::Vector2f GameWindow::getMousePixelCoords()
 {
     sf::Vector2f pixelCoords2f = getMousePixelPosition();
 
-    float tileSize = tb::Constants::TileSizeFloat;
+    const float tileSize = tb::Constants::TileSizeFloat;
 
     // this accounts for when the mouse is out of bounds in the top left corner of the map, in the void
+    if (pixelCoords2f.x < 0.0f)
     {
-        if (pixelCoords2f.x < 0.0f)
-        {
-            pixelCoords2f.x = pixelCoords2f.x - tileSize;
-        }
+        pixelCoords2f.x -= tileSize;
+    }
 
-        if (pixelCoords2f.y < 0.0f)
-        {
-            pixelCoords2f.y = pixelCoords2f.y - tileSize;
-        }
+    if (pixelCoords2f.y < 0.0f)
+    {
+        pixelCoords2f.y -= tileSize;
     }
 
     // this rounds to the nearest tile size
-    pixelCoords2f.x = pixelCoords2f.x - (std::fmodf(pixelCoords2f.x, tileSize));
-    pixelCoords2f.y = pixelCoords2f.y - (std::fmodf(pixelCoords2f.y, tileSize));
+    pixelCoords2f.x -= std::fmodf(pixelCoords2f.x, tileSize);
+    pixelCoords2f.y -= std::fmodf(pixelCoords2f.y, tileSize);
 
     return pixelCoords2f;
 }
@@ -162,7 +159,7 @@ void GameWindow::handleMouseWheelMovedEvent(sf::Event event)
         }
     }
 
-    m_view.setSize(sf::Vector2f(m_pixelWidth * m_zoomScale, m_pixelHeight * m_zoomScale));
+    m_view.setSize(sf::Vector2f(m_viewSize.x * m_zoomScale, m_viewSize.y * m_zoomScale));
 }
 
 void GameWindow::handleMouseButtonPressedEvent(sf::Event event)
@@ -175,79 +172,18 @@ void GameWindow::handleMouseButtonReleasedEvent(sf::Event event)
     //
 }
 
-void GameWindow::drawTileHighlight()
-{
-    sf::Vector2f mousePixelCoords = getMousePixelCoords();
-
-    m_tileHighlightSprite.setIDByName(m_tileHightlightSpriteName);
-    m_tileHighlightSprite.setPosition(mousePixelCoords);
-
-    m_window.draw(m_tileHighlightSprite);
-}
-
-void GameWindow::drawLayer(tb::ZAxis_t z)
-{
-    sf::IntRect tileRect = getTileRect();
-
-    sf::Vector2f spritePosition = sf::Vector2f
-    (
-        static_cast<float>((tileRect.left + m_numTilesToDrawFromOffscreen) * tb::Constants::TileSize),
-        static_cast<float>((tileRect.top  + m_numTilesToDrawFromOffscreen) * tb::Constants::TileSize)
-    );
-
-    tb::TileMap::Ptr tileMapTiles = g_Map.getTileMapOfTilesAtZ(z);
-
-    if (tileMapTiles == nullptr)
-    {
-        return;
-    }
-
-    m_windowLayer.setView(m_view);
-    m_windowLayer.clear(sf::Color::Transparent);
-
-    tileMapTiles->drawTiles(tileRect, m_windowLayer);
-
-    tb::TileMap::Ptr tileMapTileEdges = g_Map.getTileMapOfTileEdgesAtZ(z);
-
-    if (tileMapTileEdges != nullptr)
-    {
-        tileMapTileEdges->drawTiles(tileRect, m_windowLayer);
-    }
-
-    tileMapTiles->drawObjects(tileRect, m_windowLayer);
-
-    m_lightLayer.setView(m_view);
-    m_lightLayer.clear(sf::Color(m_lightBrightness, m_lightBrightness, m_lightBrightness));
-
-    tileMapTiles->drawLights(tileRect, m_lightLayer, m_lightBrightness);
-
-    m_lightLayer.display();
-
-    m_lightLayerSprite.setTexture(m_lightLayer.getTexture());
-    m_lightLayerSprite.setPosition(spritePosition);
-
-    m_windowLayer.draw(m_lightLayerSprite, m_lightBlendMode);
-
-    m_windowLayer.display();
-
-    m_windowLayerSprite.setTexture(m_windowLayer.getTexture());
-    m_windowLayerSprite.setPosition(spritePosition);
-
-    m_window.draw(m_windowLayerSprite);
-}
-
 void GameWindow::draw()
 {
     bool isDebugModeEnabled = g_Game.isDebugModeEnabled();
-
-    setPosition(sf::Vector2f(32.0f, 32.0f + g_MenuBar.getHeight()));
-
-    tb::Creature::Ptr player = g_Game.getPlayer();
 
     if (isDebugModeEnabled == false)
     {
         resetViewPositionOffset();
     }
+
+    setPosition(sf::Vector2f(32.0f, 32.0f + g_MenuBar.getHeight()));
+
+    tb::Creature::Ptr player = g_Game.getPlayer();
 
     setViewPosition
     (
@@ -320,6 +256,93 @@ void GameWindow::draw()
         }
     }
 
+    m_window.display();
+
+    sf::Texture windowTexture = m_window.getTexture();
+
+    m_windowSprite.setTexture(windowTexture);
+    m_windowSprite.setPosition(m_position);
+    m_windowSprite.setScale(sf::Vector2f(m_windowScale, m_windowScale));
+
+    sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
+
+    renderWindow->draw(m_windowSprite);
+}
+
+void GameWindow::drawLayer(tb::ZAxis_t z)
+{
+    sf::IntRect tileRect = getTileRect();
+
+    sf::IntRect tileRectForLights;
+
+    if (isZoomed() == true)
+    {
+        int tileScale = static_cast<int>(m_zoomScale);
+
+        int tileScaleX = m_numTilesFromCenterX * tileScale;
+        int tileScaleY = m_numTilesFromCenterY * tileScale;
+
+        tileRect.left   -= tileScaleX;
+        tileRect.top    -= tileScaleY;
+        tileRect.width  += tileScaleX * 2;
+        tileRect.height += tileScaleY * 2;
+
+        tileRectForLights = tileRect;
+    }
+    else
+    {
+        // this checks for lights from farther away so they
+        // don't pop in suddenly when walking around
+        tileRectForLights = getTileRect();
+        tileRectForLights.left   -= m_numTilesX;
+        tileRectForLights.top    -= m_numTilesY;
+        tileRectForLights.width  += m_numTilesX * 2;
+        tileRectForLights.height += m_numTilesY * 2;
+    }
+
+    sf::Vector2f spritePosition = m_view.getCenter();
+
+    tb::TileMap::Ptr tileMapTiles = g_Map.getTileMapOfTilesAtZ(z);
+
+    if (tileMapTiles == nullptr)
+    {
+        return;
+    }
+
+    m_windowLayer.setView(m_view);
+    m_windowLayer.clear(sf::Color::Transparent);
+
+    tileMapTiles->drawTiles(tileRect, m_windowLayer);
+
+    tb::TileMap::Ptr tileMapTileEdges = g_Map.getTileMapOfTileEdgesAtZ(z);
+
+    if (tileMapTileEdges != nullptr)
+    {
+        tileMapTileEdges->drawTiles(tileRect, m_windowLayer);
+    }
+
+    tileMapTiles->drawObjects(tileRect, m_windowLayer);
+
+    m_lightLayer.setView(m_view);
+    m_lightLayer.clear(sf::Color(m_lightBrightness, m_lightBrightness, m_lightBrightness));
+
+    tileMapTiles->drawLights(tileRectForLights, m_lightLayer, m_lightBrightness);
+
+    m_lightLayer.display();
+
+    sf::FloatRect lightLayerSpriteLocalBounds = m_lightLayerSprite.getLocalBounds();
+
+    m_lightLayerSprite.setTexture(m_lightLayer.getTexture());
+    m_lightLayerSprite.setPosition(spritePosition);
+    m_lightLayerSprite.setOrigin
+    (
+        lightLayerSpriteLocalBounds.width  / 2,
+        lightLayerSpriteLocalBounds.height / 2
+    );
+    m_lightLayerSprite.setScale(sf::Vector2f(m_zoomScale, m_zoomScale));
+
+    m_windowLayer.draw(m_lightLayerSprite, m_lightBlendMode);
+
     if (m_properties.ShowTileHighlight == true)
     {
         if (tb::Utility::MyImGui::isActive() == false)
@@ -328,41 +351,69 @@ void GameWindow::draw()
         }
     }
 
-    m_window.display();
+    m_windowLayer.display();
 
-    sf::Texture windowTexture = m_window.getTexture();
+    sf::Texture windowLayerTexture = m_windowLayer.getTexture();
 
-    m_windowSprite.setTexture(windowTexture);
-    m_windowSprite.setPosition(m_position);
-    m_windowSprite.setScale(sf::Vector2f(m_scale, m_scale));
+    sf::FloatRect windowLayerSpriteLocalBounds = m_windowLayerSprite.getLocalBounds();
 
-    sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
+    m_windowLayerSprite.setTexture(windowLayerTexture);
+    m_windowLayerSprite.setPosition(spritePosition);
+    m_windowLayerSprite.setOrigin
+    (
+        windowLayerSpriteLocalBounds.width  / 2,
+        windowLayerSpriteLocalBounds.height / 2
+    );
+    m_windowLayerSprite.setScale(sf::Vector2f(m_zoomScale, m_zoomScale));
 
-    renderWindow->draw(m_windowSprite);
+    m_window.draw(m_windowLayerSprite);
+}
+
+void GameWindow::drawTileHighlight()
+{
+    sf::Vector2f mousePixelCoords = getMousePixelCoords();
+
+    if (isZoomed() == false)
+    {
+        m_tileHighlightSprite.setIDByName(m_tileHightlightSpriteName);
+        m_tileHighlightSprite.setPosition(mousePixelCoords);
+
+        m_windowLayer.draw(m_tileHighlightSprite);
+    }
+    else
+    {
+        sf::RectangleShape rectangleShape;
+        rectangleShape.setSize(sf::Vector2f(tb::Constants::TileSizeFloat, tb::Constants::TileSizeFloat));
+        rectangleShape.setPosition(mousePixelCoords);
+        rectangleShape.setFillColor(sf::Color::Cyan);
+
+        m_windowLayer.draw(rectangleShape);
+    }
 }
 
 sf::IntRect GameWindow::getTileRect()
 {
     tb::Creature::Ptr player = g_Game.getPlayer();
 
-    int x = player->getTileX();
-    int y = player->getTileY();
+    int tileX = player->getTileX();
+    int tileY = player->getTileY();
 
     sf::Vector2i viewPositionOffset = static_cast<sf::Vector2i>(getViewPositionOffset());
 
+    // convert from pixel coords to tile coords
     viewPositionOffset.x /= tb::Constants::TileSize;
     viewPositionOffset.y /= tb::Constants::TileSize;
 
-    x += viewPositionOffset.x;
-    y += viewPositionOffset.y;
+    tileX += viewPositionOffset.x;
+    tileY += viewPositionOffset.y;
 
-    x = x - m_numTilesFromCenterX - m_numTilesToDrawFromOffscreen;
-    y = y - m_numTilesFromCenterY - m_numTilesToDrawFromOffscreen;
+    tileX -= (m_numTilesFromCenterX + m_numTilesToDrawFromOffscreen);
+    tileY -= (m_numTilesFromCenterY + m_numTilesToDrawFromOffscreen);
 
-    int width  = m_numTilesX + (m_numTilesToDrawFromOffscreen + 1);
-    int height = m_numTilesY + (m_numTilesToDrawFromOffscreen + 1);
+    int tileWidth  = m_numTilesX + (m_numTilesToDrawFromOffscreen * 2);
+    int tileHeight = m_numTilesY + (m_numTilesToDrawFromOffscreen * 2);
 
-    return sf::IntRect(x, y, width, height);
+    return sf::IntRect(tileX, tileY, tileWidth, tileHeight);
 }
 
 sf::View* GameWindow::getView()
@@ -403,7 +454,27 @@ void GameWindow::setScale(float scale)
         scale = 1.0f;
     }
 
-    m_scale = scale;
+    m_windowScale = scale;
+}
+
+float GameWindow::getZoomScale()
+{
+    return m_zoomScale;
+}
+
+float GameWindow::getZoomScaleMinimum()
+{
+    return m_zoomScaleMinimum;
+}
+
+float GameWindow::getZoomScaleMaximum()
+{
+    return m_zoomScaleMaximum;
+}
+
+bool GameWindow::isZoomed()
+{
+    return m_zoomScale > m_zoomScaleMinimum;
 }
 
 void GameWindow::setLightBrightness(tb::LightBrightness_t lightBrightness)
@@ -424,6 +495,16 @@ int GameWindow::getNumTilesX()
 int GameWindow::getNumTilesY()
 {
     return m_numTilesY;
+}
+
+int GameWindow::getNumTilesFromCenterX()
+{
+    return m_numTilesFromCenterX;
+}
+
+int GameWindow::getNumTilesFromCenterY()
+{
+    return m_numTilesFromCenterY;
 }
 
 }

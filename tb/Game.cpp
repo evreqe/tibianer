@@ -771,15 +771,37 @@ void Game::doAnimatedWater()
     {
         sf::IntRect gameWindowTileRect = g_GameWindow.getTileRect();
 
-        // increase the rect to account for the player walking too fast
-        // and seeing the water animation being applied as it appears
-        int numTilesX = g_GameWindow.getNumTilesX() + 1;
-        int numTilesY = g_GameWindow.getNumTilesY() + 1;
+        bool gameWindowIsZoomed = g_GameWindow.isZoomed();
 
-        gameWindowTileRect.left   -= numTilesX;
-        gameWindowTileRect.top    -= numTilesY;
-        gameWindowTileRect.width  += numTilesX * 2;
-        gameWindowTileRect.height += numTilesY * 2;
+        if (gameWindowIsZoomed == true)
+        {
+            float gameWindowZoomScale = g_GameWindow.getZoomScale();
+
+            int numTilesFromCenterX = g_GameWindow.getNumTilesFromCenterX();
+            int numTilesFromCenterY = g_GameWindow.getNumTilesFromCenterY();
+
+            int tileScale = static_cast<int>(gameWindowZoomScale);
+
+            int tileScaleX = numTilesFromCenterX * tileScale;
+            int tileScaleY = numTilesFromCenterY * tileScale;
+
+            gameWindowTileRect.left   -= tileScaleX;
+            gameWindowTileRect.top    -= tileScaleY;
+            gameWindowTileRect.width  += tileScaleX * 2;
+            gameWindowTileRect.height += tileScaleY * 2;
+        }
+        else
+        {
+            // increase the rect to account for the player walking too fast
+            // and seeing the water animation being applied as it appears
+            int numTilesX = g_GameWindow.getNumTilesX();
+            int numTilesY = g_GameWindow.getNumTilesY();
+
+            gameWindowTileRect.left   -= numTilesX;
+            gameWindowTileRect.top    -= numTilesY;
+            gameWindowTileRect.width  += numTilesX * 2;
+            gameWindowTileRect.height += numTilesY * 2;
+        }
 
         tb::TileMap::Ptr tileMap = g_Map.getTileMapOfTilesAtZ(tb::ZAxis::Default);
 
@@ -870,6 +892,11 @@ void Game::handleMouseWheelMovedEvent(sf::Event event)
     {
         g_GameWindow.handleMouseWheelMovedEvent(event);
     }
+
+    if (g_MiniMapWindow.isMouseInsideWindow() == true)
+    {
+        g_MiniMapWindow.handleMouseWheelMovedEvent(event);
+    }
 }
 
 void Game::handleMouseButtonPressedEvent(sf::Event event)
@@ -877,6 +904,11 @@ void Game::handleMouseButtonPressedEvent(sf::Event event)
     if (g_GameWindow.isMouseInsideWindow() == true)
     {
         g_GameWindow.handleMouseButtonPressedEvent(event);
+    }
+
+    if (g_MiniMapWindow.isMouseInsideWindow() == true)
+    {
+        g_MiniMapWindow.handleMouseButtonPressedEvent(event);
     }
 
     if (event.mouseButton.button == sf::Mouse::Left)
@@ -887,14 +919,19 @@ void Game::handleMouseButtonPressedEvent(sf::Event event)
 
 void Game::handleMouseButtonReleasedEvent(sf::Event event)
 {
-    sf::Vector2f mousePosition;
-    mousePosition.x = static_cast<float>(event.mouseButton.x);
-    mousePosition.y = static_cast<float>(event.mouseButton.y);
-
     if (g_GameWindow.isMouseInsideWindow() == true)
     {
         g_GameWindow.handleMouseButtonReleasedEvent(event);
     }
+
+    if (g_MiniMapWindow.isMouseInsideWindow() == true)
+    {
+        g_MiniMapWindow.handleMouseButtonReleasedEvent(event);
+    }
+
+    sf::Vector2f mousePosition;
+    mousePosition.x = static_cast<float>(event.mouseButton.x);
+    mousePosition.y = static_cast<float>(event.mouseButton.y);
 
     if (event.mouseButton.button == sf::Mouse::Left)
     {
@@ -1776,14 +1813,14 @@ void Game::handleCreatureMovement(tb::Creature::Ptr creature, tb::MovementDirect
         return;
     }
 
-    doMoveThingToTile(creature, toTile);
+    doMoveThingFromTileToTile(creature, toTile);
 
     creature->getMovementClock()->restart();
 
     creature->update();
 }
 
-bool Game::doMoveThingToTile(tb::Thing::Ptr thing, tb::Tile::Ptr toTile)
+bool Game::doMoveThingFromTileToTile(tb::Thing::Ptr thing, tb::Tile::Ptr toTile)
 {
     tb::Tile::Ptr fromTile = g_Map.getTileOfThing(thing);
 

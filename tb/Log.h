@@ -62,6 +62,8 @@ public:
         }
 
         vwrite(format, fmt::make_format_args(args...));
+
+        ////auto fireAndForget = std::async(std::launch::async, &Log::vwrite, this, format, fmt::make_format_args(args...));
     }
 
     Properties_t* getProperties();

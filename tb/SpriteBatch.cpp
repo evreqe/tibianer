@@ -5,7 +5,6 @@ namespace tb
 
 SpriteBatch::SpriteBatch()
 {
-    m_vertexArray.clear();
     m_vertexArray.setPrimitiveType(sf::Quads);
     m_vertexArray.resize(m_maxVertices);
 
@@ -77,7 +76,6 @@ bool SpriteBatch::addSprite(tb::Sprite* sprite, bool applyTileWidthAndHeightOffs
 void SpriteBatch::clear()
 {
     m_vertexArray.clear();
-    m_vertexArray.resize(m_maxVertices);
 
     m_numSprites = 0;
 }

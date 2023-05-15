@@ -67,28 +67,37 @@ void Creature::setDirectionByMovementDirection(tb::MovementDirection movementDir
         return;
     }
 
+    bool applyDirection = false;
+
     tb::Direction direction = tb::Direction::Down;
 
     switch (movementDirection)
     {
         case tb::MovementDirection::Up:
             direction = tb::Direction::Up;
+            applyDirection = true;
             break;
 
         case tb::MovementDirection::Right:
             direction = tb::Direction::Right;
+            applyDirection = true;
             break;
 
         case tb::MovementDirection::Down:
             direction = tb::Direction::Down;
+            applyDirection = true;
             break;
 
         case tb::MovementDirection::Left:
             direction = tb::Direction::Left;
+            applyDirection = true;
             break;
     }
 
-    setDirection(direction);
+    if (applyDirection == true)
+    {
+        setDirection(direction);
+    }
 }
 
 std::string Creature::getName()

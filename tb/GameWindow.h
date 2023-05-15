@@ -67,10 +67,9 @@ public:
     void handleMouseButtonPressedEvent(sf::Event event);
     void handleMouseButtonReleasedEvent(sf::Event event);
 
-    void drawTileHighlight();
-
-    void drawLayer(tb::ZAxis_t z);
     void draw();
+    void drawLayer(tb::ZAxis_t z);
+    void drawTileHighlight();
 
     sf::IntRect getTileRect();
 
@@ -86,11 +85,19 @@ public:
 
     void setScale(float scale);
 
+    float getZoomScale();
+    float getZoomScaleMinimum();
+    float getZoomScaleMaximum();
+    bool isZoomed();
+
     void setLightBrightness(tb::LightBrightness_t lightBrightness);
     tb::LightBrightness_t getLightBrightness();
 
     int getNumTilesX();
     int getNumTilesY();
+
+    int getNumTilesFromCenterX();
+    int getNumTilesFromCenterY();
 
 private:
 
@@ -101,6 +108,10 @@ private:
     sf::View m_view;
     sf::Vector2f m_viewPosition;
     sf::Vector2f m_viewPositionOffset;
+    const sf::Vector2f m_viewSize = sf::Vector2f(416.0f, 288.0f);
+
+    const sf::Vector2i m_windowSize = sf::Vector2i(416, 288);
+    float m_windowScale = 2.0f;
 
     sf::RenderTexture m_window;
     sf::Sprite m_windowSprite;
@@ -114,11 +125,9 @@ private:
     tb::LightBrightness_t m_lightBrightness = tb::LightBrightness::Max;
 
     float m_zoomScale = 1.0f;
-    float m_zoomScaleMinimum = 1.0f;
-    float m_zoomScaleMaximum = 2.0f;
-    float m_zoomStep = 0.2f;
-
-    float m_scale = 2.0f;
+    const float m_zoomScaleMinimum = 1.0f;
+    const float m_zoomScaleMaximum = 10.0f;
+    const float m_zoomStep = 1.0f;
 
     tb::Sprite m_tileHighlightSprite;
     const std::string m_tileHightlightSpriteName = "TileHighlight";
@@ -130,9 +139,6 @@ private:
     const int m_numTilesFromCenterY = 4; // number of tiles visible to the north or south of the player on the y-axis
 
     const int m_numTilesToDrawFromOffscreen = 1; // need to draw some tiles that are not visible in order to account for large objects that take up 4 tiles
-
-    const float m_pixelWidth = 416.0f; // size of the window
-    const float m_pixelHeight = 288.0f; // size of the window
 
 };
 

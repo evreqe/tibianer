@@ -253,7 +253,7 @@ bool TileMap::doAnimatedWater(const sf::IntRect& tileRect)
         m_waterAnimationFrame = 0;
     }
 
-   tb::SpriteIDList* waterSpriteIDList = &waterSpriteIDList_List->at(m_waterAnimationFrame);
+    tb::SpriteIDList* waterSpriteIDList = &waterSpriteIDList_List->at(m_waterAnimationFrame);
     if (waterSpriteIDList == nullptr)
     {
         g_Log.write("ERROR: waterSpriteIDList == nullptr\n");
@@ -569,6 +569,8 @@ void TileMap::drawTiles(const sf::IntRect& tileRect, sf::RenderTarget& renderTar
         return;
     }
 
+    //g_Log.write("Drawing {} tile(s)...\n", tileList.size());
+
     m_tileVertexList.clear();
     m_tileVertexList.reserve(m_numTiles * 4);
 
@@ -586,20 +588,23 @@ void TileMap::drawTiles(const sf::IntRect& tileRect, sf::RenderTarget& renderTar
         int tileX = tile->getTileX();
         int tileY = tile->getTileY();
 
-        unsigned int u = (tileSpriteID - 1) % (spriteTextureSize.x / tb::Constants::TileSize);
-        unsigned int v = (tileSpriteID - 1) / (spriteTextureSize.y / tb::Constants::TileSize);
+        int tileSize = tb::Constants::TileSize;
+
+        unsigned int u = (tileSpriteID - 1) % (spriteTextureSize.x / tileSize);
+        unsigned int v = (tileSpriteID - 1) / (spriteTextureSize.y / tileSize);
 
         sf::Vertex vertex[4];
 
-        vertex[0].position = static_cast<sf::Vector2f>(sf::Vector2i(tileX       * tb::Constants::TileSize, tileY       * tb::Constants::TileSize));
-        vertex[1].position = static_cast<sf::Vector2f>(sf::Vector2i((tileX + 1) * tb::Constants::TileSize, tileY       * tb::Constants::TileSize));
-        vertex[2].position = static_cast<sf::Vector2f>(sf::Vector2i((tileX + 1) * tb::Constants::TileSize, (tileY + 1) * tb::Constants::TileSize));
-        vertex[3].position = static_cast<sf::Vector2f>(sf::Vector2i(tileX       * tb::Constants::TileSize, (tileY + 1) * tb::Constants::TileSize));
+        // top left, top right, bottom right, bottom left
+        vertex[0].position = static_cast<sf::Vector2f>(sf::Vector2i(tileX       * tileSize, tileY       * tileSize));
+        vertex[1].position = static_cast<sf::Vector2f>(sf::Vector2i((tileX + 1) * tileSize, tileY       * tileSize));
+        vertex[2].position = static_cast<sf::Vector2f>(sf::Vector2i((tileX + 1) * tileSize, (tileY + 1) * tileSize));
+        vertex[3].position = static_cast<sf::Vector2f>(sf::Vector2i(tileX       * tileSize, (tileY + 1) * tileSize));
 
-        vertex[0].texCoords = static_cast<sf::Vector2f>(sf::Vector2i(u       * tb::Constants::TileSize, v       * tb::Constants::TileSize));
-        vertex[1].texCoords = static_cast<sf::Vector2f>(sf::Vector2i((u + 1) * tb::Constants::TileSize, v       * tb::Constants::TileSize));
-        vertex[2].texCoords = static_cast<sf::Vector2f>(sf::Vector2i((u + 1) * tb::Constants::TileSize, (v + 1) * tb::Constants::TileSize));
-        vertex[3].texCoords = static_cast<sf::Vector2f>(sf::Vector2i(u       * tb::Constants::TileSize, (v + 1) * tb::Constants::TileSize));
+        vertex[0].texCoords = static_cast<sf::Vector2f>(sf::Vector2i(u       * tileSize, v       * tileSize));
+        vertex[1].texCoords = static_cast<sf::Vector2f>(sf::Vector2i((u + 1) * tileSize, v       * tileSize));
+        vertex[2].texCoords = static_cast<sf::Vector2f>(sf::Vector2i((u + 1) * tileSize, (v + 1) * tileSize));
+        vertex[3].texCoords = static_cast<sf::Vector2f>(sf::Vector2i(u       * tileSize, (v + 1) * tileSize));
 
         tb::SpriteFlags* tileSpriteFlags = tile->getSpriteFlags();
 

@@ -38,7 +38,7 @@ namespace tb
             bool LogPrintToConsole = true;
             bool LogWriteToFile = true;
 
-            std::string PlayerName = "ABC";
+            std::string PlayerName;
             uint8_t PlayerOutfitHead = 0;
             uint8_t PlayerOutfitBody = 0;
             uint8_t PlayerOutfitLegs = 0;
