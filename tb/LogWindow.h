@@ -2,14 +2,14 @@
 
 #include "common.h"
 
-#include "tb/Window.h"
+#include "tb/ImGuiWindow.h"
 
 #include "tb/Log.h"
 
 namespace tb
 {
 
-class LogWindow : public Window
+class LogWindow : public tb::ImGuiWindow
 {
 
 public:

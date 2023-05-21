@@ -2,9 +2,9 @@
 
 #include "common.h"
 
-#include "tb/Constants.h"
+#include "tb/ImGuiWindow.h"
 
-#include "tb/Window.h"
+#include "tb/Constants.h"
 
 #include "tb/OverlayWindow.h"
 #include "tb/LogWindow.h"
@@ -28,7 +28,7 @@
 namespace tb
 {
 
-class MenuBar : public Window
+class MenuBar : public tb::ImGuiWindow
 {
 
 public:

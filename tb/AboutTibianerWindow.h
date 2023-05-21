@@ -2,7 +2,7 @@
 
 #include "common.h"
 
-#include "tb/Window.h"
+#include "tb/ImGuiWindow.h"
 
 #include "tb/SpriteData.h"
 
@@ -11,7 +11,7 @@
 namespace tb
 {
 
-    class AboutTibianerWindow : public Window
+    class AboutTibianerWindow : public tb::ImGuiWindow
     {
 
     public:

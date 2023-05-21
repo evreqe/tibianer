@@ -598,26 +598,115 @@ void Game::drawDebugRect(sf::FloatRect rect)
     renderWindow->draw(clickRectShape);
 }
 
-void Game::drawDebugRectForWindows()
+void Game::drawSfmlWindows()
+{
+    g_GameWindow.draw();
+
+    if (m_guiState.ShowMiniMapWindow == true)
+    {
+        g_MiniMapWindow.draw();
+    }
+
+    drawWoodBorderForSfmlWindows();
+
+    if (isDebugModeEnabled() == true)
+    {
+        drawDebugRectForSfmlWindows();
+    }
+}
+
+void Game::drawDebugRectForSfmlWindows()
 {
     if (tb::Utility::MyImGui::isActive() == false)
     {
         if (g_GameWindow.isMouseInsideWindow() == true)
         {
-            g_GameWindow.drawDebugRect();
+            drawDebugRect(g_GameWindow.getRect());
         }
 
-        if (g_MiniMapWindow.isMouseInsideWindow() == true)
+        if (m_guiState.ShowMiniMapWindow == true)
         {
-            g_MiniMapWindow.drawDebugRect();
+            if (g_MiniMapWindow.isMouseInsideWindow() == true)
+            {
+                drawDebugRect(g_MiniMapWindow.getRect());
+            }
         }
     }
 }
 
-void Game::drawWoodBorderForWindows()
+void Game::drawWoodBorderForSfmlWindows()
 {
-    g_GameWindow.drawWoodBorder();
-    g_MiniMapWindow.drawWoodBorder();
+    drawWoodBorder(g_GameWindow.getRect(), true);
+
+    if (m_guiState.ShowMiniMapWindow == true)
+    {
+        drawWoodBorder(g_MiniMapWindow.getRect(), true);
+    }
+}
+
+void Game::doEndGamePopup()
+{
+    if (m_properties.ShowEndGamePopup == true)
+    {
+        ImGui::OpenPopup("End Game##EndGamePopup");
+    }
+
+    ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+    ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+    if (ImGui::BeginPopupModal("End Game##EndGamePopup", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings))
+    {
+        ImGui::TextUnformatted("Are you sure you want to end this game?");
+
+        ImGui::Separator();
+
+        if (ImGui::Button("Yes##EndGamePopupButtonYes", tb::Constants::MyImGui::PopupButtonSize))
+        {
+            ImGui::CloseCurrentPopup();
+
+            m_properties.ShowEndGamePopup = false;
+
+            endGame();
+        }
+
+        ImGui::SameLine();
+
+        if (ImGui::Button("No##EndGamePopupButtonNo", tb::Constants::MyImGui::PopupButtonSize))
+        {
+            ImGui::CloseCurrentPopup();
+
+            m_properties.ShowEndGamePopup = false;
+        }
+
+        ImGui::EndPopup();
+    }
+}
+
+void Game::doErrorLoadingMapPopup()
+{
+    if (m_properties.ShowErrorLoadingMapPopup == true)
+    {
+        ImGui::OpenPopup("Error##ErrorLoadingMapPopup");
+    }
+
+    ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+    ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+    if (ImGui::BeginPopupModal("Error##ErrorLoadingMapPopup", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings))
+    {
+        ImGui::TextUnformatted("Failed to load map file!\nSee log for details.");
+
+        ImGui::Separator();
+
+        if (ImGui::Button("OK##ErrorLoadingMapPopupButtonOK", tb::Constants::MyImGui::PopupButtonSize))
+        {
+            m_properties.ShowErrorLoadingMapPopup = false;
+
+            ImGui::CloseCurrentPopup();
+        }
+
+        ImGui::EndPopup();
+    }
 }
 
 void Game::doGameStateEnterGame()
@@ -683,79 +772,16 @@ void Game::doGameStateMapSelect()
         setGameState(tb::GameState::EnterGame);
     }
 
-    if (m_properties.ShowErrorLoadingMapPopup == true)
-    {
-        ImGui::OpenPopup("Error##ErrorLoadingMapPopup");
-    }
-
-    ImVec2 center = ImGui::GetMainViewport()->GetCenter();
-    ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
-
-    if (ImGui::BeginPopupModal("Error##ErrorLoadingMapPopup", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings))
-    {
-        ImGui::TextUnformatted("Failed to load map file!\nSee log for details.");
-
-        ImGui::Separator();
-
-        if (ImGui::Button("OK##ErrorLoadingMapPopupButtonOK", tb::Constants::MyImGui::PopupButtonSize))
-        {
-            m_properties.ShowErrorLoadingMapPopup = false;
-
-            ImGui::CloseCurrentPopup();
-        }
-
-        ImGui::EndPopup();
-    }
+    doErrorLoadingMapPopup();
 }
 
 void Game::doGameStateInGame()
 {
-    g_GameWindow.draw();
-    g_MiniMapWindow.draw();
-
-    drawWoodBorderForWindows();
-
-    if (isDebugModeEnabled() == true)
-    {
-        drawDebugRectForWindows();
-    }
+    drawSfmlWindows();
 
     doAnimatedWater();
 
-    if (m_properties.ShowEndGamePopup == true)
-    {
-        ImGui::OpenPopup("End Game##EndGamePopup");
-    }
-
-    ImVec2 center = ImGui::GetMainViewport()->GetCenter();
-    ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
-
-    if (ImGui::BeginPopupModal("End Game##EndGamePopup", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings))
-    {
-        ImGui::TextUnformatted("Are you sure you want to end this game?");
-
-        ImGui::Separator();
-
-        if (ImGui::Button("Yes##EndGamePopupButtonYes", tb::Constants::MyImGui::PopupButtonSize))
-        {
-            ImGui::CloseCurrentPopup();
-
-            m_properties.ShowEndGamePopup = false;
-
-            endGame();
-        }
-
-        ImGui::SameLine();
-
-        if (ImGui::Button("No##EndGamePopupButtonNo", tb::Constants::MyImGui::PopupButtonSize))
-        {
-            ImGui::CloseCurrentPopup();
-
-            m_properties.ShowEndGamePopup = false;
-        }
-
-        ImGui::EndPopup();
-    }
+    doEndGamePopup();
 }
 
 void Game::doAnimatedWater()

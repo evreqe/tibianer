@@ -35,6 +35,7 @@
 #include "tb/StatusBar.h"
 
 #include "tb/RenderWindow.h"
+
 #include "tb/GameWindow.h"
 #include "tb/MiniMapWindow.h"
 
@@ -137,9 +138,13 @@ public:
     sf::FloatRect getClickRect(const sf::Texture& texture, const std::string& name);
 
     void drawDebugRect(sf::FloatRect rect);
-    void drawDebugRectForWindows();
 
-    void drawWoodBorderForWindows();
+    void drawSfmlWindows();
+    void drawDebugRectForSfmlWindows();
+    void drawWoodBorderForSfmlWindows();
+
+    void doEndGamePopup();
+    void doErrorLoadingMapPopup();
 
     void doGameStateEnterGame();
     void doGameStateLoadingMap();

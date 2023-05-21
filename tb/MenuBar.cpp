@@ -102,17 +102,17 @@ void MenuBar::draw()
 
             if (ImGui::MenuItem("1x##MenuItemGameWindowScale1", 0))
             {
-                g_GameWindow.setScale(1.0f);
+                g_GameWindow.setSizeScale(1.0f);
             }
 
-            if (ImGui::MenuItem("1.5x##MenuItemGameWindowScale2", 0))
+            if (ImGui::MenuItem("2x##MenuItemGameWindowScale2", 0))
             {
-                g_GameWindow.setScale(1.5f);
+                g_GameWindow.setSizeScale(2.0f);
             }
 
-            if (ImGui::MenuItem("2x##MenuItemGameWindowScale3", 0))
+            if (ImGui::MenuItem("4x##MenuItemGameWindowScale3", 0))
             {
-                g_GameWindow.setScale(2.0f);
+                g_GameWindow.setSizeScale(4.0f);
             }
 
             ImGui::MenuItem("---- Light Brightness ----##MenuItemGameWindowSeparatorLightBrightness", 0, nullptr, false);
@@ -165,6 +165,28 @@ void MenuBar::draw()
             if (ImGui::MenuItem("4k##MenuItemRenderWindowResolution7", 0))
             {
                 g_RenderWindow.setSizeAndCenter(sf::Vector2u(2160, 3840));
+            }
+
+            ImGui::EndMenu();
+        }
+
+        if (ImGui::BeginMenu("User Interface##MenuItemUserInterface"))
+        {
+            ImGui::MenuItem("---- Scale ----##MenuItemUserInterfaceSeparatorScale", 0, nullptr, false);
+
+            if (ImGui::MenuItem("1x##MenuItemUserInterfaceScale1", 0))
+            {
+                g_MiniMapWindow.setSizeScale(1.0f);
+            }
+
+            if (ImGui::MenuItem("2x##MenuItemUserInterfaceScale2", 0))
+            {
+                g_MiniMapWindow.setSizeScale(2.0f);
+            }
+
+            if (ImGui::MenuItem("4x##MenuItemUserInterfaceScale3", 0))
+            {
+                g_MiniMapWindow.setSizeScale(4.0f);
             }
 
             ImGui::EndMenu();

@@ -68,6 +68,21 @@ namespace tb
             return uniformDistribution(randomEngine);
         }
 
+        static std::string getFileContent(const char* fileName)
+        {
+            if (fileName == nullptr || std::strlen(fileName) == 0)
+            {
+                return {};
+            }
+
+            std::ifstream file(fileName);
+            auto fileSize = std::filesystem::file_size(fileName);
+            std::string content(fileSize, '\0');
+            file.read(content.data(), fileSize);
+            file.close();
+            return content;
+        }
+
         namespace String
         {
             static void removeNullTerminator(std::string& text)
@@ -89,6 +104,23 @@ namespace tb
                     ),
                     text.end()
                 );
+            }
+
+            static std::string getBetweenBeginAndEnd(const std::string& subject, const std::string& begin, const std::string& end)
+            {
+                std::size_t beginPosition;
+                if ((beginPosition = subject.find(begin)) != std::string::npos)
+                {
+                    std::size_t endPosition;
+                    if ((endPosition = subject.find(end, beginPosition)) != std::string::npos && endPosition != beginPosition)
+                    {
+                        endPosition = endPosition + 1;
+
+                        return subject.substr(beginPosition, endPosition - beginPosition);
+                    }
+                }
+
+                return std::string();
             }
         }
 

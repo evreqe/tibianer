@@ -2,7 +2,7 @@
 
 #include "common.h"
 
-#include "tb/Window.h"
+#include "tb/ImGuiWindow.h"
 
 #include "tb/SpriteData.h"
 #include "tb/OptionsData.h"
@@ -13,7 +13,7 @@
 namespace tb
 {
 
-    class SetOutfitWindow : public Window
+    class SetOutfitWindow : public tb::ImGuiWindow
     {
 
     public:

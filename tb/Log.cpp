@@ -25,7 +25,21 @@ void Log::vwrite(const FormatString& format, fmt::format_args args)
         fileName = fileName.substr(fileName.rfind("\\") + 1);
     }
 
-    m_sourceText = fmt::format(FMT_COMPILE("[{}:{}:{}()] "), fileName, loc.line(), loc.function_name());
+    std::string_view functionName = loc.function_name();
+
+    std::size_t beginPosition;
+    if ((beginPosition = functionName.find("tb::")) != std::string::npos)
+    {
+        std::size_t endPosition;
+        if ((endPosition = functionName.find("(", beginPosition)) != std::string::npos && endPosition != beginPosition)
+        {
+            endPosition = endPosition + 1;
+
+            functionName = functionName.substr(beginPosition, endPosition - beginPosition);
+        }
+    }
+
+    m_sourceText = fmt::format(FMT_COMPILE("[{}:{}:{}()] "), fileName, loc.line(), functionName);
 
     std::stringstream ss;
     ss << m_sourceText;

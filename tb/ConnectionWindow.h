@@ -2,12 +2,12 @@
 
 #include "common.h"
 
-#include "tb/Window.h"
+#include "tb/ImGuiWindow.h"
 
 namespace tb
 {
 
-    class ConnectionWindow : public Window
+    class ConnectionWindow : public tb::ImGuiWindow
     {
 
     public:

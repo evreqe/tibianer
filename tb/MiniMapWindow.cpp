@@ -5,115 +5,18 @@ namespace tb
 
 MiniMapWindow::MiniMapWindow()
 {
-    m_window.create(m_windowSize.x, m_windowSize.y);
+    setWindowRenderTextureInitialSize(m_windowRenderTextureSize);
 
-    m_view.reset(sf::FloatRect(0.0f, 0.0f, m_viewSize.x, m_viewSize.y));
+    setViewInitialSize(m_viewSize);
 
     m_vertexArray.setPrimitiveType(sf::Quads);
+
+    initalize();
 }
 
 MiniMapWindow::~MiniMapWindow()
 {
     //
-}
-
-sf::Vector2f MiniMapWindow::getPosition()
-{
-    return m_position;
-}
-
-void MiniMapWindow::setPosition(const sf::Vector2f& position)
-{
-    m_position = position;
-}
-
-sf::FloatRect MiniMapWindow::getRect()
-{
-    sf::FloatRect rect;
-
-    rect.left = m_position.x;
-    rect.top = m_position.y;
-
-    sf::Vector2f windowSize = static_cast<sf::Vector2f>(m_window.getSize());
-
-    rect.width = windowSize.x;
-    rect.height = windowSize.y;
-
-    return rect;
-}
-
-void MiniMapWindow::drawDebugRect()
-{
-    sf::FloatRect windowRect = getRect();
-
-    g_Game.drawDebugRect(windowRect);
-}
-
-void MiniMapWindow::drawWoodBorder()
-{
-    sf::FloatRect windowRect = getRect();
-
-    g_Game.drawWoodBorder(windowRect, true);
-}
-
-sf::Vector2f MiniMapWindow::getMousePixelPosition()
-{
-    sf::Vector2f mousePosition2f = g_RenderWindow.getMousePosition2f();
-
-    // game window is offset inside render window
-    mousePosition2f.x -= m_position.x;
-    mousePosition2f.y -= m_position.y;
-
-    sf::Vector2i mousePosition2i = static_cast<sf::Vector2i>(mousePosition2f);
-
-    sf::Vector2f pixelPosition = m_window.mapPixelToCoords(mousePosition2i, m_view);
-
-    return pixelPosition;
-}
-
-sf::Vector2f MiniMapWindow::getMousePixelCoords()
-{
-    sf::Vector2f pixelCoords2f = getMousePixelPosition();
-
-    const float tileSize = tb::Constants::TileSizeFloat;
-
-    // this accounts for when the mouse is out of bounds in the top left corner of the map, in the void
-    if (pixelCoords2f.x < 0.0f)
-    {
-        pixelCoords2f.x -= tileSize;
-    }
-
-    if (pixelCoords2f.y < 0.0f)
-    {
-        pixelCoords2f.y -= tileSize;
-    }
-
-    // this rounds to the nearest tile size
-    pixelCoords2f.x -= std::fmodf(pixelCoords2f.x, tileSize);
-    pixelCoords2f.y -= std::fmodf(pixelCoords2f.y, tileSize);
-
-    return pixelCoords2f;
-}
-
-sf::Vector2i MiniMapWindow::getMouseTileCoords()
-{
-    sf::Vector2f pixelCoords = getMousePixelCoords();
-
-    sf::Vector2i tileCoords = static_cast<sf::Vector2i>(pixelCoords);
-
-    tileCoords.x /= tb::Constants::TileSize;
-    tileCoords.y /= tb::Constants::TileSize;
-
-    return tileCoords;
-}
-
-bool MiniMapWindow::isMouseInsideWindow()
-{
-    sf::Vector2f mousePosition = g_RenderWindow.getMousePosition2f();
-
-    sf::FloatRect windowRect = MiniMapWindow::getRect();
-
-    return windowRect.contains(mousePosition);
 }
 
 void MiniMapWindow::handleMouseWheelMovedEvent(sf::Event event)
@@ -122,27 +25,14 @@ void MiniMapWindow::handleMouseWheelMovedEvent(sf::Event event)
     if (event.mouseWheel.delta > 0)
     {
         // zoom in
-        m_zoomScale -= m_zoomStep;
-
-        if (m_zoomScale <= m_zoomScaleMinimum)
-        {
-            m_zoomScale = m_zoomScaleMinimum;
-        }
+        zoomIn();
     }
-
     // scroll down
     else if (event.mouseWheel.delta < 0)
     {
         // zoom out
-        m_zoomScale += m_zoomStep;
-
-        if (m_zoomScale >= m_zoomScaleMaximum)
-        {
-            m_zoomScale = m_zoomScaleMaximum;
-        }
+        zoomOut();
     }
-
-    m_view.setSize(sf::Vector2f(m_viewSize.x * m_zoomScale, m_viewSize.y * m_zoomScale));
 }
 
 void MiniMapWindow::handleMouseButtonPressedEvent(sf::Event event)
@@ -164,25 +54,31 @@ void MiniMapWindow::draw()
         resetViewPositionOffset();
     }
 
-    setViewPositionOffset(g_GameWindow.getViewPositionOffset());
+    sf::Vector2f viewPositionOffset = g_GameWindow.getViewPositionOffset();
+
+    setViewPositionOffset(viewPositionOffset);
 
     sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
 
     sf::Vector2f renderWindowSize = static_cast<sf::Vector2f>(renderWindow->getSize());
 
-    sf::Vector2f windowSize = static_cast<sf::Vector2f>(m_window.getSize());
+    sf::RenderTexture* windowRenderTexture = getWindowRenderTexture();
+
+    sf::Vector2f windowSize = static_cast<sf::Vector2f>(windowRenderTexture->getSize());
+
+    float windowSizeScale = getSizeScale();
 
     float padding = tb::Constants::PaddingRenderWindow + tb::Constants::PaddingWoodBorder + tb::Constants::PaddingBlackRectangle;
 
     sf::Vector2f windowPosition;
-    windowPosition.x = renderWindowSize.x - padding - windowSize.x;
+    windowPosition.x = renderWindowSize.x - padding - (windowSize.x * windowSizeScale);
     windowPosition.y = g_MenuBar.getHeight() + padding;
 
     setPosition(windowPosition);
 
     tb::Creature::Ptr player = g_Game.getPlayer();
 
-    setViewPosition
+    sf::Vector2f viewPosition =
     (
         sf::Vector2f
         (
@@ -191,11 +87,15 @@ void MiniMapWindow::draw()
         )
     );
 
-    m_view.setCenter(m_viewPosition.x, m_viewPosition.y);
+    setViewPosition(viewPosition);
 
-    m_window.setView(m_view);
+    sf::View* view = getView();
 
-    m_window.clear(sf::Color::Black);
+    view->setCenter(viewPosition);
+
+    windowRenderTexture->setView(*view);
+
+    windowRenderTexture->clear(sf::Color::Black);
 
     tb::TileMap::Ptr tileMapTiles = g_Map.getTileMapOfTilesAtZ(player->getZ());
 
@@ -209,7 +109,9 @@ void MiniMapWindow::draw()
 
             int numTilesFromCenterX = g_GameWindow.getNumTilesFromCenterX();
 
-            int tileScale = static_cast<int>(m_zoomScale);
+            float zoomScale = getZoomScale();
+
+            int tileScale = static_cast<int>(zoomScale);
 
             int tileScaleXY = numTilesFromCenterX * tileScale;
 
@@ -238,14 +140,17 @@ void MiniMapWindow::draw()
         }
     }
 
-    m_window.display();
+    windowRenderTexture->display();
 
-    sf::Texture windowTexture = m_window.getTexture();
+    sf::Texture windowSpriteTexture = windowRenderTexture->getTexture();
 
-    m_windowSprite.setTexture(windowTexture);
-    m_windowSprite.setPosition(m_position);
+    sf::Sprite* windowSprite = getWindowSprite();
 
-    renderWindow->draw(m_windowSprite);
+    windowSprite->setTexture(windowSpriteTexture);
+    windowSprite->setPosition(windowPosition);
+    windowSprite->setScale(sf::Vector2f(windowSizeScale, windowSizeScale));
+
+    renderWindow->draw(*windowSprite);
 }
 
 void MiniMapWindow::drawTileMap(const sf::IntRect& tileRect, tb::TileMap::Ptr tileMap)
@@ -329,7 +234,9 @@ void MiniMapWindow::drawTileMap(const sf::IntRect& tileRect, tb::TileMap::Ptr ti
         m_vertexArray.append(vertex[3]);
     }
 
-    m_window.draw(m_vertexArray);
+    sf::RenderTexture* windowRenderTexture = getWindowRenderTexture();
+
+    windowRenderTexture->draw(m_vertexArray);
 }
 
 void MiniMapWindow::drawTileHighlight()
@@ -341,58 +248,9 @@ void MiniMapWindow::drawTileHighlight()
     rectangleShape.setPosition(mousePixelCoords);
     rectangleShape.setFillColor(sf::Color::Cyan);
 
-    m_window.draw(rectangleShape);
-}
+    sf::RenderTexture* windowRenderTexture = getWindowRenderTexture();
 
-sf::View* MiniMapWindow::getView()
-{
-    return &m_view;
-}
-
-sf::Vector2f MiniMapWindow::getViewPosition()
-{
-    return m_viewPosition + m_viewPositionOffset;
-}
-
-void MiniMapWindow::setViewPosition(sf::Vector2f position)
-{
-    m_viewPosition = position + m_viewPositionOffset;
-}
-
-sf::Vector2f MiniMapWindow::getViewPositionOffset()
-{
-    return m_viewPositionOffset;
-}
-
-void MiniMapWindow::setViewPositionOffset(sf::Vector2f offset)
-{
-    m_viewPositionOffset = offset;
-}
-
-void MiniMapWindow::resetViewPositionOffset()
-{
-    m_viewPositionOffset.x = 0.0f;
-    m_viewPositionOffset.y = 0.0f;
-}
-
-float MiniMapWindow::getZoomScale()
-{
-    return m_zoomScale;
-}
-
-float MiniMapWindow::getZoomScaleMinimum()
-{
-    return m_zoomScaleMinimum;
-}
-
-float MiniMapWindow::getZoomScaleMaximum()
-{
-    return m_zoomScaleMaximum;
-}
-
-bool MiniMapWindow::isZoomed()
-{
-    return m_zoomScale > m_zoomScaleMinimum;
+    windowRenderTexture->draw(rectangleShape);
 }
 
 }

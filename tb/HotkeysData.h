@@ -32,7 +32,7 @@ private:
 
 public:
 
-    typedef struct _Data
+    struct Data
     {
         std::string F1;
         std::string F2;
@@ -46,7 +46,7 @@ public:
         std::string F10;
         std::string F11;
         std::string F12;
-    } Data, * Data_ptr;
+    };
 
     bool load();
     bool isLoaded();
