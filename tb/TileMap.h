@@ -9,6 +9,7 @@
 #include "tb/SpriteData.h"
 #include "tb/PatternData.h"
 #include "tb/WaterAnimationData.h"
+#include "tb/AnimationData.h"
 
 #include "tb/Tile.h"
 #include "tb/Sprite.h"
@@ -18,6 +19,7 @@
 #include "tb/Thing.h"
 #include "tb/Object.h"
 #include "tb/Creature.h"
+#include "tb/Animation.h"
 
 namespace tb
 {
@@ -44,13 +46,11 @@ public:
     tb::SpriteIDList* getTileSpriteIDList();
 
     tb::Tile::List* getTileList();
-    tb::Tile::List* getWaterTileList();
 
     tb::Tile::List getTileListWithinTileRect(const sf::IntRect& tileRect);
 
-    void loadWaterTiles();
-
     bool doAnimatedWater(const sf::IntRect& tileRect);
+    bool doAnimatedObjects(const sf::IntRect& tileRect);
 
     bool applyTilePatterns();
     bool applyTileObjectPatterns();
@@ -69,7 +69,7 @@ public:
     bool isVisibleWithinTileRect(const sf::IntRect& tileRect);
 
     void drawTiles(const sf::IntRect& tileRect, sf::RenderTarget& renderTarget);
-    void drawObjects(const sf::IntRect& tileRect, sf::RenderTarget& renderTarget);
+    void drawThings(const sf::IntRect& tileRect, sf::RenderTarget& renderTarget);
     void drawLights(const sf::IntRect& tileRect, sf::RenderTarget& renderTarget, tb::LightBrightness_t lightBrightness);
 
 private:
@@ -90,7 +90,6 @@ private:
     tb::SpriteIDList m_tileSpriteIDList;
 
     tb::Tile::List m_tileList;
-    tb::Tile::List m_waterTileList;
 
     uint32_t m_waterAnimationFrame = 0;
 

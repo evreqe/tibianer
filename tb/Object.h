@@ -6,6 +6,7 @@
 #include "tb/Utility.h"
 
 #include "tb/SpriteData.h"
+#include "tb/AnimationData.h"
 
 #include "tb/Thing.h"
 #include "tb/Sprite.h"
@@ -41,15 +42,17 @@ public:
         }
     };
 
-    struct Properties_t
+    struct ObjectProperties_t
     {
         bool Decay = false;
         bool Regenerate = false;
     };
 
-    Properties_t* getProperties();
+    ObjectProperties_t* getObjectProperties();
 
     void update();
+
+    void animate();
 
     tb::Sprite* getSprite();
 
@@ -67,7 +70,7 @@ public:
 
 private:
 
-    Properties_t m_properties;
+    ObjectProperties_t m_objectProperties;
 
     tb::Sprite m_sprite;
 

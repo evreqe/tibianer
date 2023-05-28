@@ -123,7 +123,7 @@
     <ClCompile Include="tb\Map.cpp">
       <Filter>Source Files\tb</Filter>
     </ClCompile>
-    <ClCompile Include="tb\Window.cpp">
+    <ClCompile Include="tb\ImGuiWindow.cpp">
       <Filter>Source Files\tb</Filter>
     </ClCompile>
     <ClCompile Include="tb\Log.cpp">
@@ -285,6 +285,9 @@
     <ClCompile Include="tb\FontData.cpp">
       <Filter>Source Files\tb</Filter>
     </ClCompile>
+    <ClCompile Include="tb\SfmlGuiWindow.cpp">
+      <Filter>Source Files\tb</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -383,7 +386,7 @@
     <ClInclude Include="common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="tb\Window.h">
+    <ClInclude Include="tb\ImGuiWindow.h">
       <Filter>Header Files\tb</Filter>
     </ClInclude>
     <ClInclude Include="tb\Log.h">
@@ -558,6 +561,9 @@
       <Filter>Header Files\tb</Filter>
     </ClInclude>
     <ClInclude Include="tb\FontData.h">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\SfmlGuiWindow.h">
       <Filter>Header Files\tb</Filter>
     </ClInclude>
   </ItemGroup>

@@ -40,8 +40,10 @@ public:
         tb::SpriteFlags SpriteFlags;
 
         std::string Name;
-        std::string Article = ""; // '' or 'a' or 'an'
+        std::string Article; // '' or 'a' or 'an'
         std::string Description;
+
+        std::string AnimationName;
 
         uint8_t TileWidth = 1;
         uint8_t TileHeight = 1;
@@ -58,7 +60,9 @@ public:
 
     tb::SpriteData::DataList* getDataList();
 
-    tb::SpriteID_t getSpriteIDBySpriteName(const std::string& spriteName);
+    tb::SpriteData::Data* getDataBySpriteID(const tb::SpriteID_t& spriteID);
+    tb::SpriteData::Data* getDataByName(const std::string& name);
+    tb::SpriteData::Data* getDataByNameSV(std::string_view name);
 
 private:
 
@@ -67,8 +71,6 @@ private:
     toml::table m_table;
 
     tb::SpriteData::DataList m_dataList;
-
-    std::unordered_map<std::string, tb::SpriteID_t> m_spriteNameToSpriteIDMap;
 
     const unsigned int m_numToLoad = tb::Constants::NumSprites;
 

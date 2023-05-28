@@ -65,6 +65,7 @@ void SpriteEditorWindow::draw()
     if (ImGui::BeginTable("##SpriteEditorWindowTable", 3, ImGuiTableFlags_BordersOuter | ImGuiTableFlags_Resizable))
     {
         ImGui::TableNextRow();
+
         ImGui::TableSetColumnIndex(0);
 
         if (ImGui::BeginChild("##SpriteEditorWindowChildSpritesheet", ImVec2(0, 0), true, ImGuiWindowFlags_AlwaysHorizontalScrollbar | ImGuiWindowFlags_AlwaysVerticalScrollbar))
@@ -74,7 +75,9 @@ void SpriteEditorWindow::draw()
                 tb::Sprite sprite;
                 sprite.setID(i);
 
-                ImGui::PushID(std::format("##SpriteEditorWindowChildSpritesheetButton{}", i).c_str());
+                std::string imageButtonID = std::format("##SpriteEditorWindowChildSpritesheetButton{}", i);
+
+                ImGui::PushID(imageButtonID.c_str());
 
                 // clicked on sprite
                 if (ImGui::ImageButton(sprite))
@@ -86,20 +89,14 @@ void SpriteEditorWindow::draw()
 
                 if (i == m_selectedSpriteID)
                 {
-                    auto min = ImGui::GetItemRectMin();
-                    auto max = ImGui::GetItemRectMax();
-
-                    ImGui::GetWindowDrawList()->AddRect(min, max, ImColor(255, 0, 255));
+                    tb::Utility::MyImGui::drawRectangleAtCurrentItem(ImColor(255, 0, 255));
                 }
 
                 tb::SpriteFlags* spriteFlags = &m_spriteDataList->at(i).SpriteFlags;
 
                 if (spriteFlags->hasFlag(m_highlightSpriteFlag) == true)
                 {
-                    auto min = ImGui::GetItemRectMin();
-                    auto max = ImGui::GetItemRectMax();
-
-                    ImGui::GetWindowDrawList()->AddRect(min, max, ImColor(255, 0, 0));
+                    tb::Utility::MyImGui::drawRectangleAtCurrentItem(ImColor(255, 0, 0));
                 }
 
                 ImGui::PopID();
@@ -109,6 +106,8 @@ void SpriteEditorWindow::draw()
                     ImGui::SameLine();
                 }
             }
+
+            tb::Utility::MyImGui::scrollWindowWithMiddleMouseButton();
 
             ImGui::EndChild();
         }
@@ -185,6 +184,8 @@ void SpriteEditorWindow::draw()
             ImGui::InputText("Name##SpriteEditorWindowInputName", &m_spriteData->Name);
             ImGui::InputText("Article##SpriteEditorWindowInputArticle", &m_spriteData->Article);
             ImGui::InputText("Description##SpriteEditorWindowInputDescription", &m_spriteData->Description);
+
+            ImGui::InputText("Animation Name##SpriteEditorWindowInputAnimationName", &m_spriteData->AnimationName);
 
             ImGui::InputScalar("Tile Width##SpriteEditorWindowInputTileWidth", ImGuiDataType_U8, &m_spriteData->TileWidth, &tb::Constants::MyImGui::InputScalarU8StepOne);
             ImGui::InputScalar("Tile Height##SpriteEditorWindowInputTileHeight", ImGuiDataType_U8, &m_spriteData->TileHeight, &tb::Constants::MyImGui::InputScalarU8StepOne);

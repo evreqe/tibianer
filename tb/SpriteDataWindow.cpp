@@ -47,6 +47,8 @@ void SpriteDataWindow::draw()
                 ImGui::TextUnformatted(std::format("Article: {}", spriteData->Article).c_str());
                 ImGui::TextUnformatted(std::format("Description: {}", spriteData->Description).c_str());
 
+                ImGui::TextUnformatted(std::format("Animation Name: {}", spriteData->AnimationName).c_str());
+
                 ImGui::TextUnformatted(std::format("Tile Size: {}x{}", spriteData->TileWidth, spriteData->TileHeight).c_str());
 
                 tb::SpriteFlags* spriteFlags = &spriteData->SpriteFlags;

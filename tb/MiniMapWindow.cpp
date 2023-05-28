@@ -54,10 +54,6 @@ void MiniMapWindow::draw()
         resetViewPositionOffset();
     }
 
-    sf::Vector2f viewPositionOffset = g_GameWindow.getViewPositionOffset();
-
-    setViewPositionOffset(viewPositionOffset);
-
     sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
 
     sf::Vector2f renderWindowSize = static_cast<sf::Vector2f>(renderWindow->getSize());
@@ -87,7 +83,12 @@ void MiniMapWindow::draw()
         )
     );
 
-    setViewPosition(viewPosition);
+    sf::Vector2f viewPositionOffset = g_GameWindow.getViewPositionOffset();
+
+    setViewPositionOffset(viewPositionOffset);
+
+    viewPosition.x += viewPositionOffset.x;
+    viewPosition.y += viewPositionOffset.y;
 
     sf::View* view = getView();
 

@@ -39,9 +39,6 @@ bool SpriteData::load()
     m_dataList.clear();
     m_dataList.reserve(m_numToLoad);
 
-    m_spriteNameToSpriteIDMap.clear();
-    m_spriteNameToSpriteIDMap.reserve(m_numToLoad);
-
     tb::SpriteData::Data firstData;
     firstData.SpriteID = 0;
     firstData.Name = "NULL";
@@ -65,6 +62,8 @@ bool SpriteData::load()
         data.Name = m_table[index]["Name"].value_or("");
         data.Article = m_table[index]["Article"].value_or("");
         data.Description = m_table[index]["Description"].value_or("");
+
+        data.AnimationName = m_table[index]["AnimationName"].value_or("");
 
         data.TileWidth = static_cast<uint8_t>(m_table[index]["TileWidth"].value_or(1));
         data.TileHeight = static_cast<uint8_t>(m_table[index]["TileHeight"].value_or(1));
@@ -94,11 +93,6 @@ bool SpriteData::load()
         data.SpriteFlags = spriteFlags;
 
         m_dataList.push_back(data);
-
-        if (data.Name.size() != 0)
-        {
-            m_spriteNameToSpriteIDMap.insert({data.Name, data.SpriteID});
-        }
     }
 
     g_Log.write("Loaded data size: {}\n", m_dataList.size());
@@ -145,6 +139,8 @@ bool SpriteData::save()
         file << std::format("Article=\"{}\"\n", data.Article);
         file << std::format("Description=\"{}\"\n", data.Description);
 
+        file << std::format("AnimationName=\"{}\"\n", data.AnimationName);
+
         file << std::format("TileWidth={}\n", data.TileWidth);
         file << std::format("TileHeight={}\n", data.TileHeight);
 
@@ -172,17 +168,35 @@ tb::SpriteData::DataList* SpriteData::getDataList()
     return &m_dataList;
 }
 
-tb::SpriteID_t SpriteData::getSpriteIDBySpriteName(const std::string& spriteName)
+tb::SpriteData::Data* SpriteData::getDataBySpriteID(const tb::SpriteID_t& spriteID)
 {
-    auto it = m_spriteNameToSpriteIDMap.find(spriteName);
-    if (it != m_spriteNameToSpriteIDMap.end())
+    return &m_dataList.at(spriteID);
+}
+
+tb::SpriteData::Data* SpriteData::getDataByName(const std::string& name)
+{
+    for (auto& data : m_dataList)
     {
-        return it->second;
+        if (data.Name == name)
+        {
+            return &data;
+        }
     }
-    else
+
+    return nullptr;
+}
+
+tb::SpriteData::Data* SpriteData::getDataByNameSV(std::string_view name)
+{
+    for (auto& data : m_dataList)
     {
-        return 1;
+        if (data.Name == name)
+        {
+            return &data;
+        }
     }
+
+    return nullptr;
 }
 
 }

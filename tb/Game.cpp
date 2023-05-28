@@ -147,7 +147,59 @@ bool Game::loadData()
         return false;
     }
 
+    g_Log.write("Loading animation data\n");
+    if (g_AnimationData.load() == false)
+    {
+        g_Log.write("ERROR: Failed to load animation data\n");
+        return false;
+    }
+
     return true;
+}
+
+bool Game::loadGlobalsFromData()
+{
+    g_Log.write("Loading textures\n");
+    if (loadTextures() == false)
+    {
+        g_Log.write("ERROR: Failed to load textures\n");
+        return false;
+    }
+
+    g_Log.write("Loading fonts\n");
+    if (loadFonts() == false)
+    {
+        g_Log.write("ERROR: Failed to load fonts\n");
+        return false;
+    }
+
+    g_Log.write("Loading bitmap fonts\n");
+    if (loadBitmapFonts() == false)
+    {
+        g_Log.write("ERROR: Failed to load bitmap fonts\n");
+        return false;
+    }
+
+    g_Log.write("Loading cursors\n");
+    if (loadCursors() == false)
+    {
+        g_Log.write("ERROR: Failed to load cursors\n");
+        return false;
+    }
+
+    g_Log.write("Loading sprites\n");
+    if (loadSprites() == false)
+    {
+        g_Log.write("ERROR: Failed to load sprites\n");
+        return false;
+    }
+
+    g_Log.write("Loading animations\n");
+    if (loadAnimations() == false)
+    {
+        g_Log.write("ERROR: Failed to load animations\n");
+        return false;
+    }
 }
 
 bool Game::loadTextures()
@@ -215,15 +267,15 @@ bool Game::loadFonts()
 
     tb::FontData::DataList* fontDataList = g_FontData.getDataList();
 
-    for (auto& font : *fontDataList)
+    for (auto& fontData : *fontDataList)
     {
         bool isFound = false;
 
         for (auto& [fontName, fontObject] : tb::Fonts::Names)
         {
-            if (font.Name == fontName)
+            if (fontData.Name == fontName)
             {
-                if (fontObject.loadFromFile(font.FileName) == true)
+                if (fontObject.loadFromFile(fontData.FileName) == true)
                 {
                     isFound = true;
                     break;
@@ -233,11 +285,11 @@ bool Game::loadFonts()
 
         if (isFound == true)
         {
-            g_Log.write("Loaded font '{}' from file: {}\n", font.Name, font.FileName);
+            g_Log.write("Loaded font '{}' from file: {}\n", fontData.Name, fontData.FileName);
         }
         else
         {
-            g_Log.write("ERROR: Failed to load font '{}' from file: {}\n", font.Name, font.FileName);
+            g_Log.write("ERROR: Failed to load font '{}' from file: {}\n", fontData.Name, fontData.FileName);
             return false;
         }
     }
@@ -255,15 +307,15 @@ bool Game::loadBitmapFonts()
 
     tb::BitmapFontData::DataList* bitmapFontDataList = g_BitmapFontData.getDataList();
 
-    for (auto& bitmapFont : *bitmapFontDataList)
+    for (auto& bitmapFontData : *bitmapFontDataList)
     {
         bool isFound = false;
 
         for (auto& [bitmapFontName, bitmapFontObject] : m_bitmapFontNames)
         {
-            if (bitmapFont.Name == bitmapFontName)
+            if (bitmapFontData.Name == bitmapFontName)
             {
-                if (bitmapFontObject.load(bitmapFont.FileName, sf::Vector2u(bitmapFont.GlyphWidth, bitmapFont.GlyphHeight), bitmapFont.TextHeight, &bitmapFont.GlyphWidthList) == true)
+                if (bitmapFontObject.load(bitmapFontData.FileName, sf::Vector2u(bitmapFontData.GlyphWidth, bitmapFontData.GlyphHeight), bitmapFontData.TextHeight, &bitmapFontData.GlyphWidthList) == true)
                 {
                     isFound = true;
                     break;
@@ -273,11 +325,11 @@ bool Game::loadBitmapFonts()
 
         if (isFound == true)
         {
-            g_Log.write("Loaded bitmap font '{}' from file: {}\n", bitmapFont.Name, bitmapFont.FileName);
+            g_Log.write("Loaded bitmap font '{}' from file: {}\n", bitmapFontData.Name, bitmapFontData.FileName);
         }
         else
         {
-            g_Log.write("ERROR: Failed to load bitmap font '{}' from file: {}\n", bitmapFont.Name, bitmapFont.FileName);
+            g_Log.write("ERROR: Failed to load bitmap font '{}' from file: {}\n", bitmapFontData.Name, bitmapFontData.FileName);
             return false;
         }
     }
@@ -302,19 +354,19 @@ bool Game::loadCursors()
     tb::CursorData::DataList* cursorDataList = g_CursorData.getDataList();
 
     // custom cursors
-    for (auto& cursor : *cursorDataList)
+    for (auto& cursorData : *cursorDataList)
     {
         bool isFound = false;
 
         for (auto& [cursorName, cursorObject] : tb::Cursors::CustomCursorNames)
         {
-            if (cursor.Name == cursorName)
+            if (cursorData.Name == cursorName)
             {
-                const sf::Uint8* cursorPixels = cursor.Image.getPixelsPtr();
+                const sf::Uint8* cursorPixels = cursorData.Image.getPixelsPtr();
 
-                sf::Vector2u cursorWidth = sf::Vector2u(cursor.Width, cursor.Height);
+                sf::Vector2u cursorWidth = sf::Vector2u(cursorData.Width, cursorData.Height);
 
-                sf::Vector2u cursorHotSpot = sf::Vector2u(cursor.HotSpotX, cursor.HotSpotY);
+                sf::Vector2u cursorHotSpot = sf::Vector2u(cursorData.HotSpotX, cursorData.HotSpotY);
 
                 if (cursorObject.loadFromPixels(cursorPixels, cursorWidth, cursorHotSpot) == true)
                 {
@@ -326,11 +378,89 @@ bool Game::loadCursors()
 
         if (isFound == true)
         {
-            g_Log.write("Loaded cursor '{}' from file: {}\n", cursor.Name, cursor.FileName);
+            g_Log.write("Loaded cursor '{}' from file: {}\n", cursorData.Name, cursorData.FileName);
         }
         else
         {
-            g_Log.write("ERROR: Failed to load cursor '{}' from file: {}\n", cursor.Name, cursor.FileName);
+            g_Log.write("ERROR: Failed to load cursor '{}' from file: {}\n", cursorData.Name, cursorData.FileName);
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool Game::loadSprites()
+{
+    if (g_SpriteData.isLoaded() == false)
+    {
+        g_Log.write("ERROR: Sprite data is not loaded\n");
+        return false;
+    }
+
+    tb::SpriteData::DataList* spriteDataList = g_SpriteData.getDataList();
+
+    for (auto& [spriteName, spriteID] : tb::Sprites::Names)
+    {
+        bool isFound = false;
+
+        for (auto& spriteData : *spriteDataList)
+        {
+            if (spriteData.Name == spriteName)
+            {
+                spriteID = spriteData.SpriteID;
+
+                isFound = true;
+                break;
+            }
+        }
+
+        if (isFound == true)
+        {
+            g_Log.write("Loaded sprite '{}' to sprite ID: {}\n", spriteName, spriteID);
+        }
+        else
+        {
+            g_Log.write("ERROR: Failed to load sprite '{}' to sprite ID: {}\n", spriteName, spriteID);
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool Game::loadAnimations()
+{
+    if (g_AnimationData.isLoaded() == false)
+    {
+        g_Log.write("ERROR: Animation data is not loaded\n");
+        return false;
+    }
+
+    tb::AnimationData::DataList* animationDataList = g_AnimationData.getDataList();
+
+    for (auto& [animationName, animationIndex] : tb::Animations::Names)
+    {
+        bool isFound = false;
+
+        for (auto& animationData : *animationDataList)
+        {
+            if (animationData.Name == animationName)
+            {
+                animationIndex = animationData.Index;
+
+                isFound = true;
+                break;
+            }
+        }
+
+        if (isFound == true)
+        {
+            g_Log.write("Loaded animation '{}' to index: {}\n", animationName, animationIndex);
+        }
+        else
+        {
+            g_Log.write("ERROR: Failed to load animation '{}' to index: {}\n", animationName, animationIndex);
             return false;
         }
     }
@@ -353,7 +483,6 @@ bool Game::loadMap(const std::string& fileName)
     if (createPlayer() == false)
     {
         g_Log.write("ERROR: Failed to create player\n");
-        return false;
     }
 
     return true;
@@ -644,6 +773,104 @@ void Game::drawWoodBorderForSfmlWindows()
     }
 }
 
+void Game::drawImGuiWindows()
+{
+    if (*g_MenuBar.getIsVisible() == true)
+    {
+        g_MenuBar.draw();
+    }
+
+    if (*g_StatusBar.getIsVisible() == true)
+    {
+        g_StatusBar.draw();
+    }
+
+    drawDockSpace();
+
+    if (m_properties.ShowDemoWindow == true)
+    {
+        ImGui::ShowDemoWindow(&m_properties.ShowDemoWindow);
+    }
+
+    if (m_properties.ShowStackToolWindow == true)
+    {
+        ImGui::ShowStackToolWindow(&m_properties.ShowStackToolWindow);
+    }
+
+    if (*g_SpriteEditorWindow.getIsVisible() == true)
+    {
+        g_SpriteEditorWindow.draw();
+    }
+
+    if (*g_SpriteDataWindow.getIsVisible() == true)
+    {
+        g_SpriteDataWindow.draw();
+    }
+
+    if (*g_LogWindow.getIsVisible() == true)
+    {
+        g_LogWindow.draw();
+    }
+
+    if (*g_OptionsWindow.getIsVisible() == true)
+    {
+        g_OptionsWindow.draw();
+    }
+
+    if (*g_HotkeysWindow.getIsVisible() == true)
+    {
+        g_HotkeysWindow.draw();
+    }
+
+    if (*g_SetOutfitWindow.getIsVisible() == true)
+    {
+        g_SetOutfitWindow.draw();
+    }
+
+    if (*g_CommentsWindow.getIsVisible() == true)
+    {
+        g_CommentsWindow.draw();
+    }
+
+    if (*g_MessageOfTheDayWindow.getIsVisible() == true)
+    {
+        g_MessageOfTheDayWindow.draw();
+    }
+
+    if (*g_ConnectionWindow.getIsVisible() == true)
+    {
+        g_ConnectionWindow.draw();
+    }
+
+    if (*g_ControlsWindow.getIsVisible() == true)
+    {
+        g_ControlsWindow.draw();
+    }
+
+    if (*g_TipsAndTricksWindow.getIsVisible() == true)
+    {
+        g_TipsAndTricksWindow.draw();
+    }
+
+    if (*g_AboutTibiaWindow.getIsVisible() == true)
+    {
+        g_AboutTibiaWindow.draw();
+    }
+
+    if (*g_AboutTibianerWindow.getIsVisible() == true)
+    {
+        g_AboutTibianerWindow.draw();
+    }
+
+    if (m_gameState == tb::GameState::InGame)
+    {
+        if (*g_OverlayWindow.getIsVisible() == true)
+        {
+            g_OverlayWindow.draw();
+        }
+    }
+}
+
 void Game::doEndGamePopup()
 {
     if (m_properties.ShowEndGamePopup == true)
@@ -779,76 +1006,38 @@ void Game::doGameStateInGame()
 {
     drawSfmlWindows();
 
-    doAnimatedWater();
-
     doEndGamePopup();
-}
-
-void Game::doAnimatedWater()
-{
-    // do not animate water while underground
-    if (m_player->getZ() < tb::ZAxis::Default)
-    {
-        return;
-    }
-
-    sf::Time animatedWaterTimeElapsed = m_animatedWaterClock.getElapsedTime();
-    if (animatedWaterTimeElapsed >= m_animatedWaterTime)
-    {
-        sf::IntRect gameWindowTileRect = g_GameWindow.getTileRect();
-
-        bool gameWindowIsZoomed = g_GameWindow.isZoomed();
-
-        if (gameWindowIsZoomed == true)
-        {
-            float gameWindowZoomScale = g_GameWindow.getZoomScale();
-
-            int numTilesFromCenterX = g_GameWindow.getNumTilesFromCenterX();
-            int numTilesFromCenterY = g_GameWindow.getNumTilesFromCenterY();
-
-            int tileScale = static_cast<int>(gameWindowZoomScale);
-
-            int tileScaleX = numTilesFromCenterX * tileScale;
-            int tileScaleY = numTilesFromCenterY * tileScale;
-
-            gameWindowTileRect.left   -= tileScaleX;
-            gameWindowTileRect.top    -= tileScaleY;
-            gameWindowTileRect.width  += tileScaleX * 2;
-            gameWindowTileRect.height += tileScaleY * 2;
-        }
-        else
-        {
-            // increase the rect to account for the player walking too fast
-            // and seeing the water animation being applied as it appears
-            int numTilesX = g_GameWindow.getNumTilesX();
-            int numTilesY = g_GameWindow.getNumTilesY();
-
-            gameWindowTileRect.left   -= numTilesX;
-            gameWindowTileRect.top    -= numTilesY;
-            gameWindowTileRect.width  += numTilesX * 2;
-            gameWindowTileRect.height += numTilesY * 2;
-        }
-
-        tb::TileMap::Ptr tileMap = g_Map.getTileMapOfTilesAtZ(tb::ZAxis::Default);
-
-        if (tileMap == nullptr)
-        {
-            return;
-        }
-
-        if (tileMap->doAnimatedWater(gameWindowTileRect) == false)
-        {
-            g_Log.write("ERROR: Failed to animate water\n");
-        }
-
-        m_animatedWaterClock.restart();
-    }
 }
 
 sf::Vector2i Game::getMousePositionInDesktop()
 {
     // get mouse position in operating system desktop
     return sf::Mouse::getPosition();
+}
+
+tb::VisibleZ_t Game::getVisibleZOfPlayer()
+{
+    tb::VisibleZ_t visibleZ;
+    visibleZ.Begin = tb::ZAxis::Min;
+    visibleZ.End   = tb::ZAxis::Max;
+
+    tb::ZAxis_t playerZ = m_player->getZ();
+
+    // check if the player is underground
+    if (playerZ < tb::ZAxis::Default)
+    {
+        // get all z-axis that are underground
+        visibleZ.Begin = tb::ZAxis::Min;
+        visibleZ.End   = tb::ZAxis::Default - 1;
+    }
+    else
+    {
+        // get all z-axis that are aboveground
+        visibleZ.Begin = tb::ZAxis::Default;
+        visibleZ.End   = tb::ZAxis::Max;
+    }
+
+    return visibleZ;
 }
 
 bool Game::createPlayer()
@@ -897,7 +1086,47 @@ bool Game::createPlayer()
     g_Log.write("Tile Z: {}\n", tile->getZ());
     g_Log.write("Tile Sprite ID: {}\n", tile->getSpriteID());
 
-    g_Log.write("Player Coords: {},{},{}\n", m_player->getTileX(), m_player->getTileY(), m_player->getZ());
+    sf::Vector2i playerTileCoords = m_player->getTileCoords();
+
+    tb::ZAxis_t playerZ = m_player->getZ();
+
+    g_Log.write("Player Tile Coords: {},{},{}\n", playerTileCoords.x, playerTileCoords.y, playerZ);
+
+    spawnAnimationByIndex(playerTileCoords, playerZ, tb::Animations::BlueOrbSpell);
+
+    return true;
+}
+
+bool Game::spawnAnimationByIndex(const sf::Vector2i& tileCoords, tb::ZAxis_t z, uint32_t index)
+{
+    tb::Animation::Ptr animation = std::make_shared<tb::Animation>(tileCoords, z, index);
+
+    tb::Tile::Ptr tile = g_Map.getTile(tileCoords, z);
+
+    if (tile == nullptr)
+    {
+        g_Log.write("ERROR: tile == nullptr\n");
+        return false;
+    }
+
+    tile->addAnimation(animation);
+
+    return true;
+}
+
+bool Game::spawnAnimationByName(const sf::Vector2i& tileCoords, tb::ZAxis_t z, const std::string& name)
+{
+    tb::Animation::Ptr animation = std::make_shared<tb::Animation>(tileCoords, z, name);
+
+    tb::Tile::Ptr tile = g_Map.getTile(tileCoords, z);
+
+    if (tile == nullptr)
+    {
+        g_Log.write("ERROR: tile == nullptr\n");
+        return false;
+    }
+
+    tile->addAnimation(animation);
 
     return true;
 }
@@ -910,6 +1139,16 @@ void Game::handleClosedEvent(sf::Event event)
 void Game::handleResizedEvent(sf::Event event)
 {
     g_RenderWindow.handleResizedEvent(event);
+}
+
+void Game::handleGainedFocusEvent(sf::Event event)
+{
+    g_RenderWindow.handleGainedFocusEvent(event);
+}
+
+void Game::handleLostFocusEvent(sf::Event event)
+{
+    g_RenderWindow.handleLostFocusEvent(event);
 }
 
 void Game::handleMouseWheelMovedEvent(sf::Event event)
@@ -976,6 +1215,11 @@ void Game::handleMouseButtonReleasedEvent(sf::Event event)
 void Game::handleKeyPressedEvent(sf::Event event)
 {
     m_properties.IsAnyKeyPressed = true;
+
+    if (event.key.code == sf::Keyboard::Key::B)
+    {
+        spawnAnimationByName(m_player->getTileCoords(), m_player->getZ(), "BlueOrbSpell");
+    }
 }
 
 void Game::handleKeyReleasedEvent(sf::Event event)
@@ -1077,6 +1321,10 @@ void Game::processEvents()
 {
     sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
 
+    tb::RenderWindow::Properties_t* renderWindowProperties = g_RenderWindow.getProperties();
+
+    bool renderWindowIsFocused = renderWindowProperties->IsFocused;
+
     sf::Event event;
     while (renderWindow->pollEvent(event))
     {
@@ -1089,6 +1337,14 @@ void Game::processEvents()
         else if (event.type == sf::Event::Resized)
         {
             handleResizedEvent(event);
+        }
+        else if (event.type == sf::Event::LostFocus)
+        {
+            handleLostFocusEvent(event);
+        }
+        else if (event.type == sf::Event::GainedFocus)
+        {
+            handleGainedFocusEvent(event);
         }
 
         if (tb::Utility::MyImGui::isActive() == false)
@@ -1107,7 +1363,7 @@ void Game::processEvents()
             }
             else if (event.type == sf::Event::KeyPressed)
             {
-                 handleKeyPressedEvent(event);
+                handleKeyPressedEvent(event);
             }
             else if (event.type == sf::Event::KeyReleased)
             {
@@ -1116,7 +1372,10 @@ void Game::processEvents()
         }
     }
 
-    handleKeyboardInput();
+    if (renderWindowIsFocused == true && tb::Utility::MyImGui::isActive() == false)
+    {
+        handleKeyboardInput();
+    }
 }
 
 void Game::setMouseCursor(const sf::Cursor& cursor)
@@ -1377,34 +1636,10 @@ void Game::run()
         return;
     }
 
-    g_Log.write("Loading textures\n");
-    if (loadTextures() == false)
+    g_Log.write("Loading globals from data\n");
+    if (loadGlobalsFromData() == false)
     {
-        g_Log.write("ERROR: Failed to load textures\n");
-        exit();
-        return;
-    }
-
-    g_Log.write("Loading fonts\n");
-    if (loadFonts() == false)
-    {
-        g_Log.write("ERROR: Failed to load fonts\n");
-        exit();
-        return;
-    }
-
-    g_Log.write("Loading bitmap fonts\n");
-    if (loadBitmapFonts() == false)
-    {
-        g_Log.write("ERROR: Failed to load bitmap fonts\n");
-        exit();
-        return;
-    }
-
-    g_Log.write("Loading cursors\n");
-    if (loadCursors() == false)
-    {
-        g_Log.write("ERROR: Failed to load cursors\n");
+        g_Log.write("ERROR: Failed to load globals from data\n");
         exit();
         return;
     }
@@ -1444,100 +1679,7 @@ void Game::run()
             doOverlayText();
         }
 
-        if (*g_MenuBar.getIsVisible() == true)
-        {
-            g_MenuBar.draw();
-        }
-
-        if (*g_StatusBar.getIsVisible() == true)
-        {
-            g_StatusBar.draw();
-        }
-
-        drawDockSpace();
-
-        if (m_properties.ShowDemoWindow == true)
-        {
-            ImGui::ShowDemoWindow(&m_properties.ShowDemoWindow);
-        }
-
-        if (m_properties.ShowStackToolWindow == true)
-        {
-            ImGui::ShowStackToolWindow(&m_properties.ShowStackToolWindow);
-        }
-
-        if (*g_SpriteEditorWindow.getIsVisible() == true)
-        {
-            g_SpriteEditorWindow.draw();
-        }
-
-        if (*g_SpriteDataWindow.getIsVisible() == true)
-        {
-            g_SpriteDataWindow.draw();
-        }
-
-        if (*g_LogWindow.getIsVisible() == true)
-        {
-            g_LogWindow.draw();
-        }
-
-        if (*g_OptionsWindow.getIsVisible() == true)
-        {
-            g_OptionsWindow.draw();
-        }
-
-        if (*g_HotkeysWindow.getIsVisible() == true)
-        {
-            g_HotkeysWindow.draw();
-        }
-
-        if (*g_SetOutfitWindow.getIsVisible() == true)
-        {
-            g_SetOutfitWindow.draw();
-        }
-
-        if (*g_CommentsWindow.getIsVisible() == true)
-        {
-            g_CommentsWindow.draw();
-        }
-
-        if (*g_MessageOfTheDayWindow.getIsVisible() == true)
-        {
-            g_MessageOfTheDayWindow.draw();
-        }
-
-        if (*g_ConnectionWindow.getIsVisible() == true)
-        {
-            g_ConnectionWindow.draw();
-        }
-
-        if (*g_ControlsWindow.getIsVisible() == true)
-        {
-            g_ControlsWindow.draw();
-        }
-
-        if (*g_TipsAndTricksWindow.getIsVisible() == true)
-        {
-            g_TipsAndTricksWindow.draw();
-        }
-
-        if (*g_AboutTibiaWindow.getIsVisible() == true)
-        {
-            g_AboutTibiaWindow.draw();
-        }
-
-        if (*g_AboutTibianerWindow.getIsVisible() == true)
-        {
-            g_AboutTibianerWindow.draw();
-        }
-
-        if (m_gameState == tb::GameState::InGame)
-        {
-            if (*g_OverlayWindow.getIsVisible() == true)
-            {
-                g_OverlayWindow.draw();
-            }
-        }
+        drawImGuiWindows();
 
         drawFramesPerSecond();
 
@@ -1732,9 +1874,9 @@ tb::Tile::Ptr Game::getTileByThingMovementDirection(tb::Thing::Ptr thing, tb::Mo
     return tileList->at(tileIndex);
 }
 
-bool Game::findTilesAboveThing(tb::Thing::Ptr thing, tb::ZAxis_t tileMapZ)
+bool Game::findCeilingAbovePlayerAtZ(tb::ZAxis_t z)
 {
-    tb::TileMap::Ptr tileMap = g_Map.getTileMapOfTilesAtZ(tileMapZ);
+    tb::TileMap::Ptr tileMap = g_Map.getTileMapOfTilesAtZ(z);
 
     if (tileMap == nullptr)
     {
@@ -1753,40 +1895,43 @@ bool Game::findTilesAboveThing(tb::Thing::Ptr thing, tb::ZAxis_t tileMapZ)
         return false;
     }
 
-    int thingX = thing->getTileX();
-    int thingY = thing->getTileY();
+    int playerX = m_player->getTileX();
+    int playerY = m_player->getTileY();
 
-    std::vector<uint32_t> aboveThingTileIndexList;
+    tb::ZAxis_t playerZ = m_player->getZ();
+
+    std::vector<uint32_t> tileIndexList;
+    tileIndexList.reserve(16);
 
     for (int i = -2; i < 2; i++)
     {
-        sf::Vector2i tileCoords1 = sf::Vector2i(thingX - 2, thingY + i);
-        sf::Vector2i tileCoords2 = sf::Vector2i(thingX - 1, thingY + i);
-        sf::Vector2i tileCoords3 = sf::Vector2i(thingX,     thingY + i);
-        sf::Vector2i tileCoords4 = sf::Vector2i(thingX + 1, thingY + i);
+        sf::Vector2i tileCoords1 = sf::Vector2i(playerX - 2, playerY + i);
+        sf::Vector2i tileCoords2 = sf::Vector2i(playerX - 1, playerY + i);
+        sf::Vector2i tileCoords3 = sf::Vector2i(playerX,     playerY + i);
+        sf::Vector2i tileCoords4 = sf::Vector2i(playerX + 1, playerY + i);
 
         if (g_Map.isTileCoordsOutOfBounds(tileCoords1) == false)
         {
-            aboveThingTileIndexList.push_back(g_Map.getTileIndexByTileCoords(tileCoords1));
+            tileIndexList.push_back(g_Map.getTileIndexByTileCoords(tileCoords1));
         }
 
         if (g_Map.isTileCoordsOutOfBounds(tileCoords2) == false)
         {
-            aboveThingTileIndexList.push_back(g_Map.getTileIndexByTileCoords(tileCoords2));
+            tileIndexList.push_back(g_Map.getTileIndexByTileCoords(tileCoords2));
         }
 
         if (g_Map.isTileCoordsOutOfBounds(tileCoords3) == false)
         {
-            aboveThingTileIndexList.push_back(g_Map.getTileIndexByTileCoords(tileCoords3));
+            tileIndexList.push_back(g_Map.getTileIndexByTileCoords(tileCoords3));
         }
 
         if (g_Map.isTileCoordsOutOfBounds(tileCoords4) == false)
         {
-            aboveThingTileIndexList.push_back(g_Map.getTileIndexByTileCoords(tileCoords4));
+            tileIndexList.push_back(g_Map.getTileIndexByTileCoords(tileCoords4));
         }
     }
 
-    for (uint32_t tileIndex : aboveThingTileIndexList)
+    for (uint32_t tileIndex : tileIndexList)
     {
         if (g_Map.isTileIndexOutOfBounds(tileIndex) == true)
         {
@@ -1800,7 +1945,7 @@ bool Game::findTilesAboveThing(tb::Thing::Ptr thing, tb::ZAxis_t tileMapZ)
             continue;
         }
 
-        if (tile->getZ() > thing->getZ())
+        if (tile->getZ() > playerZ)
         {
             return true;
         }

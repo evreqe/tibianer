@@ -11,6 +11,12 @@ namespace tb
 
     using SpriteIDList = std::vector<SpriteID_t>;
 
+    struct VisibleZ_t
+    {
+        tb::ZAxis_t Begin;
+        tb::ZAxis_t End;
+    };
+
     namespace Constants
     {
         inline const std::string GameTitle = "Tibianer";
@@ -203,6 +209,32 @@ namespace tb
         };
     }
 
+    namespace Sprites
+    {
+        inline SpriteID_t TileHighlight;
+        inline SpriteID_t TibiaIconSmall;
+        inline SpriteID_t TibiaIconLarge;
+        inline SpriteID_t Evremonde;
+
+        inline const std::unordered_map<std::string, SpriteID_t&> Names =
+        {
+            {"TileHighlight",             tb::Sprites::TileHighlight},
+            {"TibiaIconSmall",            tb::Sprites::TibiaIconSmall},
+            {"TibiaIconLarge",            tb::Sprites::TibiaIconLarge},
+            {"Evremonde",                 tb::Sprites::Evremonde},
+        };
+    }
+
+    namespace Animations
+    {
+        inline uint32_t BlueOrbSpell;
+
+        inline const std::unordered_map<std::string, uint32_t&> Names =
+        {
+            {"BlueOrbSpell",            tb::Animations::BlueOrbSpell},
+        };
+    }
+
     enum class SpriteFlag : uint8_t
     {
         Null,
@@ -329,8 +361,9 @@ namespace tb
     enum class ThingType : uint8_t
     {
         Null,
-        Creature,
         Object,
+        Creature,
+        Animation,
         Entity,
     };
 

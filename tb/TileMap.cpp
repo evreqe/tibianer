@@ -103,8 +103,6 @@ bool TileMap::load(uint32_t tileWidth, uint32_t tileHeight, const tb::SpriteIDLi
 
     if (m_tileMapType == tb::TileMapType::Tiles)
     {
-        //loadWaterTiles();
-
         sf::Clock timeToApplyTilePatterns;
 
         g_Log.write("Applying tile patterns to tile map...\n");
@@ -157,11 +155,6 @@ tb::Tile::List* TileMap::getTileList()
     return &m_tileList;
 }
 
-tb::Tile::List* TileMap::getWaterTileList()
-{
-    return &m_waterTileList;
-}
-
 tb::Tile::List TileMap::getTileListWithinTileRect(const sf::IntRect& tileRect)
 {
     tb::Tile::List tileList;
@@ -184,7 +177,7 @@ tb::Tile::List TileMap::getTileListWithinTileRect(const sf::IntRect& tileRect)
             if (tileX < 0) continue;
             if (tileY < 0) continue;
 
-            if (tileX > m_tileWidth - 1) continue;
+            if (tileX > m_tileWidth  - 1) continue;
             if (tileY > m_tileHeight - 1) continue;
 
             uint32_t tileIndex = tileX + tileY * m_tileWidth;
@@ -213,30 +206,6 @@ tb::Tile::List TileMap::getTileListWithinTileRect(const sf::IntRect& tileRect)
     }
 
     return tileList;
-}
-
-void TileMap::loadWaterTiles()
-{
-    if (m_z != tb::ZAxis::Default)
-    {
-        return;
-    }
-
-    if (m_tileMapType != tb::TileMapType::Tiles)
-    {
-        return;
-    }
-
-    m_waterTileList.clear();
-    m_waterTileList.reserve(m_numTiles);
-
-    for (auto& tile : m_tileList)
-    {
-        if (tile->getSpriteFlags()->hasFlag(tb::SpriteFlag::Water) == true)
-        {
-            m_waterTileList.push_back(tile);
-        }
-    }
 }
 
 bool TileMap::doAnimatedWater(const sf::IntRect& tileRect)
@@ -305,6 +274,23 @@ bool TileMap::doAnimatedWater(const sf::IntRect& tileRect)
     return true;
 }
 
+bool TileMap::doAnimatedObjects(const sf::IntRect& tileRect)
+{
+    tb::Tile::List tileList = getTileListWithinTileRect(tileRect);
+
+    for (auto& tile : tileList)
+    {
+        tb::Object::List* objectList = tile->getObjectList();
+
+        for (auto& object : *objectList)
+        {
+            object->animate();
+        }
+    }
+
+    return true;
+}
+
 bool TileMap::applyTilePatterns()
 {
     tb::PatternData::DataList* patternDataList = g_PatternData.getDataList();
@@ -321,27 +307,15 @@ bool TileMap::applyTilePatterns()
             continue;
         }
 
-        bool isWater= false;
-
         tb::Tile::List* tileList = &m_tileList;
-
-        if (patternData.Name == "Water")
-        {
-            tileList = &m_waterTileList;
-
-            isWater = true;
-        }
 
         for (auto& tile : *tileList)
         {
-            if (isWater == false)
-            {
-                tb::SpriteID_t tileSpriteID = tile->getSpriteID();
+            tb::SpriteID_t tileSpriteID = tile->getSpriteID();
 
-                if (std::find(patternData.SpriteIDList.begin(), patternData.SpriteIDList.end(), tileSpriteID) == patternData.SpriteIDList.end())
-                {
-                    continue;
-                }
+            if (std::find(patternData.SpriteIDList.begin(), patternData.SpriteIDList.end(), tileSpriteID) == patternData.SpriteIDList.end())
+            {
+                continue;
             }
 
             uint32_t tileColumnIndex = m_tileWidth - tile->getTileX();
@@ -398,10 +372,6 @@ bool TileMap::applyTileObjectPatterns()
         for (auto& tile : m_tileList)
         {
             tb::Object::List* tileObjectList = tile->getObjectList();
-            if (tileObjectList == nullptr)
-            {
-                continue;
-            }
 
             for (auto& object : *tileObjectList)
             {
@@ -585,10 +555,20 @@ void TileMap::drawTiles(const sf::IntRect& tileRect, sf::RenderTarget& renderTar
             return;
         }
 
+        // TODO: step tiles
+/*
+        tb::Object::List* tileObjectList = tile->getObjectList();
+        tb::Creature::List* tileCreatureList = tile->getCreatureList();
+        if (tileObjectList->size() > 0 || tileCreatureList->size() > 0)
+        {
+            //
+        }
+*/
+
         int tileX = tile->getTileX();
         int tileY = tile->getTileY();
 
-        int tileSize = tb::Constants::TileSize;
+        const int tileSize = tb::Constants::TileSize;
 
         unsigned int u = (tileSpriteID - 1) % (spriteTextureSize.x / tileSize);
         unsigned int v = (tileSpriteID - 1) / (spriteTextureSize.y / tileSize);
@@ -633,7 +613,7 @@ void TileMap::drawTiles(const sf::IntRect& tileRect, sf::RenderTarget& renderTar
     }
 }
 
-void TileMap::drawObjects(const sf::IntRect& tileRect, sf::RenderTarget& renderTarget)
+void TileMap::drawThings(const sf::IntRect& tileRect, sf::RenderTarget& renderTarget)
 {
     tb::Tile::List tileList = getTileListWithinTileRect(tileRect);
 
@@ -652,6 +632,11 @@ void TileMap::drawObjects(const sf::IntRect& tileRect, sf::RenderTarget& renderT
         {
             tb::Sprite* tileEdgeObjectSprite = tileEdgeObject->getSprite();
 
+            if (tileEdgeObjectSprite == nullptr)
+            {
+                continue;
+            }
+
             spriteBatch.addSprite(tileEdgeObjectSprite, false);
         }
 
@@ -659,13 +644,15 @@ void TileMap::drawObjects(const sf::IntRect& tileRect, sf::RenderTarget& renderT
 
         tb::Object::List* objectList = tile->getObjectList();
         tb::Creature::List* creatureList = tile->getCreatureList();
+        tb::Animation::List* animationList = tile->getAnimationList();
 
-        size_t thingListReserveSize = objectList->size() + creatureList->size();
+        size_t thingListReserveSize = objectList->size() + creatureList->size() + animationList->size();
 
         thingList.reserve(thingListReserveSize);
 
         std::copy(objectList->begin(), objectList->end(), std::back_inserter(thingList));
         std::copy(creatureList->begin(), creatureList->end(), std::back_inserter(thingList));
+        std::copy(animationList->begin(), animationList->end(), std::back_inserter(thingList));
 
         std::stable_sort(std::execution::par, thingList.begin(), thingList.end(), tb::Thing::SortByTileCoords_t());
 
@@ -676,6 +663,12 @@ void TileMap::drawObjects(const sf::IntRect& tileRect, sf::RenderTarget& renderT
                 tb::Object::Ptr object = std::static_pointer_cast<tb::Object>(thing);
 
                 object->update();
+
+                if (object->getThingProperties()->Erase == true)
+                {
+                    tile->removeObject(object);
+                    continue;
+                }
 
                 tb::Sprite* objectSprite = object->getSprite();
 
@@ -692,6 +685,12 @@ void TileMap::drawObjects(const sf::IntRect& tileRect, sf::RenderTarget& renderT
 
                 creature->update();
 
+                if (creature->getThingProperties()->Erase == true)
+                {
+                    tile->removeCreature(creature);
+                    continue;
+                }
+
                 std::vector<tb::Sprite*> creatureSpriteList = creature->getSpriteList();
 
                 for (auto& creatureSprite : creatureSpriteList)
@@ -703,6 +702,27 @@ void TileMap::drawObjects(const sf::IntRect& tileRect, sf::RenderTarget& renderT
 
                     spriteBatch.addSprite(creatureSprite, false);
                 }
+            }
+            else if (thing->getThingType() == tb::ThingType::Animation)
+            {
+                tb::Animation::Ptr animation = std::static_pointer_cast<tb::Animation>(thing);
+
+                animation->update();
+
+                if (animation->getThingProperties()->Erase == true)
+                {
+                    tile->removeAnimation(animation);
+                    continue;
+                }
+
+                tb::Sprite* animationSprite = animation->getSprite();
+
+                if (animationSprite == nullptr)
+                {
+                    continue;
+                }
+
+                spriteBatch.addSprite(animationSprite, false);
             }
         }
     }

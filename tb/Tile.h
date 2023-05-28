@@ -11,7 +11,7 @@
 #include "tb/Entity.h"
 #include "tb/Object.h"
 #include "tb/Creature.h"
-//#include "tb/Animation.h"
+#include "tb/Animation.h"
 
 namespace tb
 {
@@ -68,9 +68,6 @@ public:
     uint8_t getHeight();
     void setHeight(uint8_t height);
 
-    void addEntity(tb::Entity::Ptr entity);
-    void removeEntity(tb::Entity::Ptr entity);
-
     void addObject(tb::Object::Ptr object);
     void removeObject(tb::Object::Ptr object);
 
@@ -78,15 +75,19 @@ public:
     void removeTileEdgeObject(tb::Object::Ptr object);
 
     void addCreature(tb::Creature::Ptr creature);
+    void removeCreature(tb::Creature::Ptr creature);
 
-/*
     void addAnimation(tb::Animation::Ptr animation);
-*/
+    void removeAnimation(tb::Animation::Ptr animation);
 
-    tb::Entity::List* getEntityList();
+    void addEntity(tb::Entity::Ptr entity);
+    void removeEntity(tb::Entity::Ptr entity);
+
     tb::Object::List* getObjectList();
     tb::Object::List* getTileEdgeObjectList();
     tb::Creature::List* getCreatureList();
+    tb::Animation::List* getAnimationList();
+    tb::Entity::List* getEntityList();
 
 private:
 
@@ -103,11 +104,11 @@ private:
 
     uint8_t m_height = 0; // number of objects stacked vertically on the tile
 
-    tb::Entity::List m_entityList;
     tb::Object::List m_objectList;
     tb::Object::List m_tileEdgeObjectList;
     tb::Creature::List m_creatureList;
-    //tb::Animation::List m_animationList;
+    tb::Animation::List m_animationList;
+    tb::Entity::List m_entityList;
 
 };
 

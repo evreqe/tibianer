@@ -152,73 +152,23 @@ void Tile::setHeight(uint8_t height)
     m_height = height;
 }
 
-void Tile::addEntity(tb::Entity::Ptr entity)
-{
-    m_entityList.push_back(entity);
-}
-
-void Tile::removeEntity(tb::Entity::Ptr entity)
-{
-    //auto it = std::find(m_entityList.begin(), m_entityList.end(), entity);
-    //if (it != m_entityList.end())
-    //{
-        //m_entityList.erase(it);
-    //}
-
-    std::erase(m_entityList, entity);
-}
-
 void Tile::addObject(tb::Object::Ptr object)
 {
-    /*
-            if (object->getFlags().test(tb::SpriteFlags::decal))
-            {
-                m_objectList.insert(m_objectList.begin(), object);
-            }
-            else
-            {
-                m_objectList.push_back(object);
-            }
-    */
-
     m_objectList.push_back(object);
 }
 
 void Tile::removeObject(tb::Object::Ptr object)
 {
-    //auto it = std::find(m_objectList.begin(), m_objectList.end(), object);
-    //if (it != m_objectList.end())
-    //{
-        //m_objectList.erase(it);
-    //}
-
     std::erase(m_objectList, object);
 }
 
 void Tile::addTileEdgeObject(tb::Object::Ptr object)
 {
-    /*
-            if (object->getFlags().test(tb::SpriteFlags::decal))
-            {
-                m_objectList.insert(m_objectList.begin(), object);
-            }
-            else
-            {
-                m_objectList.push_back(object);
-            }
-    */
-
     m_tileEdgeObjectList.push_back(object);
 }
 
 void Tile::removeTileEdgeObject(tb::Object::Ptr object)
 {
-    //auto it = std::find(m_objectList.begin(), m_objectList.end(), object);
-    //if (it != m_objectList.end())
-    //{
-        //m_objectList.erase(it);
-    //}
-
     std::erase(m_tileEdgeObjectList, object);
 }
 
@@ -227,9 +177,29 @@ void Tile::addCreature(tb::Creature::Ptr creature)
     m_creatureList.push_back(creature);
 }
 
-tb::Entity::List* Tile::getEntityList()
+void Tile::removeCreature(tb::Creature::Ptr creature)
 {
-    return &m_entityList;
+    std::erase(m_creatureList, creature);
+}
+
+void Tile::addAnimation(tb::Animation::Ptr animation)
+{
+    m_animationList.push_back(animation);
+}
+
+void Tile::removeAnimation(tb::Animation::Ptr animation)
+{
+    std::erase(m_animationList, animation);
+}
+
+void Tile::addEntity(tb::Entity::Ptr entity)
+{
+    m_entityList.push_back(entity);
+}
+
+void Tile::removeEntity(tb::Entity::Ptr entity)
+{
+    std::erase(m_entityList, entity);
 }
 
 tb::Object::List* Tile::getObjectList()
@@ -245,6 +215,16 @@ tb::Object::List* Tile::getTileEdgeObjectList()
 tb::Creature::List* Tile::getCreatureList()
 {
     return &m_creatureList;
+}
+
+tb::Animation::List* Tile::getAnimationList()
+{
+    return &m_animationList;
+}
+
+tb::Entity::List* Tile::getEntityList()
+{
+    return &m_entityList;
 }
 
 }

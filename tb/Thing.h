@@ -50,12 +50,12 @@ public:
         }
     };
 
-    struct Properties_t
+    struct ThingProperties_t
     {
         bool Erase = false;
     };
 
-    Properties_t* getProperties();
+    ThingProperties_t* getThingProperties();
 
     uint32_t getTileIndex();
     void setTileIndex(uint32_t tileIndex);
@@ -92,7 +92,7 @@ public:
 
 private:
 
-    Properties_t m_properties;
+    ThingProperties_t m_thingProperties;
 
     uint32_t m_uniqueID = 0;
 

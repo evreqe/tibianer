@@ -56,6 +56,10 @@ private:
 
     tb::SpriteData::Data* m_spriteData = nullptr;
 
+    tb::SpriteData::Data m_spriteDataClipboard;
+
+    tb::SpriteData::Data m_spriteDataBackup;
+
     tb::SpriteID_t m_selectedSpriteID = 1;
 
     tb::SpriteFlag m_highlightSpriteFlag = tb::SpriteFlag::Null;

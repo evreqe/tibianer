@@ -172,6 +172,16 @@ void RenderWindow::handleResizedEvent(sf::Event event)
     m_window.setView(sf::View(visibleArea));
 }
 
+void RenderWindow::handleLostFocusEvent(sf::Event event)
+{
+    m_properties.IsFocused = false;
+}
+
+void RenderWindow::handleGainedFocusEvent(sf::Event event)
+{
+    m_properties.IsFocused = true;
+}
+
 sf::Vector2f RenderWindow::getMousePosition2f()
 {
     sf::Vector2i mousePosition2i = sf::Mouse::getPosition(m_window);

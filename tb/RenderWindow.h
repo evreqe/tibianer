@@ -40,6 +40,8 @@ public:
 
         bool VerticalSync = true;
         bool StartMaximized = true;
+
+        bool IsFocused = true;
     };
 
     Properties_t* getProperties();
@@ -50,6 +52,8 @@ public:
 
     void handleClosedEvent(sf::Event event);
     void handleResizedEvent(sf::Event event);
+    void handleLostFocusEvent(sf::Event event);
+    void handleGainedFocusEvent(sf::Event event);
 
     sf::Vector2f getMousePosition2f();
     sf::Vector2i getMousePosition2i();

@@ -27,7 +27,7 @@ namespace tb
             ImGui::TableSetColumnIndex(0);
 
             tb::Sprite sprite;
-            sprite.setIDByName("Evremonde");
+            sprite.setID(tb::Sprites::Evremonde);
 
             ImGui::Image(sprite);
 

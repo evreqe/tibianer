@@ -85,6 +85,11 @@ void GameWindow::draw()
         )
     );
 
+    sf::Vector2 viewPositionOffset = getViewPositionOffset();
+
+    viewPosition.x += viewPositionOffset.x;
+    viewPosition.y += viewPositionOffset.y;
+
     sf::View* view = getView();
 
     view->setCenter(viewPosition);
@@ -102,31 +107,23 @@ void GameWindow::draw()
         windowRenderTexture->clear(sf::Color::Black);
     }
 
-    tb::ZAxis_t zBegin = tb::ZAxis::Min;
-    tb::ZAxis_t zEnd = tb::ZAxis::Max;
+    tb::ZAxis_t playerZ = player->getZ();
 
-    // check if the player is underground
-    if (player->getZ() < tb::ZAxis::Default)
-    {
-        // draw from the bottom to 1 level below the default
-        // this will draw everything that is underground
-        zBegin = tb::ZAxis::Min;
-        zEnd = tb::ZAxis::Default - 1;
-    }
-    else
-    {
-        // draw from the default level to the top
-        // this will draw everything that is aboveground
-        zBegin = tb::ZAxis::Default;
-        zEnd = tb::ZAxis::Max;
-    }
-
-    //g_Log.write("zBegin,zEnd: {},{}\n", zBegin, zEnd);
+    tb::VisibleZ_t playerVisibleZ = g_Game.getVisibleZOfPlayer();
 
     sf::IntRect tileRect = getTileRect();
 
-    for (tb::ZAxis_t z = zBegin; z < zEnd; z++)
+    for (tb::ZAxis_t z = playerVisibleZ.Begin; z < playerVisibleZ.End; z++)
     {
+        // check for ceilings and rooftops above the player
+        if (z < tb::Constants::NumZAxis && z > playerZ)
+        {
+            if (g_Game.findCeilingAbovePlayerAtZ(z) == true)
+            {
+                break;
+            }
+        }
+
         tb::TileMap::Ptr tileMap = g_Map.getTileMapOfTilesAtZ(z);
 
         if (tileMap == nullptr)
@@ -139,15 +136,6 @@ void GameWindow::draw()
         if (tileMapIsVisible == true)
         {
             drawMapLayerAtZ(z);
-        }
-
-        // check for ceilings and rooftops above the player
-        if (z < tb::Constants::NumZAxis)
-        {
-            if (g_Game.findTilesAboveThing(player, z + 1) == true)
-            {
-                break;
-            }
         }
     }
 
@@ -170,7 +158,7 @@ void GameWindow::drawMapLayerAtZ(tb::ZAxis_t z)
 {
     sf::IntRect tileRect = getTileRect();
 
-    sf::IntRect tileRectForLights;
+    sf::IntRect tileRectIncreased = tileRect;
 
     float zoomScale = getZoomScale();
 
@@ -186,17 +174,15 @@ void GameWindow::drawMapLayerAtZ(tb::ZAxis_t z)
         tileRect.width  += tileScaleX * 2;
         tileRect.height += tileScaleY * 2;
 
-        tileRectForLights = tileRect;
+        tileRectIncreased = tileRect;
     }
     else
     {
-        // this checks for lights from farther away so they
-        // don't pop in suddenly when walking around
-        tileRectForLights = getTileRect();
-        tileRectForLights.left   -= m_numTilesX;
-        tileRectForLights.top    -= m_numTilesY;
-        tileRectForLights.width  += m_numTilesX * 2;
-        tileRectForLights.height += m_numTilesY * 2;
+        // this increases the number of tiles to prevent pop in
+        tileRectIncreased.left   -= m_numTilesX;
+        tileRectIncreased.top    -= m_numTilesY;
+        tileRectIncreased.width  += m_numTilesX * 2;
+        tileRectIncreased.height += m_numTilesY * 2;
     }
 
     sf::View* view = getView();
@@ -208,6 +194,34 @@ void GameWindow::drawMapLayerAtZ(tb::ZAxis_t z)
     if (tileMapTiles == nullptr)
     {
         return;
+    }
+
+    tb::ZAxis_t playerZ = g_Game.getPlayer()->getZ();
+
+    // only animate water for the default z-axis and while the player is aboveground
+    if (playerZ >= tb::ZAxis::Default && z == tb::ZAxis::Default)
+    {
+        sf::Time animatedWaterTimeElapsed = m_animatedWaterClock.getElapsedTime();
+        if (animatedWaterTimeElapsed >= m_animatedWaterTime)
+        {
+            if (tileMapTiles->doAnimatedWater(tileRectIncreased) == false)
+            {
+                g_Log.write("ERROR: Failed to animate water at z: {}\n", z);
+            }
+
+            m_animatedWaterClock.restart();
+        }
+    }
+
+    sf::Time animatedObjectsTimeElapsed = m_animatedObjectsClock.getElapsedTime();
+    if (animatedObjectsTimeElapsed >= m_animatedObjectsTime)
+    {
+        if (tileMapTiles->doAnimatedObjects(tileRectIncreased) == false)
+        {
+            g_Log.write("ERROR: Failed to animate objects at z: {}\n", z);
+        }
+
+        m_animatedObjectsClock.restart();
     }
 
     m_windowLayerRenderTexture.setView(*view);
@@ -222,12 +236,12 @@ void GameWindow::drawMapLayerAtZ(tb::ZAxis_t z)
         tileMapTileEdges->drawTiles(tileRect, m_windowLayerRenderTexture);
     }
 
-    tileMapTiles->drawObjects(tileRect, m_windowLayerRenderTexture);
+    tileMapTiles->drawThings(tileRect, m_windowLayerRenderTexture);
 
     m_lightLayerRenderTexture.setView(*view);
     m_lightLayerRenderTexture.clear(sf::Color(m_lightBrightness, m_lightBrightness, m_lightBrightness));
 
-    tileMapTiles->drawLights(tileRectForLights, m_lightLayerRenderTexture, m_lightBrightness);
+    tileMapTiles->drawLights(tileRectIncreased, m_lightLayerRenderTexture, m_lightBrightness);
 
     m_lightLayerRenderTexture.display();
 
@@ -278,7 +292,7 @@ void GameWindow::drawTileHighlight()
 
     if (isZoomed() == false)
     {
-        m_tileHighlightSprite.setIDByName(m_tileHightlightSpriteName);
+        m_tileHighlightSprite.setID(tb::Sprites::TileHighlight);
         m_tileHighlightSprite.setPosition(mousePixelCoords);
 
         m_windowLayerRenderTexture.draw(m_tileHighlightSprite);

@@ -24,8 +24,6 @@ public:
     tb::SpriteID_t getID();
     void setID(tb::SpriteID_t spriteID);
 
-    void setIDByName(const std::string& spriteName);
-
     void setTileWidthAndHeightByID(tb::SpriteID_t spriteID);
 
     sf::IntRect getTextureRectByID(tb::SpriteID_t spriteID, uint8_t tileWidth, uint8_t tileHeight);

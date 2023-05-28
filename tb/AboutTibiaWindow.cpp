@@ -27,7 +27,7 @@ void AboutTibiaWindow::draw()
         ImGui::TableSetColumnIndex(0);
 
         tb::Sprite sprite;
-        sprite.setIDByName("TibiaIconLarge");
+        sprite.setID(tb::Sprites::TibiaIconLarge);
 
         ImGui::Image(sprite);
 

@@ -13,9 +13,9 @@ Object::~Object()
     //
 }
 
-Object::Properties_t* Object::getProperties()
+Object::ObjectProperties_t* Object::getObjectProperties()
 {
-    return &m_properties;
+    return &m_objectProperties;
 }
 
 Object::Object(const sf::Vector2i& tileCoords, tb::ZAxis_t z, tb::SpriteID_t spriteID)
@@ -46,29 +46,59 @@ void Object::update()
     m_sprite.setPosition(pixelCoords);
 }
 
-/*
-    void Object::doAnimation()
+void Object::animate()
+{
+    tb::SpriteID_t spriteID = getSpriteID();
+
+    tb::SpriteData::DataList* spriteDataList = g_SpriteData.getDataList();
+
+    if (spriteDataList == nullptr)
     {
-        for (auto& animatedObjects : tb::animatedObjectsList)
-        {
-            auto animatedObjectIt = std::find(animatedObjects.begin(), animatedObjects.end(), m_id);
-
-            if (animatedObjectIt != animatedObjects.end())
-            {
-                animatedObjectIt++;
-
-                if (animatedObjectIt == animatedObjects.end())
-                {
-                    animatedObjectIt = animatedObjects.begin();
-                }
-
-                setId(*animatedObjectIt);
-
-                return;
-            }
-        }
+        return;
     }
-*/
+
+    tb::SpriteData::Data* spriteData = &spriteDataList->at(spriteID);
+
+    if (spriteData== nullptr)
+    {
+        return;
+    }
+
+    if (spriteData->SpriteFlags.hasFlag(tb::SpriteFlag::Animated) == false)
+    {
+        return;
+    }
+
+    std::string_view animationName = spriteData->AnimationName;
+
+    tb::AnimationData::Data* animationData = g_AnimationData.getDataByNameSV(animationName);
+
+    if (animationData == nullptr)
+    {
+        return;
+    }
+
+    tb::SpriteIDList* spriteIDList = &animationData->SpriteIDList;
+
+    if (spriteIDList == nullptr)
+    {
+        return;
+    }
+
+    auto findIt = std::find(spriteIDList->begin(), spriteIDList->end(), spriteID);
+
+    if (findIt != spriteIDList->end())
+    {
+        findIt++;
+
+        if (findIt == spriteIDList->end())
+        {
+            findIt = spriteIDList->begin();
+        }
+
+        setSpriteID(*findIt);
+    }
+}
 
 /*
     void Object::doDecay()

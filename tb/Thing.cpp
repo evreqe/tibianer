@@ -13,9 +13,9 @@ Thing::~Thing()
     //
 }
 
-Thing::Properties_t* Thing::getProperties()
+Thing::ThingProperties_t* Thing::getThingProperties()
 {
-    return &m_properties;
+    return &m_thingProperties;
 }
 
 uint32_t Thing::getTileIndex()

@@ -20,10 +20,12 @@
 #include "tb/CursorData.h"
 #include "tb/FontData.h"
 #include "tb/HotkeysData.h"
+#include "tb/AnimationData.h"
 
 #include "tb/Thing.h"
-#include "tb/Creature.h"
 #include "tb/Object.h"
+#include "tb/Creature.h"
+#include "tb/Animation.h"
 #include "tb/Tile.h"
 #include "tb/TileMap.h"
 #include "tb/Sprite.h"
@@ -117,10 +119,13 @@ public:
     bool loadConfig();
     bool loadData();
 
+    bool loadGlobalsFromData();
     bool loadTextures();
     bool loadFonts();
     bool loadBitmapFonts();
     bool loadCursors();
+    bool loadSprites();
+    bool loadAnimations();
 
     bool loadMap(const std::string& fileName);
     void loadMapUsingThread(const std::string& fileName);
@@ -143,6 +148,8 @@ public:
     void drawDebugRectForSfmlWindows();
     void drawWoodBorderForSfmlWindows();
 
+    void drawImGuiWindows();
+
     void doEndGamePopup();
     void doErrorLoadingMapPopup();
 
@@ -153,12 +160,17 @@ public:
 
     sf::Vector2i getMousePositionInDesktop();
 
-    void doAnimatedWater();
+    tb::VisibleZ_t getVisibleZOfPlayer();
 
     bool createPlayer();
 
+    bool spawnAnimationByIndex(const sf::Vector2i& tileCoords, tb::ZAxis_t z, uint32_t index);
+    bool spawnAnimationByName(const sf::Vector2i& tileCoords, tb::ZAxis_t z, const std::string& name);
+
     void handleClosedEvent(sf::Event event);
     void handleResizedEvent(sf::Event event);
+    void handleLostFocusEvent(sf::Event event);
+    void handleGainedFocusEvent(sf::Event event);
     void handleMouseWheelMovedEvent(sf::Event event);
     void handleMouseButtonPressedEvent(sf::Event event);
     void handleMouseButtonReleasedEvent(sf::Event event);
@@ -198,7 +210,7 @@ public:
 
     tb::Tile::Ptr getTileByThingMovementDirection(tb::Thing::Ptr thing, tb::MovementDirection direction);
 
-    bool findTilesAboveThing(tb::Thing::Ptr thing, tb::ZAxis_t tileMapZ);
+    bool findCeilingAbovePlayerAtZ(tb::ZAxis_t z);
 
     void handleCreatureMovement(tb::Creature::Ptr creature, tb::MovementDirection movementDirection);
 
@@ -224,9 +236,6 @@ private:
     sf::Time m_framesPerSecondCurrentTime;
     sf::Time m_framesPerSecondPreviousTime;
     float m_framesPerSecond;
-
-    sf::Clock m_animatedWaterClock;
-    const sf::Time m_animatedWaterTime = sf::seconds(0.5f);
 
     sf::Clock m_cameraKeyPressedClock;
     const sf::Time m_cameraKeyPressedTime = sf::milliseconds(100);

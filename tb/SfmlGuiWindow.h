@@ -81,7 +81,6 @@ private:
 
     sf::View m_view;
     sf::Vector2f m_viewInitialSize;
-    sf::Vector2f m_viewPosition;
     sf::Vector2f m_viewPositionOffset;
 
     sf::RenderTexture m_windowRenderTexture;

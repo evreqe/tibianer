@@ -536,14 +536,9 @@ bool Map::isTileCoordsOutOfBounds(const sf::Vector2i& tileCoords)
     return false;
 }
 
-tb::Tile::Ptr Map::getTileOfThing(tb::Thing::Ptr thing)
+tb::Tile::Ptr Map::getTile(const sf::Vector2i& tileCoords, tb::ZAxis_t z)
 {
-    if (thing == nullptr)
-    {
-        return nullptr;
-    }
-
-    tb::TileMap::Ptr tileMap = getTileMapOfTilesAtZ(thing->getZ());
+    tb::TileMap::Ptr tileMap = getTileMapOfTilesAtZ(z);
 
     if (tileMap == nullptr)
     {
@@ -557,7 +552,7 @@ tb::Tile::Ptr Map::getTileOfThing(tb::Thing::Ptr thing)
         return nullptr;
     }
 
-    uint32_t tileIndex = getTileIndexByTileCoords(thing->getTileCoords());
+    uint32_t tileIndex = getTileIndexByTileCoords(tileCoords);
 
     if (isTileIndexOutOfBounds(tileIndex) == true)
     {
@@ -566,6 +561,16 @@ tb::Tile::Ptr Map::getTileOfThing(tb::Thing::Ptr thing)
     }
 
     return tileList->at(tileIndex);
+}
+
+tb::Tile::Ptr Map::getTileOfThing(tb::Thing::Ptr thing)
+{
+    if (thing == nullptr)
+    {
+        return nullptr;
+    }
+
+    return getTile(thing->getTileCoords(), thing->getZ());
 }
 
 const std::string& Map::getFileName()

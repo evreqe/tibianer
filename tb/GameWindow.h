@@ -88,7 +88,12 @@ private:
     tb::LightBrightness_t m_lightBrightness = tb::LightBrightness::Max;
 
     tb::Sprite m_tileHighlightSprite;
-    const std::string m_tileHightlightSpriteName = "TileHighlight";
+
+    sf::Clock m_animatedWaterClock;
+    const sf::Time m_animatedWaterTime = sf::seconds(0.5f);
+
+    sf::Clock m_animatedObjectsClock;
+    const sf::Time m_animatedObjectsTime = sf::seconds(0.5f);
 
     const int m_numTilesX = 13; // number of tiles visible on the x-axis
     const int m_numTilesY = 9; // number of tiles visible on the y-axis

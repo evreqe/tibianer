@@ -79,6 +79,7 @@ public:
     bool isTileIndexOutOfBounds(uint32_t tileIndex);
     bool isTileCoordsOutOfBounds(const sf::Vector2i& tileCoords);
 
+    tb::Tile::Ptr getTile(const sf::Vector2i& tileCoords, tb::ZAxis_t z);
     tb::Tile::Ptr getTileOfThing(tb::Thing::Ptr thing);
 
     const std::string& getFileName();

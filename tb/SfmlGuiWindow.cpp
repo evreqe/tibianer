@@ -126,12 +126,12 @@ void SfmlGuiWindow::setViewInitialSize(sf::Vector2f size)
 
 sf::Vector2f SfmlGuiWindow::getViewPosition()
 {
-    return m_viewPosition + m_viewPositionOffset;
+    return m_view.getCenter();
 }
 
 void SfmlGuiWindow::setViewPosition(sf::Vector2f position)
 {
-    m_viewPosition = position + m_viewPositionOffset;
+    m_view.setCenter(position);
 }
 
 sf::Vector2f SfmlGuiWindow::getViewPositionOffset()

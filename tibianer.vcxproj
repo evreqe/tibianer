@@ -211,6 +211,7 @@
     <ClCompile Include="tb\Script.cpp" />
     <ClCompile Include="tb\ScriptManager.cpp" />
     <ClCompile Include="tb\SetOutfitWindow.cpp" />
+    <ClCompile Include="tb\SfmlGuiWindow.cpp" />
     <ClCompile Include="tb\SkillsWindow.cpp" />
     <ClCompile Include="tb\SpellData.cpp" />
     <ClCompile Include="tb\Sprite.cpp" />
@@ -229,7 +230,7 @@
     <ClCompile Include="tb\TipsAndTricksData.cpp" />
     <ClCompile Include="tb\TipsAndTricksWindow.cpp" />
     <ClCompile Include="tb\WaterAnimationData.cpp" />
-    <ClCompile Include="tb\Window.cpp" />
+    <ClCompile Include="tb\ImGuiWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="boost_base64\boost_base64.hpp" />
@@ -303,6 +304,7 @@
     <ClInclude Include="tb\Script.h" />
     <ClInclude Include="tb\ScriptManager.h" />
     <ClInclude Include="tb\SetOutfitWindow.h" />
+    <ClInclude Include="tb\SfmlGuiWindow.h" />
     <ClInclude Include="tb\SkillsWindow.h" />
     <ClInclude Include="tb\SpellData.h" />
     <ClInclude Include="tb\Sprite.h" />
@@ -322,7 +324,7 @@
     <ClInclude Include="tb\TipsAndTricksWindow.h" />
     <ClInclude Include="tb\Utility.h" />
     <ClInclude Include="tb\WaterAnimationData.h" />
-    <ClInclude Include="tb\Window.h" />
+    <ClInclude Include="tb\ImGuiWindow.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />

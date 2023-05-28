@@ -147,6 +147,49 @@ namespace tb
 
                 return false;
             }
+
+            static void drawRectangleAtCurrentItem(const ImColor& color)
+            {
+                auto min = ImGui::GetItemRectMin();
+                auto max = ImGui::GetItemRectMax();
+
+                ImGui::GetWindowDrawList()->AddRect(min, max, color);
+            }
+
+            static void scrollWindowWithMiddleMouseButton()
+            {
+                ImGuiIO io = ImGui::GetIO();
+
+                ::ImGuiWindow* window = ImGui::GetCurrentWindow();
+
+                if (window->Rect().Contains(io.MousePos) == false)
+                {
+                    return;
+                }
+
+                // check if middle mouse button held down
+                if (io.MouseDown[2] == false)
+                {
+                    return;
+                }
+
+                ImVec2 mouseDelta = io.MouseDelta;
+
+                mouseDelta.x = -mouseDelta.x;
+                mouseDelta.y = -mouseDelta.y;
+
+                ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeAll);
+
+                if (mouseDelta.x != 0.0f)
+                {
+                    ImGui::SetScrollX(window, window->Scroll.x + mouseDelta.x);
+                }
+
+                if (mouseDelta.y != 0.0f)
+                {
+                    ImGui::SetScrollY(window, window->Scroll.y + mouseDelta.y);
+                }
+            }
         }
     }
 }
