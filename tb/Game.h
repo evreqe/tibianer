@@ -40,6 +40,7 @@
 
 #include "tb/GameWindow.h"
 #include "tb/MiniMapWindow.h"
+#include "tb/TabButtonsWindow.h"
 
 #include "tb/OverlayWindow.h"
 #include "tb/LogWindow.h"
@@ -100,19 +101,32 @@ public:
         bool IsAnyKeyPressed = false;
     };
 
-    struct GuiState_t
+    struct GuiProperties_t
     {
         bool ShowMiniMapWindow = true;
         bool ShowEquipmentWindow = false;
         bool ShowStatusWindow = false;
 
-        bool ShowInventoryWindow = false;
-        bool ShowCombatWindow = false;
+        bool TabButtonsWindowInventoryButtonIsPressed = true;
+        bool TabButtonsWindowStatusButtonIsPressed = false;
+        bool TabButtonsWindowBattleButtonIsPressed = false;
+        bool TabButtonsWindowMiniMapButtonIsPressed = false;
+
+        bool ShowInventoryWindow = true;
         bool ShowSkillsWindow = false;
+        bool ShowBattleWindow = false;
+
+        bool BattleButtonsWindowFullAttackButtonIsPressed = true;
+        bool BattleButtonsWindowHalfAttackHalfDefenseButtonIsPressed = false;
+        bool BattleButtonsWindowFullDefenseButtonIsPressed = false;
+
+        bool BattleButtonsWindowFollowButtonIsPressed = false;
+        bool BattleButtonsWindowKeepDistanceButtonIsPressed = false;
+        bool BattleButtonsWindowDoNotFollowButtonIsPressed = true;
     };
 
     Properties_t* getProperties();
-    GuiState_t* getGuiState();
+    GuiProperties_t* getGuiProperties();
 
     void initImGui();
 
@@ -126,6 +140,7 @@ public:
     bool loadCursors();
     bool loadSprites();
     bool loadAnimations();
+    bool loadGuiRects();
 
     bool loadMap(const std::string& fileName);
     void loadMapUsingThread(const std::string& fileName);
@@ -147,6 +162,8 @@ public:
     void drawSfmlWindows();
     void drawDebugRectForSfmlWindows();
     void drawWoodBorderForSfmlWindows();
+
+    void setSizeScaleForSfmlWindows(float scale);
 
     void drawImGuiWindows();
 
@@ -219,7 +236,7 @@ public:
 private:
 
     Properties_t m_properties;
-    GuiState_t m_guiState;
+    GuiProperties_t m_guiProperties;
 
     tb::GameState m_gameState = tb::GameState::EnterGame;
 

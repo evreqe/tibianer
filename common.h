@@ -1,5 +1,7 @@
 #pragma once
 
+#define _SILENCE_ALL_CXX23_DEPRECATION_WARNINGS
+
 #include <cctype>
 #include <cmath>
 #include <cstddef>
@@ -48,6 +50,7 @@
 #include "fmt/compile.h"
 
 #include "imgui.h"
+#include "imgui_internal.h"
 #include "imgui_stdlib.h"
 #include "imgui-SFML.h"
 

@@ -18,9 +18,9 @@ Game::Properties_t* Game::getProperties()
     return &m_properties;
 }
 
-Game::GuiState_t* Game::getGuiState()
+Game::GuiProperties_t* Game::getGuiProperties()
 {
-    return &m_guiState;
+    return &m_guiProperties;
 }
 
 void Game::initImGui()
@@ -198,6 +198,13 @@ bool Game::loadGlobalsFromData()
     if (loadAnimations() == false)
     {
         g_Log.write("ERROR: Failed to load animations\n");
+        return false;
+    }
+
+    g_Log.write("Loading gui rects\n");
+    if (loadGuiRects() == false)
+    {
+        g_Log.write("ERROR: Failed to load gui rects\n");
         return false;
     }
 }
@@ -468,6 +475,46 @@ bool Game::loadAnimations()
     return true;
 }
 
+bool Game::loadGuiRects()
+{
+    if (g_GuiData.isLoaded() == false)
+    {
+        g_Log.write("ERROR: gui data is not loaded\n");
+        return false;
+    }
+
+    tb::GuiData::DataList* guiDataList = g_GuiData.getDataList();
+
+    for (auto& [guiRectName, guiRect] : tb::GuiRects::Names)
+    {
+        bool isFound = false;
+
+        for (auto& guiData : *guiDataList)
+        {
+            if (guiData.Name == guiRectName)
+            {
+                guiRect.left   = guiData.X;
+                guiRect.top    = guiData.Y;
+                guiRect.width  = guiData.Width;
+                guiRect.height = guiData.Height;
+
+                isFound = true;
+                break;
+            }
+        }
+
+        if (isFound == true)
+        {
+            g_Log.write("Loaded gui rect for '{}'\n", guiRectName);
+        }
+        else
+        {
+            g_Log.write("ERROR: Failed to load gui rect for '{}'\n", guiRectName);
+            return false;
+        }
+    }
+}
+
 bool Game::loadMap(const std::string& fileName)
 {
     g_Log.write("Loading map\n");
@@ -731,10 +778,12 @@ void Game::drawSfmlWindows()
 {
     g_GameWindow.draw();
 
-    if (m_guiState.ShowMiniMapWindow == true)
+    if (m_guiProperties.ShowMiniMapWindow == true)
     {
         g_MiniMapWindow.draw();
     }
+
+    g_TabButtonsWindow.draw();
 
     drawWoodBorderForSfmlWindows();
 
@@ -746,20 +795,27 @@ void Game::drawSfmlWindows()
 
 void Game::drawDebugRectForSfmlWindows()
 {
-    if (tb::Utility::MyImGui::isActive() == false)
+    if (tb::Utility::MyImGui::isActive() == true)
     {
-        if (g_GameWindow.isMouseInsideWindow() == true)
-        {
-            drawDebugRect(g_GameWindow.getRect());
-        }
+        return;
+    }
 
-        if (m_guiState.ShowMiniMapWindow == true)
+    if (g_GameWindow.isMouseInsideWindow() == true)
+    {
+        drawDebugRect(g_GameWindow.getRect());
+    }
+
+    if (m_guiProperties.ShowMiniMapWindow == true)
+    {
+        if (g_MiniMapWindow.isMouseInsideWindow() == true)
         {
-            if (g_MiniMapWindow.isMouseInsideWindow() == true)
-            {
-                drawDebugRect(g_MiniMapWindow.getRect());
-            }
+            drawDebugRect(g_MiniMapWindow.getRect());
         }
+    }
+
+    if (g_TabButtonsWindow.isMouseInsideWindow() == true)
+    {
+        drawDebugRect(g_TabButtonsWindow.getRect());
     }
 }
 
@@ -767,10 +823,16 @@ void Game::drawWoodBorderForSfmlWindows()
 {
     drawWoodBorder(g_GameWindow.getRect(), true);
 
-    if (m_guiState.ShowMiniMapWindow == true)
+    if (m_guiProperties.ShowMiniMapWindow == true)
     {
         drawWoodBorder(g_MiniMapWindow.getRect(), true);
     }
+}
+
+void Game::setSizeScaleForSfmlWindows(float scale)
+{
+    g_MiniMapWindow.setSizeScale(scale);
+    g_TabButtonsWindow.setSizeScale(scale);
 }
 
 void Game::drawImGuiWindows()
@@ -1162,6 +1224,11 @@ void Game::handleMouseWheelMovedEvent(sf::Event event)
     {
         g_MiniMapWindow.handleMouseWheelMovedEvent(event);
     }
+
+    if (g_TabButtonsWindow.isMouseInsideWindow() == true)
+    {
+        g_TabButtonsWindow.handleMouseWheelMovedEvent(event);
+    }
 }
 
 void Game::handleMouseButtonPressedEvent(sf::Event event)
@@ -1174,6 +1241,11 @@ void Game::handleMouseButtonPressedEvent(sf::Event event)
     if (g_MiniMapWindow.isMouseInsideWindow() == true)
     {
         g_MiniMapWindow.handleMouseButtonPressedEvent(event);
+    }
+
+    if (g_TabButtonsWindow.isMouseInsideWindow() == true)
+    {
+        g_TabButtonsWindow.handleMouseButtonPressedEvent(event);
     }
 
     if (event.mouseButton.button == sf::Mouse::Left)
@@ -1192,6 +1264,11 @@ void Game::handleMouseButtonReleasedEvent(sf::Event event)
     if (g_MiniMapWindow.isMouseInsideWindow() == true)
     {
         g_MiniMapWindow.handleMouseButtonReleasedEvent(event);
+    }
+
+    if (g_TabButtonsWindow.isMouseInsideWindow() == true)
+    {
+        g_TabButtonsWindow.handleMouseButtonReleasedEvent(event);
     }
 
     sf::Vector2f mousePosition;

@@ -176,17 +176,17 @@ void MenuBar::draw()
 
             if (ImGui::MenuItem("1x##MenuItemUserInterfaceScale1", 0))
             {
-                g_MiniMapWindow.setSizeScale(1.0f);
+                g_Game.setSizeScaleForSfmlWindows(1.0f);
             }
 
             if (ImGui::MenuItem("2x##MenuItemUserInterfaceScale2", 0))
             {
-                g_MiniMapWindow.setSizeScale(2.0f);
+                g_Game.setSizeScaleForSfmlWindows(2.0f);
             }
 
             if (ImGui::MenuItem("4x##MenuItemUserInterfaceScale3", 0))
             {
-                g_MiniMapWindow.setSizeScale(4.0f);
+                g_Game.setSizeScaleForSfmlWindows(4.0f);
             }
 
             ImGui::EndMenu();

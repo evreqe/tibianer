@@ -56,13 +56,13 @@ bool GuiData::load()
 
         data.Name = m_table[index]["Name"].value_or("");
 
+        g_Log.write("Name: {}\n", data.Name);
+
         if (data.Name.size() == 0)
         {
             g_Log.write("ERROR: 'Name' is empty\n");
             return false;
         }
-
-        g_Log.write("Name: {}\n", data.Name);
 
         data.X = m_table[index]["X"].value_or(0);
         data.Y = m_table[index]["Y"].value_or(0);
@@ -73,14 +73,14 @@ bool GuiData::load()
         data.Width = m_table[index]["Width"].value_or(0);
         data.Height = m_table[index]["Height"].value_or(0);
 
+        g_Log.write("Width: {}\n", data.Width);
+        g_Log.write("Height: {}\n", data.Height);
+
         if (data.Width == 0 || data.Height == 0)
         {
             g_Log.write("ERROR: 'Width' or 'Height' is zero\n");
             return false;
         }
-
-        g_Log.write("Width: {}\n", data.Width);
-        g_Log.write("Height: {}\n", data.Height);
 
         m_dataList.push_back(data);
     }
@@ -104,7 +104,25 @@ bool GuiData::isLoaded()
     return true;
 }
 
+tb::GuiData::Data* GuiData::getDataByIndex(uint32_t index)
+{
+    return &m_dataList.at(index);
+}
+
 tb::GuiData::Data* GuiData::getDataByName(const std::string& name)
+{
+    for (auto& data : m_dataList)
+    {
+        if (data.Name == name)
+        {
+            return &data;
+        }
+    }
+
+    return nullptr;
+}
+
+tb::GuiData::Data* GuiData::getDataByNameSV(std::string_view name)
 {
     for (auto& data : m_dataList)
     {

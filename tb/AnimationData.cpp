@@ -56,13 +56,13 @@ bool AnimationData::load()
 
         data.Name = m_table[index]["Name"].value_or("");
 
+        g_Log.write("Name: {}\n", data.Name);
+
         if (data.Name.size() == 0)
         {
             g_Log.write("ERROR: 'Name' is empty\n");
             return false;
         }
-
-        g_Log.write("Name: {}\n", data.Name);
 
         tb::SpriteIDList spriteIDList;
         spriteIDList.reserve(m_numSpritesPerAnimationToReserve);

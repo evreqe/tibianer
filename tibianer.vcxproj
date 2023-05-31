@@ -164,6 +164,7 @@
     <ClCompile Include="tb\AboutTibiaWindow.cpp" />
     <ClCompile Include="tb\Animation.cpp" />
     <ClCompile Include="tb\AnimationData.cpp" />
+    <ClCompile Include="tb\BattleButtonsWindow.cpp" />
     <ClCompile Include="tb\BattleWindow.cpp" />
     <ClCompile Include="tb\BitmapFont.cpp" />
     <ClCompile Include="tb\BitmapFontData.cpp" />
@@ -223,6 +224,7 @@
     <ClCompile Include="tb\StatusBar.cpp" />
     <ClCompile Include="tb\StatusEffect.cpp" />
     <ClCompile Include="tb\StatusWindow.cpp" />
+    <ClCompile Include="tb\TabButtonsWindow.cpp" />
     <ClCompile Include="tb\TextureData.cpp" />
     <ClCompile Include="tb\Thing.cpp" />
     <ClCompile Include="tb\Tile.cpp" />
@@ -256,6 +258,7 @@
     <ClInclude Include="tb\AboutTibiaWindow.h" />
     <ClInclude Include="tb\Animation.h" />
     <ClInclude Include="tb\AnimationData.h" />
+    <ClInclude Include="tb\BattleButtonsWindow.h" />
     <ClInclude Include="tb\BattleWindow.h" />
     <ClInclude Include="tb\BitmapFont.h" />
     <ClInclude Include="tb\BitmapFontData.h" />
@@ -316,6 +319,7 @@
     <ClInclude Include="tb\StatusBar.h" />
     <ClInclude Include="tb\StatusEffect.h" />
     <ClInclude Include="tb\StatusWindow.h" />
+    <ClInclude Include="tb\TabButtonsWindow.h" />
     <ClInclude Include="tb\TextureData.h" />
     <ClInclude Include="tb\Thing.h" />
     <ClInclude Include="tb\Tile.h" />

@@ -32,7 +32,7 @@ private:
 
 public:
 
-    typedef struct _Data
+    struct Data
     {
         uint32_t Index = 0;
         std::string Name;
@@ -40,14 +40,16 @@ public:
         uint32_t Y = 0;
         uint32_t Width = 0;
         uint32_t Height = 0;
-    } Data, * Data_ptr;
+    };
 
     using DataList = std::vector<tb::GuiData::Data>;
 
     bool load();
     bool isLoaded();
 
+    tb::GuiData::Data* getDataByIndex(uint32_t index);
     tb::GuiData::Data* getDataByName(const std::string& name);
+    tb::GuiData::Data* getDataByNameSV(std::string_view name);
 
     tb::GuiData::DataList* getDataList();
 
@@ -69,3 +71,4 @@ namespace
 {
     inline tb::GuiData& g_GuiData = tb::GuiData::getInstance();
 }
+

@@ -48,6 +48,8 @@ namespace tb
         void handleMouseButtonPressedEvent(sf::Event event);
         void handleMouseButtonReleasedEvent(sf::Event event);
 
+        void setPositionInLayout();
+
         void draw();
         void drawTileMap(const sf::IntRect& tileRect, tb::TileMap::Ptr tileMap);
         void drawTileHighlight();

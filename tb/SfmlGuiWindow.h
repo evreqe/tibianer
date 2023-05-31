@@ -19,6 +19,8 @@ public:
 
     void initalize();
 
+    void drawToRenderWindow();
+
     sf::FloatRect getRect();
 
     sf::Vector2f getMousePixelPosition();
@@ -50,6 +52,8 @@ public:
     void setWindowRenderTextureInitialSize(sf::Vector2i size);
 
     sf::Sprite* getWindowSprite();
+
+    sf::FloatRect getRectOfSprite(const sf::Sprite& sprite);
 
     float getSizeScale();
     void setSizeScale(float scale);

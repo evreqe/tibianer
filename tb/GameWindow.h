@@ -54,6 +54,8 @@ public:
     void handleMouseButtonPressedEvent(sf::Event event);
     void handleMouseButtonReleasedEvent(sf::Event event);
 
+    void setPositionInLayout();
+
     void draw();
     void drawMapLayerAtZ(tb::ZAxis_t z);
     void drawTileHighlight();

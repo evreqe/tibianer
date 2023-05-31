@@ -288,6 +288,12 @@
     <ClCompile Include="tb\SfmlGuiWindow.cpp">
       <Filter>Source Files\tb</Filter>
     </ClCompile>
+    <ClCompile Include="tb\BattleButtonsWindow.cpp">
+      <Filter>Source Files\tb</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\TabButtonsWindow.cpp">
+      <Filter>Source Files\tb</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -564,6 +570,12 @@
       <Filter>Header Files\tb</Filter>
     </ClInclude>
     <ClInclude Include="tb\SfmlGuiWindow.h">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\BattleButtonsWindow.h">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\TabButtonsWindow.h">
       <Filter>Header Files\tb</Filter>
     </ClInclude>
   </ItemGroup>

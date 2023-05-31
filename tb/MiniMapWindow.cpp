@@ -45,15 +45,8 @@ void MiniMapWindow::handleMouseButtonReleasedEvent(sf::Event event)
     //
 }
 
-void MiniMapWindow::draw()
+void MiniMapWindow::setPositionInLayout()
 {
-    bool isDebugModeEnabled = g_Game.isDebugModeEnabled();
-
-    if (isDebugModeEnabled == false)
-    {
-        resetViewPositionOffset();
-    }
-
     sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
 
     sf::Vector2f renderWindowSize = static_cast<sf::Vector2f>(renderWindow->getSize());
@@ -71,6 +64,18 @@ void MiniMapWindow::draw()
     windowPosition.y = g_MenuBar.getHeight() + padding;
 
     setPosition(windowPosition);
+}
+
+void MiniMapWindow::draw()
+{
+    bool isDebugModeEnabled = g_Game.isDebugModeEnabled();
+
+    if (isDebugModeEnabled == false)
+    {
+        resetViewPositionOffset();
+    }
+
+    setPositionInLayout();
 
     tb::Creature::Ptr player = g_Game.getPlayer();
 
@@ -93,6 +98,8 @@ void MiniMapWindow::draw()
     sf::View* view = getView();
 
     view->setCenter(viewPosition);
+
+    sf::RenderTexture* windowRenderTexture = getWindowRenderTexture();
 
     windowRenderTexture->setView(*view);
 
@@ -143,15 +150,7 @@ void MiniMapWindow::draw()
 
     windowRenderTexture->display();
 
-    sf::Texture windowSpriteTexture = windowRenderTexture->getTexture();
-
-    sf::Sprite* windowSprite = getWindowSprite();
-
-    windowSprite->setTexture(windowSpriteTexture);
-    windowSprite->setPosition(windowPosition);
-    windowSprite->setScale(sf::Vector2f(windowSizeScale, windowSizeScale));
-
-    renderWindow->draw(*windowSprite);
+    drawToRenderWindow();
 }
 
 void MiniMapWindow::drawTileMap(const sf::IntRect& tileRect, tb::TileMap::Ptr tileMap)

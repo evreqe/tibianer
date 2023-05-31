@@ -59,6 +59,13 @@ void GameWindow::handleMouseButtonReleasedEvent(sf::Event event)
     //
 }
 
+void GameWindow::setPositionInLayout()
+{
+    sf::Vector2f windowPosition = sf::Vector2f(32.0f, 32.0f + g_MenuBar.getHeight());
+
+    setPosition(windowPosition);
+}
+
 void GameWindow::draw()
 {
     bool isDebugModeEnabled = g_Game.isDebugModeEnabled();
@@ -68,11 +75,7 @@ void GameWindow::draw()
         resetViewPositionOffset();
     }
 
-    float windowSizeScale = getSizeScale();
-
-    sf::Vector2f windowPosition = sf::Vector2f(32.0f, 32.0f + g_MenuBar.getHeight());
-
-    setPosition(windowPosition);
+    setPositionInLayout();
 
     tb::Creature::Ptr player = g_Game.getPlayer();
 
@@ -141,17 +144,7 @@ void GameWindow::draw()
 
     windowRenderTexture->display();
 
-    sf::Texture windowSpriteTexture = windowRenderTexture->getTexture();
-
-    sf::Sprite* windowSprite = getWindowSprite();
-
-    windowSprite->setTexture(windowSpriteTexture);
-    windowSprite->setPosition(windowPosition);
-    windowSprite->setScale(sf::Vector2f(windowSizeScale, windowSizeScale));
-
-    sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
-
-    renderWindow->draw(*windowSprite);
+    drawToRenderWindow();
 }
 
 void GameWindow::drawMapLayerAtZ(tb::ZAxis_t z)

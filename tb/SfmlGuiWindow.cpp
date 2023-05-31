@@ -20,6 +20,25 @@ void SfmlGuiWindow::initalize()
     m_view.reset(sf::FloatRect(0.0f, 0.0f, m_viewInitialSize.x, m_viewInitialSize.y));
 }
 
+void SfmlGuiWindow::drawToRenderWindow()
+{
+    sf::Vector2f windowPosition = getPosition();
+
+    float windowSizeScale = getSizeScale();
+
+    sf::Texture windowSpriteTexture = m_windowRenderTexture.getTexture();
+
+    sf::Sprite* windowSprite = getWindowSprite();
+
+    windowSprite->setTexture(windowSpriteTexture);
+    windowSprite->setPosition(windowPosition);
+    windowSprite->setScale(sf::Vector2f(windowSizeScale, windowSizeScale));
+
+    sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
+
+    renderWindow->draw(*windowSprite);
+}
+
 sf::FloatRect SfmlGuiWindow::getRect()
 {
     sf::FloatRect windowRect;
@@ -168,6 +187,23 @@ void SfmlGuiWindow::setWindowRenderTextureInitialSize(sf::Vector2i size)
 sf::Sprite* SfmlGuiWindow::getWindowSprite()
 {
     return &m_windowSprite;
+}
+
+sf::FloatRect SfmlGuiWindow::getRectOfSprite(const sf::Sprite& sprite)
+{
+    sf::Vector2f spritePosition = sprite.getPosition();
+
+    sf::FloatRect spriteLocalBounds = sprite.getLocalBounds();
+
+    sf::FloatRect spriteRect;
+
+    spriteRect.left = spritePosition.x;
+    spriteRect.top = spritePosition.y;
+
+    spriteRect.width = spriteLocalBounds.width;
+    spriteRect.height = spriteLocalBounds.height;
+
+    return spriteRect;
 }
 
 float SfmlGuiWindow::getSizeScale()

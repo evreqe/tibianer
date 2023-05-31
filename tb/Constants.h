@@ -235,6 +235,30 @@ namespace tb
         };
     }
 
+    namespace GuiRects
+    {
+        inline sf::IntRect TabButtonsWindowInventoryButtonReleased;
+        inline sf::IntRect TabButtonsWindowInventoryButtonPressed;
+        inline sf::IntRect TabButtonsWindowStatusButtonReleased;
+        inline sf::IntRect TabButtonsWindowStatusButtonPressed;
+        inline sf::IntRect TabButtonsWindowBattleButtonReleased;
+        inline sf::IntRect TabButtonsWindowBattleButtonPressed;
+        inline sf::IntRect TabButtonsWindowMiniMapButtonReleased;
+        inline sf::IntRect TabButtonsWindowMiniMapButtonPressed;
+
+        inline const std::unordered_map<std::string, sf::IntRect&> Names =
+        {
+            {"TabButtonsWindowInventoryButtonReleased",            tb::GuiRects::TabButtonsWindowInventoryButtonReleased},
+            {"TabButtonsWindowInventoryButtonPressed",             tb::GuiRects::TabButtonsWindowInventoryButtonPressed},
+            {"TabButtonsWindowStatusButtonReleased",               tb::GuiRects::TabButtonsWindowStatusButtonReleased},
+            {"TabButtonsWindowStatusButtonPressed",                tb::GuiRects::TabButtonsWindowStatusButtonPressed},
+            {"TabButtonsWindowBattleButtonReleased",               tb::GuiRects::TabButtonsWindowBattleButtonReleased},
+            {"TabButtonsWindowBattleButtonPressed",                tb::GuiRects::TabButtonsWindowBattleButtonPressed},
+            {"TabButtonsWindowMiniMapButtonReleased",              tb::GuiRects::TabButtonsWindowMiniMapButtonReleased},
+            {"TabButtonsWindowMiniMapButtonPressed",               tb::GuiRects::TabButtonsWindowMiniMapButtonPressed},
+        };
+    }
+
     enum class SpriteFlag : uint8_t
     {
         Null,
