@@ -1,6 +1,8 @@
 #pragma once
 
-#define _SILENCE_ALL_CXX23_DEPRECATION_WARNINGS
+// modules do not work LOL
+//import std;
+//import std.compat;
 
 #include <cctype>
 #include <cmath>

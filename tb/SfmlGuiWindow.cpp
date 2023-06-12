@@ -22,21 +22,15 @@ void SfmlGuiWindow::initalize()
 
 void SfmlGuiWindow::drawToRenderWindow()
 {
-    sf::Vector2f windowPosition = getPosition();
-
-    float windowSizeScale = getSizeScale();
-
     sf::Texture windowSpriteTexture = m_windowRenderTexture.getTexture();
 
-    sf::Sprite* windowSprite = getWindowSprite();
-
-    windowSprite->setTexture(windowSpriteTexture);
-    windowSprite->setPosition(windowPosition);
-    windowSprite->setScale(sf::Vector2f(windowSizeScale, windowSizeScale));
+    m_windowSprite.setTexture(windowSpriteTexture, true);
+    m_windowSprite.setPosition(m_position);
+    m_windowSprite.setScale(sf::Vector2f(m_sizeScale, m_sizeScale));
 
     sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
 
-    renderWindow->draw(*windowSprite);
+    renderWindow->draw(m_windowSprite);
 }
 
 sf::FloatRect SfmlGuiWindow::getRect()
@@ -44,14 +38,24 @@ sf::FloatRect SfmlGuiWindow::getRect()
     sf::FloatRect windowRect;
 
     windowRect.left = m_position.x;
-    windowRect.top = m_position.y;
+    windowRect.top  = m_position.y;
 
-    sf::Vector2f windowSize = static_cast<sf::Vector2f>(m_windowRenderTexture.getSize());
+    sf::Vector2f windowSize = getSize();
 
-    windowRect.width = windowSize.x * m_sizeScale;
-    windowRect.height = windowSize.y * m_sizeScale;
+    windowRect.width  = windowSize.x;
+    windowRect.height = windowSize.y;
 
     return windowRect;
+}
+
+sf::Vector2f SfmlGuiWindow::getSize()
+{
+    sf::Vector2f windowSize = static_cast<sf::Vector2f>(m_windowRenderTexture.getSize());
+
+    windowSize.x *= m_sizeScale;
+    windowSize.y *= m_sizeScale;
+
+    return windowSize;
 }
 
 sf::Vector2f SfmlGuiWindow::getMousePixelPosition()

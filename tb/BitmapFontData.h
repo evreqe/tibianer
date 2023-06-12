@@ -39,8 +39,9 @@ public:
         std::string FileName;
         uint8_t GlyphWidth = 32;
         uint8_t GlyphHeight = 32;
-        float TextHeight = 1.0f;
-        std::vector<unsigned int> GlyphWidthList;
+        int CharacterSpace = 0;
+        int CharacterHeight = 1;
+        std::vector<int> CharacterWidthList;
 
     } Data, * Data_ptr;
 

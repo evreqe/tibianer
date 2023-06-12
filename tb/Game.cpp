@@ -322,7 +322,17 @@ bool Game::loadBitmapFonts()
         {
             if (bitmapFontData.Name == bitmapFontName)
             {
-                if (bitmapFontObject.load(bitmapFontData.FileName, sf::Vector2u(bitmapFontData.GlyphWidth, bitmapFontData.GlyphHeight), bitmapFontData.TextHeight, &bitmapFontData.GlyphWidthList) == true)
+                if
+                (
+                    bitmapFontObject.load
+                    (
+                        bitmapFontData.FileName,
+                        sf::Vector2u(bitmapFontData.GlyphWidth, bitmapFontData.GlyphHeight),
+                        bitmapFontData.CharacterSpace,
+                        bitmapFontData.CharacterHeight,
+                        &bitmapFontData.CharacterWidthList
+                    ) == true
+                )
                 {
                     isFound = true;
                     break;
@@ -586,11 +596,11 @@ void Game::drawFramesPerSecond()
 
     m_framesPerSecond = 1.0f / (m_framesPerSecondCurrentTime.asSeconds() - m_framesPerSecondPreviousTime.asSeconds());
 
-    std::string framesPerSecondText = std::format("{} FPS", std::floorf(m_framesPerSecond));
+    std::string framesPerSecondText = std::format("FPS: {}", std::floorf(m_framesPerSecond));
 
     tb::BitmapFontText framesPerSecondBitmapFontText;
-    framesPerSecondBitmapFontText.setText(&m_tinyBitmapFont, framesPerSecondText, sf::Color::Green, false);
-    framesPerSecondBitmapFontText.setPosition(sf::Vector2f(0.0f, 0.0f + g_MenuBar.getHeight()));
+    framesPerSecondBitmapFontText.setText(&m_tinyBitmapFont, framesPerSecondText, sf::Color::White);
+    framesPerSecondBitmapFontText.setPosition(sf::Vector2f(1.0f, 1.0f + g_MenuBar.getHeight()));
 
     sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
 
@@ -630,11 +640,99 @@ void Game::drawLoadingText()
     renderWindow->display();
 }
 
+sf::FloatRect Game::getGuiFullLayoutRect()
+{
+    sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
+
+    sf::Vector2f renderWindowSize = static_cast<sf::Vector2f>(renderWindow->getSize());
+
+    float menuBarHeight = g_MenuBar.getHeight();
+    float statusBarHeight = g_StatusBar.getHeight();
+
+    const float padding = tb::Constants::PaddingRenderWindow;
+
+    sf::FloatRect layoutRect;
+    layoutRect.left   = padding;
+    layoutRect.top    = padding + menuBarHeight;
+    layoutRect.width  = renderWindowSize.x - (padding * 2.0f);
+    layoutRect.height = renderWindowSize.y - (padding * 2.0f) - menuBarHeight - statusBarHeight;
+
+    return layoutRect;
+}
+
+sf::FloatRect Game::getGuiLeftLayoutRect()
+{
+    sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
+
+    sf::Vector2f renderWindowSize = static_cast<sf::Vector2f>(renderWindow->getSize());
+
+    float padding = tb::Constants::PaddingRenderWindow;
+
+    float guiRightLayoutWidth = tb::Constants::GuiRightLayoutWidthAsFloat * m_guiProperties.Scale;
+
+    float paddingBetweenLeftAndRightLayoutRect = tb::Constants::PaddingBetweenLeftAndRightLayoutRect;
+
+    float menuBarHeight = g_MenuBar.getHeight();
+    float statusBarHeight = g_StatusBar.getHeight();
+
+    sf::FloatRect layoutRect;
+    layoutRect.left   = padding;
+    layoutRect.top    = padding + menuBarHeight;
+    layoutRect.width  = renderWindowSize.x - (padding * 2.0f) - guiRightLayoutWidth - paddingBetweenLeftAndRightLayoutRect;
+    layoutRect.height = renderWindowSize.y - (padding * 2.0f) - menuBarHeight - statusBarHeight;
+
+    return layoutRect;
+}
+
+sf::FloatRect Game::getGuiRightLayoutRect()
+{
+    sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
+
+    sf::Vector2f renderWindowSize = static_cast<sf::Vector2f>(renderWindow->getSize());
+
+    float padding = tb::Constants::PaddingRenderWindow;
+
+    float guiRightLayoutWidth = tb::Constants::GuiRightLayoutWidthAsFloat * m_guiProperties.Scale;
+
+    float menuBarHeight = g_MenuBar.getHeight();
+    float statusBarHeight = g_StatusBar.getHeight();
+
+    sf::FloatRect layoutRect;
+    layoutRect.left   = renderWindowSize.x - padding - guiRightLayoutWidth;
+    layoutRect.top    = padding + menuBarHeight;
+    layoutRect.width  = guiRightLayoutWidth;
+    layoutRect.height = renderWindowSize.y - (padding * 2.0f) - menuBarHeight - statusBarHeight;
+
+    return layoutRect;
+}
+
+void Game::drawToolTip(const std::string& text)
+{
+    sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
+
+    tb::BitmapFontText bitmapFontText;
+    bitmapFontText.setText(&m_tinyBitmapFont, text, sf::Color::White);
+
+    sf::FloatRect bitmapFontRect = bitmapFontText.getRect();
+
+    sf::Vector2f mousePosition = static_cast<sf::Vector2f>(sf::Mouse::getPosition());
+
+    sf::RectangleShape shape;
+    shape.setTexture(&tb::Textures::Wood);
+    shape.setFillColor(sf::Color::Transparent);
+    shape.setOutlineColor(sf::Color::Black);
+    shape.setOutlineThickness(1.0f);
+    shape.setSize(sf::Vector2f(bitmapFontRect.width, bitmapFontRect.height));
+    shape.setPosition(sf::Vector2f(mousePosition.x, mousePosition.y + 16.0f));
+
+    renderWindow->draw(shape);
+}
+
 void Game::drawWoodBackground()
 {
     sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
 
-    sf::Vector2u renderWindowSize = g_RenderWindow.getWindow()->getSize();
+    sf::Vector2u renderWindowSize = renderWindow->getSize();
 
     sf::Sprite wood;
     wood.setTexture(tb::Textures::Wood);
@@ -653,7 +751,7 @@ void Game::drawWoodBorder(sf::FloatRect rect, bool drawBlackRectangle)
         blackRect.setPosition(sf::Vector2f(rect.left, rect.top));
         blackRect.setSize(sf::Vector2f(rect.width, rect.height));
         blackRect.setFillColor(sf::Color::Transparent);
-        blackRect.setOutlineColor(sf::Color(0, 0, 0));
+        blackRect.setOutlineColor(sf::Color::Black);
         blackRect.setOutlineThickness(1.0f);
 
         renderWindow->draw(blackRect);
@@ -705,18 +803,13 @@ void Game::drawWoodBorder(sf::FloatRect rect, bool drawBlackRectangle)
 
 void Game::drawBackgroundTextureWithWoodBorder(const sf::Texture& texture)
 {
-    sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
-
-    sf::Vector2f renderWindowSize = static_cast<sf::Vector2f>(renderWindow->getSize());
-
-    float menuBarHeight = g_MenuBar.getHeight();
-    float statusBarHeight = g_StatusBar.getHeight();
-
-    float padding = tb::Constants::PaddingBackgroundTexture + tb::Constants::PaddingWoodBorder + tb::Constants::PaddingBlackRectangle;
+    sf::FloatRect layoutRect = getGuiFullLayoutRect();
 
     m_backgroundTextureShape.setTexture(&texture, true);
-    m_backgroundTextureShape.setPosition(sf::Vector2f(padding, padding + menuBarHeight));
-    m_backgroundTextureShape.setSize(sf::Vector2f(renderWindowSize.x - (padding * 2.0f), renderWindowSize.y - (padding * 2.0f) - menuBarHeight - statusBarHeight));
+    m_backgroundTextureShape.setPosition(sf::Vector2f(layoutRect.left, layoutRect.top));
+    m_backgroundTextureShape.setSize(sf::Vector2f(layoutRect.width, layoutRect.height));
+
+    sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
 
     renderWindow->draw(m_backgroundTextureShape);
 
@@ -778,12 +871,27 @@ void Game::drawSfmlWindows()
 {
     g_GameWindow.draw();
 
+    if (m_guiProperties.ShowEquipmentWindow == true)
+    {
+        g_EquipmentWindow.draw();
+    }
+
+    if (m_guiProperties.ShowStatusWindow == true)
+    {
+        g_StatusWindow.draw();
+    }
+
     if (m_guiProperties.ShowMiniMapWindow == true)
     {
         g_MiniMapWindow.draw();
     }
 
     g_TabButtonsWindow.draw();
+
+    if (m_guiProperties.ShowSkillsWindow == true)
+    {
+        g_SkillsWindow.draw();
+    }
 
     drawWoodBorderForSfmlWindows();
 
@@ -805,6 +913,22 @@ void Game::drawDebugRectForSfmlWindows()
         drawDebugRect(g_GameWindow.getRect());
     }
 
+    if (m_guiProperties.ShowEquipmentWindow == true)
+    {
+        if (g_EquipmentWindow.isMouseInsideWindow() == true)
+        {
+            drawDebugRect(g_EquipmentWindow.getRect());
+        }
+    }
+
+    if (m_guiProperties.ShowStatusWindow == true)
+    {
+        if (g_StatusWindow.isMouseInsideWindow() == true)
+        {
+            drawDebugRect(g_StatusWindow.getRect());
+        }
+    }
+
     if (m_guiProperties.ShowMiniMapWindow == true)
     {
         if (g_MiniMapWindow.isMouseInsideWindow() == true)
@@ -817,22 +941,80 @@ void Game::drawDebugRectForSfmlWindows()
     {
         drawDebugRect(g_TabButtonsWindow.getRect());
     }
+
+    if (m_guiProperties.ShowSkillsWindow == true)
+    {
+        if (g_SkillsWindow.isMouseInsideWindow() == true)
+        {
+            drawDebugRect(g_SkillsWindow.getRect());
+        }
+    }
 }
 
 void Game::drawWoodBorderForSfmlWindows()
 {
     drawWoodBorder(g_GameWindow.getRect(), true);
 
+    if (m_guiProperties.ShowEquipmentWindow == true)
+    {
+        drawWoodBorder(g_EquipmentWindow.getRect(), true);
+    }
+
+    if (m_guiProperties.ShowStatusWindow == true)
+    {
+        drawWoodBorder(g_StatusWindow.getRect(), true);
+    }
+
     if (m_guiProperties.ShowMiniMapWindow == true)
     {
         drawWoodBorder(g_MiniMapWindow.getRect(), true);
     }
+
+    if (m_guiProperties.ShowSkillsWindow == true)
+    {
+        drawWoodBorder(g_SkillsWindow.getRect(), true);
+    }
+}
+
+void Game::setSizeInLayoutForSfmlWindows()
+{
+    g_SkillsWindow.setSizeInLayout();
+}
+
+void Game::setPositionInLayoutForSfmlWindows()
+{
+    // order is important
+
+    g_EquipmentWindow.setPositionInLayout();
+
+    g_StatusWindow.setPositionInLayout();
+
+    g_MiniMapWindow.setPositionInLayout();
+
+    g_TabButtonsWindow.setPositionInLayout();
+
+    g_SkillsWindow.setPositionInLayout();
+
+    g_GameWindow.setPositionInLayout();
 }
 
 void Game::setSizeScaleForSfmlWindows(float scale)
 {
+    m_guiProperties.Scale = scale;
+
+    g_EquipmentWindow.setSizeScale(scale);
+    g_StatusWindow.setSizeScale(scale);
     g_MiniMapWindow.setSizeScale(scale);
     g_TabButtonsWindow.setSizeScale(scale);
+    g_SkillsWindow.setSizeScale(scale);
+
+    updateLayoutForSfmlWindows();
+}
+
+void Game::updateLayoutForSfmlWindows()
+{
+    setPositionInLayoutForSfmlWindows();
+    setSizeInLayoutForSfmlWindows();
 }
 
 void Game::drawImGuiWindows()
@@ -1201,6 +1383,8 @@ void Game::handleClosedEvent(sf::Event event)
 void Game::handleResizedEvent(sf::Event event)
 {
     g_RenderWindow.handleResizedEvent(event);
+
+    g_SkillsWindow.handleResizedEvent(event);
 }
 
 void Game::handleGainedFocusEvent(sf::Event event)
@@ -1229,6 +1413,11 @@ void Game::handleMouseWheelMovedEvent(sf::Event event)
     {
         g_TabButtonsWindow.handleMouseWheelMovedEvent(event);
     }
+
+    if (g_SkillsWindow.isMouseInsideWindow() == true)
+    {
+        g_SkillsWindow.handleMouseWheelMovedEvent(event);
+    }
 }
 
 void Game::handleMouseButtonPressedEvent(sf::Event event)
@@ -1246,6 +1435,11 @@ void Game::handleMouseButtonPressedEvent(sf::Event event)
     if (g_TabButtonsWindow.isMouseInsideWindow() == true)
     {
         g_TabButtonsWindow.handleMouseButtonPressedEvent(event);
+    }
+
+    if (g_SkillsWindow.isMouseInsideWindow() == true)
+    {
+        g_SkillsWindow.handleMouseButtonPressedEvent(event);
     }
 
     if (event.mouseButton.button == sf::Mouse::Left)
@@ -1269,6 +1463,11 @@ void Game::handleMouseButtonReleasedEvent(sf::Event event)
     if (g_TabButtonsWindow.isMouseInsideWindow() == true)
     {
         g_TabButtonsWindow.handleMouseButtonReleasedEvent(event);
+    }
+
+    if (g_SkillsWindow.isMouseInsideWindow() == true)
+    {
+        g_SkillsWindow.handleMouseButtonReleasedEvent(event);
     }
 
     sf::Vector2f mousePosition;
@@ -1721,6 +1920,8 @@ void Game::run()
         return;
     }
 
+    updateLayoutForSfmlWindows();
+
     g_Log.write("Start rendering...\n");
 
     m_framesPerSecondPreviousTime = m_framesPerSecondClock.getElapsedTime();
@@ -1736,6 +1937,8 @@ void Game::run()
         renderWindow->clear(sf::Color::Black);
 
         drawWoodBackground();
+
+        setPositionInLayoutForSfmlWindows();
 
         if (m_gameState == tb::GameState::EnterGame)
         {
@@ -2138,6 +2341,21 @@ bool Game::doMoveThingFromTileToTile(tb::Thing::Ptr thing, tb::Tile::Ptr toTile)
     // Object
 
     return true;
+}
+
+tb::BitmapFont* Game::getDefaultBitmapFont()
+{
+    return &m_defaultBitmapFont;
+}
+
+tb::BitmapFont* Game::getTinyBitmapFont()
+{
+    return &m_tinyBitmapFont;
+}
+
+tb::BitmapFont* Game::getModernBitmapFont()
+{
+    return &m_modernBitmapFont;
 }
 
 }

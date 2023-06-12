@@ -37,7 +37,7 @@ bool GameText::setText(tb::BitmapFont* bitmapFont, const sf::Vector2i& tileCoord
 
     sf::Vector2f textPosition = static_cast<sf::Vector2f>(tileCoords);
 
-    const float textHeight = bitmapFont->getTextHeight();
+    const float textHeight = bitmapFont->getCharacterHeight();
 
     m_bitmapFontTextList.clear();
     m_bitmapFontTextList.reserve(m_textList.size());
@@ -46,7 +46,7 @@ bool GameText::setText(tb::BitmapFont* bitmapFont, const sf::Vector2i& tileCoord
     {
         tb::BitmapFontText bitmapFontText;
 
-        bitmapFontText.setText(bitmapFont, textValue, textColor, isCentered);
+        bitmapFontText.setText(bitmapFont, textValue, textColor);
 
         bitmapFontText.setPosition(textPosition);
 

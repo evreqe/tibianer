@@ -13,7 +13,7 @@ BitmapFont::~BitmapFont()
     //
 }
 
-bool BitmapFont::load(const std::string& fileName, const sf::Vector2u& glyphSize, const float textHeight, const std::vector<unsigned int>* glyphWidthList, unsigned int glyphSpace)
+bool BitmapFont::load(const std::string& fileName, const sf::Vector2u& glyphSize, int characterSpace, int characterHeight, std::vector<int>* characterWidthList)
 {
     if (std::filesystem::exists(fileName) == false)
     {
@@ -32,11 +32,11 @@ bool BitmapFont::load(const std::string& fileName, const sf::Vector2u& glyphSize
 
     m_glyphSize = glyphSize;
 
-    m_textHeight = textHeight;
+    m_characterSpace = characterSpace;
 
-    m_glyphWidthList = *glyphWidthList;
+    m_characterHeight = characterHeight;
 
-    m_glyphSpace = glyphSpace;
+    m_characterWidthList = *characterWidthList;
 
     const unsigned int textureSizeX = m_texture.getSize().x;
     const unsigned int textureSizeY = m_texture.getSize().y;
@@ -92,19 +92,19 @@ sf::Vector2u BitmapFont::getGlyphSize()
     return m_glyphSize;
 }
 
-float BitmapFont::getTextHeight()
+int BitmapFont::getCharacterSpace()
 {
-    return m_textHeight;
+    return m_characterSpace;
 }
 
-std::vector<unsigned int>* BitmapFont::getGlyphWidthList()
+int BitmapFont::getCharacterHeight()
 {
-    return &m_glyphWidthList;
+    return m_characterHeight;
 }
 
-unsigned int BitmapFont::getGlyphSpace()
+std::vector<int>* BitmapFont::getCharacterWidthList()
 {
-    return m_glyphSpace;
+    return &m_characterWidthList;
 }
 
 }

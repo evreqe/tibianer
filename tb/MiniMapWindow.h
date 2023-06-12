@@ -10,9 +10,6 @@
 
 #include "tb/Sprite.h"
 
-#include "tb/MenuBar.h"
-#include "tb/StatusBar.h"
-
 #include "tb/RenderWindow.h"
 #include "tb/GameWindow.h"
 #include "tb/Map.h"
@@ -21,48 +18,52 @@
 namespace tb
 {
 
-    class MiniMapWindow : public SfmlGuiWindow
+class MiniMapWindow : public SfmlGuiWindow
+{
+
+public:
+
+    MiniMapWindow();
+    ~MiniMapWindow();
+
+    static MiniMapWindow& getInstance()
     {
+        static MiniMapWindow instance;
+        return instance;
+    }
 
-    public:
+private:
 
-        MiniMapWindow();
-        ~MiniMapWindow();
+    MiniMapWindow(const MiniMapWindow&) = delete;
+    MiniMapWindow(MiniMapWindow&&) = delete;
+    MiniMapWindow& operator=(const MiniMapWindow&) = delete;
+    MiniMapWindow& operator=(MiniMapWindow&&) = delete;
 
-        static MiniMapWindow& getInstance()
-        {
-            static MiniMapWindow instance;
-            return instance;
-        }
+public:
 
-    private:
+    void handleMouseWheelMovedEvent(sf::Event event);
+    void handleMouseButtonPressedEvent(sf::Event event);
+    void handleMouseButtonReleasedEvent(sf::Event event);
 
-        MiniMapWindow(const MiniMapWindow&) = delete;
-        MiniMapWindow(MiniMapWindow&&) = delete;
-        MiniMapWindow& operator=(const MiniMapWindow&) = delete;
-        MiniMapWindow& operator=(MiniMapWindow&&) = delete;
+    void setPositionInLayout();
 
-    public:
+    void draw();
+    void drawTileMap(const sf::IntRect& tileRect, tb::TileMap::Ptr tileMap);
+    void drawTileHighlight();
 
-        void handleMouseWheelMovedEvent(sf::Event event);
-        void handleMouseButtonPressedEvent(sf::Event event);
-        void handleMouseButtonReleasedEvent(sf::Event event);
+    std::vector<sf::Vertex> getCrosshairVertexList();
 
-        void setPositionInLayout();
+private:
 
-        void draw();
-        void drawTileMap(const sf::IntRect& tileRect, tb::TileMap::Ptr tileMap);
-        void drawTileHighlight();
+    const std::size_t m_numCrosshairTiles = 5;
 
-    private:
+    const sf::Vector2f m_viewSize = sf::Vector2f(416.0f, 416.0f);
 
-        const sf::Vector2f m_viewSize = sf::Vector2f(416.0f, 416.0f);
+    const sf::Vector2i m_windowRenderTextureSize = sf::Vector2i(tb::Constants::GuiRightLayoutWidthAsInt, tb::Constants::GuiRightLayoutWidthAsInt);
 
-        const sf::Vector2i m_windowRenderTextureSize = sf::Vector2i(108, 108);
+    sf::VertexArray m_vertexArray;
 
-        sf::VertexArray m_vertexArray;
-
-    };
+};
 
 }
 

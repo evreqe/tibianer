@@ -116,8 +116,11 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalIncludeDirectories>Z:\Code\!libraries\boost_1_78_0;Z:\Code\!libraries\tomlplusplus-3.2.0;Z:\Code\!libraries\tomlplusplus-3.2.0\include;Z:\Code\!libraries\fmt-9.1.0\include;Z:\Code\!libraries\sol2-3.3.0\include;Z:\Code\!libraries\luajit-2.0.5\src;Z:\Code\!libraries\SFML-2.5.1\include;Z:\Code\!libraries\Thor-2.0\include;Z:\Code\tibianer\tibianer;Z:\Code\tibianer\tibianer\boost_zlib;Z:\Code\tibianer\tibianer\boost_base64;Z:\Code\tibianer\tibianer\pugixml;Z:\Code\tibianer\tibianer\imgui;Z:\Code\tibianer\tibianer\imgui-sfml;Z:\Code\tibianer\tibianer\magic_enum;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <EnableModules>true</EnableModules>
+      <EnableModules>false</EnableModules>
       <OpenMPSupport>false</OpenMPSupport>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <BuildStlModules>false</BuildStlModules>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -167,6 +170,7 @@
     <ClCompile Include="tb\BattleButtonsWindow.cpp" />
     <ClCompile Include="tb\BattleWindow.cpp" />
     <ClCompile Include="tb\BitmapFont.cpp" />
+    <ClCompile Include="tb\BitmapFontTextBatch.cpp" />
     <ClCompile Include="tb\BitmapFontData.cpp" />
     <ClCompile Include="tb\BitmapFontText.cpp" />
     <ClCompile Include="tb\ClickRectData.cpp" />
@@ -261,6 +265,7 @@
     <ClInclude Include="tb\BattleButtonsWindow.h" />
     <ClInclude Include="tb\BattleWindow.h" />
     <ClInclude Include="tb\BitmapFont.h" />
+    <ClInclude Include="tb\BitmapFontTextBatch.h" />
     <ClInclude Include="tb\BitmapFontData.h" />
     <ClInclude Include="tb\BitmapFontText.h" />
     <ClInclude Include="tb\ClickRectData.h" />

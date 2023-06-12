@@ -49,10 +49,14 @@ namespace tb
 
         inline const float TileCreatureOffset = 8.0f;
 
+        inline const float PaddingRenderWindow = 11.0f; // the outer rectangle of the render window
         inline const float PaddingBackgroundTexture = 7.0f;
-        inline const float PaddingRenderWindow = 5.0f;
         inline const float PaddingWoodBorder = 3.0f;
         inline const float PaddingBlackRectangle = 1.0f;
+        inline const float PaddingBetweenLeftAndRightLayoutRect = 12.0f;
+
+        inline const float GuiRightLayoutWidthAsFloat = 108.0f;
+        inline const float GuiRightLayoutWidthAsInt = 108;
 
         inline const uint32_t NumZAxis = 16;
 
@@ -237,6 +241,9 @@ namespace tb
 
     namespace GuiRects
     {
+        inline sf::IntRect EquipmentWindow;
+        inline sf::IntRect StatusWindow;
+
         inline sf::IntRect TabButtonsWindowInventoryButtonReleased;
         inline sf::IntRect TabButtonsWindowInventoryButtonPressed;
         inline sf::IntRect TabButtonsWindowStatusButtonReleased;
@@ -246,16 +253,78 @@ namespace tb
         inline sf::IntRect TabButtonsWindowMiniMapButtonReleased;
         inline sf::IntRect TabButtonsWindowMiniMapButtonPressed;
 
+        inline sf::IntRect BattleButtonsWindowFullAttackButtonReleased;
+        inline sf::IntRect BattleButtonsWindowFullAttackButtonPressed;
+        inline sf::IntRect BattleButtonsWindowHalfAttackHalfDefenseButtonReleased;
+        inline sf::IntRect BattleButtonsWindowHalfAttackHalfDefenseButtonPressed;
+        inline sf::IntRect BattleButtonsWindowFullDefenseButtonReleased;
+        inline sf::IntRect BattleButtonsWindowFullDefenseButtonPressed;
+        inline sf::IntRect BattleButtonsWindowFollowButtonReleased;
+        inline sf::IntRect BattleButtonsWindowFollowButtonPressed;
+        inline sf::IntRect BattleButtonsWindowFollowDistanceButtonReleased;
+        inline sf::IntRect BattleButtonsWindowFollowDistanceButtonPressed;
+        inline sf::IntRect BattleButtonsWindowDoNotFollowButtonReleased;
+        inline sf::IntRect BattleButtonsWindowDoNotFollowButtonPressed;
+
+        inline sf::IntRect UpArrowButtonDisabled;
+        inline sf::IntRect UpArrowButtonEnabled;
+        inline sf::IntRect DownArrowButtonDisabled;
+        inline sf::IntRect DownArrowButtonEnabled;
+        inline sf::IntRect LeftArrowButtonDisabled;
+        inline sf::IntRect LeftArrowButtonEnabled;
+        inline sf::IntRect RightArrowButtonEnabled;
+        inline sf::IntRect RightArrowButtonDisabled;
+
+        inline sf::IntRect GraySquare;
+        inline sf::IntRect RedSquare;
+
         inline const std::unordered_map<std::string, sf::IntRect&> Names =
         {
-            {"TabButtonsWindowInventoryButtonReleased",            tb::GuiRects::TabButtonsWindowInventoryButtonReleased},
-            {"TabButtonsWindowInventoryButtonPressed",             tb::GuiRects::TabButtonsWindowInventoryButtonPressed},
-            {"TabButtonsWindowStatusButtonReleased",               tb::GuiRects::TabButtonsWindowStatusButtonReleased},
-            {"TabButtonsWindowStatusButtonPressed",                tb::GuiRects::TabButtonsWindowStatusButtonPressed},
-            {"TabButtonsWindowBattleButtonReleased",               tb::GuiRects::TabButtonsWindowBattleButtonReleased},
-            {"TabButtonsWindowBattleButtonPressed",                tb::GuiRects::TabButtonsWindowBattleButtonPressed},
-            {"TabButtonsWindowMiniMapButtonReleased",              tb::GuiRects::TabButtonsWindowMiniMapButtonReleased},
-            {"TabButtonsWindowMiniMapButtonPressed",               tb::GuiRects::TabButtonsWindowMiniMapButtonPressed},
+            {"EquipmentWindow",                                           tb::GuiRects::EquipmentWindow},
+            {"StatusWindow",                                              tb::GuiRects::StatusWindow},
+
+            {"TabButtonsWindowInventoryButtonReleased",                   tb::GuiRects::TabButtonsWindowInventoryButtonReleased},
+            {"TabButtonsWindowInventoryButtonPressed",                    tb::GuiRects::TabButtonsWindowInventoryButtonPressed},
+            {"TabButtonsWindowStatusButtonReleased",                      tb::GuiRects::TabButtonsWindowStatusButtonReleased},
+            {"TabButtonsWindowStatusButtonPressed",                       tb::GuiRects::TabButtonsWindowStatusButtonPressed},
+            {"TabButtonsWindowBattleButtonReleased",                      tb::GuiRects::TabButtonsWindowBattleButtonReleased},
+            {"TabButtonsWindowBattleButtonPressed",                       tb::GuiRects::TabButtonsWindowBattleButtonPressed},
+            {"TabButtonsWindowMiniMapButtonReleased",                     tb::GuiRects::TabButtonsWindowMiniMapButtonReleased},
+            {"TabButtonsWindowMiniMapButtonPressed",                      tb::GuiRects::TabButtonsWindowMiniMapButtonPressed},
+
+            {"BattleButtonsWindowFullAttackButtonReleased",               tb::GuiRects::BattleButtonsWindowFullAttackButtonReleased},
+            {"BattleButtonsWindowFullAttackButtonPressed",                tb::GuiRects::BattleButtonsWindowFullAttackButtonPressed},
+            {"BattleButtonsWindowHalfAttackHalfDefenseButtonReleased",    tb::GuiRects::BattleButtonsWindowHalfAttackHalfDefenseButtonReleased},
+            {"BattleButtonsWindowHalfAttackHalfDefenseButtonPressed",     tb::GuiRects::BattleButtonsWindowHalfAttackHalfDefenseButtonPressed},
+            {"BattleButtonsWindowFullDefenseButtonReleased",              tb::GuiRects::BattleButtonsWindowFullDefenseButtonReleased},
+            {"BattleButtonsWindowFullDefenseButtonPressed",               tb::GuiRects::BattleButtonsWindowFullDefenseButtonPressed},
+            {"BattleButtonsWindowFollowButtonReleased",                   tb::GuiRects::BattleButtonsWindowFollowButtonReleased},
+            {"BattleButtonsWindowFollowButtonPressed",                    tb::GuiRects::BattleButtonsWindowFollowButtonPressed},
+            {"BattleButtonsWindowFollowDistanceButtonReleased",           tb::GuiRects::BattleButtonsWindowFollowDistanceButtonReleased},
+            {"BattleButtonsWindowFollowDistanceButtonPressed",            tb::GuiRects::BattleButtonsWindowFollowDistanceButtonPressed},
+            {"BattleButtonsWindowDoNotFollowButtonReleased",              tb::GuiRects::BattleButtonsWindowDoNotFollowButtonReleased},
+            {"BattleButtonsWindowDoNotFollowButtonPressed",               tb::GuiRects::BattleButtonsWindowDoNotFollowButtonPressed},
+
+            {"UpArrowButtonDisabled",                                     tb::GuiRects::UpArrowButtonDisabled},
+            {"UpArrowButtonEnabled",                                      tb::GuiRects::UpArrowButtonEnabled},
+            {"DownArrowButtonDisabled",                                   tb::GuiRects::DownArrowButtonDisabled},
+            {"DownArrowButtonEnabled",                                    tb::GuiRects::DownArrowButtonEnabled},
+            {"LeftArrowButtonDisabled",                                   tb::GuiRects::LeftArrowButtonDisabled},
+            {"LeftArrowButtonEnabled",                                    tb::GuiRects::LeftArrowButtonEnabled},
+            {"RightArrowButtonEnabled",                                   tb::GuiRects::RightArrowButtonEnabled},
+            {"RightArrowButtonDisabled",                                  tb::GuiRects::RightArrowButtonDisabled},
+
+            {"GraySquare",                                                tb::GuiRects::GraySquare},
+            {"RedSquare",                                                 tb::GuiRects::RedSquare},
+
+            {"TabButtonsWindowInventoryButtonReleased",                   tb::GuiRects::TabButtonsWindowInventoryButtonReleased},
+            {"TabButtonsWindowInventoryButtonPressed",                    tb::GuiRects::TabButtonsWindowInventoryButtonPressed},
+            {"TabButtonsWindowStatusButtonReleased",                      tb::GuiRects::TabButtonsWindowStatusButtonReleased},
+            {"TabButtonsWindowStatusButtonPressed",                       tb::GuiRects::TabButtonsWindowStatusButtonPressed},
+            {"TabButtonsWindowBattleButtonReleased",                      tb::GuiRects::TabButtonsWindowBattleButtonReleased},
+            {"TabButtonsWindowBattleButtonPressed",                       tb::GuiRects::TabButtonsWindowBattleButtonPressed},
+            {"TabButtonsWindowMiniMapButtonReleased",                     tb::GuiRects::TabButtonsWindowMiniMapButtonReleased},
+            {"TabButtonsWindowMiniMapButtonPressed",                      tb::GuiRects::TabButtonsWindowMiniMapButtonPressed},
         };
     }
 
@@ -343,6 +412,13 @@ namespace tb
     {
         Day,
         Night,
+    };
+
+    enum class TextJustifyType : uint8_t
+    {
+        Left,
+        Center,
+        Right
     };
 
     enum class Direction : uint8_t
@@ -453,14 +529,15 @@ namespace tb
 
     enum class EquipmentSlot : uint8_t
     {
-        Bag, // bag or backpack
         Neck, // amulets
         Head,
-        Chest,
-        Legs,
-        Feet,
+        Bag, // bag or backpack
+
         LeftHand,
         RightHand, // shields
-        TwoHand,
+
+        Legs,
+        Chest,
+        Feet,
     };
 }

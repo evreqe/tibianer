@@ -294,6 +294,9 @@
     <ClCompile Include="tb\TabButtonsWindow.cpp">
       <Filter>Source Files\tb</Filter>
     </ClCompile>
+    <ClCompile Include="tb\BitmapFontTextBatch.cpp">
+      <Filter>Source Files\tb</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -576,6 +579,9 @@
       <Filter>Header Files\tb</Filter>
     </ClInclude>
     <ClInclude Include="tb\TabButtonsWindow.h">
+      <Filter>Header Files\tb</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\BitmapFontTextBatch.h">
       <Filter>Header Files\tb</Filter>
     </ClInclude>
   </ItemGroup>

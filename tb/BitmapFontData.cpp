@@ -51,7 +51,7 @@ bool BitmapFontData::load()
         g_Log.write("Index: {}\n", index);
 
         tb::BitmapFontData::Data data;
-        data.GlyphWidthList.reserve(m_numGlyphs);
+        data.CharacterWidthList.reserve(m_numGlyphs);
 
         data.Index = i;
 
@@ -87,53 +87,52 @@ bool BitmapFontData::load()
         g_Log.write("GlyphWidth: {}\n", data.GlyphWidth);
         g_Log.write("GlyphHeight: {}\n", data.GlyphHeight);
 
-        data.TextHeight = m_table[index]["TextHeight"].value_or(0.0f);
+        data.CharacterSpace = m_table[index]["CharacterSpace"].value_or(0);
 
-        if (data.TextHeight < 1.0f)
+        g_Log.write("CharacterSpace: {}\n", data.CharacterSpace);
+
+        data.CharacterHeight = m_table[index]["CharacterHeight"].value_or(1);
+
+        if (data.CharacterHeight < 1)
         {
-            g_Log.write("ERROR: 'TextHeight' is less than 1.0\n");
+            g_Log.write("ERROR: 'CharacterHeight' is less than 1\n");
             return false;
         }
 
-        g_Log.write("TextHeight: {}\n", data.TextHeight);
+        g_Log.write("CharacterHeight: {}\n", data.CharacterHeight);
 
-        auto glyphWidthListArray = m_table[index]["GlyphWidthList"].as_array();
+        auto characterWidthListArray = m_table[index]["CharacterWidthList"].as_array();
 
-        if (glyphWidthListArray == nullptr)
+        if (characterWidthListArray == nullptr)
         {
-            g_Log.write("ERROR: glyphWidthListArray == nullptr\n");
+            g_Log.write("ERROR: characterWidthListArray == nullptr\n");
             return false;
         }
 
-        for (unsigned int j = 0; auto& glyphWidthNode : *glyphWidthListArray)
+        for (int j = 0; auto& characterWidthNode : *characterWidthListArray)
         {
-            uint32_t glyphWidth = glyphWidthNode.value_or(0);
-            if (glyphWidth == 0)
-            {
-                g_Log.write("ERROR: Glypth width is zero at index: [{}] GlyphWidthList=[#{}]\n", i, j);
-                return false;
-            }
+            int characterWidth = characterWidthNode.value_or(0);
 
-            data.GlyphWidthList.push_back(glyphWidth);
+            data.CharacterWidthList.push_back(characterWidth);
 
             j++;
         }
 
-        if (data.GlyphWidthList.size() == 0)
+        if (data.CharacterWidthList.size() == 0)
         {
-            g_Log.write("ERROR: 'GlyphWidthList' is empty\n");
+            g_Log.write("ERROR: 'CharacterWidthList' is empty\n");
             return false;
         }
 
-        if (data.GlyphWidthList.size() != m_numGlyphs)
+        if (data.CharacterWidthList.size() != m_numGlyphs)
         {
-            g_Log.write("ERROR: 'GlyphWidthList' has the wrong size, {} instead of {}\n", data.GlyphWidthList.size(), m_numGlyphs);
+            g_Log.write("ERROR: 'CharacterWidthList' has the wrong size, {} instead of {}\n", data.CharacterWidthList.size(), m_numGlyphs);
             return false;
         }
 
-        std::string glypthWidthListStr = fmt::format("{}", data.GlyphWidthList);
+        std::string characterWidthListAsString = fmt::format("{}", data.CharacterWidthList);
 
-        g_Log.write("GlyphWidthList: {}\n", glypthWidthListStr);
+        g_Log.write("CharacterWidthList: {}\n", characterWidthListAsString);
 
         m_dataList.push_back(data);
     }

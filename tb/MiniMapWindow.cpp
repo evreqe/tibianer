@@ -47,23 +47,9 @@ void MiniMapWindow::handleMouseButtonReleasedEvent(sf::Event event)
 
 void MiniMapWindow::setPositionInLayout()
 {
-    sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
+    sf::FloatRect guiRightLayoutRect = g_Game.getGuiRightLayoutRect();
 
-    sf::Vector2f renderWindowSize = static_cast<sf::Vector2f>(renderWindow->getSize());
-
-    sf::RenderTexture* windowRenderTexture = getWindowRenderTexture();
-
-    sf::Vector2f windowSize = static_cast<sf::Vector2f>(windowRenderTexture->getSize());
-
-    float windowSizeScale = getSizeScale();
-
-    float padding = tb::Constants::PaddingRenderWindow + tb::Constants::PaddingWoodBorder + tb::Constants::PaddingBlackRectangle;
-
-    sf::Vector2f windowPosition;
-    windowPosition.x = renderWindowSize.x - padding - (windowSize.x * windowSizeScale);
-    windowPosition.y = g_MenuBar.getHeight() + padding;
-
-    setPosition(windowPosition);
+    setPosition(sf::Vector2f(guiRightLayoutRect.left, guiRightLayoutRect.top));
 }
 
 void MiniMapWindow::draw()
@@ -74,8 +60,6 @@ void MiniMapWindow::draw()
     {
         resetViewPositionOffset();
     }
-
-    setPositionInLayout();
 
     tb::Creature::Ptr player = g_Game.getPlayer();
 
@@ -167,6 +151,8 @@ void MiniMapWindow::drawTileMap(const sf::IntRect& tileRect, tb::TileMap::Ptr ti
     m_vertexArray.clear();
     m_vertexArray.resize(numVertices);
 
+    const float tileSize = tb::Constants::TileSizeFloat;
+
     for (auto& tile : tileList)
     {
         tb::SpriteID_t tileSpriteID = tile->getSpriteID();
@@ -180,8 +166,6 @@ void MiniMapWindow::drawTileMap(const sf::IntRect& tileRect, tb::TileMap::Ptr ti
 
         float tileX = tile->getPixelX();
         float tileY = tile->getPixelY();
-
-        const float tileSize = tb::Constants::TileSizeFloat;
 
         sf::Vertex vertex[4];
 
@@ -208,8 +192,8 @@ void MiniMapWindow::drawTileMap(const sf::IntRect& tileRect, tb::TileMap::Ptr ti
         if (objectList->size() != 0)
         {
             color.r = 255;
-            color.g = 255;
-            color.b = 255;
+            color.g = 0;
+            color.b = 0;
         }
 
         tb::Creature::List* creatureList = tile->getCreatureList();
@@ -234,6 +218,13 @@ void MiniMapWindow::drawTileMap(const sf::IntRect& tileRect, tb::TileMap::Ptr ti
         m_vertexArray.append(vertex[3]);
     }
 
+    std::vector<sf::Vertex> crosshairVertexList = getCrosshairVertexList();
+
+    for (auto& crosshairVertex : crosshairVertexList)
+    {
+        m_vertexArray.append(crosshairVertex);
+    }
+
     sf::RenderTexture* windowRenderTexture = getWindowRenderTexture();
 
     windowRenderTexture->draw(m_vertexArray);
@@ -251,6 +242,70 @@ void MiniMapWindow::drawTileHighlight()
     sf::RenderTexture* windowRenderTexture = getWindowRenderTexture();
 
     windowRenderTexture->draw(rectangleShape);
+}
+
+std::vector<sf::Vertex> MiniMapWindow::getCrosshairVertexList()
+{
+    tb::Creature::Ptr player = g_Game.getPlayer();
+
+    sf::Vector2f playerCoords = player->getPixelCoords();
+
+    const float tileSize = tb::Constants::TileSizeFloat;
+
+    std::vector<sf::Vector2f> tileCoordsList;
+    tileCoordsList.reserve(m_numCrosshairTiles);
+
+    tileCoordsList.push_back(playerCoords);
+
+    if (isZoomed() == true)
+    {
+        sf::Vector2f northCoords = playerCoords;
+        sf::Vector2f southCoords = playerCoords;
+        sf::Vector2f westCoords = playerCoords;
+        sf::Vector2f eastCoords = playerCoords;
+
+        northCoords.y -= tileSize;
+        southCoords.y += tileSize;
+        westCoords.x -= tileSize;
+        eastCoords.x += tileSize;
+
+        tileCoordsList.push_back(northCoords);
+        tileCoordsList.push_back(southCoords);
+        tileCoordsList.push_back(westCoords);
+        tileCoordsList.push_back(eastCoords);
+    }
+
+    std::vector<sf::Vertex> vertexList;
+    vertexList.reserve(m_numCrosshairTiles * 4);
+
+    for (auto& tileCoords : tileCoordsList)
+    {
+        sf::Vertex vertex[4];
+
+        // top left, top right, bottom right, bottom left
+        vertex[0].position = sf::Vector2f(tileCoords.x,            tileCoords.y);
+        vertex[1].position = sf::Vector2f(tileCoords.x + tileSize, tileCoords.y);
+        vertex[2].position = sf::Vector2f(tileCoords.x + tileSize, tileCoords.y + tileSize);
+        vertex[3].position = sf::Vector2f(tileCoords.x,            tileCoords.y + tileSize);
+
+        sf::Color color;
+        color.r = 255;
+        color.g = 255;
+        color.b = 255;
+        color.a = 255;
+
+        vertex[0].color = color;
+        vertex[1].color = color;
+        vertex[2].color = color;
+        vertex[3].color = color;
+
+        vertexList.push_back(vertex[0]);
+        vertexList.push_back(vertex[1]);
+        vertexList.push_back(vertex[2]);
+        vertexList.push_back(vertex[3]);
+    }
+
+    return vertexList;
 }
 
 }

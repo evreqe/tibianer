@@ -10,10 +10,8 @@
 
 #include "tb/Sprite.h"
 
-#include "tb/MenuBar.h"
-#include "tb/StatusBar.h"
-
 #include "tb/RenderWindow.h"
+#include "tb/MiniMapWindow.h"
 #include "tb/Map.h"
 #include "tb/Game.h"
 
@@ -53,6 +51,8 @@ public:
     void handleMouseWheelMovedEvent(sf::Event event);
     void handleMouseButtonPressedEvent(sf::Event event);
     void handleMouseButtonReleasedEvent(sf::Event event);
+
+    sf::FloatRect getLayoutRect();
 
     void setPositionInLayout();
 

@@ -23,6 +23,8 @@ public:
 
     sf::FloatRect getRect();
 
+    sf::Vector2f getSize();
+
     sf::Vector2f getMousePixelPosition();
 
     sf::Vector2f getMousePixelCoords();
@@ -101,7 +103,7 @@ private:
     const float m_zoomScaleDefault = 1.0f;
     const float m_zoomScaleStep = 1.0f;
     const float m_zoomScaleMinimum = 1.0f;
-    const float m_zoomScaleMaximum = 10.0f;
+    const float m_zoomScaleMaximum = 8.0f;
 
 };
 

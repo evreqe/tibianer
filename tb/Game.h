@@ -39,8 +39,11 @@
 #include "tb/RenderWindow.h"
 
 #include "tb/GameWindow.h"
+#include "tb/EquipmentWindow.h"
+#include "tb/StatusWindow.h"
 #include "tb/MiniMapWindow.h"
 #include "tb/TabButtonsWindow.h"
+#include "tb/SkillsWindow.h"
 
 #include "tb/OverlayWindow.h"
 #include "tb/LogWindow.h"
@@ -103,9 +106,11 @@ public:
 
     struct GuiProperties_t
     {
-        bool ShowMiniMapWindow = true;
+        float Scale = 1.0f;
+
         bool ShowEquipmentWindow = false;
         bool ShowStatusWindow = false;
+        bool ShowMiniMapWindow = true;
 
         bool TabButtonsWindowInventoryButtonIsPressed = true;
         bool TabButtonsWindowStatusButtonIsPressed = false;
@@ -121,7 +126,7 @@ public:
         bool BattleButtonsWindowFullDefenseButtonIsPressed = false;
 
         bool BattleButtonsWindowFollowButtonIsPressed = false;
-        bool BattleButtonsWindowKeepDistanceButtonIsPressed = false;
+        bool BattleButtonsWindowFollowDistanceButtonIsPressed = false;
         bool BattleButtonsWindowDoNotFollowButtonIsPressed = true;
     };
 
@@ -151,6 +156,12 @@ public:
 
     void drawLoadingText();
 
+    sf::FloatRect getGuiFullLayoutRect();
+    sf::FloatRect getGuiLeftLayoutRect();
+    sf::FloatRect getGuiRightLayoutRect();
+
+    void drawToolTip(const std::string& text);
+
     void drawWoodBackground();
     void drawWoodBorder(sf::FloatRect rect, bool drawBlackRectangle);
     void drawBackgroundTextureWithWoodBorder(const sf::Texture& texture);
@@ -163,7 +174,10 @@ public:
     void drawDebugRectForSfmlWindows();
     void drawWoodBorderForSfmlWindows();
 
+    void setSizeInLayoutForSfmlWindows();
+    void setPositionInLayoutForSfmlWindows();
     void setSizeScaleForSfmlWindows(float scale);
+    void updateLayoutForSfmlWindows();
 
     void drawImGuiWindows();
 
@@ -232,6 +246,10 @@ public:
     void handleCreatureMovement(tb::Creature::Ptr creature, tb::MovementDirection movementDirection);
 
     bool doMoveThingFromTileToTile(tb::Thing::Ptr thing, tb::Tile::Ptr toTile);
+
+    tb::BitmapFont* getDefaultBitmapFont();
+    tb::BitmapFont* getTinyBitmapFont();
+    tb::BitmapFont* getModernBitmapFont();
 
 private:
 

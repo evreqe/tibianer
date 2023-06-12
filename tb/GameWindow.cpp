@@ -59,9 +59,46 @@ void GameWindow::handleMouseButtonReleasedEvent(sf::Event event)
     //
 }
 
+sf::FloatRect GameWindow::getLayoutRect()
+{
+/*
+    sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
+
+    sf::Vector2f renderWindowSize = static_cast<sf::Vector2f>(renderWindow->getSize());
+
+    float menuBarHeight = g_MenuBar.getHeight();
+    float statusBarHeight = g_StatusBar.getHeight();
+
+    sf::FloatRect miniMapWindowRect = g_MiniMapWindow.getRect();
+
+    float miniMapWindowRightPadding = tb::Constants::PaddingRenderWindow;
+
+    float leftPadding = tb::Constants::PaddingRenderWindow;
+    float topPadding = tb::Constants::PaddingRenderWindow;
+    float rightPadding = ((tb::Constants::PaddingWoodBorder + tb::Constants::PaddingBlackRectangle) * 2.0f) + 4.0f;
+    float bottomPadding = tb::Constants::PaddingRenderWindow; // TODO
+
+    sf::FloatRect layoutRect;
+    layoutRect.left = leftPadding;
+    layoutRect.top = menuBarHeight + topPadding;
+    layoutRect.width = renderWindowSize.x - miniMapWindowRect.width - miniMapWindowRightPadding - (leftPadding + rightPadding);
+    layoutRect.height = renderWindowSize.y - menuBarHeight - topPadding - statusBarHeight - bottomPadding; // TODO
+*/
+
+    sf::FloatRect guiLeftLayoutRect = g_Game.getGuiLeftLayoutRect();
+
+    return guiLeftLayoutRect;
+}
+
 void GameWindow::setPositionInLayout()
 {
-    sf::Vector2f windowPosition = sf::Vector2f(32.0f, 32.0f + g_MenuBar.getHeight());
+    sf::FloatRect windowRect = getRect();
+
+    sf::FloatRect layoutRect = getLayoutRect();
+
+    sf::Vector2f windowPosition;
+    windowPosition.x = layoutRect.left + ((layoutRect.width  - windowRect.width)  / 2.0f);
+    windowPosition.y = layoutRect.top  + ((layoutRect.height - windowRect.height) / 2.0f);
 
     setPosition(windowPosition);
 }
@@ -74,8 +111,6 @@ void GameWindow::draw()
     {
         resetViewPositionOffset();
     }
-
-    setPositionInLayout();
 
     tb::Creature::Ptr player = g_Game.getPlayer();
 
@@ -104,6 +139,16 @@ void GameWindow::draw()
     if (isDebugModeEnabled == true)
     {
         windowRenderTexture->clear(sf::Color::Magenta);
+
+        sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
+        sf::FloatRect layoutRect = getLayoutRect();
+        sf::RectangleShape rs;
+        rs.setPosition(sf::Vector2f(layoutRect.left, layoutRect.top));
+        rs.setSize(sf::Vector2f(layoutRect.width, layoutRect.height));
+        rs.setFillColor(sf::Color::Transparent);
+        rs.setOutlineColor(sf::Color::Cyan);
+        rs.setOutlineThickness(1.0f);
+        renderWindow->draw(rs);
     }
     else
     {
