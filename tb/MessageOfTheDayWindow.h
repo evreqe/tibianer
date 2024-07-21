@@ -9,42 +9,42 @@
 namespace tb
 {
 
-    class MessageOfTheDayWindow : public tb::ImGuiWindow
+class MessageOfTheDayWindow : public tb::ImGuiWindow
+{
+
+public:
+
+    MessageOfTheDayWindow();
+    ~MessageOfTheDayWindow();
+
+    static MessageOfTheDayWindow& getInstance()
     {
+        static MessageOfTheDayWindow instance;
+        return instance;
+    }
 
-    public:
+private:
 
-        MessageOfTheDayWindow();
-        ~MessageOfTheDayWindow();
+    MessageOfTheDayWindow(const MessageOfTheDayWindow&) = delete;
+    MessageOfTheDayWindow(MessageOfTheDayWindow&&) = delete;
+    MessageOfTheDayWindow& operator=(const MessageOfTheDayWindow&) = delete;
+    MessageOfTheDayWindow& operator=(MessageOfTheDayWindow&&) = delete;
 
-        static MessageOfTheDayWindow& getInstance()
-        {
-            static MessageOfTheDayWindow instance;
-            return instance;
-        }
+public:
 
-    private:
+    void onLoad();
 
-        MessageOfTheDayWindow(const MessageOfTheDayWindow&) = delete;
-        MessageOfTheDayWindow(MessageOfTheDayWindow&&) = delete;
-        MessageOfTheDayWindow& operator=(const MessageOfTheDayWindow&) = delete;
-        MessageOfTheDayWindow& operator=(MessageOfTheDayWindow&&) = delete;
+    void draw();
 
-    public:
+private:
 
-        void onLoad();
+    bool m_isLoaded = false;
 
-        void draw();
+    std::string m_messageOfTheDayText;
 
-    private:
+    const ImVec2 m_buttonSize = ImVec2(88.0f, 23.0f);
 
-        bool m_isLoaded = false;
-
-        std::string m_messageOfTheDayText;
-
-        const ImVec2 m_buttonSize = ImVec2(88.0f, 23.0f);
-
-    };
+};
 
 }
 

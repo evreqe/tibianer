@@ -35,9 +35,9 @@ void MessageOfTheDayWindow::draw()
 
     ImGui::TextUnformatted(m_messageOfTheDayText.c_str());
 
-    auto windowWidth = ImGui::GetWindowSize().x;
+    float windowWidth = ImGui::GetWindowSize().x;
 
-    ImGui::SetCursorPosX(ImGui::GetCursorPos().x + (windowWidth * 0.5f) - (m_buttonSize.x * 0.5f));
+    ImGui::SetCursorPosX(ImGui::GetCursorPos().x + (windowWidth / 2.0f) - (m_buttonSize.x / 2.0f));
 
     if (ImGui::Button("OK##MessageOfTheDayWindowButtonOK", m_buttonSize))
     {

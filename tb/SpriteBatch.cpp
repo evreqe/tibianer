@@ -5,8 +5,7 @@ namespace tb
 
 SpriteBatch::SpriteBatch()
 {
-    m_vertexArray.setPrimitiveType(sf::Quads);
-    m_vertexArray.resize(m_maxVertices);
+    m_vertexList.resize(m_maxVertices);
 
     m_numSprites = 0;
 }
@@ -30,17 +29,17 @@ bool SpriteBatch::addSprite(tb::Sprite* sprite, bool applyTileWidthAndHeightOffs
 
     sf::Color spriteColor = sprite->getColor();
 
-    float spriteTileWidth = static_cast<float>(tb::Constants::TileSize * sprite->getTileWidth());
+    float spriteTileWidth  = static_cast<float>(tb::Constants::TileSize * sprite->getTileWidth());
     float spriteTileHeight = static_cast<float>(tb::Constants::TileSize * sprite->getTileHeight());
 
     // big sprites
     if (applyTileWidthAndHeightOffset == true)
     {
-        spritePosition.x -= (spriteTileWidth - tb::Constants::TileSizeFloat);
-        spritePosition.y -= (spriteTileHeight - tb::Constants::TileSizeFloat);
+        spritePosition.x -= (spriteTileWidth  - tb::Constants::TileSizeAsFloat);
+        spritePosition.y -= (spriteTileHeight - tb::Constants::TileSizeAsFloat);
     }
 
-    sf::Vertex* vertex = &m_vertexArray[m_numSprites * 4];
+    sf::Vertex* vertex = &m_vertexList[m_numSprites * 4];
 
     // top left, top right, bottom right, bottom left
     vertex[0].position = sf::Vector2f(spritePosition.x,                   spritePosition.y);
@@ -65,7 +64,7 @@ bool SpriteBatch::addSprite(tb::Sprite* sprite, bool applyTileWidthAndHeightOffs
         m_maxSprites = m_maxSprites * 2;
         m_maxVertices = m_maxSprites * 4;
 
-        m_vertexArray.resize(m_maxVertices);
+        m_vertexList.resize(m_maxVertices);
 
         printDebugText();
     }
@@ -75,7 +74,7 @@ bool SpriteBatch::addSprite(tb::Sprite* sprite, bool applyTileWidthAndHeightOffs
 
 void SpriteBatch::clear()
 {
-    m_vertexArray.clear();
+    m_vertexList.clear();
 
     m_numSprites = 0;
 }
@@ -87,17 +86,17 @@ void SpriteBatch::printDebugText()
     g_Log.write("----> Max Sprites:  {}\n", m_maxSprites);
     g_Log.write("----> Max Vertices: {}\n", m_maxVertices);
 
-    g_Log.write("----> Vertex Count: {}\n", m_vertexArray.getVertexCount());
+    g_Log.write("----> Vertex List Size: {}\n", m_vertexList.size());
 
     g_Log.write("----> Num Sprites:  {}\n", m_numSprites);
 }
 
-void SpriteBatch::draw(sf::RenderTarget& target, sf::RenderStates states)
+void SpriteBatch::draw(sf::RenderTarget& renderTarget, sf::RenderStates renderStates)
 {
-    target.draw(m_vertexArray, states);
+    renderTarget.draw(&m_vertexList[0], m_vertexList.size(), sf::Quads, renderStates);
 }
 
-uint32_t SpriteBatch::getNumSprites()
+std::uint32_t SpriteBatch::getNumSprites()
 {
     return m_numSprites;
 }

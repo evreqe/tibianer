@@ -5,8 +5,7 @@ namespace tb
 
 LightBatch::LightBatch()
 {
-    m_vertexArray.setPrimitiveType(sf::Quads);
-    m_vertexArray.resize(m_maxVertices);
+    m_vertexList.resize(m_maxVertices);
 
     m_numLights = 0;
 }
@@ -18,13 +17,15 @@ LightBatch::~LightBatch()
 
 bool LightBatch::addLight(sf::Vector2f position, sf::Color color)
 {
-    sf::Vertex* vertex = &m_vertexArray[m_numLights * 4];
+    const float tileSize = tb::Constants::TileSizeAsFloat;
+
+    sf::Vertex* vertex = &m_vertexList[m_numLights * 4];
 
     // top left, top right, bottom right, bottom left
-    vertex[0].position = sf::Vector2f(position.x,                                position.y);
-    vertex[1].position = sf::Vector2f(position.x + tb::Constants::TileSizeFloat, position.y);
-    vertex[2].position = sf::Vector2f(position.x + tb::Constants::TileSizeFloat, position.y + tb::Constants::TileSizeFloat);
-    vertex[3].position = sf::Vector2f(position.x,                                position.y + tb::Constants::TileSizeFloat);
+    vertex[0].position = sf::Vector2f(position.x,            position.y);
+    vertex[1].position = sf::Vector2f(position.x + tileSize, position.y);
+    vertex[2].position = sf::Vector2f(position.x + tileSize, position.y + tileSize);
+    vertex[3].position = sf::Vector2f(position.x,            position.y + tileSize);
 
     vertex[0].color = color;
     vertex[1].color = color;
@@ -38,7 +39,7 @@ bool LightBatch::addLight(sf::Vector2f position, sf::Color color)
         m_maxLights = m_maxLights * 2;
         m_maxVertices = m_maxLights * 4;
 
-        m_vertexArray.resize(m_maxVertices);
+        m_vertexList.resize(m_maxVertices);
 
         printDebugText();
     }
@@ -48,7 +49,7 @@ bool LightBatch::addLight(sf::Vector2f position, sf::Color color)
 
 void LightBatch::clear()
 {
-    m_vertexArray.clear();
+    m_vertexList.clear();
 
     m_numLights = 0;
 }
@@ -60,17 +61,17 @@ void LightBatch::printDebugText()
     g_Log.write("----> Max Lights:  {}\n", m_maxLights);
     g_Log.write("----> Max Vertices: {}\n", m_maxVertices);
 
-    g_Log.write("----> Vertex Count: {}\n", m_vertexArray.getVertexCount());
+    g_Log.write("----> Vertex List Size: {}\n", m_vertexList.size());
 
     g_Log.write("----> Num Lights:  {}\n", m_numLights);
 }
 
-void LightBatch::draw(sf::RenderTarget& target, sf::RenderStates states)
+void LightBatch::draw(sf::RenderTarget& renderTarget, sf::RenderStates renderStates)
 {
-    target.draw(m_vertexArray, states);
+    renderTarget.draw(&m_vertexList[0], m_vertexList.size(), sf::Quads, renderStates);
 }
 
-uint32_t LightBatch::getNumLights()
+std::uint32_t LightBatch::getNumLights()
 {
     return m_numLights;
 }

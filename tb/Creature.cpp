@@ -50,9 +50,9 @@ void Creature::update()
         pixelCoords.x -= tb::Constants::TileCreatureOffset;
         pixelCoords.y -= tb::Constants::TileCreatureOffset;
 
-        for (unsigned int i = 0; i < tb::Constants::NumOutfitSpriteIndex; i++)
+        for (std::uint32_t i = 0; i < tb::Constants::NumOutfitSpriteIndex; i++)
         {
-            for (unsigned int j = 0; j < tb::Constants::NumOutfitSpriteDirections; j++)
+            for (std::uint32_t j = 0; j < tb::Constants::NumOutfitSpriteDirections; j++)
             {
                 m_outfitSpriteList.at(i).at(j).setPosition(pixelCoords);
             }
@@ -100,6 +100,16 @@ void Creature::setDirectionByMovementDirection(tb::MovementDirection movementDir
     }
 }
 
+std::uint8_t Creature::getTileOffset()
+{
+    //
+}
+
+void Creature::setTileOffset(std::uint8_t tileOffset)
+{
+    //
+}
+
 std::string Creature::getName()
 {
     return m_name;
@@ -108,6 +118,16 @@ std::string Creature::getName()
 void Creature::setName(const std::string& name)
 {
     m_name = name;
+}
+
+std::string Creature::getDescription()
+{
+    return m_description;
+}
+
+void Creature::setDescription(const std::string& description)
+{
+    m_description = description;
 }
 
 tb::Direction Creature::getDirection()
@@ -120,12 +140,12 @@ void Creature::setDirection(tb::Direction direction)
     m_direction = direction;
 }
 
-uint8_t Creature::getTeamIndex()
+std::uint8_t Creature::getTeamIndex()
 {
     return m_teamIndex;
 }
 
-void Creature::setTeamIndex(uint8_t teamIndex)
+void Creature::setTeamIndex(std::uint8_t teamIndex)
 {
     m_teamIndex = teamIndex;
 }
@@ -180,22 +200,22 @@ tb::Creature::OutfitSpriteList* Creature::getOutfitSpriteList()
     return &m_outfitSpriteList;
 }
 
-void Creature::setOutfitSprites(uint8_t head, uint8_t body, uint8_t legs, uint8_t feet)
+void Creature::setOutfitSprites(std::uint8_t head, std::uint8_t body, std::uint8_t legs, std::uint8_t feet)
 {
-    for (unsigned int i = 0; i < tb::Constants::NumOutfitSpriteIndex; i++)
+    for (std::uint32_t i = 0; i < tb::Constants::NumOutfitSpriteIndex; i++)
     {
         m_outfitSpriteIDArray.at(i).clear();
         m_outfitSpriteList.at(i).clear();
     }
 
-    m_outfitSpriteIDArray.at(tb::OutfitIndex::Head) = g_OutfitData.getDataList()->at(tb::OutfitIndex::Head).SpriteIDList_List.at(head);
-    m_outfitSpriteIDArray.at(tb::OutfitIndex::Body) = g_OutfitData.getDataList()->at(tb::OutfitIndex::Body).SpriteIDList_List.at(body);
-    m_outfitSpriteIDArray.at(tb::OutfitIndex::Legs) = g_OutfitData.getDataList()->at(tb::OutfitIndex::Legs).SpriteIDList_List.at(legs);
-    m_outfitSpriteIDArray.at(tb::OutfitIndex::Feet) = g_OutfitData.getDataList()->at(tb::OutfitIndex::Feet).SpriteIDList_List.at(feet);
+    m_outfitSpriteIDArray.at(tb::OutfitIndex::Head) = g_OutfitSpritesData.getDataList()->at(tb::OutfitIndex::Head).SpriteIDList_List.at(head);
+    m_outfitSpriteIDArray.at(tb::OutfitIndex::Body) = g_OutfitSpritesData.getDataList()->at(tb::OutfitIndex::Body).SpriteIDList_List.at(body);
+    m_outfitSpriteIDArray.at(tb::OutfitIndex::Legs) = g_OutfitSpritesData.getDataList()->at(tb::OutfitIndex::Legs).SpriteIDList_List.at(legs);
+    m_outfitSpriteIDArray.at(tb::OutfitIndex::Feet) = g_OutfitSpritesData.getDataList()->at(tb::OutfitIndex::Feet).SpriteIDList_List.at(feet);
 
-    for (unsigned int i = 0; i < tb::Constants::NumOutfitSpriteIndex; i++)
+    for (std::uint32_t i = 0; i < tb::Constants::NumOutfitSpriteIndex; i++)
     {
-        for (unsigned int j = 0; j < tb::Constants::NumOutfitSpriteDirections; j++)
+        for (std::uint32_t j = 0; j < tb::Constants::NumOutfitSpriteDirections; j++)
         {
             tb::SpriteID_t spriteID = m_outfitSpriteIDArray.at(i).at(j);
 
@@ -207,7 +227,7 @@ void Creature::setOutfitSprites(uint8_t head, uint8_t body, uint8_t legs, uint8_
     }
 }
 
-void Creature::setOutfit(uint8_t head, uint8_t body, uint8_t legs, uint8_t feet)
+void Creature::setOutfit(std::uint8_t head, std::uint8_t body, std::uint8_t legs, std::uint8_t feet)
 {
     if (head > tb::Constants::NumOutfitSpriteIDListHead - 1)
     {

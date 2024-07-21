@@ -68,7 +68,7 @@ void SpriteEditorWindow::draw()
 
         ImGui::TableSetColumnIndex(0);
 
-        if (ImGui::BeginChild("##SpriteEditorWindowChildSpritesheet", ImVec2(0, 0), true, ImGuiWindowFlags_AlwaysHorizontalScrollbar | ImGuiWindowFlags_AlwaysVerticalScrollbar))
+        if (ImGui::BeginChild("##SpriteEditorWindowChildSpritesheet", ImVec2(0, 0), ImGuiChildFlags_Border, ImGuiWindowFlags_AlwaysHorizontalScrollbar | ImGuiWindowFlags_AlwaysVerticalScrollbar))
         {
             for (tb::SpriteID_t i = 1; i < tb::Constants::NumSprites + 1; i++)
             {
@@ -77,10 +77,8 @@ void SpriteEditorWindow::draw()
 
                 std::string imageButtonID = std::format("##SpriteEditorWindowChildSpritesheetButton{}", i);
 
-                ImGui::PushID(imageButtonID.c_str());
-
                 // clicked on sprite
-                if (ImGui::ImageButton(sprite))
+                if (ImGui::ImageButton(imageButtonID.c_str(), sprite, sf::Vector2f(tb::Constants::SpriteSizeAsFloat, tb::Constants::SpriteSizeAsFloat)))
                 {
                     m_selectedSpriteID = i;
 
@@ -89,17 +87,15 @@ void SpriteEditorWindow::draw()
 
                 if (i == m_selectedSpriteID)
                 {
-                    tb::Utility::MyImGui::drawRectangleAtCurrentItem(ImColor(255, 0, 255));
+                    tb::Utility::LibImGui::drawRectangleAtCurrentItem(ImColor(255, 0, 255));
                 }
 
                 tb::SpriteFlags* spriteFlags = &m_spriteDataList->at(i).SpriteFlags;
 
                 if (spriteFlags->hasFlag(m_highlightSpriteFlag) == true)
                 {
-                    tb::Utility::MyImGui::drawRectangleAtCurrentItem(ImColor(255, 0, 0));
+                    tb::Utility::LibImGui::drawRectangleAtCurrentItem(ImColor(255, 0, 0));
                 }
-
-                ImGui::PopID();
 
                 if (i % 64 != 0)
                 {
@@ -107,7 +103,7 @@ void SpriteEditorWindow::draw()
                 }
             }
 
-            tb::Utility::MyImGui::scrollWindowWithMiddleMouseButton();
+            tb::Utility::LibImGui::scrollWindowWithMiddleMouseButton();
 
             ImGui::EndChild();
         }
@@ -119,7 +115,9 @@ void SpriteEditorWindow::draw()
         tb::Sprite sprite;
         sprite.setID(static_cast<tb::SpriteID_t>(m_selectedSpriteID));
 
-        ImGui::ImageButton(sprite);
+        std::string imageButtonID = std::format("##SpriteEditorWindowSelectedSpriteButton{}", m_selectedSpriteID);
+
+        ImGui::ImageButton(imageButtonID.c_str(), sprite, sf::Vector2f(tb::Constants::SpriteSizeAsFloat, tb::Constants::SpriteSizeAsFloat));
 
         ImGui::TextUnformatted("Highlight Flag:");
 
@@ -151,7 +149,7 @@ void SpriteEditorWindow::draw()
 
         ImGui::TextUnformatted("Flags:");
 
-        if (ImGui::BeginChild("##SpriteEditorWindowChildFlags", ImVec2(0, 0), true, ImGuiWindowFlags_AlwaysAutoResize))
+        if (ImGui::BeginChild("##SpriteEditorWindowChildFlags", ImVec2(0, 0), ImGuiChildFlags_Border, ImGuiWindowFlags_AlwaysAutoResize))
         {
             tb::SpriteFlags* spriteFlags = &m_spriteDataList->at(m_selectedSpriteID).SpriteFlags;
 
@@ -179,7 +177,7 @@ void SpriteEditorWindow::draw()
 
         ImGui::TextUnformatted("Properties:");
 
-        if (ImGui::BeginChild("##SpriteEditorWindowChildProperties", ImVec2(0, 0), true, ImGuiWindowFlags_AlwaysAutoResize))
+        if (ImGui::BeginChild("##SpriteEditorWindowChildProperties", ImVec2(0, 0), ImGuiChildFlags_Border, ImGuiWindowFlags_AlwaysAutoResize))
         {
             ImGui::InputText("Name##SpriteEditorWindowInputName", &m_spriteData->Name);
             ImGui::InputText("Article##SpriteEditorWindowInputArticle", &m_spriteData->Article);
@@ -187,8 +185,8 @@ void SpriteEditorWindow::draw()
 
             ImGui::InputText("Animation Name##SpriteEditorWindowInputAnimationName", &m_spriteData->AnimationName);
 
-            ImGui::InputScalar("Tile Width##SpriteEditorWindowInputTileWidth", ImGuiDataType_U8, &m_spriteData->TileWidth, &tb::Constants::MyImGui::InputScalarU8StepOne);
-            ImGui::InputScalar("Tile Height##SpriteEditorWindowInputTileHeight", ImGuiDataType_U8, &m_spriteData->TileHeight, &tb::Constants::MyImGui::InputScalarU8StepOne);
+            ImGui::InputScalar("Tile Width##SpriteEditorWindowInputTileWidth", ImGuiDataType_U8, &m_spriteData->TileWidth, &tb::Constants::LibImGui::InputScalarU8StepOne);
+            ImGui::InputScalar("Tile Height##SpriteEditorWindowInputTileHeight", ImGuiDataType_U8, &m_spriteData->TileHeight, &tb::Constants::LibImGui::InputScalarU8StepOne);
 
             ImGui::InputFloat("Weight##SpriteEditorWindowInputWeight", &m_spriteData->Weight, 1.0f, 10.0f, "%.2f");
             ImGui::InputFloat("Light Radius##SpriteEditorWindowInputLightRadius", &m_spriteData->LightRadius, 1.0f, 10.0f, "%.2f");

@@ -21,19 +21,19 @@ public:
     bool addSprite(tb::Sprite* sprite, bool applyTileWidthAndHeightOffset = false);
     void clear();
     void printDebugText();
-    void draw(sf::RenderTarget& target, sf::RenderStates states);
+    void draw(sf::RenderTarget& renderTarget, sf::RenderStates renderStates);
 
-    uint32_t getNumSprites();
+    std::uint32_t getNumSprites();
 
 private:
 
-    sf::VertexArray m_vertexArray;
+    std::vector<sf::Vertex> m_vertexList;
 
-    uint32_t m_numSprites = 0;
+    std::uint32_t m_numSprites = 0;
 
-    uint32_t m_maxVertices = 65535; // 16384 * 4 = 65535
+    std::uint32_t m_maxVertices = 65535; // 16384 * 4 = 65535
 
-    uint32_t m_maxSprites = 16384; // 4096 * 4 = 16384
+    std::uint32_t m_maxSprites = 16384; // 4096 * 4 = 16384
 };
 
 }

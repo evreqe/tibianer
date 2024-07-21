@@ -16,25 +16,23 @@ public:
     BitmapFont();
     ~BitmapFont();
 
-    bool load(const std::string& fileName, const sf::Vector2u& glyphSize, int characterSpace, int characterHeight, std::vector<int>* characterWidthList);
+    bool load(const std::string& fileName, const sf::Vector2u& glyphSize, std::int32_t characterSpace, std::int32_t characterHeight, std::vector<std::int32_t>* characterWidthList);
 
     sf::VertexArray* getVertexArray();
     sf::Texture* getTexture();
     sf::Vector2u getGlyphSize();
-    int getCharacterSpace();
-    int getCharacterHeight();
-    std::vector<int>* getCharacterWidthList();
+    std::int32_t getCharacterSpace();
+    std::int32_t getCharacterHeight();
+    std::vector<std::int32_t>* getCharacterWidthList();
 
 private:
 
     sf::VertexArray m_vertexArray;
     sf::Texture m_texture;
     sf::Vector2u m_glyphSize;
-    int m_characterSpace = 0;
-    int m_characterHeight = 1;
-    std::vector<int> m_characterWidthList;
-
-    const unsigned int m_numGlyphs = 96;
+    std::int32_t m_characterSpace = 0;
+    std::int32_t m_characterHeight = 1;
+    std::vector<std::int32_t> m_characterWidthList;
 
 };
 

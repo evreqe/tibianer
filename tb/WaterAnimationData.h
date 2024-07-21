@@ -39,13 +39,13 @@ public:
 
 private:
 
-    std::string m_fileName = "data/water_animations.txt";
+    const std::string m_fileName = "data/water_animations.txt";
 
     toml::table m_table;
 
     std::vector<tb::SpriteIDList> m_spriteIDList_List;
 
-    const unsigned int m_numToLoad = tb::Constants::NumWaterAnimationFrames;
+    const std::uint32_t m_numToLoad = tb::Constants::NumWaterAnimationFrames;
 
 };
 

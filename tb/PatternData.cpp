@@ -15,125 +15,132 @@ PatternData::~PatternData()
 
 bool PatternData::load()
 {
-    if (std::filesystem::exists(m_fileName) == false)
+    tb::Utility::LibToml::LoadFileResult loadFileResult = tb::Utility::LibToml::loadFile(m_table, m_fileName);
+
+    g_Log.write("{}", loadFileResult.Text);
+
+    if (loadFileResult.Success == false)
     {
-        g_Log.write("ERROR: File does not exist: {}\n", m_fileName);
         return false;
     }
-
-    m_table.clear();
-
-    try
-    {
-        m_table = toml::parse_file(m_fileName);
-    }
-    catch (const toml::parse_error& parseError)
-    {
-        g_Log.write("ERROR: Failed to load data from file: {}\n", m_fileName);
-        g_Log.write("Description: {}\nLine: {}\nColumn: {}\n", parseError.description(), parseError.source().begin.line, parseError.source().begin.column);
-        return false;
-    }
-
-    g_Log.write("Loaded data from file: {}\n", m_fileName);
 
     m_dataList.clear();
-    m_dataList.reserve(m_numToLoad);
+    m_dataList.reserve(m_numToReserve);
 
-    for (unsigned int i = 0; i < m_numToLoad; i++)
-    {
-        std::string index = std::to_string(i);
+    auto arrayOf = m_table["Pattern"].as_array();
 
-        if (!m_table[index])
+    std::uint32_t arrayIndex = 0;
+
+    bool foundError = false;
+
+    arrayOf->for_each
+    (
+        [this, &arrayIndex, &foundError](toml::table& arrayTable)
         {
-            break;
-        }
+            tb::PatternData::Data data;
 
-        g_Log.write("Index: {}\n", index);
+            data.Index = arrayIndex;
 
-        tb::PatternData::Data data;
+            g_Log.write("Index: {}\n", arrayIndex);
 
-        data.Index = i;
+            data.Name = arrayTable["Name"].value_or("");
 
-        data.Name = m_table[index]["Name"].value_or("");
+            g_Log.write("Name: {}\n", data.Name);
 
-        if (data.Name.size() == 0)
-        {
-            g_Log.write("ERROR: 'Name' is empty\n");
-            return false;
-        }
-
-        g_Log.write("Name: {}\n", data.Name);
-
-        std::string_view patternType = m_table[index]["Type"].value_or("");
-
-        auto patternTypeE = magic_enum::enum_cast<tb::PatternType>(patternType);
-        if (patternTypeE.has_value())
-        {
-            data.PatternType = patternTypeE.value();
-
-            g_Log.write("Type: {}\n", magic_enum::enum_name(patternTypeE.value()));
-        }
-        else
-        {
-            g_Log.write("ERROR: 'Type' is unknown\n");
-            return false;
-        }
-
-        data.Width = static_cast<uint8_t>(m_table[index]["Width"].value_or(0));
-        data.Height = static_cast<uint8_t>(m_table[index]["Height"].value_or(0));
-
-        if (data.Width == 0 || data.Height == 0)
-        {
-            g_Log.write("ERROR: 'Width' or 'Height' is zero\n");
-            return false;
-        }
-
-        g_Log.write("Width: {}\n", data.Width);
-        g_Log.write("Height: {}\n", data.Height);
-
-        unsigned int numSpritesRequired = data.Width * data.Height;
-
-        data.SpriteIDList.reserve(numSpritesRequired);
-
-        auto spritesArray = m_table[index]["Sprites"].as_array();
-
-        if (spritesArray == nullptr)
-        {
-            g_Log.write("ERROR: spritesArray == nullptr\n");
-            return false;
-        }
-
-        for (unsigned int j = 0; auto& spritesNode : *spritesArray)
-        {
-            tb::SpriteID_t spriteID = static_cast<tb::SpriteID_t>(spritesNode.value_or(0));
-            if (spriteID == 0)
+            if (data.Name.size() == 0)
             {
-                g_Log.write("ERROR: Sprite ID is zero at index: [{}] Sprites=[#{}]\n", i, j);
+                g_Log.write("ERROR: 'Name' is empty\n");
+                foundError = true;
                 return false;
             }
 
-            data.SpriteIDList.push_back(spriteID);
+            std::string_view patternType = arrayTable["Type"].value_or("");
 
-            j++;
+            auto patternTypeE = magic_enum::enum_cast<tb::PatternType>(patternType);
+            if (patternTypeE.has_value())
+            {
+                data.PatternType = patternTypeE.value();
+
+                g_Log.write("Type: {}\n", magic_enum::enum_name(patternTypeE.value()));
+            }
+            else
+            {
+                g_Log.write("ERROR: 'Type' is unknown\n");
+                foundError = true;
+                return false;
+            }
+
+            data.Width = arrayTable["Width"].value_or(0);
+            data.Height = arrayTable["Height"].value_or(0);
+
+            g_Log.write("Width: {}\n", data.Width);
+            g_Log.write("Height: {}\n", data.Height);
+
+            if (data.Width == 0 || data.Height == 0)
+            {
+                g_Log.write("ERROR: 'Width' or 'Height' is zero\n");
+                foundError = true;
+                return false;
+            }
+
+            std::uint32_t numSpritesRequired = data.Width * data.Height;
+
+            data.SpriteIDList.reserve(numSpritesRequired);
+
+            auto spriteArray = arrayTable["SpriteList"].as_array();
+
+            if (spriteArray == nullptr)
+            {
+                g_Log.write("ERROR: 'SpriteList' is nullptr\n");
+                foundError = true;
+                return false;
+            }
+
+            for (std::uint32_t spriteIndex = 0; auto& spriteNode : *spriteArray)
+            {
+                tb::SpriteID_t spriteID = static_cast<tb::SpriteID_t>(spriteNode.value_or(tb::Constants::SpriteIDNull));
+                if (spriteID == tb::Constants::SpriteIDNull)
+                {
+                    g_Log.write("ERROR: Sprite ID is zero: SpriteList=[Index: {}]\n", spriteIndex);
+                    foundError = true;
+                    return false;
+                }
+
+                data.SpriteIDList.push_back(spriteID);
+
+                spriteIndex++;
+            }
+
+            if (data.SpriteIDList.size() == 0)
+            {
+                g_Log.write("ERROR: 'SpriteList' is empty\n");
+                foundError = true;
+                return false;
+            }
+
+            if (data.SpriteIDList.size() != numSpritesRequired)
+            {
+                g_Log.write("ERROR: 'SpriteList' has the wrong size, {} instead of {}\n", data.SpriteIDList.size(), numSpritesRequired);
+                foundError = true;
+                return false;
+            }
+
+            std::string spriteIDListAsString = fmt::format("{}", data.SpriteIDList);
+
+            g_Log.write("SpriteList: {}\n", spriteIDListAsString);
+
+            m_dataList.push_back(data);
+
+            arrayIndex++;
+
+            return true;
         }
+    );
 
-        if (data.SpriteIDList.size() == 0)
-        {
-            g_Log.write("ERROR: 'Sprites' is empty\n");
-            return false;
-        }
-
-        if (data.SpriteIDList.size() != numSpritesRequired)
-        {
-            g_Log.write("ERROR: 'Sprites' has the wrong size, {} instead of {}\n", data.SpriteIDList.size(), numSpritesRequired);
-            return false;
-        }
-
-        //std::string spriteIDListStr = fmt::format("{}", data.SpriteIDList);
-
-        //g_Log.write("Sprites: {}\n", spriteIDListStr);
-
-        m_dataList.push_back(data);
+    if (foundError == true)
+    {
+        g_Log.write("ERROR: Cannot load data because an error was found\n");
+        return false;
     }
 
     g_Log.write("Loaded data size: {}\n", m_dataList.size());
@@ -192,7 +199,7 @@ bool PatternData::save()
 
         file << "Sprites=[";
 
-        uint32_t spriteIndex = 0;
+        std::uint32_t spriteIndex = 0;
 
         for (auto& spriteID : data.SpriteIDList)
         {

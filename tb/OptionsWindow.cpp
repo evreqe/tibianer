@@ -76,7 +76,7 @@ void OptionsWindow::draw()
             ImGui::Checkbox("Vertical Sync##OptionsWindowCheckboxWindowVerticalSync", &m_optionsData.WindowVerticalSync);
 
             ImGui::TextUnformatted("Frame Rate Limit:");
-            ImGui::InputScalar("##OptionsWindowInputWindowFrameRateLimit", ImGuiDataType_U32, &m_optionsData.WindowFrameRateLimit, &tb::Constants::MyImGui::InputScalarU32StepOne);
+            ImGui::InputScalar("##OptionsWindowInputWindowFrameRateLimit", ImGuiDataType_U32, &m_optionsData.WindowFrameRateLimit, &tb::Constants::LibImGui::InputScalarU32StepOne);
 
             ImGui::EndChild();
 
@@ -134,10 +134,10 @@ void OptionsWindow::draw()
             ImGui::Checkbox("Music##OptionsWindowCheckboxAudioMusic", &m_optionsData.AudioMusic);
 
             ImGui::TextUnformatted("Sound Volume:");
-            ImGui::InputScalar("##OptionsWindowInputAudioSoundVolume", ImGuiDataType_U8, &m_optionsData.AudioSoundVolume, &tb::Constants::MyImGui::InputScalarU8StepOne);
+            ImGui::InputScalar("##OptionsWindowInputAudioSoundVolume", ImGuiDataType_U8, &m_optionsData.AudioSoundVolume, &tb::Constants::LibImGui::InputScalarU8StepOne);
 
             ImGui::TextUnformatted("Music Volume:");
-            ImGui::InputScalar("##OptionsWindowInputAudioMusicVolume", ImGuiDataType_U8, &m_optionsData.AudioMusicVolume, &tb::Constants::MyImGui::InputScalarU8StepOne);
+            ImGui::InputScalar("##OptionsWindowInputAudioMusicVolume", ImGuiDataType_U8, &m_optionsData.AudioMusicVolume, &tb::Constants::LibImGui::InputScalarU8StepOne);
 
             ImGui::Separator();
 

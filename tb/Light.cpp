@@ -84,12 +84,12 @@
     //linearBurn.alphaSrcFactor = sf::BlendMode::Factor::One;
     //linearBurn.alphaDstFactor = sf::BlendMode::Factor::SrcColor;
 
-    static uint32_t colorEquation = 2; // sf::BlendMode::Equation::Add;
-    static uint32_t alphaEquation = 2; // sf::BlendMode::Equation::Add;
-    static uint32_t colorSrcFactor = 3; // sf::BlendMode::Factor::One;
-    static uint32_t colorDstFactor = 2; // sf::BlendMode::Factor::SrcColor;
-    static uint32_t alphaSrcFactor = 8; // sf::BlendMode::Factor::One;
-    static uint32_t alphaDstFactor = 8; // sf::BlendMode::Factor::SrcColor;
+    static std::uint32_t colorEquation = 2; // sf::BlendMode::Equation::Add;
+    static std::uint32_t alphaEquation = 2; // sf::BlendMode::Equation::Add;
+    static std::uint32_t colorSrcFactor = 3; // sf::BlendMode::Factor::One;
+    static std::uint32_t colorDstFactor = 2; // sf::BlendMode::Factor::SrcColor;
+    static std::uint32_t alphaSrcFactor = 8; // sf::BlendMode::Factor::One;
+    static std::uint32_t alphaDstFactor = 8; // sf::BlendMode::Factor::SrcColor;
 
     bool isVisible = true;
     ImGui::Begin("Blend Mode##BlendModeWindow", &isVisible);

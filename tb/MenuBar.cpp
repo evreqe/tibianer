@@ -192,6 +192,36 @@ void MenuBar::draw()
             ImGui::EndMenu();
         }
 
+        if (ImGui::BeginMenu("Gamepad Controller##MenuItemGamepadController"))
+        {
+            for (unsigned int i = 0; i < sf::Joystick::Count; i++)
+            {
+                if (sf::Joystick::isConnected(i) == true)
+                {
+                    tb::JoystickList* joystickList = g_Game.getJoystickList();
+
+                    tb::Joystick::Properties_t* joystickProperties = joystickList->at(i).getProperties();
+
+                    std::string joystickMenuItemText = std::format("{}: {}##MenuItemGamepadControllerIndex{}", i, joystickProperties->Name, i);
+
+                    bool isChecked = i == g_Game.getJoystickIndex();
+
+                    if (ImGui::MenuItem(joystickMenuItemText.c_str(), 0, isChecked))
+                    {
+                        g_Game.setJoystickIndex(i);
+                    }
+                }
+                else
+                {
+                    std::string joystickMenuItemText = std::format("{}: (Disconnected)##MenuItemGamepadControllerIndex{}", i, i);
+
+                    ImGui::MenuItem(joystickMenuItemText.c_str(), 0, false, false);
+                }
+            }
+
+            ImGui::EndMenu();
+        }
+
         if (ImGui::BeginMenu("Developer##MenuItemDeveloper"))
         {
             if (ImGui::MenuItem("Debug Mode##MenuItemDeveloperDebugMode", 0, isDebugModeEnabled == true))
@@ -209,6 +239,11 @@ void MenuBar::draw()
             if (ImGui::MenuItem("Sprite Data...##MenuItemDeveloperSpriteData", 0))
             {
                 g_SpriteDataWindow.toggleIsVisible();
+            }
+
+            if (ImGui::MenuItem("Map Generator...##MenuItemDeveloperMapGeneratorWindow", 0))
+            {
+                g_MapGeneratorWindow.toggleIsVisible();
             }
 
             if (ImGui::MenuItem("Overlay...##MenuItemDeveloperOverlayWindow", 0, nullptr, gameState == tb::GameState::InGame))
@@ -238,6 +273,20 @@ void MenuBar::draw()
             if (ImGui::MenuItem("Classic Mode##MenuItemDeveloperGUIClassicMode", 0))
             {
                 ImGui::StyleColorsClassic();
+            }
+
+            ImGui::Separator();
+
+            ImGui::MenuItem("---- Game State ----##MenuItemDeveloperSeparatorGameState", 0, nullptr, false);
+
+            if (ImGui::MenuItem("InGame##MenuItemDeveloperGameStateInGame", 0))
+            {
+                g_Game.setGameState(tb::GameState::InGame);
+            }
+
+            if (ImGui::MenuItem("Testing##MenuItemDeveloperGameStateTesting", 0))
+            {
+                g_Game.setGameState(tb::GameState::Testing);
             }
 
             ImGui::Separator();

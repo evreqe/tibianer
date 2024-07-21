@@ -15,94 +15,100 @@ AnimationData::~AnimationData()
 
 bool AnimationData::load()
 {
-    if (std::filesystem::exists(m_fileName) == false)
+    tb::Utility::LibToml::LoadFileResult loadFileResult = tb::Utility::LibToml::loadFile(m_table, m_fileName);
+
+    g_Log.write("{}", loadFileResult.Text);
+
+    if (loadFileResult.Success == false)
     {
-        g_Log.write("ERROR: File does not exist: {}\n", m_fileName);
         return false;
     }
-
-    m_table.clear();
-
-    try
-    {
-        m_table = toml::parse_file(m_fileName);
-    }
-    catch (const toml::parse_error& parseError)
-    {
-        g_Log.write("ERROR: Failed to load data from file: {}\n", m_fileName);
-        g_Log.write("Description: {}\nLine: {}\nColumn: {}\n", parseError.description(), parseError.source().begin.line, parseError.source().begin.column);
-        return false;
-    }
-
-    g_Log.write("Loaded data from file: {}\n", m_fileName);
 
     m_dataList.clear();
-    m_dataList.reserve(m_numToLoad);
+    m_dataList.reserve(m_numToReserve);
 
-    for (unsigned int i = 0; i < m_numToLoad; i++)
-    {
-        std::string index = std::to_string(i);
+    auto arrayOf = m_table["Animation"].as_array();
 
-        if (!m_table[index])
+    std::uint32_t arrayIndex = 0;
+
+    bool foundError = false;
+
+    arrayOf->for_each
+    (
+        [this, &arrayIndex, &foundError](toml::table& arrayTable)
         {
-            continue;
-        }
+            tb::AnimationData::Data data;
 
-        g_Log.write("Index: {}\n", index);
+            data.Index = arrayIndex;
 
-        tb::AnimationData::Data data;
+            g_Log.write("Index: {}\n", arrayIndex);
 
-        data.Index = i;
+            data.Name = arrayTable["Name"].value_or("");
 
-        data.Name = m_table[index]["Name"].value_or("");
+            g_Log.write("Name: {}\n", data.Name);
 
-        g_Log.write("Name: {}\n", data.Name);
-
-        if (data.Name.size() == 0)
-        {
-            g_Log.write("ERROR: 'Name' is empty\n");
-            return false;
-        }
-
-        tb::SpriteIDList spriteIDList;
-        spriteIDList.reserve(m_numSpritesPerAnimationToReserve);
-
-        auto spritesArray = m_table[index]["Sprites"].as_array();
-
-        if (spritesArray == nullptr)
-        {
-            g_Log.write("ERROR: spritesArray == nullptr\n");
-            return false;
-        }
-
-        for (unsigned int j = 0; auto& spritesNode : *spritesArray)
-        {
-            tb::SpriteID_t spriteID = static_cast<tb::SpriteID_t>(spritesNode.value_or(tb::Constants::SpriteIDNull));
-            if (spriteID == tb::Constants::SpriteIDNull)
+            if (data.Name.size() == 0)
             {
-                g_Log.write("ERROR: Sprite ID is zero at index: [{}] Sprites=[#{}]\n", i, j);
+                g_Log.write("ERROR: 'Name' is empty\n");
+                foundError = true;
                 return false;
             }
 
-            spriteIDList.push_back(spriteID);
+            tb::SpriteIDList spriteIDList;
+            spriteIDList.reserve(m_numSpritesPerAnimationToReserve);
+
+            auto spriteArray = arrayTable["SpriteList"].as_array();
+
+            if (spriteArray == nullptr)
+            {
+                g_Log.write("ERROR: 'SpriteList' is nullptr\n");
+                foundError = true;
+                return false;
+            }
+
+            for (std::uint32_t spriteIndex = 0; auto& spriteNode : *spriteArray)
+            {
+                tb::SpriteID_t spriteID = static_cast<tb::SpriteID_t>(spriteNode.value_or(tb::Constants::SpriteIDNull));
+                if (spriteID == tb::Constants::SpriteIDNull)
+                {
+                    g_Log.write("ERROR: Sprite ID is zero at index: SpriteList=[Index: {}]\n", spriteIndex);
+                    foundError = true;
+                    return false;
+                }
+
+                spriteIDList.push_back(spriteID);
+
+                spriteIndex++;
+            }
+
+            data.SpriteIDList = std::move(spriteIDList);
+
+            if (data.SpriteIDList.size() == 0)
+            {
+                g_Log.write("ERROR: 'SpriteList' is empty\n");
+                foundError = true;
+                return false;
+            }
+
+            std::string spriteIDListAsString = fmt::format("{}", data.SpriteIDList);
+
+            g_Log.write("SpriteList: {}\n", spriteIDListAsString);
+
+            m_dataList.push_back(data);
+
+            arrayIndex++;
+
+            return true;
         }
+    );
 
-        data.SpriteIDList = std::move(spriteIDList);
-
-        if (data.SpriteIDList.size() == 0)
-        {
-            g_Log.write("ERROR: 'Sprites' is empty at index: [{}]\n", i);
-            return false;
-        }
-
-        std::string spriteIDListStr = fmt::format("{}", data.SpriteIDList);
-
-        g_Log.write("Sprites: {}\n", spriteIDListStr);
-
-        m_dataList.push_back(data);
+    if (foundError == true)
+    {
+        g_Log.write("ERROR: Cannot load data because an error was found\n");
+        return false;
     }
 
-    g_Log.write("Loaded data size: {}\n", m_dataList.size());
+    g_Log.write("Loaded data list size: {}\n", m_dataList.size());
 
     return true;
 }
@@ -120,7 +126,7 @@ tb::AnimationData::DataList* AnimationData::getDataList()
     return &m_dataList;
 }
 
-tb::AnimationData::Data* AnimationData::getDataByIndex(uint32_t index)
+tb::AnimationData::Data* AnimationData::getDataByIndex(std::uint32_t index)
 {
     return &m_dataList.at(index);
 }

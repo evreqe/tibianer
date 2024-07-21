@@ -36,9 +36,9 @@ public:
     using List = std::vector<tb::TileMap::Ptr>;
     using Array = std::array<tb::TileMap, tb::Constants::NumZAxis>;
 
-    bool load(uint32_t tileWidth, uint32_t tileHeight, const tb::SpriteIDList& tileSpriteIDList, const std::string& name, tb::TileMapType tileMapType, tb::ZAxis_t z);
+    bool load(std::uint32_t tileWidth, std::uint32_t tileHeight, const tb::SpriteIDList& tileSpriteIDList, const std::string& name, tb::TileMapType tileMapType, tb::ZAxis_t z);
 
-    bool isTileIndexOutOfBounds(uint32_t tileIndex);
+    bool isTileIndexOutOfBounds(std::uint32_t tileIndex);
 
     void updateTileSpriteID(tb::Tile::Ptr tile, tb::SpriteID_t spriteID);
     void updateTileSpriteFlags(tb::Tile::Ptr tile, tb::SpriteID_t spriteID);
@@ -57,7 +57,7 @@ public:
 
     bool isLoaded();
 
-    const std::string& getName();
+    std::string getName();
     void setName(const std::string& name);
 
     tb::TileMapType getTileMapType();
@@ -80,10 +80,10 @@ private:
 
     tb::TileMapType m_tileMapType = tb::TileMapType::Tiles;
 
-    uint32_t m_tileWidth = 0;
-    uint32_t m_tileHeight = 0;
+    std::uint32_t m_tileWidth = 0;
+    std::uint32_t m_tileHeight = 0;
 
-    uint32_t m_numTiles = 0;
+    std::uint32_t m_numTiles = 0;
 
     tb::ZAxis_t m_z = tb::ZAxis::Default;
 
@@ -91,7 +91,7 @@ private:
 
     tb::Tile::List m_tileList;
 
-    uint32_t m_waterAnimationFrame = 0;
+    std::uint32_t m_waterAnimationFrame = 0;
 
     std::vector<sf::Vertex> m_tileVertexList;
 

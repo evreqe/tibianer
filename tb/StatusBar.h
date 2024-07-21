@@ -49,7 +49,7 @@ private:
 
     float m_height = m_heightDefault;
 
-    const float m_bottomRightTextPadding = 8.0f;
+    const float m_textPadding = 8.0f;
 
     const std::string m_TextDefault = "Welcome to Tibianer!";
 

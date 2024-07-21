@@ -17,7 +17,7 @@ public:
     SpriteFlags();
     ~SpriteFlags();
 
-    size_t getCount();
+    std::size_t getCount();
 
     void setFlag(tb::SpriteFlag spriteFlag, bool value);
     void flipFlag(tb::SpriteFlag spriteFlag);

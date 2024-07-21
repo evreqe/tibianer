@@ -8,7 +8,7 @@
 #include "tb/Utility.h"
 #include "tb/Log.h"
 
-#include "tb/GuiData.h"
+#include "tb/GuiRectData.h"
 
 #include "tb/Sprite.h"
 

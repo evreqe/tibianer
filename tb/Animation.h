@@ -21,7 +21,7 @@ public:
 
     Animation();
     ~Animation();
-    Animation(const sf::Vector2i& tileCoords, tb::ZAxis_t z, uint32_t index);
+    Animation(const sf::Vector2i& tileCoords, tb::ZAxis_t z, std::uint32_t index);
     Animation(const sf::Vector2i& tileCoords, tb::ZAxis_t z, const std::string& name);
 
     using Ptr = std::shared_ptr<tb::Animation>;
@@ -51,11 +51,11 @@ private:
 
     sf::Clock m_clock;
 
-    uint32_t m_currentFrame = 0;
+    std::uint32_t m_currentFrame = 0;
 
     sf::Time m_frameTime = sf::seconds(0.1f);
 
-    uint32_t m_numRepeat = 0;
+    std::uint32_t m_numRepeat = 0;
 
 };
 

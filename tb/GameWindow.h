@@ -65,13 +65,13 @@ public:
     void setLightBrightness(tb::LightBrightness_t lightBrightness);
     tb::LightBrightness_t getLightBrightness();
 
-    int getNumTilesX();
-    int getNumTilesY();
+    std::uint32_t getNumTilesX();
+    std::uint32_t getNumTilesY();
 
-    int getNumTilesFromCenterX();
-    int getNumTilesFromCenterY();
+    std::uint32_t getNumTilesFromCenterX();
+    std::uint32_t getNumTilesFromCenterY();
 
-    int getNumTilesToDrawOffscreen();
+    std::uint32_t getNumTilesToDrawOffscreen();
 
 private:
 
@@ -97,13 +97,13 @@ private:
     sf::Clock m_animatedObjectsClock;
     const sf::Time m_animatedObjectsTime = sf::seconds(0.5f);
 
-    const int m_numTilesX = 13; // number of tiles visible on the x-axis
-    const int m_numTilesY = 9; // number of tiles visible on the y-axis
+    const std::uint32_t m_numTilesX = 13; // number of tiles visible on the x-axis
+    const std::uint32_t m_numTilesY = 9; // number of tiles visible on the y-axis
 
-    const int m_numTilesFromCenterX = 6; // number of tiles visible to the west or east of the player on the x-axis
-    const int m_numTilesFromCenterY = 4; // number of tiles visible to the north or south of the player on the y-axis
+    const std::uint32_t m_numTilesFromCenterX = 6; // number of tiles visible to the west or east of the player on the x-axis
+    const std::uint32_t m_numTilesFromCenterY = 4; // number of tiles visible to the north or south of the player on the y-axis
 
-    const int m_numTilesToDrawOffscreen = 1; // need to draw some tiles that are not visible in order to account for large objects that take up 4 tiles
+    const std::uint32_t m_numTilesToDrawOffscreen = 1; // need to draw some tiles that are not visible in order to account for large objects that take up 4 tiles
 
 };
 

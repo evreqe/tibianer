@@ -13,12 +13,12 @@ Tile::~Tile()
     //
 }
 
-uint32_t Tile::getTileIndex()
+std::uint32_t Tile::getTileIndex()
 {
     return m_tileIndex;
 }
 
-void Tile::setTileIndex(uint32_t tileIndex)
+void Tile::setTileIndex(std::uint32_t tileIndex)
 {
     m_tileIndex = tileIndex;
 }
@@ -58,7 +58,7 @@ void Tile::setPixelCoords(const sf::Vector2f& pixelCoords)
     }
     else
     {
-        m_tileCoords.x = static_cast<int>(pixelCoords.x / tb::Constants::TileSizeFloat);
+        m_tileCoords.x = static_cast<int>(pixelCoords.x / tb::Constants::TileSizeAsFloat);
     }
 
     if (pixelCoords.y < 0.0f)
@@ -67,7 +67,7 @@ void Tile::setPixelCoords(const sf::Vector2f& pixelCoords)
     }
     else
     {
-        m_tileCoords.y = static_cast<int>(pixelCoords.y / tb::Constants::TileSizeFloat);
+        m_tileCoords.y = static_cast<int>(pixelCoords.y / tb::Constants::TileSizeAsFloat);
     }
 }
 
@@ -80,7 +80,7 @@ void Tile::setPixelX(float pixelX)
 {
     m_pixelCoords.x = pixelX;
 
-    m_tileCoords.x = static_cast<int>(pixelX / tb::Constants::TileSizeFloat);
+    m_tileCoords.x = static_cast<int>(pixelX / tb::Constants::TileSizeAsFloat);
 }
 
 float Tile::getPixelY()
@@ -92,7 +92,7 @@ void Tile::setPixelY(float pixelY)
 {
     m_pixelCoords.y = pixelY;
 
-    m_tileCoords.y = static_cast<int>(pixelY / tb::Constants::TileSizeFloat);
+    m_tileCoords.y = static_cast<int>(pixelY / tb::Constants::TileSizeAsFloat);
 }
 
 sf::Vector2i Tile::getTileCoords()
@@ -108,24 +108,24 @@ void Tile::setTileCoords(const sf::Vector2i& tileCoords)
     m_pixelCoords.y = static_cast<float>(tileCoords.y * tb::Constants::TileSize);
 }
 
-int Tile::getTileX()
+std::int32_t Tile::getTileX()
 {
     return m_tileCoords.x;
 }
 
-void Tile::setTileX(int tileX)
+void Tile::setTileX(std::int32_t tileX)
 {
     m_tileCoords.x = tileX;
 
     m_pixelCoords.x = static_cast<float>(tileX * tb::Constants::TileSize);
 }
 
-int Tile::getTileY()
+std::int32_t Tile::getTileY()
 {
     return m_tileCoords.y;
 }
 
-void Tile::setTileY(int tileY)
+void Tile::setTileY(std::int32_t tileY)
 {
     m_tileCoords.y = tileY;
 
@@ -142,12 +142,12 @@ void Tile::setZ(tb::ZAxis_t z)
     m_z = z;
 }
 
-uint8_t Tile::getHeight()
+std::uint8_t Tile::getHeight()
 {
     return m_height;
 }
 
-void Tile::setHeight(uint8_t height)
+void Tile::setHeight(std::uint8_t height)
 {
     m_height = height;
 }

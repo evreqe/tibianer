@@ -140,7 +140,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalIncludeDirectories>Z:\Code\!libraries\boost_1_80_0;Z:\Code\!libraries\fmt-9.1.0;Z:\Code\!libraries\fmtlog-2.2.1;Z:\Code\!libraries\sol2-3.3.0\include;Z:\Code\!libraries\SFML\include;Z:\Code\!libraries\Thor\include;Z:\Code\!libraries\Thor\extlibs\aurora\include;Z:\Code\tibianer\tibianer\;Z:\Code\tibianer\tibianer\boost_zlib;Z:\Code\tibianer\tibianer\boost_base64;Z:\Code\tibianer\tibianer\pugixml;Z:\Code\tibianer\tibianer\imgui;Z:\Code\tibianer\tibianer\imgui-sfml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Z:\Code\!libraries_x64\boost_1_85_0\;Z:\Code\!libraries_x64\fmt-11.0.0\include;Z:\Code\!libraries_x64\scnlib-3.0.1\include;Z:\Code\!libraries_x64\pugixml-1.14\include;Z:\Code\!libraries_x64\tomlplusplus-3.4.0;Z:\Code\!libraries_x64\sol2-3.3.0\include;Z:\Code\!libraries_x64\SFML-2.6.1\include;Z:\Code\!libraries_x64\Thor\include;Z:\Code\!libraries_x64\Thor\extlibs\aurora\include;Z:\Code\tibianer\tibianer\;Z:\Code\tibianer\tibianer\boost_zlib;Z:\Code\tibianer\tibianer\boost_base64;Z:\Code\tibianer\tibianer\imgui;Z:\Code\tibianer\tibianer\imgui-sfml;Z:\Code\tibianer\tibianer\magic_enum;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
       <EnableModules>false</EnableModules>
     </ClCompile>
@@ -149,8 +149,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>opengl32.lib;openal32.lib;freetype.lib;ogg.lib;vorbis.lib;vorbisenc.lib;vorbisfile.lib;flac.lib;sfml-audio.lib;sfml-graphics.lib;sfml-main.lib;sfml-network.lib;sfml-system.lib;sfml-window.lib;thor.lib;libboost_iostreams-vc142-mt-x32-1_73.lib;libboost_zlib-vc142-mt-x32-1_73.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>D:\Code\!libraries\SFML\lib;D:\Code\!libraries\Thor\lib;D:\Code\!libraries\boost_1_73_0\lib32-msvc-14.2;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;openal32.lib;freetype.lib;ogg.lib;vorbis.lib;vorbisenc.lib;vorbisfile.lib;flac.lib;sfml-audio.lib;sfml-graphics.lib;sfml-main.lib;sfml-network.lib;sfml-system.lib;sfml-window.lib;thor.lib;lua51.lib;luajit.lib;lua-5.4.4.lib;fmt.lib;scn.lib;pugixml.lib;libboost_iostreams-vc143-mt-x64-1_85.lib;libboost_zlib-vc143-mt-x64-1_85.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>Z:\Code\!libraries_x64\SFML-2.6.1\lib;Z:\Code\!libraries_x64\Thor\lib;Z:\Code\!libraries_x64\boost_1_85_0\lib64-msvc-14.3;Z:\Code\!libraries_x64\fmt-11.0.0\lib;Z:\Code\!libraries_x64\scnlib-3.0.1\lib;Z:\Code\!libraries_x64\sol2-3.3.0\lib;Z:\Code\!libraries_x64\pugixml-1.14\lib;Z:\Code\!libraries_x64\LuaJIT-2.1\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -162,7 +162,6 @@
     <ClCompile Include="imgui\imgui_tables.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="pugixml\pugixml.cpp" />
     <ClCompile Include="tb\AboutTibianerWindow.cpp" />
     <ClCompile Include="tb\AboutTibiaWindow.cpp" />
     <ClCompile Include="tb\Animation.cpp" />
@@ -173,10 +172,13 @@
     <ClCompile Include="tb\BitmapFontTextBatch.cpp" />
     <ClCompile Include="tb\BitmapFontData.cpp" />
     <ClCompile Include="tb\BitmapFontText.cpp" />
+    <ClCompile Include="tb\ChatInputTextWindow.cpp" />
+    <ClCompile Include="tb\ChatTextWindow.cpp" />
     <ClCompile Include="tb\ClickRectData.cpp" />
     <ClCompile Include="tb\CommentsWindow.cpp" />
     <ClCompile Include="tb\ConnectionWindow.cpp" />
     <ClCompile Include="tb\Container.cpp" />
+    <ClCompile Include="tb\ContainerWindow.cpp" />
     <ClCompile Include="tb\ControlsWindow.cpp" />
     <ClCompile Include="tb\Creature.cpp" />
     <ClCompile Include="tb\CreatureData.cpp" />
@@ -188,9 +190,12 @@
     <ClCompile Include="tb\FloatingText.cpp" />
     <ClCompile Include="tb\FontData.cpp" />
     <ClCompile Include="tb\GameWindow.cpp" />
-    <ClCompile Include="tb\GuiData.cpp" />
+    <ClCompile Include="tb\GuiRectData.cpp" />
     <ClCompile Include="tb\HotkeysData.cpp" />
     <ClCompile Include="tb\HotkeysWindow.cpp" />
+    <ClCompile Include="tb\Joystick.cpp" />
+    <ClCompile Include="tb\JoystickData.cpp" />
+    <ClCompile Include="tb\Light.cpp" />
     <ClCompile Include="tb\LightBatch.cpp" />
     <ClCompile Include="tb\LogWindow.cpp" />
     <ClCompile Include="tb\Game.cpp" />
@@ -198,6 +203,10 @@
     <ClCompile Include="tb\Log.cpp" />
     <ClCompile Include="tb\Map.cpp" />
     <ClCompile Include="tb\MapData.cpp" />
+    <ClCompile Include="tb\MapGenerator.cpp" />
+    <ClCompile Include="tb\MapGeneratorData.cpp" />
+    <ClCompile Include="tb\MapGeneratorPixelData.cpp" />
+    <ClCompile Include="tb\MapGeneratorWindow.cpp" />
     <ClCompile Include="tb\MapSelectWindow.cpp" />
     <ClCompile Include="tb\MenuBar.cpp" />
     <ClCompile Include="tb\MessageOfTheDayData.cpp" />
@@ -207,7 +216,7 @@
     <ClCompile Include="tb\Object.cpp" />
     <ClCompile Include="tb\OptionsData.cpp" />
     <ClCompile Include="tb\OptionsWindow.cpp" />
-    <ClCompile Include="tb\OutfitData.cpp" />
+    <ClCompile Include="tb\OutfitSpritesData.cpp" />
     <ClCompile Include="tb\OverlayWindow.cpp" />
     <ClCompile Include="tb\PatternData.cpp" />
     <ClCompile Include="tb\Projectile.cpp" />
@@ -253,10 +262,14 @@
     <ClInclude Include="imgui\imstb_textedit.h" />
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="magic_enum\magic_enum.hpp" />
+    <ClInclude Include="magic_enum\magic_enum_all.hpp" />
+    <ClInclude Include="magic_enum\magic_enum_containers.hpp" />
+    <ClInclude Include="magic_enum\magic_enum_flags.hpp" />
     <ClInclude Include="magic_enum\magic_enum_format.hpp" />
     <ClInclude Include="magic_enum\magic_enum_fuse.hpp" />
-    <ClInclude Include="pugixml\pugiconfig.hpp" />
-    <ClInclude Include="pugixml\pugixml.hpp" />
+    <ClInclude Include="magic_enum\magic_enum_iostream.hpp" />
+    <ClInclude Include="magic_enum\magic_enum_switch.hpp" />
+    <ClInclude Include="magic_enum\magic_enum_utility.hpp" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="tb\AboutTibianerWindow.h" />
     <ClInclude Include="tb\AboutTibiaWindow.h" />
@@ -268,11 +281,14 @@
     <ClInclude Include="tb\BitmapFontTextBatch.h" />
     <ClInclude Include="tb\BitmapFontData.h" />
     <ClInclude Include="tb\BitmapFontText.h" />
+    <ClInclude Include="tb\ChatInputTextWindow.h" />
+    <ClInclude Include="tb\ChatTextWindow.h" />
     <ClInclude Include="tb\ClickRectData.h" />
     <ClInclude Include="tb\CommentsWindow.h" />
     <ClInclude Include="tb\ConnectionWindow.h" />
     <ClInclude Include="tb\Constants.h" />
     <ClInclude Include="tb\Container.h" />
+    <ClInclude Include="tb\ContainerWindow.h" />
     <ClInclude Include="tb\ControlsWindow.h" />
     <ClInclude Include="tb\Creature.h" />
     <ClInclude Include="tb\CreatureData.h" />
@@ -284,9 +300,12 @@
     <ClInclude Include="tb\FloatingText.h" />
     <ClInclude Include="tb\FontData.h" />
     <ClInclude Include="tb\GameWindow.h" />
-    <ClInclude Include="tb\GuiData.h" />
+    <ClInclude Include="tb\GuiRectData.h" />
     <ClInclude Include="tb\HotkeysData.h" />
     <ClInclude Include="tb\HotkeysWindow.h" />
+    <ClInclude Include="tb\Joystick.h" />
+    <ClInclude Include="tb\JoystickData.h" />
+    <ClInclude Include="tb\Light.h" />
     <ClInclude Include="tb\LightBatch.h" />
     <ClInclude Include="tb\LogWindow.h" />
     <ClInclude Include="tb\Game.h" />
@@ -294,6 +313,10 @@
     <ClInclude Include="tb\Log.h" />
     <ClInclude Include="tb\Map.h" />
     <ClInclude Include="tb\MapData.h" />
+    <ClInclude Include="tb\MapGenerator.h" />
+    <ClInclude Include="tb\MapGeneratorData.h" />
+    <ClInclude Include="tb\MapGeneratorPixelData.h" />
+    <ClInclude Include="tb\MapGeneratorWindow.h" />
     <ClInclude Include="tb\MapSelectWindow.h" />
     <ClInclude Include="tb\MenuBar.h" />
     <ClInclude Include="tb\MessageOfTheDayData.h" />
@@ -303,7 +326,7 @@
     <ClInclude Include="tb\Object.h" />
     <ClInclude Include="tb\OptionsData.h" />
     <ClInclude Include="tb\OptionsWindow.h" />
-    <ClInclude Include="tb\OutfitData.h" />
+    <ClInclude Include="tb\OutfitSpritesData.h" />
     <ClInclude Include="tb\OverlayWindow.h" />
     <ClInclude Include="tb\PatternData.h" />
     <ClInclude Include="tb\Projectile.h" />
@@ -337,6 +360,9 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="tb.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

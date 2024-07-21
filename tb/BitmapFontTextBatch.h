@@ -26,7 +26,7 @@ public:
     bool setBitmapFont(tb::BitmapFont* bitmapFont);
     tb::BitmapFont* getBitmapFont();
 
-    uint32_t getNumBitmapFontText();
+    std::uint32_t getNumBitmapFontText();
 
 private:
 
@@ -34,11 +34,11 @@ private:
 
     std::vector<sf::Vertex> m_vertexList;
 
-    uint32_t m_numBitmapFontText = 0;
+    std::uint32_t m_numBitmapFontText = 0;
 
-    uint32_t m_maxVertices = 4096; // 1024 * 4;
+    std::uint32_t m_maxVertices = 4096; // 1024 * 4;
 
-    uint32_t m_maxBitmapFontText = 1024;
+    std::uint32_t m_maxBitmapFontText = 1024;
 };
 
 }

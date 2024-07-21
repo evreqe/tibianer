@@ -58,7 +58,7 @@ public:
 
 private:
 
-    std::string m_fileName = "config/hotkeys.txt";
+    const std::string m_fileName = "config/hotkeys.txt";
 
     toml::table m_table;
 

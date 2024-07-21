@@ -105,7 +105,7 @@ tb::BitmapFont* BitmapFontTextBatch::getBitmapFont()
     return m_bitmapFont;
 }
 
-uint32_t BitmapFontTextBatch::getNumBitmapFontText()
+std::uint32_t BitmapFontTextBatch::getNumBitmapFontText()
 {
     return m_numBitmapFontText;
 }

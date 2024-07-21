@@ -21,9 +21,11 @@
 #include "tb/TipsAndTricksWindow.h"
 #include "tb/AboutTibiaWindow.h"
 #include "tb/AboutTibianerWindow.h"
+#include "tb/MapGeneratorWindow.h"
 
 #include "tb/RenderWindow.h"
 #include "tb/Game.h"
+#include "tb/Joystick.h"
 
 namespace tb
 {

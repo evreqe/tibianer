@@ -81,7 +81,7 @@ sf::Vector2f SfmlGuiWindow::getMousePixelCoords()
 {
     sf::Vector2f pixelCoords2f = getMousePixelPosition();
 
-    const float tileSize = tb::Constants::TileSizeFloat;
+    const float tileSize = tb::Constants::TileSizeAsFloat;
 
     // this accounts for when the mouse is out of bounds in the top left corner of the map, in the void
     if (pixelCoords2f.x < 0.0f)

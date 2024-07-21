@@ -5,7 +5,7 @@
 #include "tb/Constants.h"
 #include "tb/Utility.h"
 
-#include "tb/OutfitData.h"
+#include "tb/OutfitSpritesData.h"
 
 #include "tb/Thing.h"
 #include "tb/Sprite.h"
@@ -40,21 +40,21 @@ public:
 
     struct Skills_t
     {
-        uint32_t FistFighting        = tb::Constants::SkillLevelDefault;
-        uint32_t ClubFighting        = tb::Constants::SkillLevelDefault;
-        uint32_t SwordFighting       = tb::Constants::SkillLevelDefault;
-        uint32_t AxeFighting         = tb::Constants::SkillLevelDefault;
-        uint32_t DistanceFighting    = tb::Constants::SkillLevelDefault;
-        uint32_t Shielding           = tb::Constants::SkillLevelDefault;
-        uint32_t Fishing             = tb::Constants::SkillLevelDefault;
+        std::uint32_t FistFighting        = tb::Constants::SkillLevelDefault;
+        std::uint32_t ClubFighting        = tb::Constants::SkillLevelDefault;
+        std::uint32_t SwordFighting       = tb::Constants::SkillLevelDefault;
+        std::uint32_t AxeFighting         = tb::Constants::SkillLevelDefault;
+        std::uint32_t DistanceFighting    = tb::Constants::SkillLevelDefault;
+        std::uint32_t Shielding           = tb::Constants::SkillLevelDefault;
+        std::uint32_t Fishing             = tb::Constants::SkillLevelDefault;
     };
 
     struct Outfit_t
     {
-        uint8_t Head = 0;
-        uint8_t Body = 0;
-        uint8_t Legs = 0;
-        uint8_t Feet = 0;
+        std::uint8_t Head = 0;
+        std::uint8_t Body = 0;
+        std::uint8_t Legs = 0;
+        std::uint8_t Feet = 0;
     };
 
     Properties_t* getProperties();
@@ -65,17 +65,20 @@ public:
 
     void setDirectionByMovementDirection(tb::MovementDirection movementDirection);
 
-    uint8_t getTileOffset();
-    void setTileOffset(uint8_t tileOffset);
+    std::uint8_t getTileOffset();
+    void setTileOffset(std::uint8_t tileOffset);
 
     std::string getName();
     void setName(const std::string& name);
 
+    std::string getDescription();
+    void setDescription(const std::string& description);
+
     tb::Direction getDirection();
     void setDirection(tb::Direction direction);
 
-    uint8_t getTeamIndex();
-    void setTeamIndex(uint8_t teamIndex);
+    std::uint8_t getTeamIndex();
+    void setTeamIndex(std::uint8_t teamIndex);
 
     tb::Vocation getVocation();
     void setVocation(tb::Vocation vocation);
@@ -93,8 +96,8 @@ public:
     OutfitSpriteIDArray* getOutfitSpriteIDArray();
     OutfitSpriteList* getOutfitSpriteList();
 
-    void setOutfitSprites(uint8_t head, uint8_t body, uint8_t legs, uint8_t feet);
-    void setOutfit(uint8_t head, uint8_t body, uint8_t legs, uint8_t feet);
+    void setOutfitSprites(std::uint8_t head, std::uint8_t body, std::uint8_t legs, std::uint8_t feet);
+    void setOutfit(std::uint8_t head, std::uint8_t body, std::uint8_t legs, std::uint8_t feet);
 
     std::vector<tb::Sprite*> getSpriteList();
 
@@ -104,47 +107,42 @@ private:
     Skills_t m_skills;
     Outfit_t m_outfit;
 
-    uint8_t m_tileOffset;
-    uint8_t m_tileWidth;
-    uint8_t m_tileHeight;
+    std::uint8_t m_tileOffset = 0;
+    std::uint8_t m_tileWidth = 1;
+    std::uint8_t m_tileHeight = 1;
 
     std::string m_name;
+    std::string m_description;
 
     tb::Direction m_direction = tb::Direction::Down;
 
-    uint8_t m_teamIndex;
+    std::uint8_t m_teamIndex = 0;
 
-    tb::Vocation m_vocation;
+    tb::Vocation m_vocation = tb::Vocation::None;
 
-    tb::BloodType m_bloodType;
+    tb::BloodType m_bloodType = tb::BloodType::None;
 
-    uint32_t m_healthPoints;
-    uint32_t m_healthPointsMax;
+    std::uint32_t m_healthPoints = 10;
+    std::uint32_t m_healthPointsMax = 10;
 
-    uint32_t m_manaPoints;
-    uint32_t m_manaPointsMax;
+    std::uint32_t m_manaPoints = 0;
+    std::uint32_t m_manaPointsMax = 0;
 
-    uint32_t m_bankGold;
-    uint32_t m_bankPlatinum;
+    std::uint32_t m_bankGold = 0;
+    std::uint32_t m_bankPlatinum = 0;
 
-    uint32_t m_experiencePoints;
-    uint32_t m_magicExperiencePoints;
+    std::uint32_t m_experiencePoints = 0;
+    std::uint32_t m_magicExperiencePoints = 0;
 
-    uint32_t m_level;
-    uint32_t m_magicLevel;
+    std::uint32_t m_level = 1;
+    std::uint32_t m_magicLevel = 0;
 
-    uint32_t m_capacity; // encumbrance
+    std::uint32_t m_capacity = 0; // encumbrance
 
     float m_movementSpeed = 0.5f;
     sf::Clock m_movementClock;
 
     tb::Sprite m_dummySprite;
-
-    //std::vector<int> m_spritesList;
-    //std::vector<int> m_spritesCorpseList;
-
-    //tb::Sprite m_sprite[tb::NUM_CREATURE_SPRITES];
-    //tb::Sprite m_spriteCorpse[tb::NUM_CREATURE_SPRITES];
 
     // head, body, legs, feet
     tb::Creature::OutfitSpriteIDArray m_outfitSpriteIDArray;

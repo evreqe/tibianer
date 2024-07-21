@@ -30,27 +30,54 @@ bool BitmapFontText::setText(tb::BitmapFont* bitmapFont, const std::string& text
     m_vertexList.clear();
     m_vertexList.reserve(text.size() * 4);
 
-    const unsigned int textureSizeX = bitmapFont->getTexture()->getSize().x;
+    m_textLineList.clear();
+    m_textLineList.reserve(m_numTextLinesToReserve);
 
-    const unsigned int glyphSizeX = bitmapFont->getGlyphSize().x;
-    const unsigned int glyphSizeY = bitmapFont->getGlyphSize().y;
+    const std::uint32_t numGlyphs = tb::Constants::BitmapFonts::NumGlyphs;
 
-    const int characterSpace = bitmapFont->getCharacterSpace();
-    const int characterHeight = bitmapFont->getCharacterHeight();
+    const std::uint32_t textureSizeX = bitmapFont->getTexture()->getSize().x;
 
-    unsigned int textX = 0;
-    unsigned int textY = 0;
+    const std::uint32_t glyphSizeX = bitmapFont->getGlyphSize().x;
+    const std::uint32_t glyphSizeY = bitmapFont->getGlyphSize().y;
 
-    unsigned int textXMax = 0;
-    unsigned int textYMax = 0;
+    const std::int32_t characterSpace = bitmapFont->getCharacterSpace();
+    const std::int32_t characterHeight = bitmapFont->getCharacterHeight();
+
+    std::uint32_t textX = 0;
+    std::uint32_t textY = 0;
+
+    std::uint32_t textXMax = 0;
+    std::uint32_t textYMax = 0;
+
+    std::int32_t lineHeight = characterHeight + m_paddingY;
+
+    std::uint32_t lineIndex = 0;
+    std::string lineText = "";
+    std::vector<sf::Vertex*> lineVertexPointerList;
+    lineVertexPointerList.reserve(text.size() * 4);
 
     for (std::size_t i = 0; i < text.size(); i++)
     {
+        char character = text[i];
+
         // new line
-        if (text[i] == '\n')
+        if (character == '\n')
         {
+            tb::BitmapFontText::TextLine_t textLine;
+            textLine.Index = lineIndex;
+            textLine.Text = lineText;
+            textLine.Rect.left = 0.0f;
+            textLine.Rect.top = static_cast<float>(textY);
+            textLine.Rect.width = static_cast<float>(textX);
+            textLine.Rect.height = static_cast<float>(lineHeight);
+            textLine.VertexPointerList = lineVertexPointerList;
+            m_textLineList.push_back(textLine);
+
+            lineText = "";
+            lineVertexPointerList.clear();
+
             textX = 0;
-            textY += characterHeight + m_paddingY;
+            textY += lineHeight;
 
             if (textYMax < textY)
             {
@@ -59,20 +86,22 @@ bool BitmapFontText::setText(tb::BitmapFont* bitmapFont, const std::string& text
 
             continue;
         }
+        else
+        {
+            lineIndex++;
+            lineText.push_back(character);
+        }
 
-        unsigned int asciiValue = static_cast<unsigned char>(text[i]);
+        const std::uint32_t asciiValue = static_cast<unsigned char>(text[i]);
 
         // skip unused characters
-        if (asciiValue < 32 || asciiValue > 127)
+        if (asciiValue >= numGlyphs)
         {
             continue;
         }
 
-        // first 32 ascii characters skipped, need to offset the value
-        asciiValue = asciiValue - 32;
-
-        const unsigned int u = asciiValue % (textureSizeX / glyphSizeX);
-        const unsigned int v = asciiValue / (textureSizeX / glyphSizeX);
+        const std::uint32_t u = asciiValue % (textureSizeX / glyphSizeX);
+        const std::uint32_t v = asciiValue / (textureSizeX / glyphSizeX);
 
         sf::Vertex vertex[4];
 
@@ -96,7 +125,12 @@ bool BitmapFontText::setText(tb::BitmapFont* bitmapFont, const std::string& text
         m_vertexList.push_back(vertex[2]);
         m_vertexList.push_back(vertex[3]);
 
-        const int characterWidth = bitmapFont->getCharacterWidthList()->at(asciiValue);
+        lineVertexPointerList.push_back(&m_vertexList.back() - 3);
+        lineVertexPointerList.push_back(&m_vertexList.back() - 2);
+        lineVertexPointerList.push_back(&m_vertexList.back() - 1);
+        lineVertexPointerList.push_back(&m_vertexList.back());
+
+        const std::int32_t characterWidth = bitmapFont->getCharacterWidthList()->at(asciiValue);
 
         textX += characterWidth + characterSpace;
 
@@ -106,7 +140,7 @@ bool BitmapFontText::setText(tb::BitmapFont* bitmapFont, const std::string& text
         }
     }
 
-    const float textWidth = static_cast<float>(textXMax);
+    const float textWidth  = static_cast<float>(textXMax);
     const float textHeight = static_cast<float>(textYMax);
 
     sf::Vector2f position = getPosition();
@@ -115,6 +149,26 @@ bool BitmapFontText::setText(tb::BitmapFont* bitmapFont, const std::string& text
     m_rect.top    = position.y;
     m_rect.width  = textWidth;
     m_rect.height = textHeight;
+
+    // text alignment
+    for (auto& textLine : m_textLineList)
+    {
+        float offsetX = 0.0f;
+
+        if (m_textJustifyType == tb::TextJustifyType::Center)
+        {
+            offsetX = m_rect.left + ((m_rect.width - textLine.Rect.width) / 2.0f);
+        }
+        else if (m_textJustifyType == tb::TextJustifyType::Right)
+        {
+            offsetX = m_rect.left + m_rect.width - textLine.Rect.width;
+        }
+
+        for (auto& vertexPointer : textLine.VertexPointerList)
+        {
+            vertexPointer->position.x += offsetX;
+        }
+    }
 
     return true;
 }
@@ -144,14 +198,24 @@ sf::Color BitmapFontText::getColor()
     return m_color;
 }
 
-int BitmapFontText::getPaddingY()
+std::int32_t BitmapFontText::getPaddingY()
 {
     return m_paddingY;
 }
 
-void BitmapFontText::setPaddingY(int paddingY)
+void BitmapFontText::setPaddingY(std::int32_t paddingY)
 {
     m_paddingY = paddingY;
+}
+
+tb::TextJustifyType BitmapFontText::getTextJustifyType()
+{
+    return m_textJustifyType;
+}
+
+void BitmapFontText::setTextJustifyType(tb::TextJustifyType textJustifyType)
+{
+    m_textJustifyType = textJustifyType;
 }
 
 void BitmapFontText::draw(sf::RenderTarget& target, sf::RenderStates states) const

@@ -9,49 +9,49 @@
 namespace tb
 {
 
-    class MessageOfTheDayData
+class MessageOfTheDayData
+{
+
+public:
+
+    MessageOfTheDayData();
+    ~MessageOfTheDayData();
+
+    static MessageOfTheDayData& getInstance()
     {
+        static MessageOfTheDayData instance;
+        return instance;
+    }
 
-    public:
+private:
 
-        MessageOfTheDayData();
-        ~MessageOfTheDayData();
+    MessageOfTheDayData(const MessageOfTheDayData&) = delete;
+    MessageOfTheDayData(MessageOfTheDayData&&) = delete;
+    MessageOfTheDayData& operator=(const MessageOfTheDayData&) = delete;
+    MessageOfTheDayData& operator=(MessageOfTheDayData&&) = delete;
 
-        static MessageOfTheDayData& getInstance()
-        {
-            static MessageOfTheDayData instance;
-            return instance;
-        }
+public:
 
-    private:
+    using DataList = std::vector<std::string>;
 
-        MessageOfTheDayData(const MessageOfTheDayData&) = delete;
-        MessageOfTheDayData(MessageOfTheDayData&&) = delete;
-        MessageOfTheDayData& operator=(const MessageOfTheDayData&) = delete;
-        MessageOfTheDayData& operator=(MessageOfTheDayData&&) = delete;
+    bool load();
+    bool isLoaded();
 
-    public:
+    tb::MessageOfTheDayData::DataList* getDataList();
 
-        using DataList = std::vector<std::string>;
+    std::string getMessageOfTheDay();
 
-        bool load();
-        bool isLoaded();
+private:
 
-        tb::MessageOfTheDayData::DataList* getDataList();
+    const std::string m_fileName = "data/motd.txt";
 
-        std::string getMessageOfTheDay();
+    std::ifstream m_file;
 
-    private:
+    tb::MessageOfTheDayData::DataList m_dataList;
 
-        std::string m_fileName = "data/motd.txt";
+    const std::uint32_t m_numToLoad = 365; // num days in a year
 
-        std::ifstream m_file;
-
-        tb::MessageOfTheDayData::DataList m_dataList;
-
-        const unsigned int m_numToLoad = 365; // num days in a year
-
-    };
+};
 
 }
 

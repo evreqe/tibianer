@@ -13,14 +13,16 @@
 #include "tb/BitmapFontData.h"
 #include "tb/PatternData.h"
 #include "tb/WaterAnimationData.h"
-#include "tb/OutfitData.h"
+#include "tb/OutfitSpritesData.h"
 #include "tb/MessageOfTheDayData.h"
 #include "tb/ClickRectData.h"
-#include "tb/GuiData.h"
+#include "tb/GuiRectData.h"
 #include "tb/CursorData.h"
 #include "tb/FontData.h"
 #include "tb/HotkeysData.h"
 #include "tb/AnimationData.h"
+#include "tb/MapGeneratorData.h"
+#include "tb/MapGeneratorPixelData.h"
 
 #include "tb/Thing.h"
 #include "tb/Object.h"
@@ -32,6 +34,8 @@
 #include "tb/BitmapFont.h"
 #include "tb/GameText.h"
 #include "tb/Map.h"
+#include "tb/MapGenerator.h"
+#include "tb/Joystick.h"
 
 #include "tb/MenuBar.h"
 #include "tb/StatusBar.h"
@@ -61,6 +65,7 @@
 #include "tb/TipsAndTricksWindow.h"
 #include "tb/AboutTibiaWindow.h"
 #include "tb/AboutTibianerWindow.h"
+#include "tb/MapGeneratorWindow.h"
 
 #include <windows.h> // must be included last due to conflicts
 
@@ -101,7 +106,9 @@ public:
         bool ShowErrorLoadingMapPopup = false;
         bool ShowEndGamePopup = false;
 
-        bool IsAnyKeyPressed = false;
+        bool IsAnyKeyboardKeyPressed = false;
+
+        bool IsAnyJoystickButtonPressed = false;
     };
 
     struct GuiProperties_t
@@ -184,6 +191,7 @@ public:
     void doEndGamePopup();
     void doErrorLoadingMapPopup();
 
+    void doGameStateTesting();
     void doGameStateEnterGame();
     void doGameStateLoadingMap();
     void doGameStateMapSelect();
@@ -195,7 +203,7 @@ public:
 
     bool createPlayer();
 
-    bool spawnAnimationByIndex(const sf::Vector2i& tileCoords, tb::ZAxis_t z, uint32_t index);
+    bool spawnAnimationByIndex(const sf::Vector2i& tileCoords, tb::ZAxis_t z, std::uint32_t index);
     bool spawnAnimationByName(const sf::Vector2i& tileCoords, tb::ZAxis_t z, const std::string& name);
 
     void handleClosedEvent(sf::Event event);
@@ -208,10 +216,24 @@ public:
     void handleKeyPressedEvent(sf::Event event);
     void handleKeyReleasedEvent(sf::Event event);
     void handleKeyboardInput();
+    void handleJoystickConnectedEvent(sf::Event event);
+    void handleJoystickDisconnectedEvent(sf::Event event);
+    void handleJoystickMovedEvent(sf::Event event);
+    void handleJoystickButtonPressedEvent(sf::Event event);
+    void handleJoystickButtonReleasedEvent(sf::Event event);
+    void handleJoystickInput();
+    
     void processEvents();
 
     void setMouseCursor(const sf::Cursor& cursor);
     void fixMouseCursorForWindowResize(sf::RenderWindow* renderWindow);
+
+    unsigned int getJoystickIndex();
+    void setJoystickIndex(unsigned int index);
+    tb::JoystickList* getJoystickList();
+    void updateJoystickIndexForAll();
+    void updateJoystickPropertiesForAll();
+    void updateJoystickStateForAll();
 
     void createTileFileFromImageFile(const std::string& fileName);
 
@@ -247,9 +269,10 @@ public:
 
     bool doMoveThingFromTileToTile(tb::Thing::Ptr thing, tb::Tile::Ptr toTile);
 
-    tb::BitmapFont* getDefaultBitmapFont();
+    tb::BitmapFont* getClassicBitmapFont();
     tb::BitmapFont* getTinyBitmapFont();
     tb::BitmapFont* getModernBitmapFont();
+    tb::BitmapFont* getSystemBitmapFont();
 
 private:
 
@@ -261,7 +284,7 @@ private:
     std::future<bool> m_loadMapThread;
     std::future_status m_loadMapThreadStatus;
 
-    const unsigned int m_minimumTextureSizeRequiredToRun = 2048;
+    const std::uint32_t m_minimumTextureSizeRequiredToRun = 2048;
 
     sf::RectangleShape m_backgroundTextureShape;
 
@@ -272,18 +295,27 @@ private:
     sf::Time m_framesPerSecondPreviousTime;
     float m_framesPerSecond;
 
+    unsigned int m_joystickIndex = 0;
+    tb::JoystickList m_joystickList;
+
     sf::Clock m_cameraKeyPressedClock;
     const sf::Time m_cameraKeyPressedTime = sf::milliseconds(100);
 
-    tb::BitmapFont m_defaultBitmapFont;
+    tb::BitmapFont m_classicBitmapFont;
     tb::BitmapFont m_tinyBitmapFont;
     tb::BitmapFont m_modernBitmapFont;
+    tb::BitmapFont m_modern2BitmapFont;
+    tb::BitmapFont m_systemBitmapFont;
+    tb::BitmapFont m_systemFixedBitmapFont;
 
     const std::unordered_map<std::string, tb::BitmapFont&> m_bitmapFontNames =
     {
-        {"Default",    m_defaultBitmapFont},
-        {"Tiny",       m_tinyBitmapFont},
-        {"Modern",     m_modernBitmapFont},
+        {"Classic",        m_classicBitmapFont},
+        {"Tiny",           m_tinyBitmapFont},
+        {"Modern",         m_modernBitmapFont},
+        {"Modern2",        m_modern2BitmapFont},
+        {"System",         m_systemBitmapFont},
+        {"SystemFixed",    m_systemFixedBitmapFont},
     };
 
     tb::Creature::Ptr m_player = nullptr;

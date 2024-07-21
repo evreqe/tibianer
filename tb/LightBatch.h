@@ -19,19 +19,19 @@ public:
     bool addLight(sf::Vector2f position, sf::Color color);
     void clear();
     void printDebugText();
-    void draw(sf::RenderTarget& target, sf::RenderStates states);
+    void draw(sf::RenderTarget& renderTarget, sf::RenderStates renderStates);
 
-    uint32_t getNumLights();
+    std::uint32_t getNumLights();
 
 private:
 
-    sf::VertexArray m_vertexArray;
+    std::vector<sf::Vertex> m_vertexList;
 
-    uint32_t m_numLights = 0;
+    std::uint32_t m_numLights = 0;
 
-    uint32_t m_maxVertices = 4096; // 1024 * 4;
+    std::uint32_t m_maxVertices = 4096; // 1024 * 4;
 
-    uint32_t m_maxLights = 1024;
+    std::uint32_t m_maxLights = 1024;
 };
 
 }

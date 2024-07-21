@@ -32,18 +32,18 @@ private:
 
 public:
 
-    typedef struct _Data
+    struct Data
     {
-        uint32_t Index = 0;
+        std::uint32_t Index = 0;
         std::string Name;
         std::string FileName;
-        uint8_t GlyphWidth = 32;
-        uint8_t GlyphHeight = 32;
-        int CharacterSpace = 0;
-        int CharacterHeight = 1;
-        std::vector<int> CharacterWidthList;
+        std::uint32_t GlyphWidth = 32;
+        std::uint32_t GlyphHeight = 32;
+        std::int32_t CharacterSpace = 0;
+        std::int32_t CharacterHeight = 1;
+        std::vector<std::int32_t> CharacterWidthList;
 
-    } Data, * Data_ptr;
+    };
 
     using DataList = std::vector<tb::BitmapFontData::Data>;
 
@@ -54,15 +54,13 @@ public:
 
 private:
 
-    std::string m_fileName = "data/bitmap_fonts.txt";
+    const std::string m_fileName = "data/bitmap_fonts.txt";
 
     toml::table m_table;
 
     tb::BitmapFontData::DataList m_dataList;
 
-    const unsigned int m_numToLoad = 8;
-
-    const unsigned int m_numGlyphs = 96;
+    const std::uint32_t m_numToReserve = 8;
 
 };
 

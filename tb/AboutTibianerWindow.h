@@ -11,38 +11,38 @@
 namespace tb
 {
 
-    class AboutTibianerWindow : public tb::ImGuiWindow
+class AboutTibianerWindow : public tb::ImGuiWindow
+{
+
+public:
+
+    AboutTibianerWindow();
+    ~AboutTibianerWindow();
+
+    static AboutTibianerWindow& getInstance()
     {
+        static AboutTibianerWindow instance;
+        return instance;
+    }
 
-    public:
+private:
 
-        AboutTibianerWindow();
-        ~AboutTibianerWindow();
+    AboutTibianerWindow(const AboutTibianerWindow&) = delete;
+    AboutTibianerWindow(AboutTibianerWindow&&) = delete;
+    AboutTibianerWindow& operator=(const AboutTibianerWindow&) = delete;
+    AboutTibianerWindow& operator=(AboutTibianerWindow&&) = delete;
 
-        static AboutTibianerWindow& getInstance()
-        {
-            static AboutTibianerWindow instance;
-            return instance;
-        }
+public:
 
-    private:
+    void draw();
 
-        AboutTibianerWindow(const AboutTibianerWindow&) = delete;
-        AboutTibianerWindow(AboutTibianerWindow&&) = delete;
-        AboutTibianerWindow& operator=(const AboutTibianerWindow&) = delete;
-        AboutTibianerWindow& operator=(AboutTibianerWindow&&) = delete;
+private:
 
-    public:
+    const char* m_displayText = "Tibianer\nby Evremonde\n\nhttps://evretibia.itch.io/tibianer";
 
-        void draw();
+    const ImVec2 m_buttonSize = ImVec2(88.0f, 23.0f);
 
-    private:
-
-        const char* m_displayText = "Tibianer\nby Evremonde\n\nhttps://evretibia.itch.io/tibianer";
-
-        const ImVec2 m_buttonSize = ImVec2(88.0f, 23.0f);
-
-    };
+};
 
 }
 

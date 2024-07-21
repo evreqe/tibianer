@@ -289,12 +289,12 @@ void Object::setObjectType(tb::ObjectType objectType)
     m_objectType = objectType;
 }
 
-void Object::setCount(uint32_t count)
+void Object::setCount(std::uint32_t count)
 {
     m_count = count;
 }
 
-uint32_t Object::getCount()
+std::uint32_t Object::getCount()
 {
     return m_count;
 }

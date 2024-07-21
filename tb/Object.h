@@ -62,8 +62,8 @@ public:
     tb::ObjectType getObjectType();
     void setObjectType(tb::ObjectType objectType);
 
-    void setCount(uint32_t count);
-    uint32_t getCount();
+    void setCount(std::uint32_t count);
+    std::uint32_t getCount();
 
     sf::Clock* getDecayClock();
     sf::Clock* getRegenerateClock();
@@ -76,7 +76,7 @@ private:
 
     tb::ObjectType m_objectType = tb::ObjectType::Null;
 
-    uint32_t m_count = 1;
+    std::uint32_t m_count = 1;
 
     sf::Clock m_decayClock;
     sf::Clock m_regenerateClock;

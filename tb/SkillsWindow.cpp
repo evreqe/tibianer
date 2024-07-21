@@ -95,6 +95,7 @@ void SkillsWindow::updateSkillsText()
     sf::Color textColor = sf::Color::White;
 
     m_skillNamesBitmapFontText.setPaddingY(3);
+    m_skillNamesBitmapFontText.setTextJustifyType(tb::TextJustifyType::Left);
     m_skillNamesBitmapFontText.setText(tinyBitmapFont, m_skillNamesText, textColor);
 
     m_skillsBitmapFontTextBatch.addBitmapFontText(&m_skillNamesBitmapFontText);
@@ -127,7 +128,7 @@ void SkillsWindow::draw()
     float windowSizeScale = getSizeScale();
 
     m_woodSprite.setTexture(tb::Textures::Wood, true);
-    m_woodSprite.setTextureRect(sf::IntRect(0, 0, windowSize.x, windowSize.y));
+    m_woodSprite.setTextureRect(sf::IntRect(0, 0, static_cast<int>(windowSize.x), static_cast<int>(windowSize.y)));
 
     windowRenderTexture->draw(m_woodSprite);
 

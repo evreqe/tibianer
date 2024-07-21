@@ -45,8 +45,8 @@ public:
 
         std::string AnimationName;
 
-        uint8_t TileWidth = 1;
-        uint8_t TileHeight = 1;
+        std::uint8_t TileWidth = 1;
+        std::uint8_t TileHeight = 1;
 
         float Weight = 0.0f; // cap
         float LightRadius = 0.0f;
@@ -66,13 +66,13 @@ public:
 
 private:
 
-    std::string m_fileName = "data/sprites.txt";
+    const std::string m_fileName = "data/sprites.txt";
 
     toml::table m_table;
 
     tb::SpriteData::DataList m_dataList;
 
-    const unsigned int m_numToLoad = tb::Constants::NumSprites;
+    const std::uint32_t m_numToLoad = tb::Constants::NumSprites;
 
 };
 

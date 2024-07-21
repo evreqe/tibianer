@@ -32,8 +32,6 @@ public:
     {
         bool operator()(tb::Thing::Ptr a, tb::Thing::Ptr b) const
         {
-            ////return (a->getTileX() == b->getTileX() ? a->getTileY() < b->getTileY() : a->getTileX() < b->getTileX());
-
             if (a->getTileX() == b->getTileX())
             {
                 if (a->getTileY() == b->getTileY())
@@ -57,17 +55,17 @@ public:
 
     ThingProperties_t* getThingProperties();
 
-    uint32_t getTileIndex();
-    void setTileIndex(uint32_t tileIndex);
+    std::uint32_t getTileIndex();
+    void setTileIndex(std::uint32_t tileIndex);
 
     sf::Vector2i getTileCoords();
     void setTileCoords(const sf::Vector2i& tileCoords);
 
-    int getTileX();
-    void setTileX(int tileX);
+    std::int32_t getTileX();
+    void setTileX(std::int32_t tileX);
 
-    int getTileY();
-    void setTileY(int tileY);
+    std::int32_t getTileY();
+    void setTileY(std::int32_t tileY);
 
     sf::Vector2f getPixelCoords();
     void setPixelCoords(const sf::Vector2f& pixelCoords);
@@ -87,16 +85,16 @@ public:
     tb::DrawOrderType getDrawOrderType();
     void setDrawOrderType(tb::DrawOrderType drawOrder);
 
-    uint8_t getDrawOffset();
-    void setDrawOffset(uint8_t drawOffset);
+    std::uint8_t getDrawOffset();
+    void setDrawOffset(std::uint8_t drawOffset);
 
 private:
 
     ThingProperties_t m_thingProperties;
 
-    uint32_t m_uniqueID = 0;
+    std::uint32_t m_uniqueID = 0;
 
-    uint32_t m_tileIndex = 0;
+    std::uint32_t m_tileIndex = 0;
 
     sf::Vector2i m_tileCoords;
     sf::Vector2f m_pixelCoords;
@@ -107,7 +105,7 @@ private:
 
     tb::DrawOrderType m_drawOrderType = tb::DrawOrderType::Default;
 
-    uint8_t m_drawOffset = 0;
+    std::uint8_t m_drawOffset = 0;
 
 };
 

@@ -138,14 +138,11 @@
     <ClCompile Include="tb\Creature.cpp">
       <Filter>Source Files\tb</Filter>
     </ClCompile>
-    <ClCompile Include="tb\OutfitData.cpp">
+    <ClCompile Include="tb\OutfitSpritesData.cpp">
       <Filter>Source Files\tb</Filter>
     </ClCompile>
     <ClCompile Include="tb\OverlayWindow.cpp">
       <Filter>Source Files\tb</Filter>
-    </ClCompile>
-    <ClCompile Include="pugixml\pugixml.cpp">
-      <Filter>Source Files\pugixml</Filter>
     </ClCompile>
     <ClCompile Include="tb\GameWindow.cpp">
       <Filter>Source Files\tb</Filter>
@@ -264,7 +261,7 @@
     <ClCompile Include="tb\TipsAndTricksData.cpp">
       <Filter>Source Files\tb</Filter>
     </ClCompile>
-    <ClCompile Include="tb\GuiData.cpp">
+    <ClCompile Include="tb\GuiRectData.cpp">
       <Filter>Source Files\tb</Filter>
     </ClCompile>
     <ClCompile Include="tb\CommentsWindow.cpp">
@@ -296,6 +293,36 @@
     </ClCompile>
     <ClCompile Include="tb\BitmapFontTextBatch.cpp">
       <Filter>Source Files\tb</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\MapGeneratorData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\MapGeneratorPixelData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\MapGeneratorWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\MapGenerator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\Light.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\ContainerWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\ChatInputTextWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\ChatTextWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\Joystick.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\JoystickData.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -410,16 +437,7 @@
     <ClInclude Include="tb\Creature.h">
       <Filter>Header Files\tb</Filter>
     </ClInclude>
-    <ClInclude Include="magic_enum\magic_enum.hpp">
-      <Filter>Header Files\magic_enum</Filter>
-    </ClInclude>
-    <ClInclude Include="magic_enum\magic_enum_format.hpp">
-      <Filter>Header Files\magic_enum</Filter>
-    </ClInclude>
-    <ClInclude Include="magic_enum\magic_enum_fuse.hpp">
-      <Filter>Header Files\magic_enum</Filter>
-    </ClInclude>
-    <ClInclude Include="tb\OutfitData.h">
+    <ClInclude Include="tb\OutfitSpritesData.h">
       <Filter>Header Files\tb</Filter>
     </ClInclude>
     <ClInclude Include="tb\Entity.h">
@@ -427,12 +445,6 @@
     </ClInclude>
     <ClInclude Include="tb\OverlayWindow.h">
       <Filter>Header Files\tb</Filter>
-    </ClInclude>
-    <ClInclude Include="pugixml\pugixml.hpp">
-      <Filter>Header Files\pugixml</Filter>
-    </ClInclude>
-    <ClInclude Include="pugixml\pugiconfig.hpp">
-      <Filter>Header Files\pugixml</Filter>
     </ClInclude>
     <ClInclude Include="tb\GameWindow.h">
       <Filter>Header Files\tb</Filter>
@@ -551,7 +563,7 @@
     <ClInclude Include="tb\TipsAndTricksData.h">
       <Filter>Header Files\tb</Filter>
     </ClInclude>
-    <ClInclude Include="tb\GuiData.h">
+    <ClInclude Include="tb\GuiRectData.h">
       <Filter>Header Files\tb</Filter>
     </ClInclude>
     <ClInclude Include="tb\CommentsWindow.h">
@@ -584,10 +596,72 @@
     <ClInclude Include="tb\BitmapFontTextBatch.h">
       <Filter>Header Files\tb</Filter>
     </ClInclude>
+    <ClInclude Include="tb\MapGeneratorData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\MapGeneratorPixelData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="magic_enum\magic_enum.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="magic_enum\magic_enum_all.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="magic_enum\magic_enum_containers.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="magic_enum\magic_enum_flags.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="magic_enum\magic_enum_format.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="magic_enum\magic_enum_fuse.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="magic_enum\magic_enum_iostream.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="magic_enum\magic_enum_switch.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="magic_enum\magic_enum_utility.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\MapGeneratorWindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\MapGenerator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\Light.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\ContainerWindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\ChatTextWindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\ChatInputTextWindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\Joystick.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\JoystickData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="tb.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

@@ -13,37 +13,16 @@ Log::~Log()
     //
 }
 
-void Log::vwrite(const FormatString& format, fmt::format_args args)
+void Log::vwrite(const FormatString_t& formatString, fmt::format_args args)
 {
-    const auto& loc = format.loc;
+    const auto& sourceLocation = formatString.sourceLocation;
 
-    std::string_view fileName = loc.file_name();
-
-    // trim the path down to just the file name and extension
-    if (fileName.contains("\\") == true)
-    {
-        fileName = fileName.substr(fileName.rfind("\\") + 1);
-    }
-
-    std::string_view functionName = loc.function_name();
-
-    std::size_t beginPosition;
-    if ((beginPosition = functionName.find("tb::")) != std::string::npos)
-    {
-        std::size_t endPosition;
-        if ((endPosition = functionName.find("(", beginPosition)) != std::string::npos && endPosition != beginPosition)
-        {
-            endPosition = endPosition + 1;
-
-            functionName = functionName.substr(beginPosition, endPosition - beginPosition);
-        }
-    }
-
-    m_sourceText = fmt::format(FMT_COMPILE("[{}:{}:{}()] "), fileName, loc.line(), functionName);
+    m_sourceLocationText = fmt::format("[{}] ", sourceLocation);
 
     std::stringstream ss;
-    ss << m_sourceText;
-    fmt::vprint(ss, format.str, args);
+    ss << m_sourceLocationText;
+
+    fmt::vprint(ss, formatString.logText, args);
 
     m_logText = ss.str();
 
@@ -73,8 +52,8 @@ void Log::open()
     m_text.clear();
     m_text.reserve(m_textReserveSize);
 
-    m_sourceText.clear();
-    m_sourceText.reserve(m_sourceTextReserveSize);
+    m_sourceLocationText.clear();
+    m_sourceLocationText.reserve(m_sourceLocationTextReserveSize);
 
     m_logText.clear();
     m_logText.reserve(m_logTextReserveSize);
@@ -85,7 +64,7 @@ void Log::open()
 void Log::close()
 {
     m_text.clear();
-    m_sourceText.clear();
+    m_sourceLocationText.clear();
     m_logText.clear();
 
     m_file.flush();

@@ -9,89 +9,89 @@
 namespace tb
 {
 
-    class OptionsData
+class OptionsData
+{
+
+public:
+
+    OptionsData();
+    ~OptionsData();
+
+    static OptionsData& getInstance()
     {
+        static OptionsData instance;
+        return instance;
+    }
 
-    public:
+private:
 
-        OptionsData();
-        ~OptionsData();
+    OptionsData(const OptionsData&) = delete;
+    OptionsData(OptionsData&&) = delete;
+    OptionsData& operator=(const OptionsData&) = delete;
+    OptionsData& operator=(OptionsData&&) = delete;
 
-        static OptionsData& getInstance()
-        {
-            static OptionsData instance;
-            return instance;
-        }
+public:
 
-    private:
+    struct Data
+    {
+        bool LogIsEnabled = true;
+        bool LogPrintToConsole = true;
+        bool LogWriteToFile = true;
 
-        OptionsData(const OptionsData&) = delete;
-        OptionsData(OptionsData&&) = delete;
-        OptionsData& operator=(const OptionsData&) = delete;
-        OptionsData& operator=(OptionsData&&) = delete;
+        std::string PlayerName;
+        std::uint8_t PlayerOutfitHead = 0;
+        std::uint8_t PlayerOutfitBody = 0;
+        std::uint8_t PlayerOutfitLegs = 0;
+        std::uint8_t PlayerOutfitFeet = 0;
 
-    public:
+        bool WindowStartMaximized = true;
+        std::uint32_t WindowFrameRateLimit = 60;
+        bool WindowVerticalSync = true;
 
-        typedef struct _Data
-        {
-            bool LogIsEnabled = true;
-            bool LogPrintToConsole = true;
-            bool LogWriteToFile = true;
+        bool MapSkipSelect = false;
+        std::string MapSkipSelectFileName;
 
-            std::string PlayerName;
-            uint8_t PlayerOutfitHead = 0;
-            uint8_t PlayerOutfitBody = 0;
-            uint8_t PlayerOutfitLegs = 0;
-            uint8_t PlayerOutfitFeet = 0;
+        bool GameDeveloperMode = true;
+        bool GameDebugMode = true;
+        bool GameShowFloatingText = false;
+        bool GameShowPlayerNames = false;
+        bool GameShowPlayerHealthBar = false;
+        bool GameShowPlayerManaBar = false;
+        bool GameShowNPCNames = false;
+        bool GameShowNPCHealthBar = false;
+        bool GameShowNPCManaBar = false;
+        bool GameShowMonsterNames = false;
+        bool GameShowMonsterHealthBar = false;
+        bool GameShowMonsterManaBar = false;
+        bool GameFriendlyFire = false;
 
-            bool WindowStartMaximized = true;
-            uint32_t WindowFrameRateLimit = 60;
-            bool WindowVerticalSync = true;
+        bool AudioSound = false;
+        std::uint8_t AudioSoundVolume = 100;
+        bool AudioMusic = false;
+        std::uint8_t AudioMusicVolume = 100;
 
-            bool MapSkipSelect = false;
-            std::string MapSkipSelectFileName;
-
-            bool GameDeveloperMode = true;
-            bool GameDebugMode = true;
-            bool GameShowFloatingText = false;
-            bool GameShowPlayerNames = false;
-            bool GameShowPlayerHealthBar = false;
-            bool GameShowPlayerManaBar = false;
-            bool GameShowNPCNames = false;
-            bool GameShowNPCHealthBar = false;
-            bool GameShowNPCManaBar = false;
-            bool GameShowMonsterNames = false;
-            bool GameShowMonsterHealthBar = false;
-            bool GameShowMonsterManaBar = false;
-            bool GameFriendlyFire = false;
-
-            bool AudioSound = false;
-            uint8_t AudioSoundVolume = 100;
-            bool AudioMusic = false;
-            uint8_t AudioMusicVolume = 100;
-
-            bool CheatsInfiniteHealth = false;
-            bool CheatsInfiniteMana = false;
-            bool CheatsInfiniteCap = false;
-        } Data, * Data_ptr;
-
-        bool load();
-        bool isLoaded();
-
-        bool save();
-
-        tb::OptionsData::Data* getData();
-        void setData(const tb::OptionsData::Data& data);
-
-    private:
-
-        std::string m_fileName = "config/options.txt";
-
-        toml::table m_table;
-
-        tb::OptionsData::Data m_data;
-
+        bool CheatsInfiniteHealth = false;
+        bool CheatsInfiniteMana = false;
+        bool CheatsInfiniteCap = false;
     };
+
+    bool load();
+    bool isLoaded();
+
+    bool save();
+
+    tb::OptionsData::Data* getData();
+    void setData(const tb::OptionsData::Data& data);
+
+private:
+
+    const std::string m_fileName = "config/options.txt";
+
+    toml::table m_table;
+
+    tb::OptionsData::Data m_data;
+
+};
 
 }
 

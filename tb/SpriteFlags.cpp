@@ -14,7 +14,7 @@ SpriteFlags::~SpriteFlags()
 }
 
 
-size_t SpriteFlags::getCount()
+std::size_t SpriteFlags::getCount()
 {
     return m_spriteFlagBitset.count();
 }

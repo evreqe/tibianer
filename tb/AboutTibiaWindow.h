@@ -11,38 +11,38 @@
 namespace tb
 {
 
-    class AboutTibiaWindow : public tb::ImGuiWindow
+class AboutTibiaWindow : public tb::ImGuiWindow
+{
+
+public:
+
+    AboutTibiaWindow();
+    ~AboutTibiaWindow();
+
+    static AboutTibiaWindow& getInstance()
     {
+        static AboutTibiaWindow instance;
+        return instance;
+    }
 
-    public:
+private:
 
-        AboutTibiaWindow();
-        ~AboutTibiaWindow();
+    AboutTibiaWindow(const AboutTibiaWindow&) = delete;
+    AboutTibiaWindow(AboutTibiaWindow&&) = delete;
+    AboutTibiaWindow& operator=(const AboutTibiaWindow&) = delete;
+    AboutTibiaWindow& operator=(AboutTibiaWindow&&) = delete;
 
-        static AboutTibiaWindow& getInstance()
-        {
-            static AboutTibiaWindow instance;
-            return instance;
-        }
+public:
 
-    private:
+    void draw();
 
-        AboutTibiaWindow(const AboutTibiaWindow&) = delete;
-        AboutTibiaWindow(AboutTibiaWindow&&) = delete;
-        AboutTibiaWindow& operator=(const AboutTibiaWindow&) = delete;
-        AboutTibiaWindow& operator=(AboutTibiaWindow&&) = delete;
+private:
 
-    public:
+    const char* m_displayText = "Tibia\nby CipSoft\n\nwww.tibia.com";
 
-        void draw();
+    const ImVec2 m_buttonSize = ImVec2(88.0f, 23.0f);
 
-    private:
-
-        const char* m_displayText = "Tibia\nby CipSoft\n\nwww.tibia.com";
-
-        const ImVec2 m_buttonSize = ImVec2(88.0f, 23.0f);
-
-    };
+};
 
 }
 

@@ -32,12 +32,12 @@ private:
 
 public:
 
-    typedef struct _Data
+    struct Data
     {
-        uint32_t Index = 0;
+        std::uint32_t Index = 0;
         std::string Name;
         std::string FileName;
-    } Data, * Data_ptr;
+    };
 
     using DataList = std::vector<tb::FontData::Data>;
 
@@ -45,18 +45,19 @@ public:
     bool isLoaded();
 
     tb::FontData::Data* getDataByName(const std::string& name);
+    tb::FontData::Data* getDataByNameSV(std::string_view name);
 
     tb::FontData::DataList* getDataList();
 
 private:
 
-    std::string m_fileName = "data/fonts.txt";
+    const std::string m_fileName = "data/fonts.txt";
 
     toml::table m_table;
 
     tb::FontData::DataList m_dataList;
 
-    const unsigned int m_numToLoad = 32;
+    const std::uint32_t m_numToReserve = 8;
 
 };
 

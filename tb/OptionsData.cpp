@@ -15,26 +15,14 @@ OptionsData::~OptionsData()
 
 bool OptionsData::load()
 {
-    if (std::filesystem::exists(m_fileName) == false)
+    tb::Utility::LibToml::LoadFileResult loadFileResult = tb::Utility::LibToml::loadFile(m_table, m_fileName);
+
+    g_Log.write("{}", loadFileResult.Text);
+
+    if (loadFileResult.Success == false)
     {
-        g_Log.write("ERROR: File does not exist: {}\n", m_fileName);
         return false;
     }
-
-    m_table.clear();
-
-    try
-    {
-        m_table = toml::parse_file(m_fileName);
-    }
-    catch (const toml::parse_error& parseError)
-    {
-        g_Log.write("ERROR: Failed to load data from file: {}\n", m_fileName);
-        g_Log.write("Description: {}\nLine: {}\nColumn: {}\n", parseError.description(), parseError.source().begin.line, parseError.source().begin.column);
-        return false;
-    }
-
-    g_Log.write("Loaded data from file: {}\n", m_fileName);
 
     m_data.LogIsEnabled = m_table["Log"]["IsEnabled"].value_or(true);
     m_data.LogPrintToConsole = m_table["Log"]["PrintToConsole"].value_or(true);

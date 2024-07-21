@@ -10,48 +10,48 @@
 namespace tb
 {
 
-    class OptionsWindow : public tb::ImGuiWindow
+class OptionsWindow : public tb::ImGuiWindow
+{
+
+public:
+
+    OptionsWindow();
+    ~OptionsWindow();
+
+    static OptionsWindow& getInstance()
     {
+        static OptionsWindow instance;
+        return instance;
+    }
 
-    public:
+private:
 
-        OptionsWindow();
-        ~OptionsWindow();
+    OptionsWindow(const OptionsWindow&) = delete;
+    OptionsWindow(OptionsWindow&&) = delete;
+    OptionsWindow& operator=(const OptionsWindow&) = delete;
+    OptionsWindow& operator=(OptionsWindow&&) = delete;
 
-        static OptionsWindow& getInstance()
-        {
-            static OptionsWindow instance;
-            return instance;
-        }
+public:
 
-    private:
+    void onOpen();
+    void onClose();
 
-        OptionsWindow(const OptionsWindow&) = delete;
-        OptionsWindow(OptionsWindow&&) = delete;
-        OptionsWindow& operator=(const OptionsWindow&) = delete;
-        OptionsWindow& operator=(OptionsWindow&&) = delete;
+    void loadData();
+    void saveData();
 
-    public:
+    void draw();
 
-        void onOpen();
-        void onClose();
+private:
 
-        void loadData();
-        void saveData();
+    bool m_isOpen = false;
 
-        void draw();
+    tb::OptionsData::Data m_optionsData;
 
-    private:
+    const ImVec2 m_tabChildSize = ImVec2(640.0f, 480.0f);
 
-        bool m_isOpen = false;
+    const ImVec2 m_buttonSize = ImVec2(88.0f, 23.0f);
 
-        tb::OptionsData::Data m_optionsData;
-
-        const ImVec2 m_tabChildSize = ImVec2(640.0f, 480.0f);
-
-        const ImVec2 m_buttonSize = ImVec2(88.0f, 23.0f);
-
-    };
+};
 
 }
 

@@ -1,1 +1,1 @@
-#define IDI_TIBIA_ICON 101
+#define IDI_TB_ICON 101

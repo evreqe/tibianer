@@ -36,7 +36,7 @@ public:
 
     struct Properties_t
     {
-        unsigned int FrameRateLimit = 60;
+        std::uint32_t FrameRateLimit = 60;
 
         bool VerticalSync = true;
         bool StartMaximized = true;
@@ -68,14 +68,17 @@ private:
 
     sf::RenderWindow m_window;
 
-    unsigned int m_widthDefault = 1280;
-    unsigned int m_heightDefault = 720;
+    std::uint32_t m_widthDefault = 1280;
+    std::uint32_t m_heightDefault = 720;
+
+    std::uint32_t m_widthMinimum = 640;
+    std::uint32_t m_heightMinimum = 480;
 
     sf::Uint32 m_style = sf::Style::Titlebar | sf::Style::Close | sf::Style::Resize;
 
     sf::Image m_icon;
 
-    const std::string m_iconFileName = "images/icon.png";
+    const std::string m_iconFileName = "icons/tb.png";
 
 };
 

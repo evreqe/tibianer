@@ -23,21 +23,23 @@ void SpriteDataWindow::draw()
 
     ImGui::Begin("Sprite Data##SpriteDataWindow", isVisible, ImGuiWindowFlags_NoScrollbar);
 
-    if (ImGui::BeginChild("##SpriteDataWindowChildData", ImVec2(0, 0), true, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_AlwaysVerticalScrollbar))
+    if (ImGui::BeginChild("##SpriteDataWindowChildData", ImVec2(0, 0), ImGuiChildFlags_Border, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_AlwaysVerticalScrollbar))
     {
         tb::SpriteData::DataList* spriteDataList = g_SpriteData.getDataList();
 
         ImGuiListClipper clipper;
-        clipper.Begin(spriteDataList->size());
+        clipper.Begin(static_cast<int>(spriteDataList->size()));
 
         while (clipper.Step())
         {
-            for (int i = clipper.DisplayStart; i < clipper.DisplayEnd; i++)
+            for (std::int32_t i = clipper.DisplayStart; i < clipper.DisplayEnd; i++)
             {
                 tb::Sprite sprite;
                 sprite.setID(static_cast<tb::SpriteID_t>(i));
 
-                ImGui::ImageButton(sprite);
+                std::string imageButtonID = std::format("##SpriteDataWindowChildDataButton{}", i);
+
+                ImGui::ImageButton(imageButtonID.c_str(), sprite, sf::Vector2f(tb::Constants::SpriteSizeAsFloat, tb::Constants::SpriteSizeAsFloat));
 
                 tb::SpriteData::Data* spriteData = &spriteDataList->at(i);
 

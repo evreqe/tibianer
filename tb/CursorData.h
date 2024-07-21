@@ -32,17 +32,17 @@ private:
 
 public:
 
-    typedef struct _Data
+    struct Data
     {
-        uint32_t Index = 0;
+        std::uint32_t Index = 0;
         std::string Name;
         std::string FileName;
         sf::Image Image;
-        uint32_t Width = 0;
-        uint32_t Height = 0;
-        uint32_t HotSpotX = 0;
-        uint32_t HotSpotY = 0;
-    } Data, * Data_ptr;
+        std::uint32_t Width = 0;
+        std::uint32_t Height = 0;
+        std::uint32_t HotSpotX = 0;
+        std::uint32_t HotSpotY = 0;
+    };
 
     using DataList = std::vector<tb::CursorData::Data>;
 
@@ -50,18 +50,19 @@ public:
     bool isLoaded();
 
     tb::CursorData::Data* getDataByName(const std::string& name);
+    tb::CursorData::Data* getDataByNameSV(std::string_view name);
 
     tb::CursorData::DataList* getDataList();
 
 private:
 
-    std::string m_fileName = "data/cursors.txt";
+    const std::string m_fileName = "data/cursors.txt";
 
     toml::table m_table;
 
     tb::CursorData::DataList m_dataList;
 
-    const unsigned int m_numToLoad = 16;
+    const std::uint32_t m_numToReserve = 8;
 
 };
 

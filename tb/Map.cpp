@@ -70,8 +70,8 @@ bool Map::load(const std::string& fileName)
         return false;
     }
 
-    uint32_t tileSizeX = xmlNode_map.attribute("tilewidth").as_uint(); // width of a single tile
-    uint32_t tileSizeY = xmlNode_map.attribute("tileheight").as_uint(); // height of a single tile
+    std::uint32_t tileSizeX = xmlNode_map.attribute("tilewidth").as_uint(); // width of a single tile
+    std::uint32_t tileSizeY = xmlNode_map.attribute("tileheight").as_uint(); // height of a single tile
 
     if (tileSizeX != tb::Constants::TileSize || tileSizeY != tb::Constants::TileSize)
     {
@@ -262,7 +262,7 @@ bool Map::load(const std::string& fileName)
 
                 for (std::size_t i = 0; i < xmlNode_map_group_layer_data__string.size(); i += 4)
                 {
-                    uint32_t tileSpriteID;
+                    std::uint32_t tileSpriteID;
                     xmlNode_map_group_layer_data__istringstream.read(reinterpret_cast<char*>(&tileSpriteID), 4);
 
                     tileSpriteIDList.push_back((tb::SpriteID_t)tileSpriteID);
@@ -364,7 +364,7 @@ bool Map::load(const std::string& fileName)
 
                     //g_Log.write("object pixel coords: {}x{}\n", objectPixelCoords.x, objectPixelCoords.y);
 
-                    uint32_t objectTileIndex = getTileIndexByPixelCoords(objectPixelCoords);
+                    std::uint32_t objectTileIndex = getTileIndexByPixelCoords(objectPixelCoords);
 
                     sf::Vector2i objectTileCoords = getTileCoordsByPixelCoords(objectPixelCoords);
 
@@ -441,24 +441,24 @@ bool Map::load(const std::string& fileName)
     return true;
 }
 
-uint32_t Map::getTileIndexByTileCoords(const sf::Vector2i& tileCoords)
+std::uint32_t Map::getTileIndexByTileCoords(const sf::Vector2i& tileCoords)
 {
     return tileCoords.x + (tileCoords.y * m_tileWidth);
 }
 
-uint32_t Map::getTileIndexByPixelCoords(const sf::Vector2f& pixelCoords)
+std::uint32_t Map::getTileIndexByPixelCoords(const sf::Vector2f& pixelCoords)
 {
-    int tileX = 0;
-    int tileY = 0;
+    std::int32_t tileX = 0;
+    std::int32_t tileY = 0;
 
     if (pixelCoords.x != 0.0f)
     {
-        tileX = static_cast<int>(pixelCoords.x / tb::Constants::TileSizeFloat);
+        tileX = static_cast<std::int32_t>(pixelCoords.x / tb::Constants::TileSizeAsFloat);
     }
 
     if (pixelCoords.y != 0.0f)
     {
-        tileY = static_cast<int>(pixelCoords.y / tb::Constants::TileSizeFloat);
+        tileY = static_cast<std::int32_t>(pixelCoords.y / tb::Constants::TileSizeAsFloat);
     }
 
     return tileX + (tileY * m_tileWidth);
@@ -483,18 +483,18 @@ sf::Vector2i Map::getTileCoordsByPixelCoords(const sf::Vector2f& pixelCoords)
 
     if (pixelCoords.x != 0.0f)
     {
-        tileCoords.x = static_cast<int>(pixelCoords.x / tb::Constants::TileSizeFloat);
+        tileCoords.x = static_cast<int>(pixelCoords.x / tb::Constants::TileSizeAsFloat);
     }
 
     if (pixelCoords.y != 0.0f)
     {
-        tileCoords.y = static_cast<int>(pixelCoords.y / tb::Constants::TileSizeFloat);
+        tileCoords.y = static_cast<int>(pixelCoords.y / tb::Constants::TileSizeAsFloat);
     }
 
     return tileCoords;
 }
 
-sf::Vector2i Map::getTileCoordsByTileIndex(uint32_t tileIndex)
+sf::Vector2i Map::getTileCoordsByTileIndex(std::uint32_t tileIndex)
 {
     sf::Vector2i tileCoords;
 
@@ -504,7 +504,7 @@ sf::Vector2i Map::getTileCoordsByTileIndex(uint32_t tileIndex)
     return tileCoords;
 }
 
-sf::Vector2f Map::getPixelCoordsByTileIndex(uint32_t tileIndex)
+sf::Vector2f Map::getPixelCoordsByTileIndex(std::uint32_t tileIndex)
 {
     sf::Vector2i tileCoords = getTileCoordsByTileIndex(tileIndex);
 
@@ -516,7 +516,7 @@ sf::Vector2f Map::getPixelCoordsByTileIndex(uint32_t tileIndex)
     return pixelCoords;
 }
 
-bool Map::isTileIndexOutOfBounds(uint32_t tileIndex)
+bool Map::isTileIndexOutOfBounds(std::uint32_t tileIndex)
 {
     if (tileIndex > (m_numTiles - 1))
     {
@@ -530,8 +530,8 @@ bool Map::isTileCoordsOutOfBounds(const sf::Vector2i& tileCoords)
 {
     if (tileCoords.x < 0) return true;
     if (tileCoords.y < 0) return true;
-    if (tileCoords.x > (m_tileWidth - 1)) return true;
-    if (tileCoords.y > (m_tileHeight - 1)) return true;
+    if ((std::uint32_t)tileCoords.x > (m_tileWidth  - 1)) return true;
+    if ((std::uint32_t)tileCoords.y > (m_tileHeight - 1)) return true;
 
     return false;
 }
@@ -552,7 +552,7 @@ tb::Tile::Ptr Map::getTile(const sf::Vector2i& tileCoords, tb::ZAxis_t z)
         return nullptr;
     }
 
-    uint32_t tileIndex = getTileIndexByTileCoords(tileCoords);
+    std::uint32_t tileIndex = getTileIndexByTileCoords(tileCoords);
 
     if (isTileIndexOutOfBounds(tileIndex) == true)
     {
@@ -578,32 +578,32 @@ const std::string& Map::getFileName()
     return m_fileName;
 }
 
-uint32_t Map::getPixelWidth()
+std::uint32_t Map::getPixelWidth()
 {
     return m_pixelWidth;
 }
 
-uint32_t Map::getPixelHeight()
+std::uint32_t Map::getPixelHeight()
 {
     return m_pixelHeight;
 }
 
-uint32_t Map::getNumPixels()
+std::uint32_t Map::getNumPixels()
 {
     return m_numPixels;
 }
 
-uint32_t Map::getTileWidth()
+std::uint32_t Map::getTileWidth()
 {
     return m_tileWidth;
 }
 
-uint32_t Map::getTileHeight()
+std::uint32_t Map::getTileHeight()
 {
     return m_tileHeight;
 }
 
-uint32_t Map::getNumTiles()
+std::uint32_t Map::getNumTiles()
 {
     return m_numTiles;
 }

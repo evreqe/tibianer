@@ -15,126 +15,135 @@ BitmapFontData::~BitmapFontData()
 
 bool BitmapFontData::load()
 {
-    if (std::filesystem::exists(m_fileName) == false)
+    tb::Utility::LibToml::LoadFileResult loadFileResult = tb::Utility::LibToml::loadFile(m_table, m_fileName);
+
+    g_Log.write("{}", loadFileResult.Text);
+
+    if (loadFileResult.Success == false)
     {
-        g_Log.write("ERROR: File does not exist: {}\n", m_fileName);
         return false;
     }
-
-    m_table.clear();
-
-    try
-    {
-        m_table = toml::parse_file(m_fileName);
-    }
-    catch (const toml::parse_error& parseError)
-    {
-        g_Log.write("ERROR: Failed to load data from file: {}\n", m_fileName);
-        g_Log.write("Description: {}\nLine: {}\nColumn: {}\n", parseError.description(), parseError.source().begin.line, parseError.source().begin.column);
-        return false;
-    }
-
-    g_Log.write("Loaded data from file: {}\n", m_fileName);
 
     m_dataList.clear();
-    m_dataList.reserve(m_numToLoad);
+    m_dataList.reserve(m_numToReserve);
 
-    for (unsigned int i = 0; i < m_numToLoad; i++)
+    const std::uint32_t numGlyphs = tb::Constants::BitmapFonts::NumGlyphs;
+
+    auto arrayOf = m_table["BitmapFont"].as_array();
+
+    std::uint32_t arrayIndex = 0;
+
+    bool foundError = false;
+
+    arrayOf->for_each
+    (
+        [this, &numGlyphs, &arrayIndex, &foundError](toml::table& arrayTable)
+        {
+            tb::BitmapFontData::Data data;
+            data.CharacterWidthList.reserve(numGlyphs);
+
+            data.Index = arrayIndex;
+
+            g_Log.write("Index: {}\n", arrayIndex);
+
+            data.Name = arrayTable["Name"].value_or("");
+
+            g_Log.write("Name: {}\n", data.Name);
+
+            if (data.Name.size() == 0)
+            {
+                g_Log.write("ERROR: 'Name' is empty\n");
+                foundError = true;
+                return false;
+            }
+
+            data.FileName = arrayTable["FileName"].value_or("");
+
+            g_Log.write("FileName: {}\n", data.FileName);
+
+            if (data.FileName.size() == 0)
+            {
+                g_Log.write("ERROR: 'FileName' is empty\n");
+                foundError = true;
+                return false;
+            }
+
+            data.GlyphWidth = arrayTable["GlyphWidth"].value_or(0);
+            data.GlyphHeight = arrayTable["GlyphHeight"].value_or(0);
+
+            g_Log.write("GlyphWidth: {}\n", data.GlyphWidth);
+            g_Log.write("GlyphHeight: {}\n", data.GlyphHeight);
+
+            if (data.GlyphWidth == 0 || data.GlyphHeight == 0)
+            {
+                g_Log.write("ERROR: 'GlyphWidth' or 'GlyphHeight' is zero\n");
+                foundError = true;
+                return false;
+            }
+
+            data.CharacterSpace = arrayTable["CharacterSpace"].value_or(0);
+
+            g_Log.write("CharacterSpace: {}\n", data.CharacterSpace);
+
+            data.CharacterHeight = arrayTable["CharacterHeight"].value_or(1);
+
+            g_Log.write("CharacterHeight: {}\n", data.CharacterHeight);
+
+            if (data.CharacterHeight < 1)
+            {
+                g_Log.write("ERROR: 'CharacterHeight' is less than 1\n");
+                foundError = true;
+                return false;
+            }
+
+            auto characterWidthListArray = arrayTable["CharacterWidthList"].as_array();
+
+            if (characterWidthListArray == nullptr)
+            {
+                g_Log.write("ERROR: 'CharacterWidthList' is nullptr\n");
+                foundError = true;
+                return false;
+            }
+
+            for (std::int32_t characterWidthIndex = 0; auto& characterWidthNode : *characterWidthListArray)
+            {
+                std::int32_t characterWidth = characterWidthNode.value_or(0);
+
+                data.CharacterWidthList.push_back(characterWidth);
+
+                characterWidthIndex++;
+            }
+
+            if (data.CharacterWidthList.size() == 0)
+            {
+                g_Log.write("ERROR: 'CharacterWidthList' is empty\n");
+                foundError = true;
+                return false;
+            }
+
+            if (data.CharacterWidthList.size() != numGlyphs)
+            {
+                g_Log.write("ERROR: 'CharacterWidthList' has the wrong size, size is {} instead of {}\n", data.CharacterWidthList.size(), numGlyphs);
+                foundError = true;
+                return false;
+            }
+
+            std::string characterWidthListAsString = fmt::format("{}", data.CharacterWidthList);
+
+            g_Log.write("CharacterWidthList: {}\n", characterWidthListAsString);
+
+            m_dataList.push_back(data);
+
+            arrayIndex++;
+
+            return true;
+        }
+    );
+
+    if (foundError == true)
     {
-        std::string index = std::to_string(i);
-
-        if (!m_table[index])
-        {
-            break;
-        }
-
-        g_Log.write("Index: {}\n", index);
-
-        tb::BitmapFontData::Data data;
-        data.CharacterWidthList.reserve(m_numGlyphs);
-
-        data.Index = i;
-
-        data.Name = m_table[index]["Name"].value_or("");
-
-        if (data.Name.size() == 0)
-        {
-            g_Log.write("ERROR: 'Name' is empty\n");
-            return false;
-        }
-
-        g_Log.write("Name: {}\n", data.Name);
-
-        data.FileName = m_table[index]["FileName"].value_or("");
-
-        if (data.FileName.size() == 0)
-        {
-            g_Log.write("ERROR: 'FileName' is empty\n");
-            return false;
-        }
-
-        g_Log.write("FileName: {}\n", data.FileName);
-
-        data.GlyphWidth = static_cast<uint8_t>(m_table[index]["GlyphWidth"].value_or(0));
-        data.GlyphHeight = static_cast<uint8_t>(m_table[index]["GlyphHeight"].value_or(0));
-
-        if (data.GlyphWidth == 0 || data.GlyphHeight == 0)
-        {
-            g_Log.write("ERROR: 'GlyphWidth' or 'GlyphHeight' is zero\n");
-            return false;
-        }
-
-        g_Log.write("GlyphWidth: {}\n", data.GlyphWidth);
-        g_Log.write("GlyphHeight: {}\n", data.GlyphHeight);
-
-        data.CharacterSpace = m_table[index]["CharacterSpace"].value_or(0);
-
-        g_Log.write("CharacterSpace: {}\n", data.CharacterSpace);
-
-        data.CharacterHeight = m_table[index]["CharacterHeight"].value_or(1);
-
-        if (data.CharacterHeight < 1)
-        {
-            g_Log.write("ERROR: 'CharacterHeight' is less than 1\n");
-            return false;
-        }
-
-        g_Log.write("CharacterHeight: {}\n", data.CharacterHeight);
-
-        auto characterWidthListArray = m_table[index]["CharacterWidthList"].as_array();
-
-        if (characterWidthListArray == nullptr)
-        {
-            g_Log.write("ERROR: characterWidthListArray == nullptr\n");
-            return false;
-        }
-
-        for (int j = 0; auto& characterWidthNode : *characterWidthListArray)
-        {
-            int characterWidth = characterWidthNode.value_or(0);
-
-            data.CharacterWidthList.push_back(characterWidth);
-
-            j++;
-        }
-
-        if (data.CharacterWidthList.size() == 0)
-        {
-            g_Log.write("ERROR: 'CharacterWidthList' is empty\n");
-            return false;
-        }
-
-        if (data.CharacterWidthList.size() != m_numGlyphs)
-        {
-            g_Log.write("ERROR: 'CharacterWidthList' has the wrong size, {} instead of {}\n", data.CharacterWidthList.size(), m_numGlyphs);
-            return false;
-        }
-
-        std::string characterWidthListAsString = fmt::format("{}", data.CharacterWidthList);
-
-        g_Log.write("CharacterWidthList: {}\n", characterWidthListAsString);
-
-        m_dataList.push_back(data);
+        g_Log.write("ERROR: Cannot load data because an error was found\n");
+        return false;
     }
 
     g_Log.write("Loaded data size: {}\n", m_dataList.size());

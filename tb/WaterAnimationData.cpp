@@ -15,37 +15,25 @@ WaterAnimationData::~WaterAnimationData()
 
 bool WaterAnimationData::load()
 {
-    if (std::filesystem::exists(m_fileName) == false)
+    tb::Utility::LibToml::LoadFileResult loadFileResult = tb::Utility::LibToml::loadFile(m_table, m_fileName);
+
+    g_Log.write("{}", loadFileResult.Text);
+
+    if (loadFileResult.Success == false)
     {
-        g_Log.write("ERROR: File does not exist: {}\n", m_fileName);
         return false;
     }
-
-    m_table.clear();
-
-    try
-    {
-        m_table = toml::parse_file(m_fileName);
-    }
-    catch (const toml::parse_error& parseError)
-    {
-        g_Log.write("ERROR: Failed to load data from file: {}\n", m_fileName);
-        g_Log.write("Description: {}\nLine: {}\nColumn: {}\n", parseError.description(), parseError.source().begin.line, parseError.source().begin.column);
-        return false;
-    }
-
-    g_Log.write("Loaded data from file: {}\n", m_fileName);
 
     m_spriteIDList_List.clear();
     m_spriteIDList_List.reserve(m_numToLoad);
 
-    for (unsigned int i = 0; i < m_numToLoad; i++)
+    for (std::uint32_t i = 0; i < m_numToLoad; i++)
     {
         std::string index = std::to_string(i);
 
         if (!m_table[index])
         {
-            g_Log.write("ERROR: {} is missing data at index: [{}]\n", m_fileName, i);
+            g_Log.write("ERROR: '{}' is missing data at index: [{}]\n", m_fileName, i);
             return false;
         }
 
@@ -54,41 +42,43 @@ bool WaterAnimationData::load()
         tb::SpriteIDList spriteIDList;
         spriteIDList.reserve(tb::Constants::NumWaterSpritesPerAnimationFrame);
 
-        auto spritesArray = m_table[index]["Sprites"].as_array();
+        auto spriteArray = m_table[index]["SpriteList"].as_array();
 
-        if (spritesArray == nullptr)
+        if (spriteArray == nullptr)
         {
-            g_Log.write("ERROR: spritesArray == nullptr\n");
+            g_Log.write("ERROR: 'SpriteList' is nullptr\n");
             return false;
         }
 
-        for (unsigned int j = 0; auto& spritesNode : *spritesArray)
+        for (std::uint32_t spriteIndex = 0; auto& spriteNode : *spriteArray)
         {
-            tb::SpriteID_t spriteID = static_cast<tb::SpriteID_t>(spritesNode.value_or(0));
-            if (spriteID == 0)
+            tb::SpriteID_t spriteID = static_cast<tb::SpriteID_t>(spriteNode.value_or(tb::Constants::SpriteIDNull));
+            if (spriteID == tb::Constants::SpriteIDNull)
             {
-                g_Log.write("ERROR: Sprite ID is zero at index: [{}] Sprites=[#{}]\n", j);
+                g_Log.write("ERROR: Sprite ID is zero at index: SpriteList=[Index: {}]\n", spriteIndex);
                 return false;
             }
 
             spriteIDList.push_back(spriteID);
+
+            spriteIndex++;
         }
 
         if (spriteIDList.size() == 0)
         {
-            g_Log.write("ERROR: 'Sprites' is empty\n");
+            g_Log.write("ERROR: 'SpriteList' is empty\n");
             return false;
         }
 
         if (spriteIDList.size() != tb::Constants::NumWaterSpritesPerAnimationFrame)
         {
-            g_Log.write("ERROR: 'Sprites' has the wrong size, {} instead of {}\n", spriteIDList.size(), tb::Constants::NumWaterSpritesPerAnimationFrame);
+            g_Log.write("ERROR: 'SpriteList' has the wrong size, size is {} instead of {}\n", spriteIDList.size(), tb::Constants::NumWaterSpritesPerAnimationFrame);
             return false;
         }
 
-        std::string spriteIDListStr = fmt::format("{}", spriteIDList);
+        std::string spriteIDListAsString = fmt::format("{}", spriteIDList);
 
-        g_Log.write("Sprites: {}\n", spriteIDListStr);
+        g_Log.write("SpriteList: {}\n", spriteIDListAsString);
 
         m_spriteIDList_List.push_back(spriteIDList);
     }
@@ -97,7 +87,7 @@ bool WaterAnimationData::load()
 
     if (m_spriteIDList_List.size() != tb::Constants::NumWaterAnimationFrames)
     {
-        g_Log.write("ERROR: Loaded data has the wrong size, {} instead of {}\n", m_spriteIDList_List.size(), tb::Constants::NumWaterAnimationFrames);
+        g_Log.write("ERROR: Loaded data has the wrong size, size is {} instead of {}\n", m_spriteIDList_List.size(), tb::Constants::NumWaterAnimationFrames);
         return false;
     }
 

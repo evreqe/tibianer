@@ -33,7 +33,7 @@ void StatusBar::draw()
 
     ImGui::PopStyleVar(2);
 
-    ImGui::SetCursorPosX(8.0f);
+    ImGui::SetCursorPosX(m_textPadding);
 
     ImGui::TextUnformatted(m_text.c_str());
 
@@ -41,14 +41,14 @@ void StatusBar::draw()
     {
         ImGui::SameLine();
 
-        std::string bottomRightText = "H 0, M 0, C 0, A 0";
+        std::string rightText = "H 0, M 0, C 0, A 0";
 
-        ImVec2 bottomRightTextSize = ImGui::CalcTextSize(bottomRightText.c_str());
+        ImVec2 rightTextSize = ImGui::CalcTextSize(rightText.c_str());
 
         // apply right-justify alignment
-        ImGui::SetCursorPosX(renderWindowSize2f.x - bottomRightTextSize.x - m_bottomRightTextPadding);
+        ImGui::SetCursorPosX(renderWindowSize2f.x - rightTextSize.x - m_textPadding);
 
-        ImGui::TextUnformatted(bottomRightText.c_str());
+        ImGui::TextUnformatted(rightText.c_str());
     }
 
     ImGui::End();

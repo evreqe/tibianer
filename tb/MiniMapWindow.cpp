@@ -9,8 +9,6 @@ MiniMapWindow::MiniMapWindow()
 
     setViewInitialSize(m_viewSize);
 
-    m_vertexArray.setPrimitiveType(sf::Quads);
-
     initalize();
 }
 
@@ -67,8 +65,8 @@ void MiniMapWindow::draw()
     (
         sf::Vector2f
         (
-            player->getPixelX() + tb::Constants::TileSizeHalfFloat,
-            player->getPixelY() + tb::Constants::TileSizeHalfFloat
+            player->getPixelX() + tb::Constants::TileSizeHalfAsFloat,
+            player->getPixelY() + tb::Constants::TileSizeHalfAsFloat
         )
     );
 
@@ -99,13 +97,13 @@ void MiniMapWindow::draw()
         {
             // only use X and not Y because the minimap is a square with 1:1 ratio
 
-            int numTilesFromCenterX = g_GameWindow.getNumTilesFromCenterX();
+            std::uint32_t numTilesFromCenterX = g_GameWindow.getNumTilesFromCenterX();
 
             float zoomScale = getZoomScale();
 
-            int tileScale = static_cast<int>(zoomScale);
+            std::uint32_t tileScale = static_cast<std::uint32_t>(zoomScale);
 
-            int tileScaleXY = numTilesFromCenterX * tileScale;
+            std::uint32_t tileScaleXY = numTilesFromCenterX * tileScale;
 
             tileRect.left   -= tileScaleXY;
             tileRect.top    -= tileScaleXY;
@@ -126,7 +124,7 @@ void MiniMapWindow::draw()
 
     if (isDebugModeEnabled == true)
     {
-        if (tb::Utility::MyImGui::isActive() == false)
+        if (tb::Utility::LibImGui::isActive() == false)
         {
             drawTileHighlight();
         }
@@ -146,12 +144,12 @@ void MiniMapWindow::drawTileMap(const sf::IntRect& tileRect, tb::TileMap::Ptr ti
         return;
     }
 
-    int numVertices = (tileRect.width * tileRect.height) * 4;
+    std::int32_t numVertices = (tileRect.width * tileRect.height) * 4;
 
-    m_vertexArray.clear();
-    m_vertexArray.resize(numVertices);
+    m_vertexList.clear();
+    m_vertexList.reserve(numVertices);
 
-    const float tileSize = tb::Constants::TileSizeFloat;
+    const float tileSize = tb::Constants::TileSizeAsFloat;
 
     for (auto& tile : tileList)
     {
@@ -212,22 +210,21 @@ void MiniMapWindow::drawTileMap(const sf::IntRect& tileRect, tb::TileMap::Ptr ti
         vertex[2].color = color;
         vertex[3].color = color;
 
-        m_vertexArray.append(vertex[0]);
-        m_vertexArray.append(vertex[1]);
-        m_vertexArray.append(vertex[2]);
-        m_vertexArray.append(vertex[3]);
+        m_vertexList.push_back(vertex[0]);
+        m_vertexList.push_back(vertex[1]);
+        m_vertexList.push_back(vertex[2]);
+        m_vertexList.push_back(vertex[3]);
     }
 
     std::vector<sf::Vertex> crosshairVertexList = getCrosshairVertexList();
 
-    for (auto& crosshairVertex : crosshairVertexList)
-    {
-        m_vertexArray.append(crosshairVertex);
-    }
+    m_vertexList.insert(m_vertexList.end(), crosshairVertexList.begin(), crosshairVertexList.end());
 
     sf::RenderTexture* windowRenderTexture = getWindowRenderTexture();
 
-    windowRenderTexture->draw(m_vertexArray);
+    sf::RenderStates renderStates = sf::RenderStates::Default;
+
+    windowRenderTexture->draw(&m_vertexList[0], m_vertexList.size(), sf::Quads, renderStates);
 }
 
 void MiniMapWindow::drawTileHighlight()
@@ -235,7 +232,7 @@ void MiniMapWindow::drawTileHighlight()
     sf::Vector2f mousePixelCoords = getMousePixelCoords();
 
     sf::RectangleShape rectangleShape;
-    rectangleShape.setSize(sf::Vector2f(tb::Constants::TileSizeFloat, tb::Constants::TileSizeFloat));
+    rectangleShape.setSize(sf::Vector2f(tb::Constants::TileSizeAsFloat, tb::Constants::TileSizeAsFloat));
     rectangleShape.setPosition(mousePixelCoords);
     rectangleShape.setFillColor(sf::Color::Cyan);
 
@@ -250,7 +247,7 @@ std::vector<sf::Vertex> MiniMapWindow::getCrosshairVertexList()
 
     sf::Vector2f playerCoords = player->getPixelCoords();
 
-    const float tileSize = tb::Constants::TileSizeFloat;
+    const float tileSize = tb::Constants::TileSizeAsFloat;
 
     std::vector<sf::Vector2f> tileCoordsList;
     tileCoordsList.reserve(m_numCrosshairTiles);

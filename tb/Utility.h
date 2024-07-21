@@ -11,17 +11,6 @@ namespace tb
         static std::random_device randomDevice;
         static std::default_random_engine randomEngine(randomDevice());
 
-        template <typename P, typename R>
-        static bool isPositionInsideRectangle(const sf::Vector2<P>& position, const sf::Rect<R>& rect)
-        {
-            if (position.x < rect.left)                   return false;
-            if (position.y < rect.top)                    return false;
-            if (position.x > (rect.left + rect.width))    return false;
-            if (position.y > (rect.top + rect.height))    return false;
-
-            return true;
-        }
-
         static bool isPositionInsideCircle(sf::Vector2f center, sf::Vector2f position, float radius, float& distance)
         {
             float dx = center.x - position.x;
@@ -32,8 +21,6 @@ namespace tb
             return distance <= radius;
 
             //float distanceSquared = dx * dx + dy * dy;
-
-            //distance = ?
 
             //return distanceSquared <= radius * radius;
         }
@@ -54,9 +41,9 @@ namespace tb
             return std::sqrtf(std::powf(x1 - x2, 2) + std::powf(y1 - y2, 2));
         }
 
-        static uint32_t getRandomNumber(uint32_t min, uint32_t max)
+        static std::uint32_t getRandomNumber(std::uint32_t min, std::uint32_t max)
         {
-            std::uniform_int_distribution<uint32_t> uniformDistribution(min, max);
+            std::uniform_int_distribution<std::uint32_t> uniformDistribution(min, max);
 
             return uniformDistribution(randomEngine);
         }
@@ -68,7 +55,7 @@ namespace tb
             return uniformDistribution(randomEngine);
         }
 
-        static std::string getFileContent(const char* fileName)
+        static std::string getFileText(const char* fileName)
         {
             if (fileName == nullptr || std::strlen(fileName) == 0)
             {
@@ -77,10 +64,10 @@ namespace tb
 
             std::ifstream file(fileName);
             auto fileSize = std::filesystem::file_size(fileName);
-            std::string content(fileSize, '\0');
-            file.read(content.data(), fileSize);
+            std::string text(fileSize, '\0');
+            file.read(text.data(), fileSize);
             file.close();
-            return content;
+            return text;
         }
 
         namespace String
@@ -122,9 +109,21 @@ namespace tb
 
                 return std::string();
             }
+
+            static std::string replaceAll(std::string subject, const std::string& from, const std::string& to)
+            {
+                std::size_t beginPosition = 0;
+                while((beginPosition = subject.find(from, beginPosition)) != std::string::npos)
+                {
+                    subject.replace(beginPosition, from.length(), to);
+
+                    beginPosition = beginPosition + to.length();
+                }
+                return subject;
+            }
         }
 
-        namespace MyImGui
+        namespace LibImGui
         {
             static bool isActive()
             {
@@ -189,6 +188,44 @@ namespace tb
                 {
                     ImGui::SetScrollY(window, window->Scroll.y + mouseDelta.y);
                 }
+            }
+        }
+
+        namespace LibToml
+        {
+            struct LoadFileResult
+            {
+                bool Success = false;
+                std::string Text;
+            };
+
+            static LoadFileResult loadFile(toml::table& table, const std::string& fileName)
+            {
+                LoadFileResult result;
+
+                if (std::filesystem::exists(fileName) == false)
+                {
+                    result.Text = std::format("ERROR: File does not exist: {}\n", fileName);
+                    result.Success = false;
+                    return result;
+                }
+
+                table.clear();
+
+                try
+                {
+                    table = toml::parse_file(fileName);
+                }
+                catch (const toml::parse_error& parseError)
+                {
+                    result.Text = std::format("ERROR: Failed to load TOML data from file: {}\nDescription: {}\nLine: {}\nColumn: {}\n", fileName, parseError.description(), parseError.source().begin.line, parseError.source().begin.column);
+                    result.Success = false;
+                    return result;
+                }
+
+                result.Text = std::format("Loaded TOML data from file: {}\n", fileName);
+                result.Success = true;
+                return result;
             }
         }
     }

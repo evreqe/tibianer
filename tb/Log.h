@@ -3,7 +3,7 @@
 #include "common.h"
 
 #include "tb/Constants.h"
-#include "tb/Utility.h"
+#include "tb/Log.h"
 
 namespace tb
 {
@@ -39,31 +39,29 @@ public:
         bool WriteToFile = true;
     };
 
-    typedef struct _FormatString
+    struct FormatString_t
     {
-        fmt::string_view str;
-        std::source_location loc;
+        fmt::string_view logText;
+        std::source_location sourceLocation;
 
-        _FormatString
+        FormatString_t
         (
-            const char* str,
-            const std::source_location& loc = std::source_location::current()
-        ) : str(str), loc(loc) {}
-    } FormatString, *FormatString_ptr;
+            const char* logText,
+            const std::source_location& sourceLocation = std::source_location::current()
+        ) : logText(logText), sourceLocation(sourceLocation) {}
+    };
 
-    void vwrite(const FormatString& format, fmt::format_args args);
+    void vwrite(const FormatString_t& formatString, fmt::format_args args);
 
     template <typename... Args>
-    void write(const FormatString& format, Args&&... args)
+    void write(const FormatString_t& formatString, Args&&... args)
     {
         if (m_properties.IsEnabled == false)
         {
             return;
         }
 
-        vwrite(format, fmt::make_format_args(args...));
-
-        ////auto fireAndForget = std::async(std::launch::async, &Log::vwrite, this, format, fmt::make_format_args(args...));
+        vwrite(formatString, fmt::make_format_args(args...));
     }
 
     Properties_t* getProperties();
@@ -88,8 +86,8 @@ private:
     std::string m_text;
     std::size_t m_textReserveSize = 4096 * 1000;
 
-    std::string m_sourceText;
-    std::size_t m_sourceTextReserveSize = 128;
+    std::string m_sourceLocationText;
+    std::size_t m_sourceLocationTextReserveSize = 128;
 
     std::string m_logText;
     std::size_t m_logTextReserveSize = 256;

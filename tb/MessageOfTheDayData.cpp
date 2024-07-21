@@ -37,6 +37,7 @@ bool MessageOfTheDayData::load()
     std::string line;
     while (std::getline(m_file, line))
     {
+        // skip comments
         if (line.starts_with("#") == true)
         {
             continue;
@@ -73,20 +74,20 @@ std::string MessageOfTheDayData::getMessageOfTheDay()
 
     const std::chrono::year_month_day yearMonthDay {std::chrono::floor<std::chrono::days>(timePointNow)};
 
-    unsigned int day = static_cast<unsigned int>(yearMonthDay.day());
+    std::uint32_t day = static_cast<std::uint32_t>(yearMonthDay.day());
 
-    size_t numMessages = m_dataList.size();
+    std::size_t numMessages = m_dataList.size();
 
     if (numMessages == 0)
     {
         return "ERROR: No messages found!";
     }
 
-    uint32_t messageIndex = 0;
+    std::uint32_t messageIndex = 0;
 
     if (day > numMessages)
     {
-        messageIndex = tb::Utility::getRandomNumber(0, numMessages - 1);
+        messageIndex = tb::Utility::getRandomNumber(0, static_cast<std::uint32_t>(numMessages - 1));
     }
     else
     {

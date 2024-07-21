@@ -69,7 +69,7 @@ private:
 
     tb::BitmapFontText m_skillNamesBitmapFontText;
 
-    const std::string m_skillNamesText = "FIST FIGHTING:\nCLUB FIGHTING:\nSWORD FIGHTING:\nAXE FIGHTING:\nDISTANCE FIGHTING:\nSHIELDING:\nFISHING:";
+    const std::string m_skillNamesText = "FIST FIGHTING:\nCLUB FIGHTING:\nSWORD FIGHTING:\nAXE FIGHTING:\nDISTANCE FIGHTING:\nSHIELDING:\nFISHING:\n";
 
     sf::Vector2f m_viewSize = sf::Vector2f(tb::Constants::GuiRightLayoutWidthAsFloat, tb::Constants::GuiRightLayoutWidthAsFloat);
 

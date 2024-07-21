@@ -35,17 +35,17 @@ void Sprite::setTileWidthAndHeightByID(tb::SpriteID_t spriteID)
     updateTextureRect();
 }
 
-sf::IntRect Sprite::getTextureRectByID(tb::SpriteID_t spriteID, uint8_t tileWidth, uint8_t tileHeight)
+sf::IntRect Sprite::getTextureRectByID(tb::SpriteID_t spriteID, std::uint8_t tileWidth, std::uint8_t tileHeight)
 {
     // index in the spritesheet starts at 1
     spriteID = spriteID - 1;
 
     sf::Vector2u spritesTextureSize = tb::Textures::Sprites.getSize();
 
-    const int tileSize = tb::Constants::TileSize;
+    const std::uint32_t tileSize = tb::Constants::TileSize;
 
-    int u = (spriteID % (spritesTextureSize.x / tileSize)) * tileSize;
-    int v = (spriteID / (spritesTextureSize.y / tileSize)) * tileSize;
+    std::int32_t u = (spriteID % (spritesTextureSize.x / tileSize)) * tileSize;
+    std::int32_t v = (spriteID / (spritesTextureSize.y / tileSize)) * tileSize;
 
     u = u - ((tileWidth  - 1) * tileSize);
     v = v - ((tileHeight - 1) * tileSize);
@@ -60,24 +60,24 @@ void Sprite::updateTextureRect()
     setTextureRect(rect);
 }
 
-uint8_t Sprite::getTileWidth()
+std::uint8_t Sprite::getTileWidth()
 {
     return m_tileWidth;
 }
 
-void Sprite::setTileWidth(uint8_t tileWidth)
+void Sprite::setTileWidth(std::uint8_t tileWidth)
 {
     m_tileWidth = tileWidth;
 
     updateTextureRect();
 }
 
-uint8_t Sprite::getTileHeight()
+std::uint8_t Sprite::getTileHeight()
 {
     return m_tileHeight;
 }
 
-void Sprite::setTileHeight(uint8_t tileHeight)
+void Sprite::setTileHeight(std::uint8_t tileHeight)
 {
     m_tileHeight = tileHeight;
 

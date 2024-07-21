@@ -2,7 +2,6 @@
 
 // modules do not work LOL
 //import std;
-//import std.compat;
 
 #include <cctype>
 #include <cmath>
@@ -10,6 +9,7 @@
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
+#include <stdfloat>
 
 #include <algorithm>
 #include <array>
@@ -45,15 +45,19 @@
 #include <utility>
 #include <vector>
 
+#undef FMT_UNICODE
+#define FMT_UNICODE 0
 #include "fmt/core.h"
 #include "fmt/format.h"
 #include "fmt/ostream.h"
 #include "fmt/ranges.h"
 #include "fmt/compile.h"
+#include "fmt/std.h"
 
 #include "imgui.h"
 #include "imgui_internal.h"
 #include "imgui_stdlib.h"
+
 #include "imgui-SFML.h"
 
 #include "toml.hpp"

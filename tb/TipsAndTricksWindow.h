@@ -7,34 +7,34 @@
 namespace tb
 {
 
-    class TipsAndTricksWindow : public tb::ImGuiWindow
+class TipsAndTricksWindow : public tb::ImGuiWindow
+{
+
+public:
+
+    TipsAndTricksWindow();
+    ~TipsAndTricksWindow();
+
+    static TipsAndTricksWindow& getInstance()
     {
+        static TipsAndTricksWindow instance;
+        return instance;
+    }
 
-    public:
+private:
 
-        TipsAndTricksWindow();
-        ~TipsAndTricksWindow();
+    TipsAndTricksWindow(const TipsAndTricksWindow&) = delete;
+    TipsAndTricksWindow(TipsAndTricksWindow&&) = delete;
+    TipsAndTricksWindow& operator=(const TipsAndTricksWindow&) = delete;
+    TipsAndTricksWindow& operator=(TipsAndTricksWindow&&) = delete;
 
-        static TipsAndTricksWindow& getInstance()
-        {
-            static TipsAndTricksWindow instance;
-            return instance;
-        }
+public:
 
-    private:
+    void draw();
 
-        TipsAndTricksWindow(const TipsAndTricksWindow&) = delete;
-        TipsAndTricksWindow(TipsAndTricksWindow&&) = delete;
-        TipsAndTricksWindow& operator=(const TipsAndTricksWindow&) = delete;
-        TipsAndTricksWindow& operator=(TipsAndTricksWindow&&) = delete;
+private:
 
-    public:
-
-        void draw();
-
-    private:
-
-        const char* m_displayText =
+    const char* m_displayText =
 "- When fighting against several monsters try to keep your\n\
   back free, so that only one of them can hit you.\n\
 - A day in Tibia lasts 60 minutes. Make sure that you have\n\
@@ -49,9 +49,9 @@ namespace tb
   \"I want to buy a short sword.\"\n\
   \"What time is it?\"";
 
-        const ImVec2 m_buttonSize = ImVec2(88.0f, 23.0f);
+    const ImVec2 m_buttonSize = ImVec2(88.0f, 23.0f);
 
-    };
+};
 
 }
 

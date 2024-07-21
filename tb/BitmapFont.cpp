@@ -13,7 +13,7 @@ BitmapFont::~BitmapFont()
     //
 }
 
-bool BitmapFont::load(const std::string& fileName, const sf::Vector2u& glyphSize, int characterSpace, int characterHeight, std::vector<int>* characterWidthList)
+bool BitmapFont::load(const std::string& fileName, const sf::Vector2u& glyphSize, std::int32_t characterSpace, std::int32_t characterHeight, std::vector<std::int32_t>* characterWidthList)
 {
     if (std::filesystem::exists(fileName) == false)
     {
@@ -27,8 +27,10 @@ bool BitmapFont::load(const std::string& fileName, const sf::Vector2u& glyphSize
         return false;
     }
 
+    const std::uint32_t numGlyphs = tb::Constants::BitmapFonts::NumGlyphs;
+
     m_vertexArray.clear();
-    m_vertexArray.resize(m_numGlyphs * 4);
+    m_vertexArray.resize(numGlyphs * 4);
 
     m_glyphSize = glyphSize;
 
@@ -38,8 +40,8 @@ bool BitmapFont::load(const std::string& fileName, const sf::Vector2u& glyphSize
 
     m_characterWidthList = *characterWidthList;
 
-    const unsigned int textureSizeX = m_texture.getSize().x;
-    const unsigned int textureSizeY = m_texture.getSize().y;
+    const std::uint32_t textureSizeX = m_texture.getSize().x;
+    const std::uint32_t textureSizeY = m_texture.getSize().y;
 
     if (textureSizeX == 0 || textureSizeY == 0)
     {
@@ -47,8 +49,8 @@ bool BitmapFont::load(const std::string& fileName, const sf::Vector2u& glyphSize
         return false;
     }
 
-    const unsigned int glyphSizeX = glyphSize.x;
-    const unsigned int glyphSizeY = glyphSize.y;
+    const std::uint32_t glyphSizeX = glyphSize.x;
+    const std::uint32_t glyphSizeY = glyphSize.y;
 
     if (glyphSizeX == 0 || glyphSizeY == 0)
     {
@@ -56,10 +58,10 @@ bool BitmapFont::load(const std::string& fileName, const sf::Vector2u& glyphSize
         return false;
     }
 
-    for (unsigned int i = 0; i < m_numGlyphs; i++)
+    for (std::uint32_t i = 0; i < numGlyphs; i++)
     {
-        const unsigned int u = i % (textureSizeX / glyphSizeX);
-        const unsigned int v = i / (textureSizeX / glyphSizeX);
+        const std::uint32_t u = i % (textureSizeX / glyphSizeX);
+        const std::uint32_t v = i / (textureSizeX / glyphSizeX);
 
         sf::Vertex* vertex = &m_vertexArray[i * 4];
 
@@ -92,17 +94,17 @@ sf::Vector2u BitmapFont::getGlyphSize()
     return m_glyphSize;
 }
 
-int BitmapFont::getCharacterSpace()
+std::int32_t BitmapFont::getCharacterSpace()
 {
     return m_characterSpace;
 }
 
-int BitmapFont::getCharacterHeight()
+std::int32_t BitmapFont::getCharacterHeight()
 {
     return m_characterHeight;
 }
 
-std::vector<int>* BitmapFont::getCharacterWidthList()
+std::vector<std::int32_t>* BitmapFont::getCharacterWidthList()
 {
     return &m_characterWidthList;
 }

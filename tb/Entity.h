@@ -27,7 +27,8 @@ public:
 
 private:
 
-    std::string m_name = std::string();
+    std::string m_name;
+
 };
 
 }

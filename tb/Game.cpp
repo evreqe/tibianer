@@ -112,10 +112,10 @@ bool Game::loadData()
         return false;
     }
 
-    g_Log.write("Loading outfit data\n");
-    if (g_OutfitData.load() == false)
+    g_Log.write("Loading outfit sprites data\n");
+    if (g_OutfitSpritesData.load() == false)
     {
-        g_Log.write("ERROR: Failed to load outfit data\n");
+        g_Log.write("ERROR: Failed to load outfit sprites data\n");
         return false;
     }
 
@@ -133,10 +133,10 @@ bool Game::loadData()
         return false;
     }
 
-    g_Log.write("Loading gui data\n");
-    if (g_GuiData.load() == false)
+    g_Log.write("Loading gui rect data\n");
+    if (g_GuiRectData.load() == false)
     {
-        g_Log.write("ERROR: Failed to load gui data\n");
+        g_Log.write("ERROR: Failed to load GUI rect data\n");
         return false;
     }
 
@@ -151,6 +151,20 @@ bool Game::loadData()
     if (g_AnimationData.load() == false)
     {
         g_Log.write("ERROR: Failed to load animation data\n");
+        return false;
+    }
+
+    g_Log.write("Loading map generator data\n");
+    if (g_MapGeneratorData.load() == false)
+    {
+        g_Log.write("ERROR: Failed to load map generator data\n");
+        return false;
+    }
+
+    g_Log.write("Loading map generator pixel data\n");
+    if (g_MapGeneratorPixelData.load() == false)
+    {
+        g_Log.write("ERROR: Failed to load map generator pixel data\n");
         return false;
     }
 
@@ -201,17 +215,19 @@ bool Game::loadGlobalsFromData()
         return false;
     }
 
-    g_Log.write("Loading gui rects\n");
+    g_Log.write("Loading GUI rects\n");
     if (loadGuiRects() == false)
     {
         g_Log.write("ERROR: Failed to load gui rects\n");
         return false;
     }
+
+    return true;
 }
 
 bool Game::loadTextures()
 {
-    unsigned int maximumTextureSize = sf::Texture::getMaximumSize();
+    std::uint32_t maximumTextureSize = sf::Texture::getMaximumSize();
 
     if (maximumTextureSize < m_minimumTextureSizeRequiredToRun)
     {
@@ -308,7 +324,7 @@ bool Game::loadBitmapFonts()
 {
     if (g_BitmapFontData.isLoaded() == false)
     {
-        g_Log.write("ERROR: Bitmap font data is not loaded\n");
+        g_Log.write("ERROR: Bitmap Font data is not loaded\n");
         return false;
     }
 
@@ -487,26 +503,26 @@ bool Game::loadAnimations()
 
 bool Game::loadGuiRects()
 {
-    if (g_GuiData.isLoaded() == false)
+    if (g_GuiRectData.isLoaded() == false)
     {
-        g_Log.write("ERROR: gui data is not loaded\n");
+        g_Log.write("ERROR: GUI Rect data is not loaded\n");
         return false;
     }
 
-    tb::GuiData::DataList* guiDataList = g_GuiData.getDataList();
+    tb::GuiRectData::DataList* guiRectDataList = g_GuiRectData.getDataList();
 
     for (auto& [guiRectName, guiRect] : tb::GuiRects::Names)
     {
         bool isFound = false;
 
-        for (auto& guiData : *guiDataList)
+        for (auto& guiRectData : *guiRectDataList)
         {
-            if (guiData.Name == guiRectName)
+            if (guiRectData.Name == guiRectName)
             {
-                guiRect.left   = guiData.X;
-                guiRect.top    = guiData.Y;
-                guiRect.width  = guiData.Width;
-                guiRect.height = guiData.Height;
+                guiRect.left   = guiRectData.X;
+                guiRect.top    = guiRectData.Y;
+                guiRect.width  = guiRectData.Width;
+                guiRect.height = guiRectData.Height;
 
                 isFound = true;
                 break;
@@ -523,6 +539,8 @@ bool Game::loadGuiRects()
             return false;
         }
     }
+
+    return true;
 }
 
 bool Game::loadMap(const std::string& fileName)
@@ -614,7 +632,7 @@ void Game::drawLoadingText()
     sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
 
     sf::Font loadingTextFont;
-    if (loadingTextFont.loadFromFile("fonts/arial.ttf") == false)
+    if (loadingTextFont.loadFromFile("fonts/system.ttf") == false)
     {
         g_Log.write("ERROR: Failed to draw loading text\n");
 
@@ -626,7 +644,7 @@ void Game::drawLoadingText()
 
     sf::Text loadingText;
     loadingText.setFont(loadingTextFont);
-    loadingText.setCharacterSize(64);
+    loadingText.setCharacterSize(13);
     loadingText.setFillColor(sf::Color::White);
     loadingText.setString("Loading...");
 
@@ -649,13 +667,13 @@ sf::FloatRect Game::getGuiFullLayoutRect()
     float menuBarHeight = g_MenuBar.getHeight();
     float statusBarHeight = g_StatusBar.getHeight();
 
-    const float padding = tb::Constants::PaddingRenderWindow;
+    const float paddingRenderWindow = tb::Constants::PaddingRenderWindow;
 
     sf::FloatRect layoutRect;
-    layoutRect.left   = padding;
-    layoutRect.top    = padding + menuBarHeight;
-    layoutRect.width  = renderWindowSize.x - (padding * 2.0f);
-    layoutRect.height = renderWindowSize.y - (padding * 2.0f) - menuBarHeight - statusBarHeight;
+    layoutRect.left   = paddingRenderWindow;
+    layoutRect.top    = paddingRenderWindow + menuBarHeight;
+    layoutRect.width  = renderWindowSize.x - (paddingRenderWindow * 2.0f);
+    layoutRect.height = renderWindowSize.y - (paddingRenderWindow * 2.0f) - menuBarHeight - statusBarHeight;
 
     return layoutRect;
 }
@@ -666,7 +684,7 @@ sf::FloatRect Game::getGuiLeftLayoutRect()
 
     sf::Vector2f renderWindowSize = static_cast<sf::Vector2f>(renderWindow->getSize());
 
-    float padding = tb::Constants::PaddingRenderWindow;
+    float paddingRenderWindow = tb::Constants::PaddingRenderWindow;
 
     float guiRightLayoutWidth = tb::Constants::GuiRightLayoutWidthAsFloat * m_guiProperties.Scale;
 
@@ -676,10 +694,10 @@ sf::FloatRect Game::getGuiLeftLayoutRect()
     float statusBarHeight = g_StatusBar.getHeight();
 
     sf::FloatRect layoutRect;
-    layoutRect.left   = padding;
-    layoutRect.top    = padding + menuBarHeight;
-    layoutRect.width  = renderWindowSize.x - (padding * 2.0f) - guiRightLayoutWidth - paddingBetweenLeftAndRightLayoutRect;
-    layoutRect.height = renderWindowSize.y - (padding * 2.0f) - menuBarHeight - statusBarHeight;
+    layoutRect.left   = paddingRenderWindow;
+    layoutRect.top    = paddingRenderWindow + menuBarHeight;
+    layoutRect.width  = renderWindowSize.x - (paddingRenderWindow * 2.0f) - guiRightLayoutWidth - paddingBetweenLeftAndRightLayoutRect;
+    layoutRect.height = renderWindowSize.y - (paddingRenderWindow * 2.0f) - menuBarHeight - statusBarHeight;
 
     return layoutRect;
 }
@@ -690,7 +708,7 @@ sf::FloatRect Game::getGuiRightLayoutRect()
 
     sf::Vector2f renderWindowSize = static_cast<sf::Vector2f>(renderWindow->getSize());
 
-    float padding = tb::Constants::PaddingRenderWindow;
+    float paddingRenderWindow = tb::Constants::PaddingRenderWindow;
 
     float guiRightLayoutWidth = tb::Constants::GuiRightLayoutWidthAsFloat * m_guiProperties.Scale;
 
@@ -698,10 +716,10 @@ sf::FloatRect Game::getGuiRightLayoutRect()
     float statusBarHeight = g_StatusBar.getHeight();
 
     sf::FloatRect layoutRect;
-    layoutRect.left   = renderWindowSize.x - padding - guiRightLayoutWidth;
-    layoutRect.top    = padding + menuBarHeight;
+    layoutRect.left   = renderWindowSize.x - paddingRenderWindow - guiRightLayoutWidth;
+    layoutRect.top    = paddingRenderWindow + menuBarHeight;
     layoutRect.width  = guiRightLayoutWidth;
-    layoutRect.height = renderWindowSize.y - (padding * 2.0f) - menuBarHeight - statusBarHeight;
+    layoutRect.height = renderWindowSize.y - (paddingRenderWindow * 2.0f) - menuBarHeight - statusBarHeight;
 
     return layoutRect;
 }
@@ -763,41 +781,41 @@ void Game::drawWoodBorder(sf::FloatRect rect, bool drawBlackRectangle)
         rect.height += 2.0f;
     }
 
-    sf::Sprite woodHorizontal1;
+    sf::Sprite woodHorizontal;
     sf::Sprite woodHorizontal2;
-    sf::Sprite woodVertical1;
+    sf::Sprite woodVertical;
     sf::Sprite woodVertical2;
 
-    woodHorizontal1.setTexture(tb::Textures::WoodHorizontal1);
+    woodHorizontal.setTexture(tb::Textures::WoodHorizontal);
     woodHorizontal2.setTexture(tb::Textures::WoodHorizontal2);
-    woodVertical1.setTexture(tb::Textures::WoodVertical1);
+    woodVertical.setTexture(tb::Textures::WoodVertical);
     woodVertical2.setTexture(tb::Textures::WoodVertical2);
 
-    sf::Vector2u woodHorizontal1Size = tb::Textures::WoodHorizontal1.getSize();
+    sf::Vector2u woodHorizontalSize = tb::Textures::WoodHorizontal.getSize();
     sf::Vector2u woodHorizontal2Size = tb::Textures::WoodHorizontal2.getSize();
 
-    sf::Vector2u woodVertical1Size = tb::Textures::WoodVertical1.getSize();
+    sf::Vector2u woodVerticalSize = tb::Textures::WoodVertical.getSize();
     sf::Vector2u woodVertical2Size = tb::Textures::WoodVertical2.getSize();
 
     // top
-    woodHorizontal1.setPosition(sf::Vector2f(rect.left - woodVertical1Size.x, rect.top - woodHorizontal1Size.y));
-    woodHorizontal1.setTextureRect(sf::IntRect(0, 0, rect.width + (woodVertical1Size.x * 2), woodHorizontal1Size.y));
+    woodHorizontal.setPosition(sf::Vector2f((float)(rect.left - woodVerticalSize.x), (float)(rect.top - woodHorizontalSize.y)));
+    woodHorizontal.setTextureRect(sf::IntRect(0, 0, (int)(rect.width + (woodVerticalSize.x * 2)), (int)woodHorizontalSize.y));
 
     // bottom
-    woodHorizontal2.setPosition(sf::Vector2f(rect.left - woodVertical2Size.x, rect.top + rect.height));
-    woodHorizontal2.setTextureRect(sf::IntRect(0, 0, rect.width + (woodVertical2Size.x * 2), woodHorizontal2Size.y));
+    woodHorizontal2.setPosition(sf::Vector2f((float)(rect.left - woodVertical2Size.x), rect.top + rect.height));
+    woodHorizontal2.setTextureRect(sf::IntRect(0, 0, (int)(rect.width + (woodVertical2Size.x * 2)), (int)woodHorizontal2Size.y));
 
     // left
-    woodVertical1.setPosition(sf::Vector2f(rect.left - woodVertical1Size.x, rect.top));
-    woodVertical1.setTextureRect(sf::IntRect(0, 0, woodVertical1Size.x, rect.height));
+    woodVertical.setPosition(sf::Vector2f((float)(rect.left - woodVerticalSize.x), rect.top));
+    woodVertical.setTextureRect(sf::IntRect(0, 0, (int)woodVerticalSize.x, (int)rect.height));
 
     // right
     woodVertical2.setPosition(sf::Vector2f(rect.left + rect.width, rect.top));
-    woodVertical2.setTextureRect(sf::IntRect(0, 0, woodHorizontal2Size.y, rect.height));
+    woodVertical2.setTextureRect(sf::IntRect(0, 0, (int)woodHorizontal2Size.y, (int)rect.height));
 
-    renderWindow->draw(woodHorizontal1);
+    renderWindow->draw(woodHorizontal);
     renderWindow->draw(woodHorizontal2);
-    renderWindow->draw(woodVertical1);
+    renderWindow->draw(woodVertical);
     renderWindow->draw(woodVertical2);
 }
 
@@ -903,7 +921,7 @@ void Game::drawSfmlWindows()
 
 void Game::drawDebugRectForSfmlWindows()
 {
-    if (tb::Utility::MyImGui::isActive() == true)
+    if (tb::Utility::LibImGui::isActive() == true)
     {
         return;
     }
@@ -1106,6 +1124,11 @@ void Game::drawImGuiWindows()
         g_AboutTibianerWindow.draw();
     }
 
+    if (*g_MapGeneratorWindow.getIsVisible() == true)
+    {
+        g_MapGeneratorWindow.draw();
+    }
+
     if (m_gameState == tb::GameState::InGame)
     {
         if (*g_OverlayWindow.getIsVisible() == true)
@@ -1122,8 +1145,8 @@ void Game::doEndGamePopup()
         ImGui::OpenPopup("End Game##EndGamePopup");
     }
 
-    ImVec2 center = ImGui::GetMainViewport()->GetCenter();
-    ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+    ImVec2 viewportCenter = ImGui::GetMainViewport()->GetCenter();
+    ImGui::SetNextWindowPos(viewportCenter, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
 
     if (ImGui::BeginPopupModal("End Game##EndGamePopup", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings))
     {
@@ -1131,7 +1154,7 @@ void Game::doEndGamePopup()
 
         ImGui::Separator();
 
-        if (ImGui::Button("Yes##EndGamePopupButtonYes", tb::Constants::MyImGui::PopupButtonSize))
+        if (ImGui::Button("Yes##EndGamePopupButtonYes", tb::Constants::LibImGui::PopupButtonSize))
         {
             ImGui::CloseCurrentPopup();
 
@@ -1142,7 +1165,7 @@ void Game::doEndGamePopup()
 
         ImGui::SameLine();
 
-        if (ImGui::Button("No##EndGamePopupButtonNo", tb::Constants::MyImGui::PopupButtonSize))
+        if (ImGui::Button("No##EndGamePopupButtonNo", tb::Constants::LibImGui::PopupButtonSize))
         {
             ImGui::CloseCurrentPopup();
 
@@ -1160,8 +1183,8 @@ void Game::doErrorLoadingMapPopup()
         ImGui::OpenPopup("Error##ErrorLoadingMapPopup");
     }
 
-    ImVec2 center = ImGui::GetMainViewport()->GetCenter();
-    ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+    ImVec2 viewportCenter = ImGui::GetMainViewport()->GetCenter();
+    ImGui::SetNextWindowPos(viewportCenter, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
 
     if (ImGui::BeginPopupModal("Error##ErrorLoadingMapPopup", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings))
     {
@@ -1169,7 +1192,7 @@ void Game::doErrorLoadingMapPopup()
 
         ImGui::Separator();
 
-        if (ImGui::Button("OK##ErrorLoadingMapPopupButtonOK", tb::Constants::MyImGui::PopupButtonSize))
+        if (ImGui::Button("OK##ErrorLoadingMapPopupButtonOK", tb::Constants::LibImGui::PopupButtonSize))
         {
             m_properties.ShowErrorLoadingMapPopup = false;
 
@@ -1180,13 +1203,184 @@ void Game::doErrorLoadingMapPopup()
     }
 }
 
+void Game::doGameStateTesting()
+{
+    sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
+
+    renderWindow->clear(sf::Color::White);
+
+/*
+    sf::Vector2f drawPosition = sf::Vector2f(100.0f, 100.0f);
+
+    sf::Text testText;
+    testText.setFont(tb::Fonts::SystemFixed);
+    testText.setCharacterSize(tb::Fonts::CharacterSize::SystemFixed);
+    testText.setFillColor(sf::Color::Black);
+
+    for (std::uint32_t i = 0; i < tb::Constants::BitmapFonts::NumGlyphs; i++)
+    {
+        if (i != 0 && i % 16 == 0)
+        {
+            drawPosition.x = 100.0f;
+            drawPosition.y += 16.0f;
+        }
+
+        std::string character;
+        character = (char)i;
+
+        testText.setString(character);
+
+        testText.setPosition(drawPosition);
+
+        renderWindow->draw(testText);
+
+        drawPosition.x += 16.0f;
+    }
+
+    sf::FloatRect rect;
+    rect.left = 100.0f;
+    rect.top = 100.0f + 3.0f;
+    rect.width = 256.0f;
+    rect.height = 256.0f;
+
+    drawDebugRect(rect);
+*/
+
+/*
+    sf::Vector2f drawPosition = sf::Vector2f(10.0f, 40.0f);
+
+    sf::Text testText;
+    testText.setFont(tb::Fonts::System);
+    testText.setCharacterSize(13);
+    testText.setFillColor(sf::Color::Black);
+
+    for (std::uint32_t i = 32; i < tb::Constants::BitmapFonts::NumGlyphs; i++)
+    {
+        if (i != 32 && i % 16 == 0)
+        {
+            drawPosition.x += 100.0f;
+            drawPosition.y = 40.0f;
+        }
+
+        char character = (char)i;
+
+        std::string text = std::format("{}: {}{}", i, character, character);
+
+        testText.setString(text);
+
+        testText.setPosition(drawPosition);
+
+        renderWindow->draw(testText);
+
+        drawPosition.y += 16.0f;
+    }
+*/
+
+/*
+    sf::Font* font = &tb::Fonts::System;
+
+    sf::Vector2f drawPosition = sf::Vector2f(100.0f, 100.0f);
+
+    sf::Text testText;
+    testText.setFont(*font);
+    testText.setCharacterSize(13);
+    testText.setFillColor(sf::Color::Black);
+
+    for (std::uint32_t i = 0; i < tb::Constants::BitmapFonts::NumGlyphs; i++)
+    {
+        if (i != 0 && i % 16 == 0)
+        {
+            drawPosition.x = 100.0f;
+            drawPosition.y += 16.0f;
+        }
+
+        sf::Glyph glyph = font->getGlyph(i, 13, false, 0.0f);
+
+        float characterLeft = glyph.bounds.left;
+        float characterWidth = glyph.bounds.width;
+
+        std::string characterText = std::format("{}", characterLeft + characterWidth);
+
+        testText.setString(characterText);
+
+        testText.setPosition(drawPosition);
+
+        renderWindow->draw(testText);
+
+        drawPosition.x += 32.0f;
+    }
+*/
+
+/*
+    sf::Vector2f drawPosition = sf::Vector2f(100.0f, 100.0f);
+
+    sf::Text testText;
+    testText.setFont(tb::Fonts::System);
+    testText.setCharacterSize(13);
+    testText.setFillColor(sf::Color::Black);
+
+    for (std::uint32_t i = 0; i < tb::Constants::BitmapFonts::NumGlyphs; i++)
+    {
+        if (i != 0 && i % 16 == 0)
+        {
+            drawPosition.x = 100.0f;
+            drawPosition.y += 16.0f;
+        }
+
+        std::string character;
+        character = (char)i;
+
+        std::string text = std::format("x{}x", character);
+
+        testText.setString(text);
+
+        testText.setPosition(drawPosition);
+
+        sf::FloatRect textRect = testText.getLocalBounds();
+
+        float characterWidth = textRect.width - 16.0f;
+
+        text = std::format("{}", characterWidth);
+
+        testText.setString(text);
+
+        renderWindow->draw(testText);
+
+        drawPosition.x += 32.0f;
+    }
+*/
+
+/*
+    tb::BitmapFontText bitmapText;
+    bitmapText.setText(&m_systemBitmapFont, "Hello, world!", sf::Color::Black);
+    bitmapText.setPosition(sf::Vector2f(100.0f, 100.0f));
+
+    renderWindow->draw(bitmapText);
+
+    sf::Text text;
+    text.setString("Hello, world!");
+    text.setFont(tb::Fonts::System);
+    text.setCharacterSize(tb::Fonts::CharacterSize::System);
+    text.setFillColor(sf::Color::Black);
+    text.setPosition(sf::Vector2f(100.0f, 116.0f));
+
+    renderWindow->draw(text);
+*/
+
+    tb::BitmapFontText bitmapText;
+    bitmapText.setText(&m_systemFixedBitmapFont, "Hello, world! ABCDEFGHIJKLMNOPQRSTUVWXYZ\nabcdefghijklmnopqqrstuvwxyz\n1234567890\n!@#$%^&*()-+[]\n", sf::Color::Black);
+    bitmapText.setPosition(sf::Vector2f(100.0f, 100.0f));
+
+    renderWindow->draw(bitmapText);
+}
+
 void Game::doGameStateEnterGame()
 {
     drawBackgroundTextureWithWoodBorder(tb::Textures::EnterGame);
 
     if (isDebugModeEnabled() == true)
     {
-        if (tb::Utility::MyImGui::isActive() == false)
+        if (tb::Utility::LibImGui::isActive() == false)
         {
             sf::FloatRect enterGameClickRect = getClickRect(tb::Textures::EnterGame, "EnterGame");
 
@@ -1341,7 +1535,7 @@ bool Game::createPlayer()
     return true;
 }
 
-bool Game::spawnAnimationByIndex(const sf::Vector2i& tileCoords, tb::ZAxis_t z, uint32_t index)
+bool Game::spawnAnimationByIndex(const sf::Vector2i& tileCoords, tb::ZAxis_t z, std::uint32_t index)
 {
     tb::Animation::Ptr animation = std::make_shared<tb::Animation>(tileCoords, z, index);
 
@@ -1490,17 +1684,20 @@ void Game::handleMouseButtonReleasedEvent(sf::Event event)
 
 void Game::handleKeyPressedEvent(sf::Event event)
 {
-    m_properties.IsAnyKeyPressed = true;
+    m_properties.IsAnyKeyboardKeyPressed = true;
 
-    if (event.key.code == sf::Keyboard::Key::B)
+    if (m_gameState == tb::GameState::InGame)
     {
-        spawnAnimationByName(m_player->getTileCoords(), m_player->getZ(), "BlueOrbSpell");
+        if (event.key.code == sf::Keyboard::Key::B)
+        {
+            spawnAnimationByName(m_player->getTileCoords(), m_player->getZ(), "BlueOrbSpell");
+        }
     }
 }
 
 void Game::handleKeyReleasedEvent(sf::Event event)
 {
-    m_properties.IsAnyKeyPressed = false;
+    m_properties.IsAnyKeyboardKeyPressed = false;
 }
 
 void Game::handleKeyboardInput()
@@ -1546,7 +1743,7 @@ void Game::handleKeyboardInput()
                 {
                     sf::Vector2f viewPositionOffset = g_GameWindow.getViewPositionOffset();
 
-                    viewPositionOffset.y -= tb::Constants::TileSizeFloat;
+                    viewPositionOffset.y -= tb::Constants::TileSizeAsFloat;
 
                     g_GameWindow.setViewPositionOffset(viewPositionOffset);
 
@@ -1558,7 +1755,7 @@ void Game::handleKeyboardInput()
                 {
                     sf::Vector2f viewPositionOffset = g_GameWindow.getViewPositionOffset();
 
-                    viewPositionOffset.x += tb::Constants::TileSizeFloat;
+                    viewPositionOffset.x += tb::Constants::TileSizeAsFloat;
 
                     g_GameWindow.setViewPositionOffset(viewPositionOffset);
 
@@ -1570,7 +1767,7 @@ void Game::handleKeyboardInput()
                 {
                     sf::Vector2f viewPositionOffset = g_GameWindow.getViewPositionOffset();
 
-                    viewPositionOffset.y += tb::Constants::TileSizeFloat;
+                    viewPositionOffset.y += tb::Constants::TileSizeAsFloat;
 
                     g_GameWindow.setViewPositionOffset(viewPositionOffset);
 
@@ -1582,13 +1779,102 @@ void Game::handleKeyboardInput()
                 {
                     sf::Vector2f viewPositionOffset = g_GameWindow.getViewPositionOffset();
 
-                    viewPositionOffset.x -= tb::Constants::TileSizeFloat;
+                    viewPositionOffset.x -= tb::Constants::TileSizeAsFloat;
 
                     g_GameWindow.setViewPositionOffset(viewPositionOffset);
 
                     m_cameraKeyPressedClock.restart();
                 }
             }
+        }
+    }
+}
+
+void Game::handleJoystickConnectedEvent(sf::Event event)
+{
+    m_joystickIndex = event.joystickConnect.joystickId;
+
+    updateJoystickPropertiesForAll();
+
+    g_Log.write("Joystick Connected Index: {}\n", m_joystickIndex);
+
+    tb::Joystick::Properties_t* joystickProperties = m_joystickList[m_joystickIndex].getProperties();
+
+    g_Log.write("--> Name: {}\n", joystickProperties->Name);
+    g_Log.write("--> Product ID: {}\n", joystickProperties->ProductID);
+    g_Log.write("--> Vendor ID: {}\n", joystickProperties->VendorID);
+    g_Log.write("--> Button Count: {}\n", joystickProperties->ButtonCount);
+}
+
+void Game::handleJoystickDisconnectedEvent(sf::Event event)
+{
+    unsigned int joystickIndex = event.joystickConnect.joystickId;
+
+    updateJoystickPropertiesForAll();
+
+    g_Log.write("Joystick Disconnected Index: {}\n", joystickIndex);
+
+    tb::Joystick::Properties_t* joystickProperties = m_joystickList[joystickIndex].getProperties();
+
+    g_Log.write("--> Name: {}\n", joystickProperties->Name);
+    g_Log.write("--> Product ID: {}\n", joystickProperties->ProductID);
+    g_Log.write("--> Vendor ID: {}\n", joystickProperties->VendorID);
+    g_Log.write("--> Button Count: {}\n", joystickProperties->ButtonCount);
+}
+
+void Game::handleJoystickMovedEvent(sf::Event event)
+{
+    g_Log.write("Joystick Moved Axis and Position: {} = {}\n", magic_enum::enum_name(event.joystickMove.axis), event.joystickMove.position);
+}
+
+void Game::handleJoystickButtonPressedEvent(sf::Event event)
+{
+    m_properties.IsAnyJoystickButtonPressed = true;
+}
+
+void Game::handleJoystickButtonReleasedEvent(sf::Event event)
+{
+    m_properties.IsAnyJoystickButtonPressed = false;
+
+    g_Log.write("Joystick Button Released: {}\n", event.joystickButton.button);
+}
+
+void Game::handleJoystickInput()
+{
+    tb::Joystick* joystick = &m_joystickList[m_joystickIndex];
+
+    if (joystick == nullptr)
+    {
+        return;
+    }
+
+    if (joystick->isConnected() == false)
+    {
+        return;
+    }
+
+    tb::Joystick::State_t* joystickState = joystick->getState();
+
+    if (m_gameState == tb::GameState::InGame)
+    {
+        if (joystickState->AxisPOVY >= 50.0f)
+        {
+            handleCreatureMovement(m_player, tb::MovementDirection::Up);
+        }
+
+        if (joystickState->AxisPOVX >= 50.0f)
+        {
+            handleCreatureMovement(m_player, tb::MovementDirection::Right);
+        }
+
+        if (joystickState->AxisPOVY <= -50.0f)
+        {
+            handleCreatureMovement(m_player, tb::MovementDirection::Down);
+        }
+
+        if (joystickState->AxisPOVX <= -50.0f)
+        {
+            handleCreatureMovement(m_player, tb::MovementDirection::Left);
         }
     }
 }
@@ -1623,7 +1909,7 @@ void Game::processEvents()
             handleGainedFocusEvent(event);
         }
 
-        if (tb::Utility::MyImGui::isActive() == false)
+        if (tb::Utility::LibImGui::isActive() == false)
         {
             if (event.type == sf::Event::MouseButtonPressed)
             {
@@ -1645,12 +1931,35 @@ void Game::processEvents()
             {
                 handleKeyReleasedEvent(event);
             }
+            else if (event.type == sf::Event::JoystickConnected)
+            {
+                handleJoystickConnectedEvent(event);
+            }
+            else if (event.type == sf::Event::JoystickDisconnected)
+            {
+                handleJoystickDisconnectedEvent(event);
+            }
+            else if (event.type == sf::Event::JoystickMoved)
+            {
+                handleJoystickMovedEvent(event);
+            }
+            else if (event.type == sf::Event::JoystickButtonPressed)
+            {
+                handleJoystickButtonPressedEvent(event);
+            }
+            else if (event.type == sf::Event::JoystickButtonReleased)
+            {
+                handleJoystickButtonReleasedEvent(event);
+            }
         }
     }
 
-    if (renderWindowIsFocused == true && tb::Utility::MyImGui::isActive() == false)
+    if (renderWindowIsFocused == true && tb::Utility::LibImGui::isActive() == false)
     {
         handleKeyboardInput();
+
+        updateJoystickStateForAll();
+        handleJoystickInput();
     }
 }
 
@@ -1686,6 +1995,48 @@ void Game::fixMouseCursorForWindowResize(sf::RenderWindow* renderWindow)
     }
 }
 
+unsigned int Game::getJoystickIndex()
+{
+    return m_joystickIndex;
+}
+
+void Game::setJoystickIndex(unsigned int index)
+{
+    m_joystickIndex = index;
+}
+
+tb::JoystickList* Game::getJoystickList()
+{
+    return &m_joystickList;
+}
+
+void Game::updateJoystickIndexForAll()
+{
+    for (unsigned int i = 0; i < sf::Joystick::Count; i++)
+    {
+        m_joystickList[i].setIndex(i);
+    }
+}
+
+void Game::updateJoystickPropertiesForAll()
+{
+    for (unsigned int i = 0; i < sf::Joystick::Count; i++)
+    {
+        if (sf::Joystick::isConnected(i) == true)
+        {
+            m_joystickList[i].updateProperties();
+        }
+    }
+}
+
+void Game::updateJoystickStateForAll()
+{
+    for (unsigned int i = 0; i < sf::Joystick::Count; i++)
+    {
+        m_joystickList[i].updateState();
+    }
+}
+
 void Game::createTileFileFromImageFile(const std::string& fileName)
 {
     std::fstream file;
@@ -1707,14 +2058,14 @@ void Game::createTileFileFromImageFile(const std::string& fileName)
     // TODO: rotate image 90 degrees clockwise
     // TODO: flip image horizontal
 
-    unsigned int imageWidth = image.getSize().x;
-    unsigned int imageHeight = image.getSize().y;
+    std::uint32_t imageWidth = image.getSize().x;
+    std::uint32_t imageHeight = image.getSize().y;
 
     tb::SpriteIDList spriteIDList;
 
-    for (unsigned int i = 0; i < imageWidth; i++)
+    for (std::uint32_t i = 0; i < imageWidth; i++)
     {
-        for (unsigned int j = 0; j < imageHeight; j++)
+        for (std::uint32_t j = 0; j < imageHeight; j++)
         {
             sf::Color pixelColor = image.getPixel(i, j);
 
@@ -1779,9 +2130,9 @@ void Game::createTileFileFromImageFile(const std::string& fileName)
         }
     }
 
-    size_t spriteIDListSize = spriteIDList.size();
+    std::size_t spriteIDListSize = spriteIDList.size();
 
-    for (unsigned int i = 0; i < spriteIDListSize; i++)
+    for (std::size_t i = 0; i < spriteIDListSize; i++)
     {
         file << spriteIDList.at(i);
 
@@ -1803,45 +2154,104 @@ void Game::doOverlayText()
 {
     g_OverlayWindow.clearTextList();
 
-    std::string playerCoordsText = std::format("Player X,Y,Z: {},{},{}\n", m_player->getTileX(), m_player->getTileY(), m_player->getZ());
-
-    g_OverlayWindow.addTextToList(playerCoordsText);
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     tb::Creature::Outfit_t* playerOutfit = m_player->getOutfit();
 
-    std::string playerOutfitText = std::format("Player Outfit: {},{},{},{}\n", playerOutfit->Head, playerOutfit->Body, playerOutfit->Legs, playerOutfit->Feet);
+    std::string playerText = std::format
+    (
+"\
+Player X,Y,Z: {},{},{}\n\
+Player Outfit: {},{},{},{}\n\
+",
+        m_player->getTileX(), m_player->getTileY(), m_player->getZ(),
+        playerOutfit->Head, playerOutfit->Body, playerOutfit->Legs, playerOutfit->Feet
+    );
 
-    g_OverlayWindow.addTextToList(playerOutfitText);
+    g_OverlayWindow.addTextToList(playerText);
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     sf::Vector2i mousePositionInDesktop = getMousePositionInDesktop();
-
-    std::string mousePositionInDesktopText = std::format("Desktop Mouse Position: {},{}\n", mousePositionInDesktop.x, mousePositionInDesktop.y);
-
-    g_OverlayWindow.addTextToList(mousePositionInDesktopText);
-
     sf::Vector2i mousePositionInRenderWindow = g_RenderWindow.getMousePosition2i();
-
-    std::string mousePositionInRenderWindowText = std::format("Render Window Mouse Position: {},{}\n", mousePositionInRenderWindow.x, mousePositionInRenderWindow.y);
-
-    g_OverlayWindow.addTextToList(mousePositionInRenderWindowText);
-
     sf::Vector2f mousePixelPositionInGameWindow = g_GameWindow.getMousePixelPosition();
-
-    std::string mousePixelPositionInGameWindowText = std::format("Game Window Mouse Pixel Position: {},{}\n", mousePixelPositionInGameWindow.x, mousePixelPositionInGameWindow.y);
-
-    g_OverlayWindow.addTextToList(mousePixelPositionInGameWindowText);
-
     sf::Vector2f mousePixelCoordsInGameWindow = g_GameWindow.getMousePixelCoords();
-
-    std::string mousePixelCoordsInGameWindowText = std::format("Game Window Mouse Pixel Coords: {},{}\n", mousePixelCoordsInGameWindow.x, mousePixelCoordsInGameWindow.y);
-
-    g_OverlayWindow.addTextToList(mousePixelCoordsInGameWindowText);
-
     sf::Vector2i mouseTileCoordsInGameWindow = g_GameWindow.getMouseTileCoords();
 
-    std::string mouseTileCoordsInGameWindowText = std::format("Game Window Mouse Tile Coords: {},{}\n", mouseTileCoordsInGameWindow.x, mouseTileCoordsInGameWindow.y);
+    std::string mouseText = std::format
+    (
+"\
+Desktop Mouse Position: {},{}\n\
+Render Window Mouse Position: {},{}\n\
+Game Window Mouse Pixel Position: {},{}\n\
+Game Window Mouse Pixel Coords: {},{}\n\
+Game Window Mouse Tile Coords: {},{}\n\
+",
+        mousePositionInDesktop.x, mousePositionInDesktop.y,
+        mousePositionInRenderWindow.x, mousePositionInRenderWindow.y,
+        mousePixelPositionInGameWindow.x, mousePixelPositionInGameWindow.y,
+        mousePixelCoordsInGameWindow.x, mousePixelCoordsInGameWindow.y,
+        mouseTileCoordsInGameWindow.x, mouseTileCoordsInGameWindow.y
+    );
 
-    g_OverlayWindow.addTextToList(mouseTileCoordsInGameWindowText);
+    g_OverlayWindow.addTextToList(mouseText);
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    tb::Joystick* joystick = &m_joystickList[m_joystickIndex];
+
+    if (joystick->isConnected() == false)
+    {
+        std::string joystickDisconnectedText = std::format("Joystick Index {} is disconnected!\n", m_joystickIndex);
+
+        g_OverlayWindow.addTextToList(joystickDisconnectedText);
+    }
+    else
+    {
+        tb::Joystick::State_t* joystickState = joystick->getState();
+
+        std::string joystickButtonText;
+        joystickButtonText.reserve(1024);
+
+        for (unsigned int i = 0; i < sf::Joystick::ButtonCount; i++)
+        {
+            bool buttonState = joystickState->Button[i];
+
+            if (buttonState == true)
+            {
+                joystickButtonText.append(std::format("Joystick Button {}: Pressed\n", i));
+            }
+        }
+
+        if (joystickButtonText.empty() == false)
+        {
+            g_OverlayWindow.addTextToList(joystickButtonText);
+        }
+
+        std::string joystickAxisText = std::format
+        (
+"\
+Joystick Axis X: {}\n\
+Joystick Axis Y: {}\n\
+Joystick Axis Z: {}\n\
+Joystick Axis R: {}\n\
+Joystick Axis U: {}\n\
+Joystick Axis V: {}\n\
+Joystick Axis POVX: {}\n\
+Joystick Axis POVY: {}\n\
+",
+            joystickState->AxisX,
+            joystickState->AxisY,
+            joystickState->AxisZ,
+            joystickState->AxisR,
+            joystickState->AxisU,
+            joystickState->AxisV,
+            joystickState->AxisPOVX,
+            joystickState->AxisPOVY
+        );
+
+        g_OverlayWindow.addTextToList(joystickAxisText);
+    }
 }
 
 void Game::waitForKeyPress()
@@ -1922,6 +2332,12 @@ void Game::run()
 
     updateLayoutForSfmlWindows();
 
+    g_Log.write("Updating joystick\n");
+
+    sf::Joystick::update();
+    updateJoystickIndexForAll();
+    updateJoystickPropertiesForAll();
+
     g_Log.write("Start rendering...\n");
 
     m_framesPerSecondPreviousTime = m_framesPerSecondClock.getElapsedTime();
@@ -1930,7 +2346,8 @@ void Game::run()
     {
         processEvents();
 
-        fixMouseCursorForWindowResize(renderWindow);
+        // fixed in imgui-sfml 2.6
+        //fixMouseCursorForWindowResize(renderWindow);
 
         ImGui::SFML::Update(*renderWindow, m_deltaClock.restart());
 
@@ -1940,7 +2357,11 @@ void Game::run()
 
         setPositionInLayoutForSfmlWindows();
 
-        if (m_gameState == tb::GameState::EnterGame)
+        if (m_gameState == tb::GameState::Testing)
+        {
+            doGameStateTesting();
+        }
+        else if (m_gameState == tb::GameState::EnterGame)
         {
             doGameStateEnterGame();
         }
@@ -2144,7 +2565,7 @@ tb::Tile::Ptr Game::getTileByThingMovementDirection(tb::Thing::Ptr thing, tb::Mo
         return nullptr;
     }
 
-    uint32_t tileIndex = g_Map.getTileIndexByTileCoords(tileCoords);
+    std::uint32_t tileIndex = g_Map.getTileIndexByTileCoords(tileCoords);
 
     if (g_Map.isTileIndexOutOfBounds(tileIndex) == true)
     {
@@ -2175,12 +2596,12 @@ bool Game::findCeilingAbovePlayerAtZ(tb::ZAxis_t z)
         return false;
     }
 
-    int playerX = m_player->getTileX();
-    int playerY = m_player->getTileY();
+    std::int32_t playerX = m_player->getTileX();
+    std::int32_t playerY = m_player->getTileY();
 
     tb::ZAxis_t playerZ = m_player->getZ();
 
-    std::vector<uint32_t> tileIndexList;
+    std::vector<std::uint32_t> tileIndexList;
     tileIndexList.reserve(16);
 
     for (int i = -2; i < 2; i++)
@@ -2211,7 +2632,7 @@ bool Game::findCeilingAbovePlayerAtZ(tb::ZAxis_t z)
         }
     }
 
-    for (uint32_t tileIndex : tileIndexList)
+    for (std::uint32_t tileIndex : tileIndexList)
     {
         if (g_Map.isTileIndexOutOfBounds(tileIndex) == true)
         {
@@ -2343,9 +2764,9 @@ bool Game::doMoveThingFromTileToTile(tb::Thing::Ptr thing, tb::Tile::Ptr toTile)
     return true;
 }
 
-tb::BitmapFont* Game::getDefaultBitmapFont()
+tb::BitmapFont* Game::getClassicBitmapFont()
 {
-    return &m_defaultBitmapFont;
+    return &m_classicBitmapFont;
 }
 
 tb::BitmapFont* Game::getTinyBitmapFont()
@@ -2356,6 +2777,11 @@ tb::BitmapFont* Game::getTinyBitmapFont()
 tb::BitmapFont* Game::getModernBitmapFont()
 {
     return &m_modernBitmapFont;
+}
+
+tb::BitmapFont* Game::getSystemBitmapFont()
+{
+    return &m_systemBitmapFont;
 }
 
 }

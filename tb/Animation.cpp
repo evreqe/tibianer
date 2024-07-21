@@ -13,7 +13,7 @@ Animation::~Animation()
     //
 }
 
-Animation::Animation(const sf::Vector2i& tileCoords, tb::ZAxis_t z, uint32_t index)
+Animation::Animation(const sf::Vector2i& tileCoords, tb::ZAxis_t z, std::uint32_t index)
 {
     setThingType(tb::ThingType::Animation);
 

@@ -17,6 +17,14 @@ public:
     BitmapFontText();
     ~BitmapFontText();
 
+    struct TextLine_t
+    {
+        std::uint32_t Index = 0;
+        std::string Text;
+        sf::FloatRect Rect;
+        std::vector<sf::Vertex*> VertexPointerList;
+    };
+
     bool setText(tb::BitmapFont* bitmapFont, const std::string& text, const sf::Color& color);
 
     tb::BitmapFont* getBitmapFont();
@@ -29,8 +37,13 @@ public:
 
     sf::Color getColor();
 
-    int getPaddingY();
-    void setPaddingY(int paddingY);
+    std::int32_t getPaddingY();
+    void setPaddingY(std::int32_t paddingY);
+
+    tb::TextJustifyType getTextJustifyType();
+    void setTextJustifyType(tb::TextJustifyType textJustifyType);
+
+    virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
 private:
 
@@ -44,9 +57,13 @@ private:
 
     sf::Color m_color;
 
-    int m_paddingY = 1;
+    std::int32_t m_paddingY = 1;
 
-    virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+    tb::TextJustifyType m_textJustifyType = tb::TextJustifyType::Left;
+
+    std::vector<tb::BitmapFontText::TextLine_t> m_textLineList;
+
+    const std::uint32_t m_numTextLinesToReserve = 8;
 
 };
 

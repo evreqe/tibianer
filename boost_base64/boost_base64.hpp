@@ -37,7 +37,7 @@ static std::string boost_base64_decode(const std::string& subject)
 
     typedef bai::transform_width<bai::binary_from_base64<const char *>, 8, 6> base64_dec;
 
-    unsigned int size = subject.size();
+    std::size_t size = subject.size();
 
     if (size <= 0)
     {

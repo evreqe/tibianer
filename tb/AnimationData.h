@@ -34,7 +34,7 @@ public:
 
     struct Data
     {
-        uint32_t Index = 0;
+        std::uint32_t Index = 0;
         std::string Name;
         tb::SpriteIDList SpriteIDList;
     };
@@ -46,21 +46,21 @@ public:
 
     tb::AnimationData::DataList* getDataList();
 
-    tb::AnimationData::Data* getDataByIndex(uint32_t index);
+    tb::AnimationData::Data* getDataByIndex(std::uint32_t index);
     tb::AnimationData::Data* getDataByName(const std::string& name);
     tb::AnimationData::Data* getDataByNameSV(std::string_view name);
 
 private:
 
-    std::string m_fileName = "data/animations.txt";
+    const std::string m_fileName = "data/animations.txt";
 
     toml::table m_table;
 
     tb::AnimationData::DataList m_dataList;
 
-    const unsigned int m_numToLoad = 128;
+    const std::uint32_t m_numToReserve = 64;
 
-    const unsigned int m_numSpritesPerAnimationToReserve = 16;
+    const std::uint32_t m_numSpritesPerAnimationToReserve = 16;
 
 };
 

@@ -46,7 +46,7 @@ bool RenderWindow::create()
 
     bool startMaximized = m_properties.StartMaximized;
 
-    g_Log.write("Start Maximized: {}\n", verticalSync);
+    g_Log.write("Start Maximized: {}\n", startMaximized);
 
     if (startMaximized == true)
     {
@@ -71,14 +71,14 @@ bool RenderWindow::create()
 
 void RenderWindow::setSizeAndCenter(sf::Vector2u size)
 {
-    if (size.x < 640)
+    if (size.x < m_widthMinimum)
     {
-        size.x = 640; // TODO: magic numbers
+        size.x = m_widthMinimum;
     }
 
-    if (size.y < 480)
+    if (size.y < m_heightMinimum)
     {
-        size.y = 480; // TODO: magic numbers
+        size.y = m_heightMinimum;
     }
 
     HWND renderWindow = m_window.getSystemHandle();
@@ -88,8 +88,8 @@ void RenderWindow::setSizeAndCenter(sf::Vector2u size)
     RECT desktopRect;
     ::GetWindowRect(desktopWindow, &desktopRect);
 
-    unsigned int desktopWidth = desktopRect.right - desktopRect.left;
-    unsigned int desktopHeight = desktopRect.bottom - desktopRect.top;
+    std::uint32_t desktopWidth  = desktopRect.right  - desktopRect.left;
+    std::uint32_t desktopHeight = desktopRect.bottom - desktopRect.top;
 
     g_Log.write("desktop window size: {},{}\n", desktopWidth, desktopHeight);
 
@@ -112,30 +112,15 @@ void RenderWindow::setSizeAndCenter(sf::Vector2u size)
     RECT renderWindowRect;
     ::GetWindowRect(renderWindow, &renderWindowRect);
 
-    unsigned int renderWindowWidth = renderWindowRect.right - renderWindowRect.left;
-    unsigned int renderWindowHeight = renderWindowRect.bottom - renderWindowRect.top;
-
-    /*
-        unsigned int taskBarWidth = 0;
-        unsigned int taskBarHeight = 0;
-
-        HWND taskBarWindow = ::FindWindowA("Shell_TrayWnd", NULL);
-        if (taskBarWindow)
-        {
-            RECT taskBarRect;
-            ::GetWindowRect(taskBarWindow, &taskBarRect);
-
-            taskBarWidth = taskBarRect.right - taskBarRect.left;
-            taskBarHeight = taskBarRect.bottom - taskBarRect.top;
-        }
-    */
+    std::uint32_t renderWindowWidth  = renderWindowRect.right  - renderWindowRect.left;
+    std::uint32_t renderWindowHeight = renderWindowRect.bottom - renderWindowRect.top;
 
     // center window
     m_window.setPosition
     (
         sf::Vector2i
         (
-            (desktopWidth / 2) - (renderWindowWidth / 2),
+            (desktopWidth  / 2) - (renderWindowWidth  / 2),
             (desktopHeight / 2) - (renderWindowHeight / 2)
         )
     );

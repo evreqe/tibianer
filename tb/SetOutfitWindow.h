@@ -13,50 +13,50 @@
 namespace tb
 {
 
-    class SetOutfitWindow : public tb::ImGuiWindow
+class SetOutfitWindow : public tb::ImGuiWindow
+{
+
+public:
+
+    SetOutfitWindow();
+    ~SetOutfitWindow();
+
+    static SetOutfitWindow& getInstance()
     {
+        static SetOutfitWindow instance;
+        return instance;
+    }
 
-    public:
+private:
 
-        SetOutfitWindow();
-        ~SetOutfitWindow();
+    SetOutfitWindow(const SetOutfitWindow&) = delete;
+    SetOutfitWindow(SetOutfitWindow&&) = delete;
+    SetOutfitWindow& operator=(const SetOutfitWindow&) = delete;
+    SetOutfitWindow& operator=(SetOutfitWindow&&) = delete;
 
-        static SetOutfitWindow& getInstance()
-        {
-            static SetOutfitWindow instance;
-            return instance;
-        }
+public:
 
-    private:
+    void onOpen();
+    void onClose();
 
-        SetOutfitWindow(const SetOutfitWindow&) = delete;
-        SetOutfitWindow(SetOutfitWindow&&) = delete;
-        SetOutfitWindow& operator=(const SetOutfitWindow&) = delete;
-        SetOutfitWindow& operator=(SetOutfitWindow&&) = delete;
+    void load();
+    void save();
 
-    public:
+    void setOutfitSprites();
 
-        void onOpen();
-        void onClose();
+    void draw();
 
-        void load();
-        void save();
+private:
 
-        void setOutfitSprites();
+    bool m_isOpen = false;
 
-        void draw();
+    tb::Creature::Ptr m_creature = nullptr;
 
-    private:
+    tb::Creature::Outfit_t* m_creatureOutfit = nullptr;
 
-        bool m_isOpen = false;
+    const ImVec2 m_buttonSize = ImVec2(123.0f, 29.0f);
 
-        tb::Creature::Ptr m_creature = nullptr;
-
-        tb::Creature::Outfit_t* m_creatureOutfit = nullptr;
-
-        const ImVec2 m_buttonSize = ImVec2(123.0f, 29.0f);
-
-    };
+};
 
 }
 

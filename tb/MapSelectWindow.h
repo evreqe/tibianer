@@ -13,40 +13,40 @@
 namespace tb
 {
 
-    class MapSelectWindow : public tb::ImGuiWindow
+class MapSelectWindow : public tb::ImGuiWindow
+{
+
+public:
+
+    MapSelectWindow();
+    ~MapSelectWindow();
+
+    static MapSelectWindow& getInstance()
     {
+        static MapSelectWindow instance;
+        return instance;
+    }
 
-    public:
+private:
 
-        MapSelectWindow();
-        ~MapSelectWindow();
+    MapSelectWindow(const MapSelectWindow&) = delete;
+    MapSelectWindow(MapSelectWindow&&) = delete;
+    MapSelectWindow& operator=(const MapSelectWindow&) = delete;
+    MapSelectWindow& operator=(MapSelectWindow&&) = delete;
 
-        static MapSelectWindow& getInstance()
-        {
-            static MapSelectWindow instance;
-            return instance;
-        }
+public:
 
-    private:
+    void draw();
 
-        MapSelectWindow(const MapSelectWindow&) = delete;
-        MapSelectWindow(MapSelectWindow&&) = delete;
-        MapSelectWindow& operator=(const MapSelectWindow&) = delete;
-        MapSelectWindow& operator=(MapSelectWindow&&) = delete;
+private:
 
-    public:
+    std::uint32_t m_selectedListBoxIndex = 0;
 
-        void draw();
+    tb::MapData::Data* m_selectedMapData = nullptr;
 
-    private:
+    const ImVec2 m_buttonSize = ImVec2(105.0f, 29.0f);
 
-        unsigned int m_selectedListBoxIndex = 0;
-
-        tb::MapData::Data* m_selectedMapData = nullptr;
-
-        const ImVec2 m_buttonSize = ImVec2(105.0f, 29.0f);
-
-    };
+};
 
 }
 

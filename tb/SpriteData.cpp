@@ -15,26 +15,14 @@ SpriteData::~SpriteData()
 
 bool SpriteData::load()
 {
-    if (std::filesystem::exists(m_fileName) == false)
+    tb::Utility::LibToml::LoadFileResult loadFileResult = tb::Utility::LibToml::loadFile(m_table, m_fileName);
+
+    g_Log.write("{}", loadFileResult.Text);
+
+    if (loadFileResult.Success == false)
     {
-        g_Log.write("ERROR: File does not exist: {}\n", m_fileName);
         return false;
     }
-
-    m_table.clear();
-
-    try
-    {
-        m_table = toml::parse_file(m_fileName);
-    }
-    catch (const toml::parse_error& parseError)
-    {
-        g_Log.write("ERROR: Failed to load data from file: {}\n", m_fileName);
-        g_Log.write("Description: {}\nLine: {}\nColumn: {}\n", parseError.description(), parseError.source().begin.line, parseError.source().begin.column);
-        return false;
-    }
-
-    g_Log.write("Loaded data from file: {}\n", m_fileName);
 
     m_dataList.clear();
     m_dataList.reserve(m_numToLoad);
@@ -45,13 +33,13 @@ bool SpriteData::load()
 
     m_dataList.push_back(firstData);
 
-    for (unsigned int i = 1; i < m_numToLoad + 1; i++)
+    for (std::uint32_t i = 1; i < m_numToLoad + 1; i++)
     {
         std::string index = std::to_string(i);
 
         if (!m_table[index])
         {
-            g_Log.write("ERROR: {} is missing data at index: [{}]\n", m_fileName, i);
+            g_Log.write("ERROR: '{}' is missing data at index: [{}]\n", m_fileName, i);
             return false;
         }
 
@@ -65,8 +53,8 @@ bool SpriteData::load()
 
         data.AnimationName = m_table[index]["AnimationName"].value_or("");
 
-        data.TileWidth = static_cast<uint8_t>(m_table[index]["TileWidth"].value_or(1));
-        data.TileHeight = static_cast<uint8_t>(m_table[index]["TileHeight"].value_or(1));
+        data.TileWidth = static_cast<std::uint8_t>(m_table[index]["TileWidth"].value_or(1));
+        data.TileHeight = static_cast<std::uint8_t>(m_table[index]["TileHeight"].value_or(1));
 
         data.Weight = m_table[index]["Weight"].value_or(0.0f);
         data.LightRadius = m_table[index]["LightRadius"].value_or(0.0f);
@@ -84,11 +72,6 @@ bool SpriteData::load()
                 spriteFlags.setFlag(spriteFlag, true);
             }
         }
-
-        //if (spriteFlags != 0)
-        //{
-            //tb::print("[DEBUG]: spriteFlags = {}\n", spriteFlags.to_string<char, std::string::traits_type, std::string::allocator_type>());
-        //}
 
         data.SpriteFlags = spriteFlags;
 

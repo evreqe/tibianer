@@ -4,12 +4,12 @@
 
 namespace tb
 {
-    using ZAxis_t = uint8_t;
-    using LightBrightness_t = uint8_t;
-    using OutfitIndex_t = uint8_t;
-    using SpriteID_t = uint16_t;
+    using ZAxis_t = std::uint8_t;
+    using LightBrightness_t = std::uint8_t;
+    using OutfitIndex_t = std::uint8_t;
+    using SpriteID_t = std::uint16_t;
 
-    using SpriteIDList = std::vector<SpriteID_t>;
+    using SpriteIDList = std::vector<tb::SpriteID_t>;
 
     struct VisibleZ_t
     {
@@ -23,29 +23,31 @@ namespace tb
 
         inline const std::string PlayerNameDefault = "Avatar";
 
-        inline const uint32_t NumSprites = 4096; // 2048x2048
+        inline const std::uint32_t NumSprites = 4096; // 2048x2048
 
-        inline const uint32_t NumWaterAnimationFrames = 16;
-        inline const uint32_t NumWaterSpritesPerAnimationFrame = 8;
+        inline const std::uint32_t NumWaterAnimationFrames = 16;
+        inline const std::uint32_t NumWaterSpritesPerAnimationFrame = 8;
 
-        inline const uint32_t WaterPatternWidth = 4;
-        inline const uint32_t WaterPatternHeight = 2;
+        inline const std::uint32_t WaterPatternWidth = 4;
+        inline const std::uint32_t WaterPatternHeight = 2;
 
-        inline const uint32_t NumOutfitSpriteIndex = 4; // head, body, legs, feet
-        inline const uint32_t NumOutfitSpriteDirections = 4; // up, right, down, left
+        inline const std::uint32_t NumOutfitSpriteIndex = 4; // head, body, legs, feet
+        inline const std::uint32_t NumOutfitSpriteDirections = 4; // up, right, down, left
 
-        inline const uint32_t NumOutfitSpriteIDListHead = 11;
-        inline const uint32_t NumOutfitSpriteIDListBody = 11;
-        inline const uint32_t NumOutfitSpriteIDListLegs = 9;
-        inline const uint32_t NumOutfitSpriteIDListFeet = 9;
+        inline const std::uint32_t NumOutfitSpriteIDListHead = 11;
+        inline const std::uint32_t NumOutfitSpriteIDListBody = 11;
+        inline const std::uint32_t NumOutfitSpriteIDListLegs = 9;
+        inline const std::uint32_t NumOutfitSpriteIDListFeet = 9;
 
-        inline const SpriteID_t SpriteIDNull = 0;
-        inline const SpriteID_t SpriteIDDefault = 1;
+        inline const tb::SpriteID_t SpriteIDNull = 0;
+        inline const tb::SpriteID_t SpriteIDDefault = 1;
 
-        inline const int TileSize = 32;
-        inline const int TileSizeHalf = 16;
-        inline const float TileSizeFloat = 32.0f;
-        inline const float TileSizeHalfFloat = 16.0f;
+        inline const float SpriteSizeAsFloat = 32.0f;
+
+        inline const std::uint32_t TileSize = 32;
+        inline const std::uint32_t TileSizeHalf = 16;
+        inline const float TileSizeAsFloat = 32.0f;
+        inline const float TileSizeHalfAsFloat = 16.0f;
 
         inline const float TileCreatureOffset = 8.0f;
 
@@ -56,22 +58,27 @@ namespace tb
         inline const float PaddingBetweenLeftAndRightLayoutRect = 12.0f;
 
         inline const float GuiRightLayoutWidthAsFloat = 108.0f;
-        inline const float GuiRightLayoutWidthAsInt = 108;
+        inline const int GuiRightLayoutWidthAsInt = 108;
 
-        inline const uint32_t NumZAxis = 16;
+        inline const std::uint32_t NumZAxis = 16;
 
-        inline const uint32_t TileHeightMovementDifference = 2; // player cannot move to a tile if it has vertical objects stacked 2 axis higher than the player
-        inline const uint32_t TileHeightMax = 5; // highest you can stack vertical objects on a tile, like chairs or parcels
-        inline const uint32_t TileHeightClimbDifference = 3; // height needed to climb up or down a z-axis level using stacked vertical objects, like going from the ground to the roof of a house
+        inline const std::uint32_t TileHeightMovementDifference = 2; // player cannot move to a tile if it has vertical objects stacked 2 axis higher than the player
+        inline const std::uint32_t TileHeightMax = 5; // highest you can stack vertical objects on a tile, like chairs or parcels
+        inline const std::uint32_t TileHeightClimbDifference = 3; // height needed to climb up or down a z-axis level using stacked vertical objects, like going from the ground to the roof of a house
 
-        inline const uint32_t SkillLevelDefault = 10;
+        inline const std::uint32_t SkillLevelDefault = 10;
 
-        namespace MyImGui
+        namespace BitmapFonts
         {
-            inline const uint8_t InputScalarU8StepOne = 1;
-            inline const uint16_t InputScalarU16StepOne = 1;
-            inline const uint32_t InputScalarU32StepOne = 1;
-            inline const uint64_t InputScalarU64StepOne = 1;
+            inline const std::uint32_t NumGlyphs = 256; // ASCII codes
+        }
+
+        namespace LibImGui
+        {
+            inline const std::uint8_t InputScalarU8StepOne = 1;
+            inline const std::uint16_t InputScalarU16StepOne = 1;
+            inline const std::uint32_t InputScalarU32StepOne = 1;
+            inline const std::uint64_t InputScalarU64StepOne = 1;
 
             inline const ImVec2 PopupButtonSize(105.0f, 29.0f);
         }
@@ -89,9 +96,9 @@ namespace tb
         inline sf::Texture GUI;
         inline sf::Texture Scroll;
         inline sf::Texture Wood;
-        inline sf::Texture WoodHorizontal1;
+        inline sf::Texture WoodHorizontal;
         inline sf::Texture WoodHorizontal2;
-        inline sf::Texture WoodVertical1;
+        inline sf::Texture WoodVertical;
         inline sf::Texture WoodVertical2;
         inline sf::Texture Water;
 
@@ -107,9 +114,9 @@ namespace tb
             {"GUI",                     tb::Textures::GUI},
             {"Scroll",                  tb::Textures::Scroll},
             {"Wood",                    tb::Textures::Wood},
-            {"WoodHorizontal1",         tb::Textures::WoodHorizontal1},
+            {"WoodHorizontal",          tb::Textures::WoodHorizontal},
             {"WoodHorizontal2",         tb::Textures::WoodHorizontal2},
-            {"WoodVertical1",           tb::Textures::WoodVertical1},
+            {"WoodVertical",            tb::Textures::WoodVertical},
             {"WoodVertical2",           tb::Textures::WoodVertical2},
             {"Water",                   tb::Textures::Water},
         };
@@ -117,32 +124,28 @@ namespace tb
 
     namespace Fonts
     {
-        inline sf::Font Arial;
-        inline sf::Font CourierNew;
-        inline sf::Font Helvetica;
         inline sf::Font MarcoPolo;
         inline sf::Font Martel;
-        inline sf::Font Roboto;
         inline sf::Font Supernatural1001;
         inline sf::Font Supernatural1002;
         inline sf::Font System;
-        inline sf::Font TimesNewRoman;
-        inline sf::Font Verdana;
+        inline sf::Font SystemFixed;
 
         inline const std::unordered_map<std::string, sf::Font&> Names =
         {
-            {"Arial",               tb::Fonts::Arial},
-            {"CourierNew",          tb::Fonts::CourierNew},
-            {"Helvetica",           tb::Fonts::Helvetica},
             {"MarcoPolo",           tb::Fonts::MarcoPolo},
             {"Martel",              tb::Fonts::Martel},
-            {"Roboto",              tb::Fonts::Roboto},
             {"Supernatural1001",    tb::Fonts::Supernatural1001},
             {"Supernatural1002",    tb::Fonts::Supernatural1002},
             {"System",              tb::Fonts::System},
-            {"TimesNewRoman",       tb::Fonts::TimesNewRoman},
-            {"Verdana",             tb::Fonts::Verdana},
+            {"SystemFixed",         tb::Fonts::SystemFixed},
         };
+
+        namespace CharacterSize
+        {
+            inline std::uint32_t System = 13;
+            inline std::uint32_t SystemFixed = 16;
+        }
     }
 
     namespace Cursors
@@ -216,24 +219,28 @@ namespace tb
     namespace Sprites
     {
         inline SpriteID_t TileHighlight;
-        inline SpriteID_t TibiaIconSmall;
-        inline SpriteID_t TibiaIconLarge;
+        inline SpriteID_t TbIconSmall;
+        inline SpriteID_t TbIconLarge;
         inline SpriteID_t Evremonde;
+        inline SpriteID_t Grass;
+        inline SpriteID_t Water;
 
         inline const std::unordered_map<std::string, SpriteID_t&> Names =
         {
-            {"TileHighlight",             tb::Sprites::TileHighlight},
-            {"TibiaIconSmall",            tb::Sprites::TibiaIconSmall},
-            {"TibiaIconLarge",            tb::Sprites::TibiaIconLarge},
-            {"Evremonde",                 tb::Sprites::Evremonde},
+            {"TileHighlight",          tb::Sprites::TileHighlight},
+            {"TbIconSmall",            tb::Sprites::TbIconSmall},
+            {"TbIconLarge",            tb::Sprites::TbIconLarge},
+            {"Evremonde",              tb::Sprites::Evremonde},
+            {"Grass",                  tb::Sprites::Grass},
+            {"Water",                  tb::Sprites::Water},
         };
     }
 
     namespace Animations
     {
-        inline uint32_t BlueOrbSpell;
+        inline std::uint32_t BlueOrbSpell;
 
-        inline const std::unordered_map<std::string, uint32_t&> Names =
+        inline const std::unordered_map<std::string, std::uint32_t&> Names =
         {
             {"BlueOrbSpell",            tb::Animations::BlueOrbSpell},
         };
@@ -328,7 +335,7 @@ namespace tb
         };
     }
 
-    enum class SpriteFlag : uint8_t
+    enum class SpriteFlag : std::uint8_t
     {
         Null,
         Solid,
@@ -363,9 +370,9 @@ namespace tb
         DrawLast, // drawn on top of everything else
     };
 
-    inline constexpr auto SpriteFlagEntries = magic_enum::enum_entries<SpriteFlag>();
+    inline constexpr auto SpriteFlagEntries = magic_enum::enum_entries<tb::SpriteFlag>();
 
-    using SpriteFlagBitset = std::bitset<magic_enum::enum_count<SpriteFlag>()>;
+    using SpriteFlagBitset = std::bitset<magic_enum::enum_count<tb::SpriteFlag>()>;
 
     namespace ZAxis
     {
@@ -398,8 +405,9 @@ namespace tb
         };
     }
 
-    enum class GameState : uint8_t
+    enum class GameState : std::uint8_t
     {
+        Testing,
         EnterGame,
         NewGameJourneyOnward,
         MapSelect,
@@ -408,20 +416,20 @@ namespace tb
         Paused,
     };
 
-    enum class TimeOfDay : uint8_t
+    enum class TimeOfDay : std::uint8_t
     {
         Day,
         Night,
     };
 
-    enum class TextJustifyType : uint8_t
+    enum class TextJustifyType : std::uint8_t
     {
         Left,
         Center,
         Right
     };
 
-    enum class Direction : uint8_t
+    enum class Direction : std::uint8_t
     {
         Up,
         Right,
@@ -429,7 +437,7 @@ namespace tb
         Left,
     };
 
-    enum class MovementDirection : uint8_t
+    enum class MovementDirection : std::uint8_t
     {
         Null,
         Up,
@@ -442,7 +450,7 @@ namespace tb
         DownRight,
     };
 
-    enum class Vocation : uint8_t
+    enum class Vocation : std::uint8_t
     {
         None,
         Knight,
@@ -451,14 +459,14 @@ namespace tb
         Sorcerer,
     };
 
-    enum class BloodType : uint8_t
+    enum class BloodType : std::uint8_t
     {
         None,
         Red,
         Green,
     };
 
-    enum class ThingType : uint8_t
+    enum class ThingType : std::uint8_t
     {
         Null,
         Object,
@@ -467,7 +475,7 @@ namespace tb
         Entity,
     };
 
-    enum class DrawOrderType : uint8_t
+    enum class DrawOrderType : std::uint8_t
     {
         First,
         TileEdge,
@@ -476,19 +484,19 @@ namespace tb
         Last,
     };
 
-    enum class PatternType : uint8_t
+    enum class PatternType : std::uint8_t
     {
         Tile,
         Object,
     };
 
-    enum class TileMapType : uint8_t
+    enum class TileMapType : std::uint8_t
     {
         Tiles,
         TileEdges,
     };
 
-    enum class MapObjectLayerType : uint8_t
+    enum class MapObjectLayerType : std::uint8_t
     {
         Entities,
         Creatures,
@@ -496,7 +504,7 @@ namespace tb
         TileEdgeObjects,
     };
 
-    enum class ObjectType : uint8_t
+    enum class ObjectType : std::uint8_t
     {
         Null,
         ChangeMap,
@@ -512,7 +520,7 @@ namespace tb
         Creature,
     };
 
-    enum class WeaponType : uint8_t
+    enum class WeaponType : std::uint8_t
     {
         Null,
         Fist,
@@ -527,7 +535,7 @@ namespace tb
         Wand,
     };
 
-    enum class EquipmentSlot : uint8_t
+    enum class EquipmentSlot : std::uint8_t
     {
         Neck, // amulets
         Head,

@@ -17,7 +17,7 @@ bool MapData::load()
 {
     std::vector<std::string> folderNameList;
 
-    for (const auto& directoryEntry : std::filesystem::directory_iterator("maps/"))
+    for (const auto& directoryEntry : std::filesystem::directory_iterator(m_mapDirectory))
     {
         if (directoryEntry.is_directory() == true)
         {
@@ -56,7 +56,7 @@ bool MapData::load()
     m_dataList.clear();
     m_dataList.reserve(fileNameList.size());
 
-    for (auto& fileName : fileNameList)
+    for (std::uint32_t fileIndex = 0; auto& fileName : fileNameList)
     {
         if (std::filesystem::exists(fileName) == false)
         {
@@ -77,9 +77,17 @@ bool MapData::load()
 
         tb::MapData::Data data;
 
+        data.Index = fileIndex;
+
         data.FileName = fileName;
 
         g_Log.write("FileName: {}\n", data.FileName);
+
+        if (data.FileName.size() == 0)
+        {
+            g_Log.write("ERROR: 'FileName' is empty\n");
+            return false;
+        }
 
         pugi::xml_node xmlNode_map = xmlDocument.child("map");
         if (xmlNode_map == NULL)
@@ -91,14 +99,14 @@ bool MapData::load()
         data.TileWidth = xmlNode_map.attribute("width").as_uint(); // number of tiles hortizontally
         data.TileHeight = xmlNode_map.attribute("height").as_uint(); // number of tiles vertically
 
+        g_Log.write("TileWidth: {}\n", data.TileWidth);
+        g_Log.write("TileHeight: {}\n", data.TileHeight);
+
         if (data.TileWidth == 0 || data.TileHeight == 0)
         {
             g_Log.write("ERROR: 'TileWidth' or 'TileHeight' is zero\n");
             return false;
         }
-
-        g_Log.write("TileWidth: {}\n", data.TileWidth);
-        g_Log.write("TileHeight: {}\n", data.TileHeight);
 
         pugi::xml_node xmlNode_map_properties = xmlNode_map.child("properties");
         if (xmlNode_map_properties == NULL)
@@ -148,6 +156,8 @@ bool MapData::load()
         }
 
         m_dataList.push_back(data);
+
+        fileIndex++;
     }
 
     g_Log.write("Loaded data size: {}\n", m_dataList.size());

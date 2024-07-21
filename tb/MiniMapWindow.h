@@ -61,7 +61,7 @@ private:
 
     const sf::Vector2i m_windowRenderTextureSize = sf::Vector2i(tb::Constants::GuiRightLayoutWidthAsInt, tb::Constants::GuiRightLayoutWidthAsInt);
 
-    sf::VertexArray m_vertexArray;
+    std::vector<sf::Vertex> m_vertexList;
 
 };
 

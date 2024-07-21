@@ -7,7 +7,6 @@
 #include "tb/Constants.h"
 
 #include "tb/MenuBar.h"
-#include "tb/StatusBar.h"
 
 namespace tb
 {

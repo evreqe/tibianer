@@ -7,34 +7,34 @@
 namespace tb
 {
 
-    class ConnectionWindow : public tb::ImGuiWindow
+class ConnectionWindow : public tb::ImGuiWindow
+{
+
+public:
+
+    ConnectionWindow();
+    ~ConnectionWindow();
+
+    static ConnectionWindow& getInstance()
     {
+        static ConnectionWindow instance;
+        return instance;
+    }
 
-    public:
+private:
 
-        ConnectionWindow();
-        ~ConnectionWindow();
+    ConnectionWindow(const ConnectionWindow&) = delete;
+    ConnectionWindow(ConnectionWindow&&) = delete;
+    ConnectionWindow& operator=(const ConnectionWindow&) = delete;
+    ConnectionWindow& operator=(ConnectionWindow&&) = delete;
 
-        static ConnectionWindow& getInstance()
-        {
-            static ConnectionWindow instance;
-            return instance;
-        }
+public:
 
-    private:
+    void draw();
 
-        ConnectionWindow(const ConnectionWindow&) = delete;
-        ConnectionWindow(ConnectionWindow&&) = delete;
-        ConnectionWindow& operator=(const ConnectionWindow&) = delete;
-        ConnectionWindow& operator=(ConnectionWindow&&) = delete;
+private:
 
-    public:
-
-        void draw();
-
-    private:
-
-        const char* m_displayText =
+    const char* m_displayText =
 "- Verify the address of our server in \"File | Preferences\".\n\
   You can get the right data from our homepage\n\
   \"http://www.tibia.org\".\n\
@@ -46,9 +46,9 @@ namespace tb
   enter the game or the server will refuse the entrance\n\
   for the reason given in a message box.";
 
-        const ImVec2 m_buttonSize = ImVec2(88.0f, 23.0f);
+    const ImVec2 m_buttonSize = ImVec2(88.0f, 23.0f);
 
-    };
+};
 
 }
 

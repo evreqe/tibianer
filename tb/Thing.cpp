@@ -18,12 +18,12 @@ Thing::ThingProperties_t* Thing::getThingProperties()
     return &m_thingProperties;
 }
 
-uint32_t Thing::getTileIndex()
+std::uint32_t Thing::getTileIndex()
 {
     return m_tileIndex;
 }
 
-void Thing::setTileIndex(uint32_t tileIndex)
+void Thing::setTileIndex(std::uint32_t tileIndex)
 {
     m_tileIndex = tileIndex;
 }
@@ -41,24 +41,24 @@ void Thing::setTileCoords(const sf::Vector2i& tileCoords)
     m_pixelCoords.y = static_cast<float>(m_tileCoords.y * tb::Constants::TileSize);
 }
 
-int Thing::getTileX()
+std::int32_t Thing::getTileX()
 {
     return m_tileCoords.x;
 }
 
-void Thing::setTileX(int tileX)
+void Thing::setTileX(std::int32_t tileX)
 {
     m_tileCoords.x = tileX;
 
     m_pixelCoords.x = static_cast<float>(tileX * tb::Constants::TileSize);
 }
 
-int Thing::getTileY()
+std::int32_t Thing::getTileY()
 {
     return m_tileCoords.y;
 }
 
-void Thing::setTileY(int tileY)
+void Thing::setTileY(std::int32_t tileY)
 {
     m_tileCoords.y = tileY;
 
@@ -80,7 +80,7 @@ void Thing::setPixelCoords(const sf::Vector2f& pixelCoords)
     }
     else
     {
-        m_tileCoords.x = static_cast<int>(pixelCoords.x / tb::Constants::TileSizeFloat);
+        m_tileCoords.x = static_cast<int>(pixelCoords.x / tb::Constants::TileSizeAsFloat);
     }
 
     if (pixelCoords.y < 0.0f)
@@ -89,7 +89,7 @@ void Thing::setPixelCoords(const sf::Vector2f& pixelCoords)
     }
     else
     {
-        m_tileCoords.y = static_cast<int>(pixelCoords.y / tb::Constants::TileSizeFloat);
+        m_tileCoords.y = static_cast<int>(pixelCoords.y / tb::Constants::TileSizeAsFloat);
     }
 }
 
@@ -108,7 +108,7 @@ void Thing::setPixelX(float pixelX)
     }
     else
     {
-        m_tileCoords.x = static_cast<int>(pixelX / tb::Constants::TileSizeFloat);
+        m_tileCoords.x = static_cast<int>(pixelX / tb::Constants::TileSizeAsFloat);
     }
 }
 
@@ -127,7 +127,7 @@ void Thing::setPixelY(float pixelY)
     }
     else
     {
-        m_tileCoords.y = static_cast<int>(pixelY / tb::Constants::TileSizeFloat);
+        m_tileCoords.y = static_cast<int>(pixelY / tb::Constants::TileSizeAsFloat);
     }
 }
 
@@ -161,12 +161,12 @@ void Thing::setDrawOrderType(tb::DrawOrderType drawOrderType)
     m_drawOrderType = drawOrderType;
 }
 
-uint8_t Thing::getDrawOffset()
+std::uint8_t Thing::getDrawOffset()
 {
     return m_drawOffset;
 }
 
-void Thing::setDrawOffset(uint8_t drawOffset)
+void Thing::setDrawOffset(std::uint8_t drawOffset)
 {
     m_drawOffset = drawOffset;
 }

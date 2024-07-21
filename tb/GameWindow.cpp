@@ -118,8 +118,8 @@ void GameWindow::draw()
     (
         sf::Vector2f
         (
-            player->getPixelX() + tb::Constants::TileSizeHalfFloat,
-            player->getPixelY() + tb::Constants::TileSizeHalfFloat
+            player->getPixelX() + tb::Constants::TileSizeHalfAsFloat,
+            player->getPixelY() + tb::Constants::TileSizeHalfAsFloat
         )
     );
 
@@ -202,10 +202,10 @@ void GameWindow::drawMapLayerAtZ(tb::ZAxis_t z)
 
     if (isZoomed() == true)
     {
-        int tileScale = static_cast<int>(zoomScale);
+        std::uint32_t tileScale = static_cast<std::uint32_t>(zoomScale);
 
-        int tileScaleX = m_numTilesFromCenterX * tileScale;
-        int tileScaleY = m_numTilesFromCenterY * tileScale;
+        std::uint32_t tileScaleX = m_numTilesFromCenterX * tileScale;
+        std::uint32_t tileScaleY = m_numTilesFromCenterY * tileScale;
 
         tileRect.left   -= tileScaleX;
         tileRect.top    -= tileScaleY;
@@ -289,8 +289,8 @@ void GameWindow::drawMapLayerAtZ(tb::ZAxis_t z)
     m_lightLayerSprite.setPosition(spritePosition);
     m_lightLayerSprite.setOrigin
     (
-        lightLayerSpriteLocalBounds.width  / 2,
-        lightLayerSpriteLocalBounds.height / 2
+        lightLayerSpriteLocalBounds.width  / 2.0f,
+        lightLayerSpriteLocalBounds.height / 2.0f
     );
     m_lightLayerSprite.setScale(sf::Vector2f(zoomScale, zoomScale));
 
@@ -298,7 +298,7 @@ void GameWindow::drawMapLayerAtZ(tb::ZAxis_t z)
 
     if (m_properties.ShowTileHighlight == true)
     {
-        if (tb::Utility::MyImGui::isActive() == false)
+        if (tb::Utility::LibImGui::isActive() == false)
         {
             drawTileHighlight();
         }
@@ -314,8 +314,8 @@ void GameWindow::drawMapLayerAtZ(tb::ZAxis_t z)
     m_windowLayerSprite.setPosition(spritePosition);
     m_windowLayerSprite.setOrigin
     (
-        windowLayerSpriteLocalBounds.width  / 2,
-        windowLayerSpriteLocalBounds.height / 2
+        windowLayerSpriteLocalBounds.width  / 2.0f,
+        windowLayerSpriteLocalBounds.height / 2.0f
     );
     m_windowLayerSprite.setScale(sf::Vector2f(zoomScale, zoomScale));
 
@@ -338,7 +338,7 @@ void GameWindow::drawTileHighlight()
     else
     {
         sf::RectangleShape rectangleShape;
-        rectangleShape.setSize(sf::Vector2f(tb::Constants::TileSizeFloat, tb::Constants::TileSizeFloat));
+        rectangleShape.setSize(sf::Vector2f(tb::Constants::TileSizeAsFloat, tb::Constants::TileSizeAsFloat));
         rectangleShape.setPosition(mousePixelCoords);
         rectangleShape.setFillColor(sf::Color::Cyan);
 
@@ -350,8 +350,8 @@ sf::IntRect GameWindow::getTileRect()
 {
     tb::Creature::Ptr player = g_Game.getPlayer();
 
-    int tileX = player->getTileX();
-    int tileY = player->getTileY();
+    std::int32_t tileX = player->getTileX();
+    std::int32_t tileY = player->getTileY();
 
     sf::Vector2i viewPositionOffset = static_cast<sf::Vector2i>(getViewPositionOffset());
 
@@ -365,8 +365,8 @@ sf::IntRect GameWindow::getTileRect()
     tileX -= (m_numTilesFromCenterX + m_numTilesToDrawOffscreen);
     tileY -= (m_numTilesFromCenterY + m_numTilesToDrawOffscreen);
 
-    int tileWidth  = m_numTilesX + (m_numTilesToDrawOffscreen * 2);
-    int tileHeight = m_numTilesY + (m_numTilesToDrawOffscreen * 2);
+    std::int32_t tileWidth  = m_numTilesX + (m_numTilesToDrawOffscreen * 2);
+    std::int32_t tileHeight = m_numTilesY + (m_numTilesToDrawOffscreen * 2);
 
     return sf::IntRect(tileX, tileY, tileWidth, tileHeight);
 }
@@ -381,27 +381,27 @@ tb::LightBrightness_t GameWindow::getLightBrightness()
     return m_lightBrightness;
 }
 
-int GameWindow::getNumTilesX()
+std::uint32_t GameWindow::getNumTilesX()
 {
     return m_numTilesX;
 }
 
-int GameWindow::getNumTilesY()
+std::uint32_t GameWindow::getNumTilesY()
 {
     return m_numTilesY;
 }
 
-int GameWindow::getNumTilesFromCenterX()
+std::uint32_t GameWindow::getNumTilesFromCenterX()
 {
     return m_numTilesFromCenterX;
 }
 
-int GameWindow::getNumTilesFromCenterY()
+std::uint32_t GameWindow::getNumTilesFromCenterY()
 {
     return m_numTilesFromCenterY;
 }
 
-int GameWindow::getNumTilesToDrawOffscreen()
+std::uint32_t GameWindow::getNumTilesToDrawOffscreen()
 {
     return m_numTilesToDrawOffscreen;
 }

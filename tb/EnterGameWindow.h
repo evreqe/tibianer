@@ -13,45 +13,45 @@
 namespace tb
 {
 
-    class EnterGameWindow : public tb::ImGuiWindow
+class EnterGameWindow : public tb::ImGuiWindow
+{
+
+public:
+
+    EnterGameWindow();
+    ~EnterGameWindow();
+
+    static EnterGameWindow& getInstance()
     {
+        static EnterGameWindow instance;
+        return instance;
+    }
 
-    public:
+private:
 
-        EnterGameWindow();
-        ~EnterGameWindow();
+    EnterGameWindow(const EnterGameWindow&) = delete;
+    EnterGameWindow(EnterGameWindow&&) = delete;
+    EnterGameWindow& operator=(const EnterGameWindow&) = delete;
+    EnterGameWindow& operator=(EnterGameWindow&&) = delete;
 
-        static EnterGameWindow& getInstance()
-        {
-            static EnterGameWindow instance;
-            return instance;
-        }
+public:
 
-    private:
+    void onOpen();
+    void onClose();
 
-        EnterGameWindow(const EnterGameWindow&) = delete;
-        EnterGameWindow(EnterGameWindow&&) = delete;
-        EnterGameWindow& operator=(const EnterGameWindow&) = delete;
-        EnterGameWindow& operator=(EnterGameWindow&&) = delete;
+    void draw();
 
-    public:
+private:
 
-        void onOpen();
-        void onClose();
+    bool m_isOpen = false;
 
-        void draw();
+    tb::OptionsData::Data* m_optionsData = nullptr;
 
-    private:
+    const float m_inputTextWidth = 131.0f;
 
-        bool m_isOpen = false;
+    const ImVec2 m_buttonSize = ImVec2(105.0f, 29.0f);
 
-        tb::OptionsData::Data* m_optionsData = nullptr;
-
-        const float m_inputTextWidth = 131.0f;
-
-        const ImVec2 m_buttonSize = ImVec2(105.0f, 29.0f);
-
-    };
+};
 
 }
 
