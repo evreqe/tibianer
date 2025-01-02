@@ -50,6 +50,10 @@ private:
 
     std::string m_selectedImageFileName;
 
+    const float m_listBoxWidth = 320.0f;
+
+    const float m_inputTextWidth = 320.0f;
+
     const ImVec2 m_buttonSize = ImVec2(88.0f, 23.0f);
 
 };

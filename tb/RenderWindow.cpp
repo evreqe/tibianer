@@ -20,11 +20,11 @@ RenderWindow::Properties_t* RenderWindow::getProperties()
 
 bool RenderWindow::create()
 {
-    m_window.create(sf::VideoMode(m_widthDefault, m_heightDefault), tb::Constants::GameTitle, m_style);
+    m_window.create(sf::VideoMode(sf::Vector2u(m_widthDefault, m_heightDefault)), tb::Constants::GameTitle, m_style, m_state);
 
     if (m_icon.loadFromFile(m_iconFileName) == true)
     {
-        m_window.setIcon(m_icon.getSize().x, m_icon.getSize().y, m_icon.getPixelsPtr());
+        m_window.setIcon(m_icon);
     }
     else
     {
@@ -32,7 +32,7 @@ bool RenderWindow::create()
         return false;
     }
 
-    unsigned int frameRateLimit = m_properties.FrameRateLimit;
+    std::uint32_t frameRateLimit = m_properties.FrameRateLimit;
 
     m_window.setFramerateLimit(frameRateLimit);
 
@@ -50,20 +50,20 @@ bool RenderWindow::create()
 
     if (startMaximized == true)
     {
-        m_window.setSize(sf::Vector2u(sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height));
+        m_window.setSize(sf::Vector2u(sf::VideoMode::getDesktopMode().size.x, sf::VideoMode::getDesktopMode().size.y));
         m_window.setPosition(sf::Vector2i(0, 0));
 
-        ::ShowWindow(m_window.getSystemHandle(), SW_MAXIMIZE);
+        ::ShowWindow(m_window.getNativeHandle(), SW_MAXIMIZE);
     }
 
-    sf::Cursor arrowCursor;
-    if (arrowCursor.loadFromSystem(sf::Cursor::Arrow) == false)
+    const std::optional<sf::Cursor> arrowCursor = sf::Cursor::createFromSystem(sf::Cursor::Type::Arrow);
+    if (arrowCursor.has_value() == false)
     {
-        g_Log.write("ERROR: Failed to load arrow cursor\n");
+        g_Log.write("ERROR: Failed to create arrow cursor\n");
         return false;
     }
 
-    m_window.setMouseCursor(arrowCursor);
+    m_window.setMouseCursor(arrowCursor.value());
     m_window.setMouseCursorVisible(true);
 
     return true;
@@ -81,7 +81,7 @@ void RenderWindow::setSizeAndCenter(sf::Vector2u size)
         size.y = m_heightMinimum;
     }
 
-    HWND renderWindow = m_window.getSystemHandle();
+    HWND renderWindow = m_window.getNativeHandle();
 
     HWND desktopWindow = ::GetDesktopWindow();
 
@@ -96,6 +96,7 @@ void RenderWindow::setSizeAndCenter(sf::Vector2u size)
     // new size is too big to fit inside the desktop
     if (size.x > desktopWidth || size.y > desktopHeight)
     {
+        // maximize window
         ::ShowWindow(renderWindow, SW_MAXIMIZE);
         return;
     }
@@ -138,31 +139,33 @@ void RenderWindow::setSizeAndCenter(sf::Vector2u size)
     }
 }
 
-void RenderWindow::handleClosedEvent(sf::Event event)
+void RenderWindow::handleEventClosed()
 {
     m_window.close();
 }
 
-void RenderWindow::handleResizedEvent(sf::Event event)
+void RenderWindow::handleEventResized(const sf::Event::Resized* eventResized)
 {
     // stretch to fill window
     sf::FloatRect visibleArea
     (
-        0.0f,
-        0.0f,
-        static_cast<float>(event.size.width),
-        static_cast<float>(event.size.height)
+        sf::Vector2f(0.0f, 0.0f),
+        sf::Vector2f
+        (
+            static_cast<float>(eventResized->size.x),
+            static_cast<float>(eventResized->size.y)
+        )
     );
 
     m_window.setView(sf::View(visibleArea));
 }
 
-void RenderWindow::handleLostFocusEvent(sf::Event event)
+void RenderWindow::handleEventFocusLost()
 {
     m_properties.IsFocused = false;
 }
 
-void RenderWindow::handleGainedFocusEvent(sf::Event event)
+void RenderWindow::handleEventFocusGained()
 {
     m_properties.IsFocused = true;
 }

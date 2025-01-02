@@ -31,9 +31,11 @@ private:
 
     std::uint32_t m_numSprites = 0;
 
-    std::uint32_t m_maxVertices = 65535; // 16384 * 4 = 65535
-
     std::uint32_t m_maxSprites = 16384; // 4096 * 4 = 16384
+
+    const uint32_t m_numVertexPerSprite = 6;
+
+    std::uint32_t m_maxVertices = m_maxSprites * m_numVertexPerSprite;
 };
 
 }

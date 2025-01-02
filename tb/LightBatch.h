@@ -29,9 +29,11 @@ private:
 
     std::uint32_t m_numLights = 0;
 
-    std::uint32_t m_maxVertices = 4096; // 1024 * 4;
+    std::uint32_t m_maxLights = 4096;
 
-    std::uint32_t m_maxLights = 1024;
+    const uint32_t m_numVertexPerLight = 6;
+
+    std::uint32_t m_maxVertices = m_maxLights * m_numVertexPerLight;
 };
 
 }

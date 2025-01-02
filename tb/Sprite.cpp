@@ -3,9 +3,10 @@
 namespace tb
 {
 
-Sprite::Sprite()
+Sprite::Sprite(const sf::Texture& texture) : sf::Sprite(texture)
 {
-    setTexture(tb::Textures::Sprites);
+    setTexture(texture, true);
+    setID(tb::Constants::SpriteIDDefault);
 }
 
 Sprite::~Sprite()
@@ -29,7 +30,7 @@ void Sprite::setTileWidthAndHeightByID(tb::SpriteID_t spriteID)
 {
     tb::SpriteData::Data* spriteData = &g_SpriteData.getDataList()->at(spriteID);
 
-    m_tileWidth = spriteData->TileWidth;
+     m_tileWidth = spriteData->TileWidth;
     m_tileHeight = spriteData->TileHeight;
 
     updateTextureRect();
@@ -42,15 +43,24 @@ sf::IntRect Sprite::getTextureRectByID(tb::SpriteID_t spriteID, std::uint8_t til
 
     sf::Vector2u spritesTextureSize = tb::Textures::Sprites.getSize();
 
+    if (spritesTextureSize.x == 0 || spritesTextureSize.y == 0)
+    {
+        throw std::runtime_error("ERROR: Invalid texture size");
+    }
+
     const std::uint32_t tileSize = tb::Constants::TileSize;
-
-    std::int32_t u = (spriteID % (spritesTextureSize.x / tileSize)) * tileSize;
-    std::int32_t v = (spriteID / (spritesTextureSize.y / tileSize)) * tileSize;
-
-    u = u - ((tileWidth  - 1) * tileSize);
-    v = v - ((tileHeight - 1) * tileSize);
-
-    return sf::IntRect(u, v, (tileWidth * tileSize), (tileHeight * tileSize));
+    
+    std::int32_t tileU = (spriteID % (spritesTextureSize.x / tileSize)) * tileSize;
+    std::int32_t tileV = (spriteID / (spritesTextureSize.y / tileSize)) * tileSize;
+    
+    tileU = tileU - ((tileWidth  - 1) * tileSize);
+    tileV = tileV - ((tileHeight - 1) * tileSize);
+    
+    return sf::IntRect
+    (
+        sf::Vector2i(tileU, tileV),
+        sf::Vector2i(static_cast<std::int32_t>(tileWidth * tileSize), static_cast<std::int32_t>(tileHeight * tileSize))
+    );
 }
 
 void Sprite::updateTextureRect()

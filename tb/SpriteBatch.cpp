@@ -32,37 +32,44 @@ bool SpriteBatch::addSprite(tb::Sprite* sprite, bool applyTileWidthAndHeightOffs
     float spriteTileWidth  = static_cast<float>(tb::Constants::TileSize * sprite->getTileWidth());
     float spriteTileHeight = static_cast<float>(tb::Constants::TileSize * sprite->getTileHeight());
 
-    // big sprites
+    // apply position offset to sprites that are larger than 32x32 pixels
     if (applyTileWidthAndHeightOffset == true)
     {
         spritePosition.x -= (spriteTileWidth  - tb::Constants::TileSizeAsFloat);
         spritePosition.y -= (spriteTileHeight - tb::Constants::TileSizeAsFloat);
     }
 
-    sf::Vertex* vertex = &m_vertexList[m_numSprites * 4];
+    const std::uint32_t numVertices = m_numSprites * m_numVertexPerSprite;
 
-    // top left, top right, bottom right, bottom left
+    sf::Vertex* vertex = &m_vertexList[numVertices];
+
     vertex[0].position = sf::Vector2f(spritePosition.x,                   spritePosition.y);
     vertex[1].position = sf::Vector2f(spritePosition.x + spriteTileWidth, spritePosition.y);
-    vertex[2].position = sf::Vector2f(spritePosition.x + spriteTileWidth, spritePosition.y + spriteTileHeight);
+    vertex[2].position = sf::Vector2f(spritePosition.x,                   spritePosition.y + spriteTileHeight);
     vertex[3].position = sf::Vector2f(spritePosition.x,                   spritePosition.y + spriteTileHeight);
+    vertex[4].position = sf::Vector2f(spritePosition.x + spriteTileWidth, spritePosition.y);
+    vertex[5].position = sf::Vector2f(spritePosition.x + spriteTileWidth, spritePosition.y + spriteTileHeight);
 
-    vertex[0].texCoords = sf::Vector2f(spriteRect.left,                    spriteRect.top);
-    vertex[1].texCoords = sf::Vector2f(spriteRect.left + spriteRect.width, spriteRect.top);
-    vertex[2].texCoords = sf::Vector2f(spriteRect.left + spriteRect.width, spriteRect.top + spriteRect.height);
-    vertex[3].texCoords = sf::Vector2f(spriteRect.left,                    spriteRect.top + spriteRect.height);
+    vertex[0].texCoords = sf::Vector2f(spriteRect.position.x,                     spriteRect.position.y);
+    vertex[1].texCoords = sf::Vector2f(spriteRect.position.x + spriteRect.size.x, spriteRect.position.y);
+    vertex[2].texCoords = sf::Vector2f(spriteRect.position.x,                     spriteRect.position.y + spriteRect.size.y);
+    vertex[3].texCoords = sf::Vector2f(spriteRect.position.x,                     spriteRect.position.y + spriteRect.size.y);
+    vertex[4].texCoords = sf::Vector2f(spriteRect.position.x + spriteRect.size.x, spriteRect.position.y);
+    vertex[5].texCoords = sf::Vector2f(spriteRect.position.x + spriteRect.size.x, spriteRect.position.y + spriteRect.size.y);
 
     vertex[0].color = spriteColor;
     vertex[1].color = spriteColor;
     vertex[2].color = spriteColor;
     vertex[3].color = spriteColor;
+    vertex[4].color = spriteColor;
+    vertex[5].color = spriteColor;
 
     m_numSprites++;
 
     if (m_numSprites >= m_maxSprites)
     {
         m_maxSprites = m_maxSprites * 2;
-        m_maxVertices = m_maxSprites * 4;
+        m_maxVertices = m_maxSprites * m_numVertexPerSprite;
 
         m_vertexList.resize(m_maxVertices);
 
@@ -93,7 +100,7 @@ void SpriteBatch::printDebugText()
 
 void SpriteBatch::draw(sf::RenderTarget& renderTarget, sf::RenderStates renderStates)
 {
-    renderTarget.draw(&m_vertexList[0], m_vertexList.size(), sf::Quads, renderStates);
+    renderTarget.draw(&m_vertexList[0], m_vertexList.size(), sf::PrimitiveType::Triangles, renderStates);
 }
 
 std::uint32_t SpriteBatch::getNumSprites()

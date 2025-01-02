@@ -41,9 +41,9 @@ private:
 
 public:
 
-    void handleMouseWheelMovedEvent(sf::Event event);
-    void handleMouseButtonPressedEvent(sf::Event event);
-    void handleMouseButtonReleasedEvent(sf::Event event);
+    void handleEventMouseWheelScrolled(const sf::Event::MouseWheelScrolled* eventMouseWheelScrolled);
+    void handleEventMouseButtonPressed(const sf::Event::MouseButtonPressed* eventMouseButtonPressed);
+    void handleEventMouseButtonReleased(const sf::Event::MouseButtonReleased* eventMouseButtonReleased);
 
     void setPositionInLayout();
 
@@ -62,6 +62,8 @@ private:
     const sf::Vector2i m_windowRenderTextureSize = sf::Vector2i(tb::Constants::GuiRightLayoutWidthAsInt, tb::Constants::GuiRightLayoutWidthAsInt);
 
     std::vector<sf::Vertex> m_vertexList;
+
+    static const std::uint32_t m_numVertexPerTile = 6;
 
 };
 

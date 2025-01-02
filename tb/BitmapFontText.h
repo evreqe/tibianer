@@ -51,6 +51,8 @@ private:
 
     std::vector<sf::Vertex> m_vertexList;
 
+    static const std::uint32_t m_numVertexPerGlyph = 6;
+
     sf::FloatRect m_rect;
 
     std::string m_text;

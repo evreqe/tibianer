@@ -98,7 +98,7 @@ void MenuBar::draw()
 
         if (ImGui::BeginMenu("Game Window##MenuItemGameWindow"))
         {
-            ImGui::MenuItem("---- Scale ----##MenuItemGameWindowSeparatorScale", 0, nullptr, false);
+            ImGui::SeparatorText("Scale##MenuItemGameWindowSeparatorScale");
 
             if (ImGui::MenuItem("1x##MenuItemGameWindowScale1", 0))
             {
@@ -115,7 +115,7 @@ void MenuBar::draw()
                 g_GameWindow.setSizeScale(4.0f);
             }
 
-            ImGui::MenuItem("---- Light Brightness ----##MenuItemGameWindowSeparatorLightBrightness", 0, nullptr, false);
+            ImGui::SeparatorText("Light Brightness##MenuItemGameWindowSeparatorLightBrightness");
 
             static int lightBrightness = tb::LightBrightness::Max;
             if (ImGui::DragInt("##MenuItemGameWindowDragIntLightBrightness", &lightBrightness, 1.0f, tb::LightBrightness::Min, tb::LightBrightness::Max))
@@ -128,7 +128,7 @@ void MenuBar::draw()
 
         if (ImGui::BeginMenu("Render Window##MenuItemRenderWindow"))
         {
-            ImGui::MenuItem("---- 4:3 ----##MenuItemRenderWindowResolutionSeparator4by3", 0, nullptr, false);
+            ImGui::SeparatorText("4:3##MenuItemRenderWindowResolutionSeparator4by3");
 
             if (ImGui::MenuItem("640x480##MenuItemRenderWindowResolution1", 0))
             {
@@ -145,7 +145,7 @@ void MenuBar::draw()
                 g_RenderWindow.setSizeAndCenter(sf::Vector2u(1024, 768));
             }
 
-            ImGui::MenuItem("---- 16:9 ----##MenuItemRenderWindowResolutionSeparator16by9", 0, nullptr, false);
+            ImGui::SeparatorText("16:9##MenuItemRenderWindowResolutionSeparator16by9");
 
             if (ImGui::MenuItem("720p##MenuItemRenderWindowResolution4", 0))
             {
@@ -172,7 +172,7 @@ void MenuBar::draw()
 
         if (ImGui::BeginMenu("User Interface##MenuItemUserInterface"))
         {
-            ImGui::MenuItem("---- Scale ----##MenuItemUserInterfaceSeparatorScale", 0, nullptr, false);
+            ImGui::SeparatorText("Scale##MenuItemUserInterfaceSeparatorScale");
 
             if (ImGui::MenuItem("1x##MenuItemUserInterfaceScale1", 0))
             {
@@ -256,9 +256,19 @@ void MenuBar::draw()
                 g_LogWindow.toggleIsVisible();
             }
 
-            ImGui::Separator();
+            ImGui::SeparatorText("Game State##MenuItemDeveloperSeparatorGameState");
 
-            ImGui::MenuItem("---- GUI ----##MenuItemDeveloperSeparatorGUI", 0, nullptr, false);
+            if (ImGui::MenuItem("InGame##MenuItemDeveloperGameStateInGame", 0))
+            {
+                g_Game.setGameState(tb::GameState::InGame);
+            }
+
+            if (ImGui::MenuItem("Testing##MenuItemDeveloperGameStateTesting", 0))
+            {
+                g_Game.setGameState(tb::GameState::Testing);
+            }
+
+            ImGui::SeparatorText("ImGui##MenuItemDeveloperSeparatorImGui");
 
             if (ImGui::MenuItem("Light Mode##MenuItemDeveloperGUILightMode", 0))
             {
@@ -273,20 +283,6 @@ void MenuBar::draw()
             if (ImGui::MenuItem("Classic Mode##MenuItemDeveloperGUIClassicMode", 0))
             {
                 ImGui::StyleColorsClassic();
-            }
-
-            ImGui::Separator();
-
-            ImGui::MenuItem("---- Game State ----##MenuItemDeveloperSeparatorGameState", 0, nullptr, false);
-
-            if (ImGui::MenuItem("InGame##MenuItemDeveloperGameStateInGame", 0))
-            {
-                g_Game.setGameState(tb::GameState::InGame);
-            }
-
-            if (ImGui::MenuItem("Testing##MenuItemDeveloperGameStateTesting", 0))
-            {
-                g_Game.setGameState(tb::GameState::Testing);
             }
 
             ImGui::Separator();

@@ -3,7 +3,8 @@
 namespace tb
 {
 
-Creature::Creature()
+Creature::Creature() :
+    m_dummySprite(tb::Textures::Sprites)
 {
     setThingType(tb::ThingType::Creature);
 }
@@ -13,7 +14,8 @@ Creature::~Creature()
     //
 }
 
-Creature::Creature(const sf::Vector2i& tileCoords, tb::ZAxis_t z)
+Creature::Creature(const sf::Vector2i& tileCoords, tb::ZAxis_t z) :
+    m_dummySprite(tb::Textures::Sprites)
 {
     setThingType(tb::ThingType::Creature);
 
@@ -219,7 +221,7 @@ void Creature::setOutfitSprites(std::uint8_t head, std::uint8_t body, std::uint8
         {
             tb::SpriteID_t spriteID = m_outfitSpriteIDArray.at(i).at(j);
 
-            tb::Sprite sprite;
+            tb::Sprite sprite(tb::Textures::Sprites);
             sprite.setID(spriteID);
 
             m_outfitSpriteList.at(i).push_back(sprite);

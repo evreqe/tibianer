@@ -36,9 +36,11 @@ private:
 
     std::uint32_t m_numBitmapFontText = 0;
 
-    std::uint32_t m_maxVertices = 4096; // 1024 * 4;
-
     std::uint32_t m_maxBitmapFontText = 1024;
+
+    const std::uint32_t m_numVertexPerBitmapFontText = 6;
+
+    std::uint32_t m_maxVertices = m_maxBitmapFontText * m_numVertexPerBitmapFontText;
 };
 
 }

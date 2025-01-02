@@ -25,20 +25,14 @@ namespace tb
             //return distanceSquared <= radius * radius;
         }
 
-        template <typename E>
-        constexpr auto toUnderlying(E e) noexcept
-        {
-            return static_cast<std::underlying_type_t<E>>(e);
-        }
-
         static void toggleBool(bool& b)
         {
             b = !b;
         }
 
-        static float calculateDistance(float x1, float y1, float x2, float y2)
+        static float calculateDistance(sf::Vector2f position1, sf::Vector2f position2)
         {
-            return std::sqrtf(std::powf(x1 - x2, 2) + std::powf(y1 - y2, 2));
+            return std::sqrtf(std::powf(position1.x - position2.x, 2.0f) + std::powf(position1.y - position2.y, 2.0f));
         }
 
         static std::uint32_t getRandomNumber(std::uint32_t min, std::uint32_t max)
@@ -48,14 +42,14 @@ namespace tb
             return uniformDistribution(randomEngine);
         }
 
-        static float getRandomNumberFloat(float min, float max)
+        static float getRandomNumberAsFloat(float min, float max)
         {
             std::uniform_real_distribution<float> uniformDistribution(min, max);
 
             return uniformDistribution(randomEngine);
         }
 
-        static std::string getFileText(const char* fileName)
+        static std::string readFileToString(const char* fileName)
         {
             if (fileName == nullptr || std::strlen(fileName) == 0)
             {

@@ -95,6 +95,8 @@ private:
 
     std::vector<sf::Vertex> m_tileVertexList;
 
+    static const std::uint32_t m_numVertexPerTile = 6;
+
 };
 
 }

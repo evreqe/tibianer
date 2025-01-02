@@ -33,7 +33,8 @@ void MapGeneratorWindow::draw()
 
     ImGui::Begin("Map Generator##MapGeneratorWindow", isVisible, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
 
-    if (ImGui::BeginListBox("##MapGeneratorWindowListBoxData", ImVec2(320.0f, 10.0f * ImGui::GetTextLineHeightWithSpacing())))
+    ImGui::TextUnformatted("Image:");
+    if (ImGui::BeginListBox("##MapGeneratorWindowListBoxData", ImVec2(m_listBoxWidth, 10.0f * ImGui::GetTextLineHeightWithSpacing())))
     {
         std::uint32_t fileIndex = 0;
 
@@ -69,19 +70,36 @@ void MapGeneratorWindow::draw()
         ImGui::EndListBox();
     }
 
+    ImGui::TextUnformatted("Name:");
+    ImGui::SetNextItemWidth(m_inputTextWidth);
+    ImGui::InputText("##MapGeneratorWindowInputMapName", &m_map.Name);
+
+    ImGui::TextUnformatted("Description:");
+    ImGui::SetNextItemWidth(m_inputTextWidth);
+    ImGui::InputText("##MapGeneratorWindowInputMapDescription", &m_map.Description);
+
+    ImGui::TextUnformatted("Author:");
+    ImGui::SetNextItemWidth(m_inputTextWidth);
+    ImGui::InputText("##MapGeneratorWindowInputMapAuthor", &m_map.Author);
+
+    ImGui::TextUnformatted("Player Start X:");
+    ImGui::InputInt("##MapGeneratorWindowInputMapPlayerStartX", (int*)&m_map.PlayerStartX, 1, tb::Constants::TileSize);
+
+    ImGui::TextUnformatted("Player Start Y:");
+    ImGui::InputInt("##MapGeneratorWindowInputMapPlayerStartY", (int*)&m_map.PlayerStartY, 1, tb::Constants::TileSize);
+
+    ImGui::TextUnformatted("Player Start Z:");
+    ImGui::SliderInt("##MapGeneratorWindowInputMapPlayerStartZ", (int*)&m_map.PlayerStartZ, tb::ZAxis::Min, tb::ZAxis::Max);
+
     if (ImGui::Button("Generate##MapGeneratorWindowButtonGenerate", m_buttonSize))
     {
-        m_map.Author = "GeneratedAuthor";
-        m_map.Description = "GeneratedDescription";
-        m_map.Name = "GeneratedMap";
-        m_map.PlayerStartX = 128;
-        m_map.PlayerStartY = 128;
-        m_map.PlayerStartZ = tb::ZAxis::Default;
+        if (m_map.Name.size() != 0)
+        {
+            std::string outputFileName = m_selectedImageFileName;
+            outputFileName = tb::Utility::String::replaceAll(outputFileName, ".png", ".tmx");
 
-        std::string outputFileName = m_selectedImageFileName;
-        outputFileName = tb::Utility::String::replaceAll(outputFileName, ".png", ".tmx");
-
-        g_MapGenerator.generateMapFromImageFile(m_map, m_selectedImageFileName, outputFileName);
+            g_MapGenerator.generateMapFromImageFile(m_map, m_selectedImageFileName, outputFileName);
+        }
     }
 
     float windowWidth = ImGui::GetWindowSize().x;

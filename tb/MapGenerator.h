@@ -38,8 +38,8 @@ public:
     struct Map_t
     {
         std::string Name;
-        std::string Author;
         std::string Description;
+        std::string Author;
         std::uint32_t PlayerStartX = 0;
         std::uint32_t PlayerStartY = 0;
         std::uint32_t PlayerStartZ = tb::ZAxis::Default;

@@ -3,7 +3,8 @@
 namespace tb
 {
 
-StatusWindow::StatusWindow()
+StatusWindow::StatusWindow() :
+    m_statusWindowSprite(tb::Textures::GUI)
 {
     setWindowRenderTextureInitialSize(m_windowRenderTextureSize);
 
@@ -11,7 +12,7 @@ StatusWindow::StatusWindow()
 
     initalize();
 
-    m_statusWindowSprite.setTexture(tb::Textures::GUI);
+    //m_statusWindowSprite.setTexture(tb::Textures::GUI);
 }
 
 StatusWindow::~StatusWindow()
@@ -19,26 +20,26 @@ StatusWindow::~StatusWindow()
     //
 }
 
-void StatusWindow::handleMouseWheelMovedEvent(sf::Event event)
+void StatusWindow::handleEventMouseWheelScrolled(const sf::Event::MouseWheelScrolled* eventMouseWheelScrolled)
 {
-    // scroll up
-    if (event.mouseWheel.delta > 0)
+    // scrolled up
+    if (eventMouseWheelScrolled->delta > 0)
     {
         //
     }
-    // scroll down
-    else if (event.mouseWheel.delta < 0)
+    // scrolled down
+    else if (eventMouseWheelScrolled->delta < 0)
     {
         //
     }
 }
 
-void StatusWindow::handleMouseButtonPressedEvent(sf::Event event)
+void StatusWindow::handleEventMouseButtonPressed(const sf::Event::MouseButtonPressed* eventMouseButtonPressed)
 {
     //
 }
 
-void StatusWindow::handleMouseButtonReleasedEvent(sf::Event event)
+void StatusWindow::handleEventMouseButtonReleased(const sf::Event::MouseButtonReleased* eventMouseButtonReleased)
 {
     //
 }
@@ -47,7 +48,7 @@ void StatusWindow::setPositionInLayout()
 {
     sf::FloatRect guiRightLayoutRect = g_Game.getGuiRightLayoutRect();
 
-    setPosition(sf::Vector2f(guiRightLayoutRect.left, guiRightLayoutRect.top));
+    setPosition(guiRightLayoutRect.position);
 }
 
 void StatusWindow::predraw()

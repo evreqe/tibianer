@@ -41,9 +41,9 @@ private:
 
 public:
 
-    void handleMouseWheelMovedEvent(sf::Event event);
-    void handleMouseButtonPressedEvent(sf::Event event);
-    void handleMouseButtonReleasedEvent(sf::Event event);
+    void handleEventMouseWheelScrolled(const sf::Event::MouseWheelScrolled* eventMouseWheelScrolled);
+    void handleEventMouseButtonPressed(const sf::Event::MouseButtonPressed* eventMouseButtonPressed);
+    void handleEventMouseButtonReleased(const sf::Event::MouseButtonReleased* eventMouseButtonReleased);
 
     void setPositionInLayout();
 
@@ -68,43 +68,43 @@ private:
     const sf::Vector2f m_hitPointsSlotPosition = sf::Vector2f(20.0f, 2.0f);
     const sf::FloatRect m_hitPointsSlotRect = sf::FloatRect
     (
-        m_hitPointsSlotPosition.x, m_hitPointsSlotPosition.y,
-        m_slotSize.x, m_slotSize.y
+        m_hitPointsSlotPosition,
+        m_slotSize
     );
 
     const sf::Vector2f m_capSlotPosition = sf::Vector2f(56.0f, 2.0f);
     const sf::FloatRect m_capSlotRect = sf::FloatRect
     (
-        m_capSlotPosition.x, m_capSlotPosition.y,
-        m_slotSize.x, m_slotSize.y
+        m_capSlotPosition,
+        m_slotSize
     );
 
     const sf::Vector2f m_experiencePointsSlotPosition = sf::Vector2f(2.0f, 37.0f);
     const sf::FloatRect m_experiencePointsSlotRect = sf::FloatRect
     (
-        m_experiencePointsSlotPosition.x, m_experiencePointsSlotPosition.y,
-        m_slotSize.x, m_slotSize.y
+        m_experiencePointsSlotPosition,
+        m_slotSize
     );
 
     const sf::Vector2f m_manaPointsSlotPosition = sf::Vector2f(74.0f, 37.0f);
     const sf::FloatRect m_manaPointsSlotRect = sf::FloatRect
     (
-        m_manaPointsSlotPosition.x, m_manaPointsSlotPosition.y,
-        m_slotSize.x, m_slotSize.y
+        m_manaPointsSlotPosition,
+        m_slotSize
     );
 
     const sf::Vector2f m_levelSlotPosition = sf::Vector2f(20.0f, 72.0f);
     const sf::FloatRect m_levelSlotRect = sf::FloatRect
     (
-        m_levelSlotPosition.x, m_levelSlotPosition.y,
-        m_slotSize.x, m_slotSize.y
+        m_levelSlotPosition,
+        m_slotSize
     );
 
     const sf::Vector2f m_magicLevelSlotPosition = sf::Vector2f(56.0f, 72.0f);
     const sf::FloatRect m_magicLevelSlotRect = sf::FloatRect
     (
-        m_magicLevelSlotPosition.x, m_magicLevelSlotPosition.y,
-        m_slotSize.x, m_slotSize.y
+        m_magicLevelSlotPosition,
+        m_slotSize
     );
 
     const sf::Vector2f m_viewSize = sf::Vector2f(tb::Constants::GuiRightLayoutWidthAsFloat, 108.0f);

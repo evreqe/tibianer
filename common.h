@@ -3,6 +3,9 @@
 // modules do not work LOL
 //import std;
 
+// SFML exception bug
+#pragma warning(disable: 4275)
+
 #include <cctype>
 #include <cmath>
 #include <cstddef>

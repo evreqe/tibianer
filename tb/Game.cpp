@@ -23,9 +23,15 @@ Game::GuiProperties_t* Game::getGuiProperties()
     return &m_guiProperties;
 }
 
-void Game::initImGui()
+bool Game::initImGui()
 {
-    ImGui::SFML::Init(*g_RenderWindow.getWindow());
+    bool initResult = ImGui::SFML::Init(*g_RenderWindow.getWindow());
+
+    if (initResult == false)
+    {
+        g_Log.write("ERROR: ImGui::SFML::Init() failed\n");
+        return false;
+    }
 
     ImGui::StyleColorsLight();
 
@@ -40,6 +46,8 @@ void Game::initImGui()
 
     imguiIO.ConfigWindowsMoveFromTitleBarOnly = true;
     imguiIO.ConfigDockingWithShift = true;
+
+    return true;
 }
 
 bool Game::loadConfig()
@@ -252,7 +260,7 @@ bool Game::loadTextures()
         {
             if (textureData.Name == textureName)
             {
-                if (textureObject.loadFromFile(textureData.FileName, sf::IntRect(0, 0, textureData.Width, textureData.Height)) == true)
+                if (textureObject.loadFromFile(textureData.FileName, false, sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(textureData.Width, textureData.Height))) == true)
                 {
                     // tiled textures
                     if (textureData.Repeated == true)
@@ -298,7 +306,7 @@ bool Game::loadFonts()
         {
             if (fontData.Name == fontName)
             {
-                if (fontObject.loadFromFile(fontData.FileName) == true)
+                if (fontObject.openFromFile(fontData.FileName) == true)
                 {
                     isFound = true;
                     break;
@@ -381,7 +389,12 @@ bool Game::loadCursors()
     // system cursors
     for (auto& [cursorType, cursorObject] : tb::Cursors::SystemCursorTypes)
     {
-        cursorObject.loadFromSystem(cursorType);
+        auto cursorResult = cursorObject.createFromSystem(cursorType);
+        if (cursorResult.has_value() == false)
+        {
+            g_Log.write("ERROR: Failed to create system cursors");
+            return false;
+        }
     }
 
     tb::CursorData::DataList* cursorDataList = g_CursorData.getDataList();
@@ -395,13 +408,14 @@ bool Game::loadCursors()
         {
             if (cursorData.Name == cursorName)
             {
-                const sf::Uint8* cursorPixels = cursorData.Image.getPixelsPtr();
+                const std::uint8_t* cursorPixels = cursorData.Image.getPixelsPtr();
 
-                sf::Vector2u cursorWidth = sf::Vector2u(cursorData.Width, cursorData.Height);
+                sf::Vector2u cursorSize = sf::Vector2u(cursorData.Width, cursorData.Height);
 
                 sf::Vector2u cursorHotSpot = sf::Vector2u(cursorData.HotSpotX, cursorData.HotSpotY);
 
-                if (cursorObject.loadFromPixels(cursorPixels, cursorWidth, cursorHotSpot) == true)
+                auto cursorResult = cursorObject.createFromPixels(cursorPixels, cursorSize, cursorHotSpot);
+                if (cursorResult.has_value() == true)
                 {
                     isFound = true;
                     break;
@@ -519,10 +533,10 @@ bool Game::loadGuiRects()
         {
             if (guiRectData.Name == guiRectName)
             {
-                guiRect.left   = guiRectData.X;
-                guiRect.top    = guiRectData.Y;
-                guiRect.width  = guiRectData.Width;
-                guiRect.height = guiRectData.Height;
+                guiRect.position.x    = guiRectData.X;
+                guiRect.position.y    = guiRectData.Y;
+                guiRect.size.x        = guiRectData.Width;
+                guiRect.size.y        = guiRectData.Height;
 
                 isFound = true;
                 break;
@@ -632,25 +646,25 @@ void Game::drawLoadingText()
     sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
 
     sf::Font loadingTextFont;
-    if (loadingTextFont.loadFromFile("fonts/system.ttf") == false)
+    if (loadingTextFont.openFromFile(m_systemFontFileName) == false)
     {
         g_Log.write("ERROR: Failed to draw loading text\n");
 
+        // blue screen of death
         renderWindow->clear(sf::Color::Blue);
         renderWindow->display();
 
         return;
     }
 
-    sf::Text loadingText;
-    loadingText.setFont(loadingTextFont);
+    sf::Text loadingText(loadingTextFont);
     loadingText.setCharacterSize(13);
     loadingText.setFillColor(sf::Color::White);
     loadingText.setString("Loading...");
 
     sf::FloatRect loadingTextRect = loadingText.getLocalBounds();
 
-    loadingText.setOrigin(sf::Vector2f(loadingTextRect.left + loadingTextRect.width / 2.0f, loadingTextRect.top + loadingTextRect.height / 2.0f));
+    loadingText.setOrigin(sf::Vector2f(loadingTextRect.position.x + loadingTextRect.size.x / 2.0f, loadingTextRect.position.y + loadingTextRect.size.y / 2.0f));
     loadingText.setPosition(renderWindow->getView().getCenter());
 
     renderWindow->clear(sf::Color::Black);
@@ -670,10 +684,10 @@ sf::FloatRect Game::getGuiFullLayoutRect()
     const float paddingRenderWindow = tb::Constants::PaddingRenderWindow;
 
     sf::FloatRect layoutRect;
-    layoutRect.left   = paddingRenderWindow;
-    layoutRect.top    = paddingRenderWindow + menuBarHeight;
-    layoutRect.width  = renderWindowSize.x - (paddingRenderWindow * 2.0f);
-    layoutRect.height = renderWindowSize.y - (paddingRenderWindow * 2.0f) - menuBarHeight - statusBarHeight;
+    layoutRect.position.x    = paddingRenderWindow;
+    layoutRect.position.y    = paddingRenderWindow + menuBarHeight;
+    layoutRect.size.x        = renderWindowSize.x - (paddingRenderWindow * 2.0f);
+    layoutRect.size.y        = renderWindowSize.y - (paddingRenderWindow * 2.0f) - menuBarHeight - statusBarHeight;
 
     return layoutRect;
 }
@@ -694,10 +708,10 @@ sf::FloatRect Game::getGuiLeftLayoutRect()
     float statusBarHeight = g_StatusBar.getHeight();
 
     sf::FloatRect layoutRect;
-    layoutRect.left   = paddingRenderWindow;
-    layoutRect.top    = paddingRenderWindow + menuBarHeight;
-    layoutRect.width  = renderWindowSize.x - (paddingRenderWindow * 2.0f) - guiRightLayoutWidth - paddingBetweenLeftAndRightLayoutRect;
-    layoutRect.height = renderWindowSize.y - (paddingRenderWindow * 2.0f) - menuBarHeight - statusBarHeight;
+    layoutRect.position.x    = paddingRenderWindow;
+    layoutRect.position.y    = paddingRenderWindow + menuBarHeight;
+    layoutRect.size.x        = renderWindowSize.x - (paddingRenderWindow * 2.0f) - guiRightLayoutWidth - paddingBetweenLeftAndRightLayoutRect;
+    layoutRect.size.y        = renderWindowSize.y - (paddingRenderWindow * 2.0f) - menuBarHeight - statusBarHeight;
 
     return layoutRect;
 }
@@ -716,10 +730,10 @@ sf::FloatRect Game::getGuiRightLayoutRect()
     float statusBarHeight = g_StatusBar.getHeight();
 
     sf::FloatRect layoutRect;
-    layoutRect.left   = renderWindowSize.x - paddingRenderWindow - guiRightLayoutWidth;
-    layoutRect.top    = paddingRenderWindow + menuBarHeight;
-    layoutRect.width  = guiRightLayoutWidth;
-    layoutRect.height = renderWindowSize.y - (paddingRenderWindow * 2.0f) - menuBarHeight - statusBarHeight;
+    layoutRect.position.x    = renderWindowSize.x - paddingRenderWindow - guiRightLayoutWidth;
+    layoutRect.position.y    = paddingRenderWindow + menuBarHeight;
+    layoutRect.size.x        = guiRightLayoutWidth;
+    layoutRect.size.y        = renderWindowSize.y - (paddingRenderWindow * 2.0f) - menuBarHeight - statusBarHeight;
 
     return layoutRect;
 }
@@ -735,13 +749,15 @@ void Game::drawToolTip(const std::string& text)
 
     sf::Vector2f mousePosition = static_cast<sf::Vector2f>(sf::Mouse::getPosition());
 
+    const float toolTipVerticalOffset = 16.0f;
+
     sf::RectangleShape shape;
     shape.setTexture(&tb::Textures::Wood);
     shape.setFillColor(sf::Color::Transparent);
     shape.setOutlineColor(sf::Color::Black);
     shape.setOutlineThickness(1.0f);
-    shape.setSize(sf::Vector2f(bitmapFontRect.width, bitmapFontRect.height));
-    shape.setPosition(sf::Vector2f(mousePosition.x, mousePosition.y + 16.0f));
+    shape.setSize(sf::Vector2f(bitmapFontRect.size.x, bitmapFontRect.size.y));
+    shape.setPosition(sf::Vector2f(mousePosition.x, mousePosition.y + toolTipVerticalOffset));
 
     renderWindow->draw(shape);
 }
@@ -752,9 +768,8 @@ void Game::drawWoodBackground()
 
     sf::Vector2u renderWindowSize = renderWindow->getSize();
 
-    sf::Sprite wood;
-    wood.setTexture(tb::Textures::Wood);
-    wood.setTextureRect(sf::IntRect(0, 0, renderWindowSize.x, renderWindowSize.y));
+    sf::Sprite wood(tb::Textures::Wood);
+    wood.setTextureRect(sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(renderWindowSize.x, renderWindowSize.y)));
 
     renderWindow->draw(wood);
 }
@@ -766,8 +781,8 @@ void Game::drawWoodBorder(sf::FloatRect rect, bool drawBlackRectangle)
     if (drawBlackRectangle == true)
     {
         sf::RectangleShape blackRect;
-        blackRect.setPosition(sf::Vector2f(rect.left, rect.top));
-        blackRect.setSize(sf::Vector2f(rect.width, rect.height));
+        blackRect.setPosition(rect.position);
+        blackRect.setSize(rect.size);
         blackRect.setFillColor(sf::Color::Transparent);
         blackRect.setOutlineColor(sf::Color::Black);
         blackRect.setOutlineThickness(1.0f);
@@ -775,21 +790,17 @@ void Game::drawWoodBorder(sf::FloatRect rect, bool drawBlackRectangle)
         renderWindow->draw(blackRect);
 
         // enlarge the rectangle by 1 pixel to account for the black rectangle
-        rect.left -= 1.0f;
-        rect.top -= 1.0f;
-        rect.width += 2.0f;
-        rect.height += 2.0f;
+        rect.position.x -= 1.0f;
+        rect.position.y -= 1.0f;
+        rect.size.x     += 2.0f;
+        rect.size.y     += 2.0f;
     }
 
-    sf::Sprite woodHorizontal;
-    sf::Sprite woodHorizontal2;
-    sf::Sprite woodVertical;
-    sf::Sprite woodVertical2;
+    sf::Sprite woodHorizontal(tb::Textures::WoodHorizontal);
+    sf::Sprite woodHorizontal2(tb::Textures::WoodHorizontal2);
 
-    woodHorizontal.setTexture(tb::Textures::WoodHorizontal);
-    woodHorizontal2.setTexture(tb::Textures::WoodHorizontal2);
-    woodVertical.setTexture(tb::Textures::WoodVertical);
-    woodVertical2.setTexture(tb::Textures::WoodVertical2);
+    sf::Sprite woodVertical(tb::Textures::WoodVertical);
+    sf::Sprite woodVertical2(tb::Textures::WoodVertical2);
 
     sf::Vector2u woodHorizontalSize = tb::Textures::WoodHorizontal.getSize();
     sf::Vector2u woodHorizontal2Size = tb::Textures::WoodHorizontal2.getSize();
@@ -798,20 +809,20 @@ void Game::drawWoodBorder(sf::FloatRect rect, bool drawBlackRectangle)
     sf::Vector2u woodVertical2Size = tb::Textures::WoodVertical2.getSize();
 
     // top
-    woodHorizontal.setPosition(sf::Vector2f((float)(rect.left - woodVerticalSize.x), (float)(rect.top - woodHorizontalSize.y)));
-    woodHorizontal.setTextureRect(sf::IntRect(0, 0, (int)(rect.width + (woodVerticalSize.x * 2)), (int)woodHorizontalSize.y));
+    woodHorizontal.setPosition(sf::Vector2f(static_cast<float>(rect.position.x - woodVerticalSize.x), static_cast<float>(rect.position.y - woodHorizontalSize.y)));
+    woodHorizontal.setTextureRect(sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(static_cast<int>(rect.size.x + (woodVerticalSize.x * 2)), static_cast<int>(woodHorizontalSize.y))));
 
     // bottom
-    woodHorizontal2.setPosition(sf::Vector2f((float)(rect.left - woodVertical2Size.x), rect.top + rect.height));
-    woodHorizontal2.setTextureRect(sf::IntRect(0, 0, (int)(rect.width + (woodVertical2Size.x * 2)), (int)woodHorizontal2Size.y));
+    woodHorizontal2.setPosition(sf::Vector2f(static_cast<float>(rect.position.x - woodVertical2Size.x), rect.position.y + rect.size.y));
+    woodHorizontal2.setTextureRect(sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(static_cast<int>(rect.size.x + (woodVertical2Size.x * 2)), static_cast<int>(woodHorizontal2Size.y))));
 
     // left
-    woodVertical.setPosition(sf::Vector2f((float)(rect.left - woodVerticalSize.x), rect.top));
-    woodVertical.setTextureRect(sf::IntRect(0, 0, (int)woodVerticalSize.x, (int)rect.height));
+    woodVertical.setPosition(sf::Vector2f(static_cast<float>(rect.position.x - woodVerticalSize.x), rect.position.y));
+    woodVertical.setTextureRect(sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(static_cast<int>(woodVerticalSize.x), static_cast<int>(rect.size.y))));
 
     // right
-    woodVertical2.setPosition(sf::Vector2f(rect.left + rect.width, rect.top));
-    woodVertical2.setTextureRect(sf::IntRect(0, 0, (int)woodHorizontal2Size.y, (int)rect.height));
+    woodVertical2.setPosition(sf::Vector2f(rect.position.x + rect.size.x, rect.position.y));
+    woodVertical2.setTextureRect(sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(static_cast<int>(woodHorizontal2Size.y), static_cast<int>(rect.size.y))));
 
     renderWindow->draw(woodHorizontal);
     renderWindow->draw(woodHorizontal2);
@@ -824,8 +835,8 @@ void Game::drawBackgroundTextureWithWoodBorder(const sf::Texture& texture)
     sf::FloatRect layoutRect = getGuiFullLayoutRect();
 
     m_backgroundTextureShape.setTexture(&texture, true);
-    m_backgroundTextureShape.setPosition(sf::Vector2f(layoutRect.left, layoutRect.top));
-    m_backgroundTextureShape.setSize(sf::Vector2f(layoutRect.width, layoutRect.height));
+    m_backgroundTextureShape.setPosition(layoutRect.position);
+    m_backgroundTextureShape.setSize(layoutRect.size);
 
     sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
 
@@ -844,10 +855,10 @@ sf::FloatRect Game::getClickRect(const sf::Texture& texture, const std::string& 
     {
         g_Log.write("ERROR: clickRectData == nullptr with name '{}'\n", name);
 
-        clickRect.left = 0.0f;
-        clickRect.top = 0.0f;
-        clickRect.width = 0.0f;
-        clickRect.height = 0.0f;
+        clickRect.position.x = 0.0f;
+        clickRect.position.y = 0.0f;
+        clickRect.size.x = 0.0f;
+        clickRect.size.y = 0.0f;
 
         return clickRect;
     }
@@ -862,27 +873,27 @@ sf::FloatRect Game::getClickRect(const sf::Texture& texture, const std::string& 
 
     sf::Vector2f backgroundTexturePosition = m_backgroundTextureShape.getPosition();
 
-    clickRect.left = backgroundTexturePosition.x + (static_cast<float>(clickRectData->X) * backgroundTextureScale.x);
-    clickRect.top  = backgroundTexturePosition.y + (static_cast<float>(clickRectData->Y) * backgroundTextureScale.y);
+    clickRect.position.x = backgroundTexturePosition.x + (static_cast<float>(clickRectData->X) * backgroundTextureScale.x);
+    clickRect.position.y = backgroundTexturePosition.y + (static_cast<float>(clickRectData->Y) * backgroundTextureScale.y);
 
-    clickRect.width  = static_cast<float>(clickRectData->Width)  * backgroundTextureScale.x;
-    clickRect.height = static_cast<float>(clickRectData->Height) * backgroundTextureScale.y;
+    clickRect.size.x = static_cast<float>(clickRectData->Width)  * backgroundTextureScale.x;
+    clickRect.size.y = static_cast<float>(clickRectData->Height) * backgroundTextureScale.y;
 
     return clickRect;
 }
 
 void Game::drawDebugRect(sf::FloatRect rect)
 {
-    sf::RectangleShape clickRectShape;
-    clickRectShape.setPosition(sf::Vector2f(rect.left, rect.top));
-    clickRectShape.setSize(sf::Vector2f(rect.width, rect.height));
-    clickRectShape.setFillColor(sf::Color::Transparent);
-    clickRectShape.setOutlineColor(sf::Color::Magenta);
-    clickRectShape.setOutlineThickness(1.0f);
+    sf::RectangleShape rectangleShape;
+    rectangleShape.setPosition(rect.position);
+    rectangleShape.setSize(rect.size);
+    rectangleShape.setFillColor(sf::Color::Transparent);
+    rectangleShape.setOutlineColor(sf::Color::Magenta);
+    rectangleShape.setOutlineThickness(1.0f);
 
     sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
 
-    renderWindow->draw(clickRectShape);
+    renderWindow->draw(rectangleShape);
 }
 
 void Game::drawSfmlWindows()
@@ -1569,106 +1580,104 @@ bool Game::spawnAnimationByName(const sf::Vector2i& tileCoords, tb::ZAxis_t z, c
     return true;
 }
 
-void Game::handleClosedEvent(sf::Event event)
+void Game::handleEventClosed()
 {
-    g_RenderWindow.handleClosedEvent(event);
+    g_RenderWindow.handleEventClosed();
 }
 
-void Game::handleResizedEvent(sf::Event event)
+void Game::handleEventResized(const sf::Event::Resized* eventResized)
 {
-    g_RenderWindow.handleResizedEvent(event);
+    g_RenderWindow.handleEventResized(eventResized);
 
-    g_SkillsWindow.handleResizedEvent(event);
+    g_SkillsWindow.handleEventResized(eventResized);
 }
 
-void Game::handleGainedFocusEvent(sf::Event event)
+void Game::handleEventFocusGained()
 {
-    g_RenderWindow.handleGainedFocusEvent(event);
+    g_RenderWindow.handleEventFocusGained();
 }
 
-void Game::handleLostFocusEvent(sf::Event event)
+void Game::handleEventFocusLost()
 {
-    g_RenderWindow.handleLostFocusEvent(event);
+    g_RenderWindow.handleEventFocusLost();
 }
 
-void Game::handleMouseWheelMovedEvent(sf::Event event)
+void Game::handleEventMouseWheelScrolled(const sf::Event::MouseWheelScrolled* eventMouseWheelScrolled)
 {
     if (g_GameWindow.isMouseInsideWindow() == true)
     {
-        g_GameWindow.handleMouseWheelMovedEvent(event);
+        g_GameWindow.handleEventMouseWheelScrolled(eventMouseWheelScrolled);
     }
 
     if (g_MiniMapWindow.isMouseInsideWindow() == true)
     {
-        g_MiniMapWindow.handleMouseWheelMovedEvent(event);
+        g_MiniMapWindow.handleEventMouseWheelScrolled(eventMouseWheelScrolled);
     }
 
     if (g_TabButtonsWindow.isMouseInsideWindow() == true)
     {
-        g_TabButtonsWindow.handleMouseWheelMovedEvent(event);
+        g_TabButtonsWindow.handleEventMouseWheelScrolled(eventMouseWheelScrolled);
     }
 
     if (g_SkillsWindow.isMouseInsideWindow() == true)
     {
-        g_SkillsWindow.handleMouseWheelMovedEvent(event);
+        g_SkillsWindow.handleEventMouseWheelScrolled(eventMouseWheelScrolled);
     }
 }
 
-void Game::handleMouseButtonPressedEvent(sf::Event event)
+void Game::handleEventMouseButtonPressed(const sf::Event::MouseButtonPressed* eventMouseButtonPressed)
 {
     if (g_GameWindow.isMouseInsideWindow() == true)
     {
-        g_GameWindow.handleMouseButtonPressedEvent(event);
+        g_GameWindow.handleEventMouseButtonPressed(eventMouseButtonPressed);
     }
 
     if (g_MiniMapWindow.isMouseInsideWindow() == true)
     {
-        g_MiniMapWindow.handleMouseButtonPressedEvent(event);
+        g_MiniMapWindow.handleEventMouseButtonPressed(eventMouseButtonPressed);
     }
 
     if (g_TabButtonsWindow.isMouseInsideWindow() == true)
     {
-        g_TabButtonsWindow.handleMouseButtonPressedEvent(event);
+        g_TabButtonsWindow.handleEventMouseButtonPressed(eventMouseButtonPressed);
     }
 
     if (g_SkillsWindow.isMouseInsideWindow() == true)
     {
-        g_SkillsWindow.handleMouseButtonPressedEvent(event);
+        g_SkillsWindow.handleEventMouseButtonPressed(eventMouseButtonPressed);
     }
 
-    if (event.mouseButton.button == sf::Mouse::Left)
+    if (eventMouseButtonPressed->button == sf::Mouse::Button::Left)
     {
         //
     }
 }
 
-void Game::handleMouseButtonReleasedEvent(sf::Event event)
+void Game::handleEventMouseButtonReleased(const sf::Event::MouseButtonReleased* eventMouseButtonReleased)
 {
     if (g_GameWindow.isMouseInsideWindow() == true)
     {
-        g_GameWindow.handleMouseButtonReleasedEvent(event);
+        g_GameWindow.handleEventMouseButtonReleased(eventMouseButtonReleased);
     }
 
     if (g_MiniMapWindow.isMouseInsideWindow() == true)
     {
-        g_MiniMapWindow.handleMouseButtonReleasedEvent(event);
+        g_MiniMapWindow.handleEventMouseButtonReleased(eventMouseButtonReleased);
     }
 
     if (g_TabButtonsWindow.isMouseInsideWindow() == true)
     {
-        g_TabButtonsWindow.handleMouseButtonReleasedEvent(event);
+        g_TabButtonsWindow.handleEventMouseButtonReleased(eventMouseButtonReleased);
     }
 
     if (g_SkillsWindow.isMouseInsideWindow() == true)
     {
-        g_SkillsWindow.handleMouseButtonReleasedEvent(event);
+        g_SkillsWindow.handleEventMouseButtonReleased(eventMouseButtonReleased);
     }
 
-    sf::Vector2f mousePosition;
-    mousePosition.x = static_cast<float>(event.mouseButton.x);
-    mousePosition.y = static_cast<float>(event.mouseButton.y);
+    sf::Vector2f mousePosition = static_cast<sf::Vector2f>(eventMouseButtonReleased->position);
 
-    if (event.mouseButton.button == sf::Mouse::Left)
+    if (eventMouseButtonReleased->button == sf::Mouse::Button::Left)
     {
         if (m_gameState == tb::GameState::EnterGame)
         {
@@ -1682,22 +1691,154 @@ void Game::handleMouseButtonReleasedEvent(sf::Event event)
     }
 }
 
-void Game::handleKeyPressedEvent(sf::Event event)
+void Game::handleEventKeyPressed(const sf::Event::KeyPressed* eventKeyPressed)
 {
     m_properties.IsAnyKeyboardKeyPressed = true;
 
     if (m_gameState == tb::GameState::InGame)
     {
-        if (event.key.code == sf::Keyboard::Key::B)
+        if (eventKeyPressed->code == sf::Keyboard::Key::B)
         {
             spawnAnimationByName(m_player->getTileCoords(), m_player->getZ(), "BlueOrbSpell");
         }
     }
 }
 
-void Game::handleKeyReleasedEvent(sf::Event event)
+void Game::handleEventKeyReleased(const sf::Event::KeyReleased* eventKeyReleased)
 {
     m_properties.IsAnyKeyboardKeyPressed = false;
+}
+
+void Game::handleEventJoystickConnected(const sf::Event::JoystickConnected* eventJoystickConnected)
+{
+    m_joystickIndex = eventJoystickConnected->joystickId;
+
+    updateJoystickPropertiesForAll();
+
+    g_Log.write("Joystick Connected Index: {}\n", m_joystickIndex);
+
+    tb::Joystick::Properties_t* joystickProperties = m_joystickList[m_joystickIndex].getProperties();
+
+    g_Log.write("--> Name: {}\n", joystickProperties->Name);
+    g_Log.write("--> Product ID: {}\n", joystickProperties->ProductID);
+    g_Log.write("--> Vendor ID: {}\n", joystickProperties->VendorID);
+    g_Log.write("--> Button Count: {}\n", joystickProperties->ButtonCount);
+}
+
+void Game::handleEventJoystickDisconnected(const sf::Event::JoystickDisconnected* eventJoystickDisconnected)
+{
+    unsigned int joystickIndex = eventJoystickDisconnected->joystickId;
+
+    updateJoystickPropertiesForAll();
+
+    g_Log.write("Joystick Disconnected Index: {}\n", joystickIndex);
+
+    tb::Joystick::Properties_t* joystickProperties = m_joystickList[joystickIndex].getProperties();
+
+    g_Log.write("--> Name: {}\n", joystickProperties->Name);
+    g_Log.write("--> Product ID: {}\n", joystickProperties->ProductID);
+    g_Log.write("--> Vendor ID: {}\n", joystickProperties->VendorID);
+    g_Log.write("--> Button Count: {}\n", joystickProperties->ButtonCount);
+}
+
+void Game::handleEventJoystickMoved(const sf::Event::JoystickMoved* eventJoystickMoved)
+{
+    g_Log.write("Joystick Moved Axis and Position: {} = {}\n", magic_enum::enum_name(eventJoystickMoved->axis), eventJoystickMoved->position);
+}
+
+void Game::handleEventJoystickButtonPressed(const sf::Event::JoystickButtonPressed* eventJoystickButtonPressed)
+{
+    m_properties.IsAnyJoystickButtonPressed = true;
+}
+
+void Game::handleEventJoystickButtonReleased(const sf::Event::JoystickButtonReleased* eventJoystickButtonReleased)
+{
+    m_properties.IsAnyJoystickButtonPressed = false;
+
+    g_Log.write("Joystick Button Released: {}\n", eventJoystickButtonReleased->button);
+}
+
+void Game::processEvents()
+{
+    sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
+
+    tb::RenderWindow::Properties_t* renderWindowProperties = g_RenderWindow.getProperties();
+
+    bool renderWindowIsFocused = renderWindowProperties->IsFocused;
+
+    while (const std::optional event = renderWindow->pollEvent())
+    {
+        ImGui::SFML::ProcessEvent(*renderWindow, *event);
+
+        if (event->is<sf::Event::Closed>())
+        {
+            handleEventClosed();
+        }
+        else if (const sf::Event::Resized* eventResized = event->getIf<sf::Event::Resized>())
+        {
+            handleEventResized(eventResized);
+        }
+        else if (event->is<sf::Event::FocusLost>())
+        {
+            handleEventFocusLost();
+        }
+        else if (event->is<sf::Event::FocusGained>())
+        {
+            handleEventFocusGained();
+        }
+        else if (const sf::Event::JoystickConnected* eventJoystickConnected = event->getIf<sf::Event::JoystickConnected>())
+        {
+            handleEventJoystickConnected(eventJoystickConnected);
+        }
+        else if (const sf::Event::JoystickDisconnected* eventJoystickDisconnected = event->getIf<sf::Event::JoystickDisconnected>())
+        {
+            handleEventJoystickDisconnected(eventJoystickDisconnected);
+        }
+
+        if (tb::Utility::LibImGui::isActive() == false)
+        {
+            if (const sf::Event::MouseWheelScrolled* eventMouseWheelScrolled = event->getIf<sf::Event::MouseWheelScrolled>())
+            {
+                handleEventMouseWheelScrolled(eventMouseWheelScrolled);
+            }
+            else if (const sf::Event::MouseButtonPressed* eventMouseButtonPressed = event->getIf<sf::Event::MouseButtonPressed>())
+            {
+                handleEventMouseButtonPressed(eventMouseButtonPressed);
+            }
+            else if (const sf::Event::MouseButtonReleased* eventMouseButtonReleased = event->getIf<sf::Event::MouseButtonReleased>())
+            {
+                handleEventMouseButtonReleased(eventMouseButtonReleased);
+            }
+            else if (const sf::Event::KeyPressed* eventKeyPressed = event->getIf<sf::Event::KeyPressed>())
+            {
+                handleEventKeyPressed(eventKeyPressed);
+            }
+            else if (const sf::Event::KeyReleased* eventKeyReleased = event->getIf<sf::Event::KeyReleased>())
+            {
+                handleEventKeyReleased(eventKeyReleased);
+            }
+            else if (const sf::Event::JoystickMoved* eventJoystickMoved = event->getIf<sf::Event::JoystickMoved>())
+            {
+                handleEventJoystickMoved(eventJoystickMoved);
+            }
+            else if (const sf::Event::JoystickButtonPressed* eventJoystickButtonPressed = event->getIf<sf::Event::JoystickButtonPressed>())
+            {
+                handleEventJoystickButtonPressed(eventJoystickButtonPressed);
+            }
+            else if (const sf::Event::JoystickButtonReleased* eventJoystickButtonReleased = event->getIf<sf::Event::JoystickButtonReleased>())
+            {
+                handleEventJoystickButtonReleased(eventJoystickButtonReleased);
+            }
+        }
+    }
+
+    if (renderWindowIsFocused == true && tb::Utility::LibImGui::isActive() == false)
+    {
+        handleKeyboardInput();
+
+        updateJoystickStateForAll();
+        handleJoystickInput();
+    }
 }
 
 void Game::handleKeyboardInput()
@@ -1731,7 +1872,7 @@ void Game::handleKeyboardInput()
             if (cameraKeyPressedTimeElapsed >= m_cameraKeyPressedTime)
             {
                 // camera reset
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad0) == true || sf::Keyboard::isKeyPressed(sf::Keyboard::Num0) == true)
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Numpad0) == true || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num0) == true)
                 {
                     g_GameWindow.resetViewPositionOffset();
 
@@ -1739,7 +1880,7 @@ void Game::handleKeyboardInput()
                 }
 
                 // camera up
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad8) == true || sf::Keyboard::isKeyPressed(sf::Keyboard::Num8) == true)
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Numpad8) == true || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num8) == true)
                 {
                     sf::Vector2f viewPositionOffset = g_GameWindow.getViewPositionOffset();
 
@@ -1751,7 +1892,7 @@ void Game::handleKeyboardInput()
                 }
 
                 // camera right
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad6) == true || sf::Keyboard::isKeyPressed(sf::Keyboard::Num6) == true)
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Numpad6) == true || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num6) == true)
                 {
                     sf::Vector2f viewPositionOffset = g_GameWindow.getViewPositionOffset();
 
@@ -1763,7 +1904,7 @@ void Game::handleKeyboardInput()
                 }
 
                 // camera down
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad5) == true || sf::Keyboard::isKeyPressed(sf::Keyboard::Num5) == true)
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Numpad5) == true || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num5) == true)
                 {
                     sf::Vector2f viewPositionOffset = g_GameWindow.getViewPositionOffset();
 
@@ -1775,7 +1916,7 @@ void Game::handleKeyboardInput()
                 }
 
                 // camera left
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad4) == true || sf::Keyboard::isKeyPressed(sf::Keyboard::Num4) == true)
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Numpad4) == true || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num4) == true)
                 {
                     sf::Vector2f viewPositionOffset = g_GameWindow.getViewPositionOffset();
 
@@ -1788,55 +1929,6 @@ void Game::handleKeyboardInput()
             }
         }
     }
-}
-
-void Game::handleJoystickConnectedEvent(sf::Event event)
-{
-    m_joystickIndex = event.joystickConnect.joystickId;
-
-    updateJoystickPropertiesForAll();
-
-    g_Log.write("Joystick Connected Index: {}\n", m_joystickIndex);
-
-    tb::Joystick::Properties_t* joystickProperties = m_joystickList[m_joystickIndex].getProperties();
-
-    g_Log.write("--> Name: {}\n", joystickProperties->Name);
-    g_Log.write("--> Product ID: {}\n", joystickProperties->ProductID);
-    g_Log.write("--> Vendor ID: {}\n", joystickProperties->VendorID);
-    g_Log.write("--> Button Count: {}\n", joystickProperties->ButtonCount);
-}
-
-void Game::handleJoystickDisconnectedEvent(sf::Event event)
-{
-    unsigned int joystickIndex = event.joystickConnect.joystickId;
-
-    updateJoystickPropertiesForAll();
-
-    g_Log.write("Joystick Disconnected Index: {}\n", joystickIndex);
-
-    tb::Joystick::Properties_t* joystickProperties = m_joystickList[joystickIndex].getProperties();
-
-    g_Log.write("--> Name: {}\n", joystickProperties->Name);
-    g_Log.write("--> Product ID: {}\n", joystickProperties->ProductID);
-    g_Log.write("--> Vendor ID: {}\n", joystickProperties->VendorID);
-    g_Log.write("--> Button Count: {}\n", joystickProperties->ButtonCount);
-}
-
-void Game::handleJoystickMovedEvent(sf::Event event)
-{
-    g_Log.write("Joystick Moved Axis and Position: {} = {}\n", magic_enum::enum_name(event.joystickMove.axis), event.joystickMove.position);
-}
-
-void Game::handleJoystickButtonPressedEvent(sf::Event event)
-{
-    m_properties.IsAnyJoystickButtonPressed = true;
-}
-
-void Game::handleJoystickButtonReleasedEvent(sf::Event event)
-{
-    m_properties.IsAnyJoystickButtonPressed = false;
-
-    g_Log.write("Joystick Button Released: {}\n", event.joystickButton.button);
 }
 
 void Game::handleJoystickInput()
@@ -1876,90 +1968,6 @@ void Game::handleJoystickInput()
         {
             handleCreatureMovement(m_player, tb::MovementDirection::Left);
         }
-    }
-}
-
-void Game::processEvents()
-{
-    sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
-
-    tb::RenderWindow::Properties_t* renderWindowProperties = g_RenderWindow.getProperties();
-
-    bool renderWindowIsFocused = renderWindowProperties->IsFocused;
-
-    sf::Event event;
-    while (renderWindow->pollEvent(event))
-    {
-        ImGui::SFML::ProcessEvent(*renderWindow, event);
-
-        if (event.type == sf::Event::Closed)
-        {
-            handleClosedEvent(event);
-        }
-        else if (event.type == sf::Event::Resized)
-        {
-            handleResizedEvent(event);
-        }
-        else if (event.type == sf::Event::LostFocus)
-        {
-            handleLostFocusEvent(event);
-        }
-        else if (event.type == sf::Event::GainedFocus)
-        {
-            handleGainedFocusEvent(event);
-        }
-
-        if (tb::Utility::LibImGui::isActive() == false)
-        {
-            if (event.type == sf::Event::MouseButtonPressed)
-            {
-                handleMouseButtonPressedEvent(event);
-            }
-            else if (event.type == sf::Event::MouseButtonReleased)
-            {
-                handleMouseButtonReleasedEvent(event);
-            }
-            else if (event.type == sf::Event::MouseWheelMoved)
-            {
-                handleMouseWheelMovedEvent(event);
-            }
-            else if (event.type == sf::Event::KeyPressed)
-            {
-                handleKeyPressedEvent(event);
-            }
-            else if (event.type == sf::Event::KeyReleased)
-            {
-                handleKeyReleasedEvent(event);
-            }
-            else if (event.type == sf::Event::JoystickConnected)
-            {
-                handleJoystickConnectedEvent(event);
-            }
-            else if (event.type == sf::Event::JoystickDisconnected)
-            {
-                handleJoystickDisconnectedEvent(event);
-            }
-            else if (event.type == sf::Event::JoystickMoved)
-            {
-                handleJoystickMovedEvent(event);
-            }
-            else if (event.type == sf::Event::JoystickButtonPressed)
-            {
-                handleJoystickButtonPressedEvent(event);
-            }
-            else if (event.type == sf::Event::JoystickButtonReleased)
-            {
-                handleJoystickButtonReleasedEvent(event);
-            }
-        }
-    }
-
-    if (renderWindowIsFocused == true && tb::Utility::LibImGui::isActive() == false)
-    {
-        handleKeyboardInput();
-
-        updateJoystickStateForAll();
-        handleJoystickInput();
     }
 }
 
@@ -2067,7 +2075,7 @@ void Game::createTileFileFromImageFile(const std::string& fileName)
     {
         for (std::uint32_t j = 0; j < imageHeight; j++)
         {
-            sf::Color pixelColor = image.getPixel(i, j);
+            sf::Color pixelColor = image.getPixel(sf::Vector2u(i, j));
 
             //g_Log.write("pixelColor: {},{},{}\n", pixelColor.r, pixelColor.g, pixelColor.b);
 
@@ -2312,7 +2320,12 @@ void Game::run()
     drawLoadingText();
 
     g_Log.write("Initializing ImGui\n");
-    initImGui();
+    if (initImGui() == false)
+    {
+        g_Log.write("ERROR: Failed to initialize ImGui\n");
+        exit();
+        return;
+    }
 
     g_Log.write("Loading data\n");
     if (loadData() == false)

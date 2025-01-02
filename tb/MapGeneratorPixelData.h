@@ -37,13 +37,13 @@ public:
         std::uint32_t Index = 0;
         std::string Name;
         std::string Type;
-        std::string Edge;
         std::uint32_t ColorR = 0;
         std::uint32_t ColorG = 0;
         std::uint32_t ColorB = 0;
         tb::SpriteIDList SpriteIDList;
         tb::SpriteIDList CornersSpriteIDList;
         tb::SpriteIDList EdgesSpriteIDList;
+        std::vector<std::string> EdgeList;
     };
 
     using DataList = std::vector<tb::MapGeneratorPixelData::Data>;
@@ -68,6 +68,7 @@ private:
     const std::uint32_t m_numSpritesToReserve = 4;
     const std::uint32_t m_numCornerSpritesToReserve = 4;
     const std::uint32_t m_numEdgeSpritesToReserve = 9;
+    const std::uint32_t m_numEdgeToReserve = 8;
 
     const std::uint32_t m_maxColorValue = 255;
 

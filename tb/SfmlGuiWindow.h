@@ -36,6 +36,7 @@ public:
     void setPosition(const sf::Vector2f& position);
 
     sf::View* getView();
+    void setView(sf::View view);
 
     sf::Vector2f getViewInitialSize();
     void setViewInitialSize(sf::Vector2f size);

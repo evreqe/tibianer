@@ -42,9 +42,9 @@ private:
 
 public:
 
-    void handleMouseWheelMovedEvent(sf::Event event);
-    void handleMouseButtonPressedEvent(sf::Event event);
-    void handleMouseButtonReleasedEvent(sf::Event event);
+    void handleEventMouseWheelScrolled(const sf::Event::MouseWheelScrolled* eventMouseWheelScrolled);
+    void handleEventMouseButtonPressed(const sf::Event::MouseButtonPressed* eventMouseButtonPressed);
+    void handleEventMouseButtonReleased(const sf::Event::MouseButtonReleased* eventMouseButtonReleased);
 
     void updateButtons();
 
@@ -75,8 +75,8 @@ private:
     sf::IntRect m_inventoryButtonTextureRect = tb::GuiRects::TabButtonsWindowInventoryButtonPressed;
     const sf::FloatRect m_inventoryButtonRect = sf::FloatRect
     (
-        m_inventoryButtonPosition.x, m_inventoryButtonPosition.y,
-        m_buttonSize.x, m_buttonSize.y
+        m_inventoryButtonPosition,
+        m_buttonSize
     );
 
     sf::Sprite m_statusButtonSprite;
@@ -84,8 +84,8 @@ private:
     sf::IntRect m_statusButtonTextureRect = tb::GuiRects::TabButtonsWindowStatusButtonReleased;
     const sf::FloatRect m_statusButtonRect = sf::FloatRect
     (
-        m_statusButtonPosition.x, m_statusButtonPosition.y,
-        m_buttonSize.x, m_buttonSize.y
+        m_statusButtonPosition,
+        m_buttonSize
     );
 
     sf::Sprite m_battleButtonSprite;
@@ -93,8 +93,8 @@ private:
     sf::IntRect m_battleButtonTextureRect = tb::GuiRects::TabButtonsWindowBattleButtonReleased;
     const sf::FloatRect m_battleButtonRect = sf::FloatRect
     (
-        m_battleButtonPosition.x, m_battleButtonPosition.y,
-        m_buttonSize.x, m_buttonSize.y
+        m_battleButtonPosition,
+        m_buttonSize
     );
 
     sf::Sprite m_miniMapButtonSprite;
@@ -102,8 +102,8 @@ private:
     sf::IntRect m_miniMapButtonTextureRect = tb::GuiRects::TabButtonsWindowMiniMapButtonReleased;
     const sf::FloatRect m_miniMapButtonRect = sf::FloatRect
     (
-        m_miniMapButtonPosition.x, m_miniMapButtonPosition.y,
-        m_buttonSize.x, m_buttonSize.y
+        m_miniMapButtonPosition,
+        m_buttonSize
     );
 
 };

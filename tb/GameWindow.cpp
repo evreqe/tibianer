@@ -3,7 +3,10 @@
 namespace tb
 {
 
-GameWindow::GameWindow()
+GameWindow::GameWindow() :
+    m_windowLayerSprite(tb::Textures::Null),
+    m_lightLayerSprite(tb::Textures::Null),
+    m_tileHighlightSprite(tb::Textures::Sprites)
 {
     setWindowRenderTextureInitialSize(m_windowRenderTextureSize);
 
@@ -11,8 +14,17 @@ GameWindow::GameWindow()
 
     initalize();
 
-    m_windowLayerRenderTexture.create(m_windowRenderTextureSize.x, m_windowRenderTextureSize.y);
-    m_lightLayerRenderTexture.create(m_windowRenderTextureSize.x, m_windowRenderTextureSize.y);
+    sf::Vector2u windowRenderTextureSize2u = static_cast<sf::Vector2u>(m_windowRenderTextureSize);
+
+    if (m_windowLayerRenderTexture.resize(windowRenderTextureSize2u) == false)
+    {
+        g_Log.write("ERROR: Failed to resize RenderTexture\n");
+    }
+
+    if (m_lightLayerRenderTexture.resize(windowRenderTextureSize2u) == false)
+    {
+        g_Log.write("ERROR: Failed to resize RenderTexture\n");
+    }
 
     // this makes the lighting look like old tibia
     m_lightBlendMode.colorEquation = sf::BlendMode::Equation::ReverseSubtract;
@@ -33,28 +45,28 @@ GameWindow::Properties_t* GameWindow::getProperties()
     return &m_properties;
 }
 
-void GameWindow::handleMouseWheelMovedEvent(sf::Event event)
+void GameWindow::handleEventMouseWheelScrolled(const sf::Event::MouseWheelScrolled* eventMouseWheelScrolled)
 {
-    // scroll up
-    if (event.mouseWheel.delta > 0)
+    // scrolled up
+    if (eventMouseWheelScrolled->delta > 0.0f)
     {
         // zoom in
         zoomIn();
     }
-    // scroll down
-    else if (event.mouseWheel.delta < 0)
+    // scrolled down
+    else if (eventMouseWheelScrolled->delta < 0.0f)
     {
         // zoom out
         zoomOut();
     }
 }
 
-void GameWindow::handleMouseButtonPressedEvent(sf::Event event)
+void GameWindow::handleEventMouseButtonPressed(const sf::Event::MouseButtonPressed* eventMouseButtonPressed)
 {
     //
 }
 
-void GameWindow::handleMouseButtonReleasedEvent(sf::Event event)
+void GameWindow::handleEventMouseButtonReleased(const sf::Event::MouseButtonReleased* eventMouseButtonReleased)
 {
     //
 }
@@ -97,8 +109,8 @@ void GameWindow::setPositionInLayout()
     sf::FloatRect layoutRect = getLayoutRect();
 
     sf::Vector2f windowPosition;
-    windowPosition.x = layoutRect.left + ((layoutRect.width  - windowRect.width)  / 2.0f);
-    windowPosition.y = layoutRect.top  + ((layoutRect.height - windowRect.height) / 2.0f);
+    windowPosition.x = layoutRect.position.x + ((layoutRect.size.x - windowRect.size.x) / 2.0f);
+    windowPosition.y = layoutRect.position.y + ((layoutRect.size.y - windowRect.size.y) / 2.0f);
 
     setPosition(windowPosition);
 }
@@ -142,13 +154,13 @@ void GameWindow::draw()
 
         sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
         sf::FloatRect layoutRect = getLayoutRect();
-        sf::RectangleShape rs;
-        rs.setPosition(sf::Vector2f(layoutRect.left, layoutRect.top));
-        rs.setSize(sf::Vector2f(layoutRect.width, layoutRect.height));
-        rs.setFillColor(sf::Color::Transparent);
-        rs.setOutlineColor(sf::Color::Cyan);
-        rs.setOutlineThickness(1.0f);
-        renderWindow->draw(rs);
+        sf::RectangleShape rectangleShape;
+        rectangleShape.setPosition(layoutRect.position);
+        rectangleShape.setSize(layoutRect.size);
+        rectangleShape.setFillColor(sf::Color::Transparent);
+        rectangleShape.setOutlineColor(sf::Color::Cyan);
+        rectangleShape.setOutlineThickness(1.0f);
+        renderWindow->draw(rectangleShape);
     }
     else
     {
@@ -207,20 +219,20 @@ void GameWindow::drawMapLayerAtZ(tb::ZAxis_t z)
         std::uint32_t tileScaleX = m_numTilesFromCenterX * tileScale;
         std::uint32_t tileScaleY = m_numTilesFromCenterY * tileScale;
 
-        tileRect.left   -= tileScaleX;
-        tileRect.top    -= tileScaleY;
-        tileRect.width  += tileScaleX * 2;
-        tileRect.height += tileScaleY * 2;
+        tileRect.position.x    -= tileScaleX;
+        tileRect.position.y    -= tileScaleY;
+        tileRect.size.x        += tileScaleX * 2;
+        tileRect.size.y        += tileScaleY * 2;
 
         tileRectIncreased = tileRect;
     }
     else
     {
         // this increases the number of tiles to prevent pop in
-        tileRectIncreased.left   -= m_numTilesX;
-        tileRectIncreased.top    -= m_numTilesY;
-        tileRectIncreased.width  += m_numTilesX * 2;
-        tileRectIncreased.height += m_numTilesY * 2;
+        tileRectIncreased.position.x    -= m_numTilesX;
+        tileRectIncreased.position.y    -= m_numTilesY;
+        tileRectIncreased.size.x        += m_numTilesX * 2;
+        tileRectIncreased.size.y        += m_numTilesY * 2;
     }
 
     sf::View* view = getView();
@@ -285,12 +297,15 @@ void GameWindow::drawMapLayerAtZ(tb::ZAxis_t z)
 
     sf::FloatRect lightLayerSpriteLocalBounds = m_lightLayerSprite.getLocalBounds();
 
-    m_lightLayerSprite.setTexture(m_lightLayerRenderTexture.getTexture());
+    m_lightLayerSprite.setTexture(m_lightLayerRenderTexture.getTexture(), true);
     m_lightLayerSprite.setPosition(spritePosition);
     m_lightLayerSprite.setOrigin
     (
-        lightLayerSpriteLocalBounds.width  / 2.0f,
-        lightLayerSpriteLocalBounds.height / 2.0f
+        sf::Vector2f
+        (
+            lightLayerSpriteLocalBounds.size.x / 2.0f,
+            lightLayerSpriteLocalBounds.size.y / 2.0f
+        )
     );
     m_lightLayerSprite.setScale(sf::Vector2f(zoomScale, zoomScale));
 
@@ -310,12 +325,15 @@ void GameWindow::drawMapLayerAtZ(tb::ZAxis_t z)
 
     sf::FloatRect windowLayerSpriteLocalBounds = m_windowLayerSprite.getLocalBounds();
 
-    m_windowLayerSprite.setTexture(windowLayerTexture);
+    m_windowLayerSprite.setTexture(windowLayerTexture, true);
     m_windowLayerSprite.setPosition(spritePosition);
     m_windowLayerSprite.setOrigin
     (
-        windowLayerSpriteLocalBounds.width  / 2.0f,
-        windowLayerSpriteLocalBounds.height / 2.0f
+        sf::Vector2f
+        (
+            windowLayerSpriteLocalBounds.size.x / 2.0f,
+            windowLayerSpriteLocalBounds.size.y / 2.0f
+        )
     );
     m_windowLayerSprite.setScale(sf::Vector2f(zoomScale, zoomScale));
 
@@ -368,7 +386,7 @@ sf::IntRect GameWindow::getTileRect()
     std::int32_t tileWidth  = m_numTilesX + (m_numTilesToDrawOffscreen * 2);
     std::int32_t tileHeight = m_numTilesY + (m_numTilesToDrawOffscreen * 2);
 
-    return sf::IntRect(tileX, tileY, tileWidth, tileHeight);
+    return sf::IntRect(sf::Vector2i(tileX, tileY), sf::Vector2i(tileWidth, tileHeight));
 }
 
 void GameWindow::setLightBrightness(tb::LightBrightness_t lightBrightness)

@@ -49,7 +49,7 @@ bool BitmapFontTextBatch::addBitmapFontText(tb::BitmapFontText* bitmapFontText)
     if (m_numBitmapFontText >= m_maxBitmapFontText)
     {
         m_maxBitmapFontText = m_maxBitmapFontText * 2;
-        m_maxVertices = m_maxBitmapFontText * 4;
+        m_maxVertices = m_maxBitmapFontText * m_numVertexPerBitmapFontText;
 
         m_vertexList.reserve(m_maxVertices);
 
@@ -84,7 +84,7 @@ void BitmapFontTextBatch::draw(sf::RenderTarget& target, sf::RenderStates states
 
     states.texture = m_bitmapFont->getTexture();
 
-    target.draw(&m_vertexList[0], m_vertexList.size(), sf::Quads, states);
+    target.draw(&m_vertexList[0], m_vertexList.size(), sf::PrimitiveType::Triangles, states);
 }
 
 bool BitmapFontTextBatch::setBitmapFont(tb::BitmapFont* bitmapFont)

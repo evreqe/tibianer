@@ -3,7 +3,8 @@
 namespace tb
 {
 
-SfmlGuiWindow::SfmlGuiWindow()
+SfmlGuiWindow::SfmlGuiWindow() :
+    m_windowSprite(tb::Textures::Null)
 {
     //
 }
@@ -15,9 +16,15 @@ SfmlGuiWindow::~SfmlGuiWindow()
 
 void SfmlGuiWindow::initalize()
 {
-    m_windowRenderTexture.create(m_windowRenderTextureInitialSize.x, m_windowRenderTextureInitialSize.y);
+    bool resizeResult = m_windowRenderTexture.resize(static_cast<sf::Vector2u>(m_windowRenderTextureInitialSize));
 
-    m_view.reset(sf::FloatRect(0.0f, 0.0f, m_viewInitialSize.x, m_viewInitialSize.y));
+    if (resizeResult == false)
+    {
+        g_Log.write("ERROR: Failed to resize RenderTexture\n");
+    }
+
+    sf::View resetView(sf::FloatRect(sf::Vector2f(0.0f, 0.0f), static_cast<sf::Vector2f>(m_viewInitialSize)));
+    setView(resetView);
 }
 
 void SfmlGuiWindow::drawToRenderWindow()
@@ -36,14 +43,8 @@ void SfmlGuiWindow::drawToRenderWindow()
 sf::FloatRect SfmlGuiWindow::getRect()
 {
     sf::FloatRect windowRect;
-
-    windowRect.left = m_position.x;
-    windowRect.top  = m_position.y;
-
-    sf::Vector2f windowSize = getSize();
-
-    windowRect.width  = windowSize.x;
-    windowRect.height = windowSize.y;
+    windowRect.position = getPosition();
+    windowRect.size = getSize();
 
     return windowRect;
 }
@@ -79,26 +80,26 @@ sf::Vector2f SfmlGuiWindow::getMousePixelPosition()
 
 sf::Vector2f SfmlGuiWindow::getMousePixelCoords()
 {
-    sf::Vector2f pixelCoords2f = getMousePixelPosition();
+    sf::Vector2f mousePixelPosition = getMousePixelPosition();
 
     const float tileSize = tb::Constants::TileSizeAsFloat;
 
     // this accounts for when the mouse is out of bounds in the top left corner of the map, in the void
-    if (pixelCoords2f.x < 0.0f)
+    if (mousePixelPosition.x < 0.0f)
     {
-        pixelCoords2f.x -= tileSize;
+        mousePixelPosition.x -= tileSize;
     }
 
-    if (pixelCoords2f.y < 0.0f)
+    if (mousePixelPosition.y < 0.0f)
     {
-        pixelCoords2f.y -= tileSize;
+        mousePixelPosition.y -= tileSize;
     }
 
     // this rounds to the nearest tile size
-    pixelCoords2f.x -= std::fmodf(pixelCoords2f.x, tileSize);
-    pixelCoords2f.y -= std::fmodf(pixelCoords2f.y, tileSize);
+    mousePixelPosition.x -= std::fmodf(mousePixelPosition.x, tileSize);
+    mousePixelPosition.y -= std::fmodf(mousePixelPosition.y, tileSize);
 
-    return pixelCoords2f;
+    return mousePixelPosition;
 }
 
 sf::Vector2i SfmlGuiWindow::getMouseTileCoords()
@@ -135,6 +136,11 @@ void SfmlGuiWindow::setPosition(const sf::Vector2f& position)
 sf::View* SfmlGuiWindow::getView()
 {
     return &m_view;
+}
+
+void SfmlGuiWindow::setView(sf::View view)
+{
+    m_view = view;
 }
 
 sf::Vector2f SfmlGuiWindow::getViewInitialSize()
@@ -195,17 +201,9 @@ sf::Sprite* SfmlGuiWindow::getWindowSprite()
 
 sf::FloatRect SfmlGuiWindow::getRectOfSprite(const sf::Sprite& sprite)
 {
-    sf::Vector2f spritePosition = sprite.getPosition();
-
-    sf::FloatRect spriteLocalBounds = sprite.getLocalBounds();
-
     sf::FloatRect spriteRect;
-
-    spriteRect.left = spritePosition.x;
-    spriteRect.top = spritePosition.y;
-
-    spriteRect.width = spriteLocalBounds.width;
-    spriteRect.height = spriteLocalBounds.height;
+    spriteRect.position = sprite.getPosition();
+    spriteRect.size = sprite.getLocalBounds().size;
 
     return spriteRect;
 }

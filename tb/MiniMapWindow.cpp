@@ -17,28 +17,28 @@ MiniMapWindow::~MiniMapWindow()
     //
 }
 
-void MiniMapWindow::handleMouseWheelMovedEvent(sf::Event event)
+void MiniMapWindow::handleEventMouseWheelScrolled(const sf::Event::MouseWheelScrolled* eventMouseWheelScrolled)
 {
-    // scroll up
-    if (event.mouseWheel.delta > 0)
+    // scrolled up
+    if (eventMouseWheelScrolled->delta > 0)
     {
         // zoom in
         zoomIn();
     }
-    // scroll down
-    else if (event.mouseWheel.delta < 0)
+    // scrolled down
+    else if (eventMouseWheelScrolled->delta < 0)
     {
         // zoom out
         zoomOut();
     }
 }
 
-void MiniMapWindow::handleMouseButtonPressedEvent(sf::Event event)
+void MiniMapWindow::handleEventMouseButtonPressed(const sf::Event::MouseButtonPressed* eventMouseButtonPressed)
 {
     //
 }
 
-void MiniMapWindow::handleMouseButtonReleasedEvent(sf::Event event)
+void MiniMapWindow::handleEventMouseButtonReleased(const sf::Event::MouseButtonReleased* eventMouseButtonReleased)
 {
     //
 }
@@ -47,7 +47,7 @@ void MiniMapWindow::setPositionInLayout()
 {
     sf::FloatRect guiRightLayoutRect = g_Game.getGuiRightLayoutRect();
 
-    setPosition(sf::Vector2f(guiRightLayoutRect.left, guiRightLayoutRect.top));
+    setPosition(guiRightLayoutRect.position);
 }
 
 void MiniMapWindow::draw()
@@ -96,7 +96,6 @@ void MiniMapWindow::draw()
         if (isZoomed() == true)
         {
             // only use X and not Y because the minimap is a square with 1:1 ratio
-
             std::uint32_t numTilesFromCenterX = g_GameWindow.getNumTilesFromCenterX();
 
             float zoomScale = getZoomScale();
@@ -105,18 +104,18 @@ void MiniMapWindow::draw()
 
             std::uint32_t tileScaleXY = numTilesFromCenterX * tileScale;
 
-            tileRect.left   -= tileScaleXY;
-            tileRect.top    -= tileScaleXY;
-            tileRect.width  += tileScaleXY * 2;
-            tileRect.height += tileScaleXY * 2;
+            tileRect.position.x    -= tileScaleXY;
+            tileRect.position.y    -= tileScaleXY;
+            tileRect.size.x        += tileScaleXY * 2;
+            tileRect.size.y        += tileScaleXY * 2;
         }
         else
         {
             // need to draw 1 tile extra to fill whole window
-            tileRect.left   -= 1;
-            tileRect.top    -= 1;
-            tileRect.width  += 2;
-            tileRect.height += 2;
+            tileRect.position.x    -= 1;
+            tileRect.position.y    -= 1;
+            tileRect.size.x        += 2;
+            tileRect.size.y        += 2;
         }
 
         drawTileMap(tileRect, tileMapTiles);
@@ -144,12 +143,12 @@ void MiniMapWindow::drawTileMap(const sf::IntRect& tileRect, tb::TileMap::Ptr ti
         return;
     }
 
-    std::int32_t numVertices = (tileRect.width * tileRect.height) * 4;
+    const float tileSize = tb::Constants::TileSizeAsFloat;
+
+    const std::uint32_t numVertices = static_cast<std::uint32_t>(tileRect.size.x * tileRect.size.y) * m_numVertexPerTile;
 
     m_vertexList.clear();
     m_vertexList.reserve(numVertices);
-
-    const float tileSize = tb::Constants::TileSizeAsFloat;
 
     for (auto& tile : tileList)
     {
@@ -165,13 +164,22 @@ void MiniMapWindow::drawTileMap(const sf::IntRect& tileRect, tb::TileMap::Ptr ti
         float tileX = tile->getPixelX();
         float tileY = tile->getPixelY();
 
-        sf::Vertex vertex[4];
+        // we have to render the square as two triangles
+        // ______
+        // |\   |
+        // | \  |
+        // |__\ |
+        sf::Vertex vertex[m_numVertexPerTile];
 
-        // top left, top right, bottom right, bottom left
-        vertex[0].position = sf::Vector2f(tileX,            tileY);
-        vertex[1].position = sf::Vector2f(tileX + tileSize, tileY);
-        vertex[2].position = sf::Vector2f(tileX + tileSize, tileY + tileSize);
-        vertex[3].position = sf::Vector2f(tileX,            tileY + tileSize);
+        // first triangle
+        vertex[0].position = sf::Vector2f(tileX,            tileY);            // top left
+        vertex[1].position = sf::Vector2f(tileX + tileSize, tileY);            // top right
+        vertex[2].position = sf::Vector2f(tileX,            tileY + tileSize); // bottom left
+
+        // second triangle
+        vertex[3].position = sf::Vector2f(tileX,            tileY + tileSize); // bottom left
+        vertex[4].position = sf::Vector2f(tileX + tileSize, tileY);            // top right
+        vertex[5].position = sf::Vector2f(tileX + tileSize, tileY + tileSize); // bottom right
 
         sf::Color color;
         color.r = 8;
@@ -190,16 +198,16 @@ void MiniMapWindow::drawTileMap(const sf::IntRect& tileRect, tb::TileMap::Ptr ti
         if (objectList->size() != 0)
         {
             color.r = 255;
-            color.g = 0;
-            color.b = 0;
+            color.g = 255;
+            color.b = 255;
         }
 
         tb::Creature::List* creatureList = tile->getCreatureList();
 
         if (creatureList->size() != 0)
         {
-            color.r = 0;
-            color.g = 255;
+            color.r = 255;
+            color.g = 0;
             color.b = 0;
         }
 
@@ -209,11 +217,15 @@ void MiniMapWindow::drawTileMap(const sf::IntRect& tileRect, tb::TileMap::Ptr ti
         vertex[1].color = color;
         vertex[2].color = color;
         vertex[3].color = color;
+        vertex[4].color = color;
+        vertex[5].color = color;
 
         m_vertexList.push_back(vertex[0]);
         m_vertexList.push_back(vertex[1]);
         m_vertexList.push_back(vertex[2]);
         m_vertexList.push_back(vertex[3]);
+        m_vertexList.push_back(vertex[4]);
+        m_vertexList.push_back(vertex[5]);
     }
 
     std::vector<sf::Vertex> crosshairVertexList = getCrosshairVertexList();
@@ -224,7 +236,7 @@ void MiniMapWindow::drawTileMap(const sf::IntRect& tileRect, tb::TileMap::Ptr ti
 
     sf::RenderStates renderStates = sf::RenderStates::Default;
 
-    windowRenderTexture->draw(&m_vertexList[0], m_vertexList.size(), sf::Quads, renderStates);
+    windowRenderTexture->draw(&m_vertexList[0], m_vertexList.size(), sf::PrimitiveType::Triangles, renderStates);
 }
 
 void MiniMapWindow::drawTileHighlight()
@@ -272,18 +284,24 @@ std::vector<sf::Vertex> MiniMapWindow::getCrosshairVertexList()
         tileCoordsList.push_back(eastCoords);
     }
 
+    const std::uint32_t numVertices = static_cast<std::uint32_t>(m_numCrosshairTiles * m_numVertexPerTile);
+
     std::vector<sf::Vertex> vertexList;
-    vertexList.reserve(m_numCrosshairTiles * 4);
+    vertexList.reserve(numVertices);
 
     for (auto& tileCoords : tileCoordsList)
     {
-        sf::Vertex vertex[4];
+        sf::Vertex vertex[m_numVertexPerTile];
 
-        // top left, top right, bottom right, bottom left
-        vertex[0].position = sf::Vector2f(tileCoords.x,            tileCoords.y);
-        vertex[1].position = sf::Vector2f(tileCoords.x + tileSize, tileCoords.y);
-        vertex[2].position = sf::Vector2f(tileCoords.x + tileSize, tileCoords.y + tileSize);
-        vertex[3].position = sf::Vector2f(tileCoords.x,            tileCoords.y + tileSize);
+        // first triangle
+        vertex[0].position = sf::Vector2f(tileCoords.x,            tileCoords.y);            // top left
+        vertex[1].position = sf::Vector2f(tileCoords.x + tileSize, tileCoords.y);            // top right
+        vertex[2].position = sf::Vector2f(tileCoords.x,            tileCoords.y + tileSize); // bottom left
+
+        // second triangle
+        vertex[3].position = sf::Vector2f(tileCoords.x,            tileCoords.y + tileSize); // bottom left
+        vertex[4].position = sf::Vector2f(tileCoords.x + tileSize, tileCoords.y);            // top right
+        vertex[5].position = sf::Vector2f(tileCoords.x + tileSize, tileCoords.y + tileSize); // bottom right
 
         sf::Color color;
         color.r = 255;
@@ -295,11 +313,15 @@ std::vector<sf::Vertex> MiniMapWindow::getCrosshairVertexList()
         vertex[1].color = color;
         vertex[2].color = color;
         vertex[3].color = color;
+        vertex[4].color = color;
+        vertex[5].color = color;
 
         vertexList.push_back(vertex[0]);
         vertexList.push_back(vertex[1]);
         vertexList.push_back(vertex[2]);
         vertexList.push_back(vertex[3]);
+        vertexList.push_back(vertex[4]);
+        vertexList.push_back(vertex[5]);
     }
 
     return vertexList;

@@ -34,6 +34,8 @@ private:
     std::int32_t m_characterHeight = 1;
     std::vector<std::int32_t> m_characterWidthList;
 
+    static const std::uint32_t m_numVertexPerGlyph = 6;
+
 };
 
 }

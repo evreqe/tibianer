@@ -48,9 +48,9 @@ public:
 
     Properties_t* getProperties();
 
-    void handleMouseWheelMovedEvent(sf::Event event);
-    void handleMouseButtonPressedEvent(sf::Event event);
-    void handleMouseButtonReleasedEvent(sf::Event event);
+    void handleEventMouseWheelScrolled(const sf::Event::MouseWheelScrolled* eventMouseWheelScrolled);
+    void handleEventMouseButtonPressed(const sf::Event::MouseButtonPressed* eventMouseButtonPressed);
+    void handleEventMouseButtonReleased(const sf::Event::MouseButtonReleased* eventMouseButtonReleased);
 
     sf::FloatRect getLayoutRect();
 

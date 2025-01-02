@@ -3,7 +3,8 @@
 namespace tb
 {
 
-Object::Object()
+Object::Object() :
+    m_sprite(tb::Textures::Sprites)
 {
     setThingType(tb::ThingType::Object);
 }
@@ -18,7 +19,8 @@ Object::ObjectProperties_t* Object::getObjectProperties()
     return &m_objectProperties;
 }
 
-Object::Object(const sf::Vector2i& tileCoords, tb::ZAxis_t z, tb::SpriteID_t spriteID)
+Object::Object(const sf::Vector2i& tileCoords, tb::ZAxis_t z, tb::SpriteID_t spriteID) :
+    m_sprite(tb::Textures::Sprites)
 {
     setThingType(tb::ThingType::Object);
 

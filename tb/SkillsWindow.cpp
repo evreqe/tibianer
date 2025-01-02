@@ -3,7 +3,8 @@
 namespace tb
 {
 
-SkillsWindow::SkillsWindow()
+SkillsWindow::SkillsWindow() :
+    m_woodSprite(tb::Textures::Wood)
 {
     setWindowRenderTextureInitialSize(m_windowRenderTextureSize);
 
@@ -17,31 +18,31 @@ SkillsWindow::~SkillsWindow()
     //
 }
 
-void SkillsWindow::handleMouseWheelMovedEvent(sf::Event event)
+void SkillsWindow::handleEventMouseWheelScrolled(const sf::Event::MouseWheelScrolled* eventMouseWheelScrolled)
 {
     // scroll up
-    if (event.mouseWheel.delta > 0)
+    if (eventMouseWheelScrolled->delta > 0)
     {
         //
     }
     // scroll down
-    else if (event.mouseWheel.delta < 0)
+    else if (eventMouseWheelScrolled->delta < 0)
     {
         //
     }
 }
 
-void SkillsWindow::handleMouseButtonPressedEvent(sf::Event event)
+void SkillsWindow::handleEventMouseButtonPressed(const sf::Event::MouseButtonPressed* eventMouseButtonPressed)
 {
     //
 }
 
-void SkillsWindow::handleMouseButtonReleasedEvent(sf::Event event)
+void SkillsWindow::handleEventMouseButtonReleased(const sf::Event::MouseButtonReleased* eventMouseButtonReleased)
 {
     //
 }
 
-void SkillsWindow::handleResizedEvent(sf::Event event)
+void SkillsWindow::handleEventResized(const sf::Event::Resized* eventResized)
 {
     setPositionInLayout();
     setSizeInLayout();
@@ -51,7 +52,7 @@ void SkillsWindow::setSizeInLayout()
 {
     sf::FloatRect guiRightLayoutRect = g_Game.getGuiRightLayoutRect();
 
-    float guiRightLayoutRectBottomLeftY = guiRightLayoutRect.top + guiRightLayoutRect.height;
+    float guiRightLayoutRectBottomLeftY = guiRightLayoutRect.position.y + guiRightLayoutRect.size.y;
 
     sf::Vector2f windowPosition = getPosition();
 
@@ -61,13 +62,24 @@ void SkillsWindow::setSizeInLayout()
     m_viewSize.x = tb::Constants::GuiRightLayoutWidthAsFloat;
     m_viewSize.y = guiRightLayoutRectBottomLeftY - windowPosition.y;
 
-    sf::View* view = getView();
-
-    view->reset(sf::FloatRect(0.0f, 0.0f, m_viewSize.x, m_viewSize.y / windowSizeScale));
+    sf::View resetView = sf::View(sf::FloatRect(sf::Vector2f(0.0f, 0.0f), sf::Vector2f(m_viewSize.x, m_viewSize.y / windowSizeScale)));
+    setView(resetView);
 
     sf::RenderTexture* windowRenderTexture = getWindowRenderTexture();
 
-    windowRenderTexture->create(static_cast<unsigned int>(m_viewSize.x), static_cast<unsigned int>(m_viewSize.y / windowSizeScale));
+    bool resizeResult = windowRenderTexture->resize
+    (
+        sf::Vector2u
+        (
+            static_cast<std::uint32_t>(m_viewSize.x),
+            static_cast<std::uint32_t>(m_viewSize.y / windowSizeScale)
+        )
+    );
+
+    if (resizeResult == false)
+    {
+        g_Log.write("ERROR: Failed to resize RenderTexture\n");
+    }
 }
 
 void SkillsWindow::setPositionInLayout()
@@ -79,8 +91,8 @@ void SkillsWindow::setPositionInLayout()
     float padding = tb::Constants::PaddingRenderWindow;
 
     sf::Vector2f windowPosition;
-    windowPosition.x = guiRightLayoutRect.left - 1.0f;
-    windowPosition.y = tabButtonsWindowRect.top + tabButtonsWindowRect.height + padding;
+    windowPosition.x = guiRightLayoutRect.position.x - 1.0f;
+    windowPosition.y = tabButtonsWindowRect.position.y + tabButtonsWindowRect.size.y + padding;
 
     setPosition(windowPosition);
 }
@@ -90,7 +102,7 @@ void SkillsWindow::updateSkillsText()
     tb::BitmapFont* tinyBitmapFont = g_Game.getTinyBitmapFont();
 
     m_skillsBitmapFontTextBatch.setBitmapFont(tinyBitmapFont);
-    m_skillsBitmapFontTextBatch.setPosition(3.0f, 3.0f);
+    m_skillsBitmapFontTextBatch.setPosition(sf::Vector2f(3.0f, 3.0f));
 
     sf::Color textColor = sf::Color::White;
 
@@ -128,7 +140,7 @@ void SkillsWindow::draw()
     float windowSizeScale = getSizeScale();
 
     m_woodSprite.setTexture(tb::Textures::Wood, true);
-    m_woodSprite.setTextureRect(sf::IntRect(0, 0, static_cast<int>(windowSize.x), static_cast<int>(windowSize.y)));
+    m_woodSprite.setTextureRect(sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(static_cast<int>(windowSize.x), static_cast<int>(windowSize.y))));
 
     windowRenderTexture->draw(m_woodSprite);
 

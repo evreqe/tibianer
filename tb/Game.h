@@ -140,7 +140,7 @@ public:
     Properties_t* getProperties();
     GuiProperties_t* getGuiProperties();
 
-    void initImGui();
+    bool initImGui();
 
     bool loadConfig();
     bool loadData();
@@ -206,24 +206,25 @@ public:
     bool spawnAnimationByIndex(const sf::Vector2i& tileCoords, tb::ZAxis_t z, std::uint32_t index);
     bool spawnAnimationByName(const sf::Vector2i& tileCoords, tb::ZAxis_t z, const std::string& name);
 
-    void handleClosedEvent(sf::Event event);
-    void handleResizedEvent(sf::Event event);
-    void handleLostFocusEvent(sf::Event event);
-    void handleGainedFocusEvent(sf::Event event);
-    void handleMouseWheelMovedEvent(sf::Event event);
-    void handleMouseButtonPressedEvent(sf::Event event);
-    void handleMouseButtonReleasedEvent(sf::Event event);
-    void handleKeyPressedEvent(sf::Event event);
-    void handleKeyReleasedEvent(sf::Event event);
-    void handleKeyboardInput();
-    void handleJoystickConnectedEvent(sf::Event event);
-    void handleJoystickDisconnectedEvent(sf::Event event);
-    void handleJoystickMovedEvent(sf::Event event);
-    void handleJoystickButtonPressedEvent(sf::Event event);
-    void handleJoystickButtonReleasedEvent(sf::Event event);
-    void handleJoystickInput();
+    void handleEventClosed();
+    void handleEventResized(const sf::Event::Resized* eventResized);
+    void handleEventFocusLost();
+    void handleEventFocusGained();
+    void handleEventMouseWheelScrolled(const sf::Event::MouseWheelScrolled* eventMouseWheelScrolled);
+    void handleEventMouseButtonPressed(const sf::Event::MouseButtonPressed* eventMouseButtonPressed);
+    void handleEventMouseButtonReleased(const sf::Event::MouseButtonReleased* eventMouseButtonReleased);
+    void handleEventKeyPressed(const sf::Event::KeyPressed* eventKeyPressed);
+    void handleEventKeyReleased(const sf::Event::KeyReleased* eventKeyReleased);
+    void handleEventJoystickConnected(const sf::Event::JoystickConnected* eventJoystickConnected);
+    void handleEventJoystickDisconnected(const sf::Event::JoystickDisconnected* eventJoystickDisconnected);
+    void handleEventJoystickMoved(const sf::Event::JoystickMoved* eventJoystickMoved);
+    void handleEventJoystickButtonPressed(const sf::Event::JoystickButtonPressed* eventJoystickButtonPressed);
+    void handleEventJoystickButtonReleased(const sf::Event::JoystickButtonReleased* eventJoystickButtonReleased);
     
     void processEvents();
+
+    void handleKeyboardInput();
+    void handleJoystickInput();
 
     void setMouseCursor(const sf::Cursor& cursor);
     void fixMouseCursorForWindowResize(sf::RenderWindow* renderWindow);
@@ -300,6 +301,8 @@ private:
 
     sf::Clock m_cameraKeyPressedClock;
     const sf::Time m_cameraKeyPressedTime = sf::milliseconds(100);
+
+    const std::filesystem::path m_systemFontFileName = "fonts/system.ttf";
 
     tb::BitmapFont m_classicBitmapFont;
     tb::BitmapFont m_tinyBitmapFont;

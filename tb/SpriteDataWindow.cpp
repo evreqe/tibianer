@@ -34,7 +34,7 @@ void SpriteDataWindow::draw()
         {
             for (std::int32_t i = clipper.DisplayStart; i < clipper.DisplayEnd; i++)
             {
-                tb::Sprite sprite;
+                tb::Sprite sprite(tb::Textures::Sprites);
                 sprite.setID(static_cast<tb::SpriteID_t>(i));
 
                 std::string imageButtonID = std::format("##SpriteDataWindowChildDataButton{}", i);

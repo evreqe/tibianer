@@ -26,7 +26,7 @@ namespace tb
             ImGui::TableNextRow();
             ImGui::TableSetColumnIndex(0);
 
-            tb::Sprite sprite;
+            tb::Sprite sprite(tb::Textures::Sprites);
             sprite.setID(tb::Sprites::Evremonde);
 
             ImGui::Image(sprite);
@@ -34,6 +34,18 @@ namespace tb
             ImGui::TableSetColumnIndex(1);
 
             ImGui::TextUnformatted(m_displayText);
+
+            ImGui::Spacing();
+
+            std::string textLinkLabel = std::format("{}##AboutTibianerWindowTextLink", m_textLinkURL);
+
+            ImGui::TextLinkOpenURL(textLinkLabel.c_str(), m_textLinkURL);
+            if (ImGui::IsMouseHoveringRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax()) == true)
+            {
+                ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+            }
+
+            ImGui::Spacing();
 
             ImGui::TableSetColumnIndex(2);
 

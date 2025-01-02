@@ -41,9 +41,13 @@ bool MapGeneratorPixelData::load()
         {
             tb::MapGeneratorPixelData::Data data;
 
+            // Index
+
             data.Index = arrayIndex;
 
             g_Log.write("Index: {}\n", arrayIndex);
+
+            // Name
 
             data.Name = arrayTable["Name"].value_or("");
 
@@ -56,6 +60,8 @@ bool MapGeneratorPixelData::load()
                 return false;
             }
 
+            // Type
+
             data.Type = arrayTable["Type"].value_or("");
 
             g_Log.write("Type: {}\n", data.Type);
@@ -67,14 +73,7 @@ bool MapGeneratorPixelData::load()
                 return false;
             }
 
-            data.Edge = arrayTable["Edge"].value_or("");
-
-            g_Log.write("Edge: {}\n", data.Edge);
-
-            if (data.Edge.size() == 0)
-            {
-                g_Log.write("INFO: 'Edge' is empty\n");
-            }
+            // ColorRGB
 
             data.ColorR = arrayTable["ColorR"].value_or(0);
             data.ColorG = arrayTable["ColorG"].value_or(0);
@@ -212,6 +211,46 @@ bool MapGeneratorPixelData::load()
             std::string edgeSpriteIDListAsString = fmt::format("{}", data.EdgesSpriteIDList);
 
             g_Log.write("EdgesSpriteList: {}\n", edgeSpriteIDListAsString);
+
+            // EdgeList
+
+            std::vector<std::string> edgeList;
+            edgeList.reserve(m_numEdgeToReserve);
+
+            auto edgeArray = arrayTable["EdgeList"].as_array();
+
+            if (edgeArray == nullptr)
+            {
+                g_Log.write("ERROR: 'edgeArray' is nullptr\n");
+                foundError = true;
+                return false;
+            }
+
+            for (std::uint32_t edgeIndex = 0; auto& edgeNode : *edgeArray)
+            {
+                std::string edgeName = edgeNode.value_or("");
+                if (edgeName.empty() == true)
+                {
+                    g_Log.write("ERROR: 'edgeName' is empty at index: EdgeList=[Index: {}]\n", edgeIndex);
+                    foundError = true;
+                    return false;
+                }
+
+                edgeList.push_back(edgeName);
+
+                edgeIndex++;
+            }
+
+            data.EdgeList = std::move(edgeList);
+
+            if (data.EdgeList.size() == 0)
+            {
+                g_Log.write("INFO: 'EdgeList' is empty\n");
+            }
+
+            std::string edgeListAsString = fmt::format("{}", data.EdgeList);
+
+            g_Log.write("EdgeList: {}\n", edgeListAsString);
 
             //
 

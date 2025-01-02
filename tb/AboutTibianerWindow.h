@@ -38,7 +38,9 @@ public:
 
 private:
 
-    const char* m_displayText = "Tibianer\nby Evremonde\n\nhttps://evretibia.itch.io/tibianer";
+    const char* m_displayText = "Tibianer\nby Evremonde";
+
+    const char* m_textLinkURL = "https://evretibia.itch.io/tibianer";
 
     const ImVec2 m_buttonSize = ImVec2(88.0f, 23.0f);
 

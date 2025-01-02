@@ -3,7 +3,11 @@
 namespace tb
 {
 
-TabButtonsWindow::TabButtonsWindow()
+TabButtonsWindow::TabButtonsWindow() :
+    m_inventoryButtonSprite(tb::Textures::GUI),
+    m_statusButtonSprite(tb::Textures::GUI),
+    m_battleButtonSprite(tb::Textures::GUI),
+    m_miniMapButtonSprite(tb::Textures::GUI)
 {
     setWindowRenderTextureInitialSize(m_windowRenderTextureSize);
 
@@ -11,10 +15,10 @@ TabButtonsWindow::TabButtonsWindow()
 
     initalize();
 
-    m_inventoryButtonSprite.setTexture(tb::Textures::GUI);
-    m_statusButtonSprite.setTexture(tb::Textures::GUI);
-    m_battleButtonSprite.setTexture(tb::Textures::GUI);
-    m_miniMapButtonSprite.setTexture(tb::Textures::GUI);
+    //m_inventoryButtonSprite.setTexture(tb::Textures::GUI);
+    //m_statusButtonSprite.setTexture(tb::Textures::GUI);
+    //m_battleButtonSprite.setTexture(tb::Textures::GUI);
+    //m_miniMapButtonSprite.setTexture(tb::Textures::GUI);
 
     m_inventoryButtonSprite.setPosition(m_inventoryButtonPosition);
     m_statusButtonSprite.setPosition(m_statusButtonPosition);
@@ -27,25 +31,25 @@ TabButtonsWindow::~TabButtonsWindow()
     //
 }
 
-void TabButtonsWindow::handleMouseWheelMovedEvent(sf::Event event)
+void TabButtonsWindow::handleEventMouseWheelScrolled(const sf::Event::MouseWheelScrolled* eventMouseWheelScrolled)
 {
-    // scroll up
-    if (event.mouseWheel.delta > 0)
+    // scrolled up
+    if (eventMouseWheelScrolled->delta > 0)
     {
         //
     }
-    // scroll down
-    else if (event.mouseWheel.delta < 0)
+    // scrolled down
+    else if (eventMouseWheelScrolled->delta < 0)
     {
         //
     }
 }
 
-void TabButtonsWindow::handleMouseButtonPressedEvent(sf::Event event)
+void TabButtonsWindow::handleEventMouseButtonPressed(const sf::Event::MouseButtonPressed* eventMouseButtonPressed)
 {
     sf::Vector2f mousePosition = getMousePixelPosition();
 
-    if (event.mouseButton.button == sf::Mouse::Left)
+    if (eventMouseButtonPressed->button == sf::Mouse::Button::Left)
     {
         tb::Game::GuiProperties_t* gameGuiProperties = g_Game.getGuiProperties();
 
@@ -54,7 +58,7 @@ void TabButtonsWindow::handleMouseButtonPressedEvent(sf::Event event)
         sf::FloatRect battleButtonRect = getBattleButtonRect();
         sf::FloatRect miniMapButtonRect = getMiniMapButtonRect();
 
-        if (inventoryButtonRect.contains(mousePosition))
+        if (inventoryButtonRect.contains(mousePosition) == true)
         {
             gameGuiProperties->TabButtonsWindowInventoryButtonIsPressed = true;
             gameGuiProperties->TabButtonsWindowStatusButtonIsPressed = false;
@@ -72,7 +76,7 @@ void TabButtonsWindow::handleMouseButtonPressedEvent(sf::Event event)
             m_inventoryButtonSprite.setTextureRect(tb::GuiRects::TabButtonsWindowInventoryButtonPressed);
         }
 
-        if (statusButtonRect.contains(mousePosition))
+        if (statusButtonRect.contains(mousePosition) == true)
         {
             gameGuiProperties->TabButtonsWindowInventoryButtonIsPressed = false;
             gameGuiProperties->TabButtonsWindowStatusButtonIsPressed = true;
@@ -90,7 +94,7 @@ void TabButtonsWindow::handleMouseButtonPressedEvent(sf::Event event)
             m_statusButtonSprite.setTextureRect(tb::GuiRects::TabButtonsWindowStatusButtonPressed);
         }
 
-        if (battleButtonRect.contains(mousePosition))
+        if (battleButtonRect.contains(mousePosition) == true)
         {
             gameGuiProperties->TabButtonsWindowInventoryButtonIsPressed = false;
             gameGuiProperties->TabButtonsWindowStatusButtonIsPressed = false;
@@ -108,7 +112,7 @@ void TabButtonsWindow::handleMouseButtonPressedEvent(sf::Event event)
             m_battleButtonSprite.setTextureRect(tb::GuiRects::TabButtonsWindowBattleButtonPressed);
         }
 
-        if (miniMapButtonRect.contains(mousePosition))
+        if (miniMapButtonRect.contains(mousePosition) == true)
         {
             gameGuiProperties->TabButtonsWindowInventoryButtonIsPressed = false;
             gameGuiProperties->TabButtonsWindowStatusButtonIsPressed = false;
@@ -130,7 +134,7 @@ void TabButtonsWindow::handleMouseButtonPressedEvent(sf::Event event)
     }
 }
 
-void TabButtonsWindow::handleMouseButtonReleasedEvent(sf::Event event)
+void TabButtonsWindow::handleEventMouseButtonReleased(const sf::Event::MouseButtonReleased* eventMouseButtonReleased)
 {
     //
 }
@@ -198,8 +202,8 @@ void TabButtonsWindow::setPositionInLayout()
     float padding = tb::Constants::PaddingRenderWindow;
 
     sf::Vector2f windowPosition;
-    windowPosition.x = guiRightLayoutRect.left;
-    windowPosition.y = miniMapWindowRect.top + miniMapWindowRect.height + padding;
+    windowPosition.x = guiRightLayoutRect.position.x;
+    windowPosition.y = miniMapWindowRect.position.y + miniMapWindowRect.size.y + padding;
 
     setPosition(windowPosition);
 }

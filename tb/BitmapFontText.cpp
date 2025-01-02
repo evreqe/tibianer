@@ -27,8 +27,10 @@ bool BitmapFontText::setText(tb::BitmapFont* bitmapFont, const std::string& text
 
     m_color = color;
 
+    const std::uint32_t numVertices = static_cast<std::uint32_t>(text.size() * m_numVertexPerGlyph);
+
     m_vertexList.clear();
-    m_vertexList.reserve(text.size() * 4);
+    m_vertexList.reserve(numVertices);
 
     m_textLineList.clear();
     m_textLineList.reserve(m_numTextLinesToReserve);
@@ -54,7 +56,7 @@ bool BitmapFontText::setText(tb::BitmapFont* bitmapFont, const std::string& text
     std::uint32_t lineIndex = 0;
     std::string lineText = "";
     std::vector<sf::Vertex*> lineVertexPointerList;
-    lineVertexPointerList.reserve(text.size() * 4);
+    lineVertexPointerList.reserve(text.size() * m_numTextLinesToReserve);
 
     for (std::size_t i = 0; i < text.size(); i++)
     {
@@ -66,10 +68,10 @@ bool BitmapFontText::setText(tb::BitmapFont* bitmapFont, const std::string& text
             tb::BitmapFontText::TextLine_t textLine;
             textLine.Index = lineIndex;
             textLine.Text = lineText;
-            textLine.Rect.left = 0.0f;
-            textLine.Rect.top = static_cast<float>(textY);
-            textLine.Rect.width = static_cast<float>(textX);
-            textLine.Rect.height = static_cast<float>(lineHeight);
+            textLine.Rect.position.x = 0.0f;
+            textLine.Rect.position.y = static_cast<float>(textY);
+            textLine.Rect.size.x = static_cast<float>(textX);
+            textLine.Rect.size.y = static_cast<float>(lineHeight);
             textLine.VertexPointerList = lineVertexPointerList;
             m_textLineList.push_back(textLine);
 
@@ -100,31 +102,41 @@ bool BitmapFontText::setText(tb::BitmapFont* bitmapFont, const std::string& text
             continue;
         }
 
-        const std::uint32_t u = asciiValue % (textureSizeX / glyphSizeX);
-        const std::uint32_t v = asciiValue / (textureSizeX / glyphSizeX);
+        const std::uint32_t textU = asciiValue % (textureSizeX / glyphSizeX);
+        const std::uint32_t textV = asciiValue / (textureSizeX / glyphSizeX);
 
-        sf::Vertex vertex[4];
+        sf::Vertex vertex[m_numVertexPerGlyph];
 
         vertex[0].position = static_cast<sf::Vector2f>(sf::Vector2u(textX,              textY));
         vertex[1].position = static_cast<sf::Vector2f>(sf::Vector2u(textX + glyphSizeX, textY));
-        vertex[2].position = static_cast<sf::Vector2f>(sf::Vector2u(textX + glyphSizeX, textY + glyphSizeY));
+        vertex[2].position = static_cast<sf::Vector2f>(sf::Vector2u(textX,              textY + glyphSizeY));
         vertex[3].position = static_cast<sf::Vector2f>(sf::Vector2u(textX,              textY + glyphSizeY));
+        vertex[4].position = static_cast<sf::Vector2f>(sf::Vector2u(textX + glyphSizeX, textY));
+        vertex[5].position = static_cast<sf::Vector2f>(sf::Vector2u(textX + glyphSizeX, textY + glyphSizeY));
 
-        vertex[0].texCoords = static_cast<sf::Vector2f>(sf::Vector2u(u       * glyphSizeX, v       * glyphSizeY));
-        vertex[1].texCoords = static_cast<sf::Vector2f>(sf::Vector2u((u + 1) * glyphSizeX, v       * glyphSizeY));
-        vertex[2].texCoords = static_cast<sf::Vector2f>(sf::Vector2u((u + 1) * glyphSizeX, (v + 1) * glyphSizeY));
-        vertex[3].texCoords = static_cast<sf::Vector2f>(sf::Vector2u(u       * glyphSizeX, (v + 1) * glyphSizeY));
+        vertex[0].texCoords = static_cast<sf::Vector2f>(sf::Vector2u(textU       * glyphSizeX, textV       * glyphSizeY));
+        vertex[1].texCoords = static_cast<sf::Vector2f>(sf::Vector2u((textU + 1) * glyphSizeX, textV       * glyphSizeY));
+        vertex[2].texCoords = static_cast<sf::Vector2f>(sf::Vector2u(textU       * glyphSizeX, (textV + 1) * glyphSizeY));
+        vertex[3].texCoords = static_cast<sf::Vector2f>(sf::Vector2u(textU       * glyphSizeX, (textV + 1) * glyphSizeY));
+        vertex[4].texCoords = static_cast<sf::Vector2f>(sf::Vector2u((textU + 1) * glyphSizeX, textV       * glyphSizeY));
+        vertex[5].texCoords = static_cast<sf::Vector2f>(sf::Vector2u((textU + 1) * glyphSizeX, (textV + 1) * glyphSizeY));
 
         vertex[0].color = color;
         vertex[1].color = color;
         vertex[2].color = color;
         vertex[3].color = color;
+        vertex[4].color = color;
+        vertex[5].color = color;
 
         m_vertexList.push_back(vertex[0]);
         m_vertexList.push_back(vertex[1]);
         m_vertexList.push_back(vertex[2]);
         m_vertexList.push_back(vertex[3]);
+        m_vertexList.push_back(vertex[4]);
+        m_vertexList.push_back(vertex[5]);
 
+        lineVertexPointerList.push_back(&m_vertexList.back() - 5);
+        lineVertexPointerList.push_back(&m_vertexList.back() - 4);
         lineVertexPointerList.push_back(&m_vertexList.back() - 3);
         lineVertexPointerList.push_back(&m_vertexList.back() - 2);
         lineVertexPointerList.push_back(&m_vertexList.back() - 1);
@@ -143,12 +155,10 @@ bool BitmapFontText::setText(tb::BitmapFont* bitmapFont, const std::string& text
     const float textWidth  = static_cast<float>(textXMax);
     const float textHeight = static_cast<float>(textYMax);
 
-    sf::Vector2f position = getPosition();
+    m_rect.position = getPosition();
 
-    m_rect.left   = position.x;
-    m_rect.top    = position.y;
-    m_rect.width  = textWidth;
-    m_rect.height = textHeight;
+    m_rect.size.x = textWidth;
+    m_rect.size.y = textHeight;
 
     // text alignment
     for (auto& textLine : m_textLineList)
@@ -157,11 +167,11 @@ bool BitmapFontText::setText(tb::BitmapFont* bitmapFont, const std::string& text
 
         if (m_textJustifyType == tb::TextJustifyType::Center)
         {
-            offsetX = m_rect.left + ((m_rect.width - textLine.Rect.width) / 2.0f);
+            offsetX = m_rect.position.x + ((m_rect.size.x - textLine.Rect.size.x) / 2.0f);
         }
         else if (m_textJustifyType == tb::TextJustifyType::Right)
         {
-            offsetX = m_rect.left + m_rect.width - textLine.Rect.width;
+            offsetX = m_rect.position.x + m_rect.size.x - textLine.Rect.size.x;
         }
 
         for (auto& vertexPointer : textLine.VertexPointerList)
@@ -224,7 +234,7 @@ void BitmapFontText::draw(sf::RenderTarget& target, sf::RenderStates states) con
 
     states.texture = m_bitmapFont->getTexture();
 
-    target.draw(&m_vertexList[0], m_vertexList.size(), sf::Quads, states);
+    target.draw(&m_vertexList[0], m_vertexList.size(), sf::PrimitiveType::Triangles, states);
 }
 
 }

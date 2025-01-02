@@ -3,7 +3,16 @@
 namespace tb
 {
 
-EquipmentWindow::EquipmentWindow()
+EquipmentWindow::EquipmentWindow() :
+    m_equipmentWindowSprite(tb::Textures::GUI),
+    m_neckSlotSprite(tb::Textures::GUI),
+    m_headSlotSprite(tb::Textures::GUI),
+    m_bagSlotSprite(tb::Textures::GUI),
+    m_leftHandSlotSprite(tb::Textures::GUI),
+    m_rightHandSlotSprite(tb::Textures::GUI),
+    m_legsSlotSprite(tb::Textures::GUI),
+    m_chestSlotSprite(tb::Textures::GUI),
+    m_feetSlotSprite(tb::Textures::GUI)
 {
     setWindowRenderTextureInitialSize(m_windowRenderTextureSize);
 
@@ -11,7 +20,7 @@ EquipmentWindow::EquipmentWindow()
 
     initalize();
 
-    m_equipmentWindowSprite.setTexture(tb::Textures::GUI);
+    //m_equipmentWindowSprite.setTexture(tb::Textures::GUI);
 }
 
 EquipmentWindow::~EquipmentWindow()
@@ -19,26 +28,26 @@ EquipmentWindow::~EquipmentWindow()
     //
 }
 
-void EquipmentWindow::handleMouseWheelMovedEvent(sf::Event event)
+void EquipmentWindow::handleEventMouseWheelScrolled(const sf::Event::MouseWheelScrolled* eventMouseWheelScrolled)
 {
-    // scroll up
-    if (event.mouseWheel.delta > 0)
+    // scrolled up
+    if (eventMouseWheelScrolled->delta > 0)
     {
         //
     }
-    // scroll down
-    else if (event.mouseWheel.delta < 0)
+    // scrolled down
+    else if (eventMouseWheelScrolled->delta < 0)
     {
         //
     }
 }
 
-void EquipmentWindow::handleMouseButtonPressedEvent(sf::Event event)
+void EquipmentWindow::handleEventMouseButtonPressed(const sf::Event::MouseButtonPressed* eventMouseButtonPressed)
 {
     //
 }
 
-void EquipmentWindow::handleMouseButtonReleasedEvent(sf::Event event)
+void EquipmentWindow::handleEventMouseButtonReleased(const sf::Event::MouseButtonReleased* eventMouseButtonReleased)
 {
     //
 }
@@ -47,7 +56,7 @@ void EquipmentWindow::setPositionInLayout()
 {
     sf::FloatRect guiRightLayoutRect = g_Game.getGuiRightLayoutRect();
 
-    setPosition(sf::Vector2f(guiRightLayoutRect.left, guiRightLayoutRect.top));
+    setPosition(guiRightLayoutRect.position);
 }
 
 void EquipmentWindow::predraw()

@@ -38,7 +38,9 @@ public:
 
 private:
 
-    const char* m_displayText = "Tibia\nby CipSoft\n\nwww.tibia.com";
+    const char* m_displayText = "Tibia\nby CipSoft";
+
+    const char* m_textLinkURL = "www.tibia.com";
 
     const ImVec2 m_buttonSize = ImVec2(88.0f, 23.0f);
 

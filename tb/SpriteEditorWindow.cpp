@@ -72,7 +72,7 @@ void SpriteEditorWindow::draw()
         {
             for (tb::SpriteID_t i = 1; i < tb::Constants::NumSprites + 1; i++)
             {
-                tb::Sprite sprite;
+                tb::Sprite sprite(tb::Textures::Sprites);
                 sprite.setID(i);
 
                 std::string imageButtonID = std::format("##SpriteEditorWindowChildSpritesheetButton{}", i);
@@ -112,7 +112,7 @@ void SpriteEditorWindow::draw()
 
         ImGui::TextUnformatted(std::format("Sprite: {}", m_selectedSpriteID).c_str());
 
-        tb::Sprite sprite;
+        tb::Sprite sprite(tb::Textures::Sprites);
         sprite.setID(static_cast<tb::SpriteID_t>(m_selectedSpriteID));
 
         std::string imageButtonID = std::format("##SpriteEditorWindowSelectedSpriteButton{}", m_selectedSpriteID);

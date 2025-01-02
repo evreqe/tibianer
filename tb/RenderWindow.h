@@ -50,10 +50,10 @@ public:
 
     void setSizeAndCenter(sf::Vector2u size);
 
-    void handleClosedEvent(sf::Event event);
-    void handleResizedEvent(sf::Event event);
-    void handleLostFocusEvent(sf::Event event);
-    void handleGainedFocusEvent(sf::Event event);
+    void handleEventClosed();
+    void handleEventResized(const sf::Event::Resized* eventResized);
+    void handleEventFocusLost();
+    void handleEventFocusGained();
 
     sf::Vector2f getMousePosition2f();
     sf::Vector2i getMousePosition2i();
@@ -74,11 +74,12 @@ private:
     std::uint32_t m_widthMinimum = 640;
     std::uint32_t m_heightMinimum = 480;
 
-    sf::Uint32 m_style = sf::Style::Titlebar | sf::Style::Close | sf::Style::Resize;
+    std::uint32_t m_style = sf::Style::Titlebar | sf::Style::Close | sf::Style::Resize;
+    sf::State m_state = sf::State::Windowed;
 
     sf::Image m_icon;
 
-    const std::string m_iconFileName = "icons/tb.png";
+    const std::filesystem::path m_iconFileName = "icons/tb.png";
 
 };
 

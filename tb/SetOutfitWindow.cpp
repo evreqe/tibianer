@@ -105,7 +105,7 @@ void SetOutfitWindow::draw()
 
         drawList->AddRectFilled(cursorScreenPos, ImVec2(cursorScreenPos.x + 64.0f, cursorScreenPos.y + 64.0f), IM_COL32(204, 204, 204, 255));
 
-        tb::Sprite spriteOutfit;
+        tb::Sprite spriteOutfit(tb::Textures::Sprites);
 
         spriteOutfit.setID(spriteFeet->getID());
         spriteOutfit.setScale(sf::Vector2f(2.0f, 2.0f));

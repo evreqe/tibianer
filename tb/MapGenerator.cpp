@@ -164,7 +164,7 @@ bool MapGenerator::generateMapFromImageFile(const MapGenerator::Map_t& map, cons
     {
         for (unsigned int x = 0; x < imageWidth; x++)
         {
-            sf::Color imagePixelColor = image.getPixel(x, y);
+            sf::Color imagePixelColor = image.getPixel(sf::Vector2u(x, y));
 
             bool wasPixelFound = false;
 

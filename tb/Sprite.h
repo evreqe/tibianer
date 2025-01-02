@@ -16,7 +16,7 @@ class Sprite : public sf::Sprite
 
 public:
 
-    Sprite();
+    Sprite(const sf::Texture& texture);
     ~Sprite();
 
     using List = std::vector<tb::Sprite>;

@@ -86,21 +86,23 @@ namespace tb
 
     namespace Textures
     {
-        inline sf::Texture Introduction;
-        inline sf::Texture EnterGame;
-        inline sf::Texture NewGameJourneyOnward;
-        inline sf::Texture MapSelect;
-        inline sf::Texture Loading;
-        inline sf::Texture MapEditor;
-        inline sf::Texture Sprites;
-        inline sf::Texture GUI;
-        inline sf::Texture Scroll;
-        inline sf::Texture Wood;
-        inline sf::Texture WoodHorizontal;
-        inline sf::Texture WoodHorizontal2;
-        inline sf::Texture WoodVertical;
-        inline sf::Texture WoodVertical2;
-        inline sf::Texture Water;
+        inline sf::Texture Introduction("textures/introduction.png");
+        inline sf::Texture EnterGame("textures/enter_game.png");
+        inline sf::Texture NewGameJourneyOnward("textures/new_game_journey_onward.png");
+        inline sf::Texture MapSelect("textures/map_select.png");
+        inline sf::Texture Loading("textures/loading.png");
+        inline sf::Texture TiledLogo("textures/tiled_logo.png");
+        inline sf::Texture SFMLLogo("textures/sfml_logo.png");
+        inline sf::Texture Sprites("textures/sprites.png");
+        inline sf::Texture GUI("textures/gui.png");
+        inline sf::Texture Scroll("textures/scroll.png");
+        inline sf::Texture Wood("textures/wood.png");
+        inline sf::Texture WoodHorizontal("textures/wood_horizontal.png");
+        inline sf::Texture WoodHorizontal2("textures/wood_horizontal_2.png");
+        inline sf::Texture WoodVertical("textures/wood_vertical.png");
+        inline sf::Texture WoodVertical2("textures/wood_vertical_2.png");
+        inline sf::Texture Water("textures/water.png");
+        inline sf::Texture Null("textures/null.png");
 
         inline const std::unordered_map<std::string, sf::Texture&> Names =
         {
@@ -109,7 +111,8 @@ namespace tb
             {"NewGameJourneyOnward",    tb::Textures::NewGameJourneyOnward},
             {"MapSelect",               tb::Textures::MapSelect},
             {"Loading",                 tb::Textures::Loading},
-            {"MapEditor",               tb::Textures::MapEditor},
+            {"TiledLogo",               tb::Textures::TiledLogo},
+            {"SFMLLogo",                tb::Textures::SFMLLogo},
             {"Sprites",                 tb::Textures::Sprites},
             {"GUI",                     tb::Textures::GUI},
             {"Scroll",                  tb::Textures::Scroll},
@@ -119,6 +122,7 @@ namespace tb
             {"WoodVertical",            tb::Textures::WoodVertical},
             {"WoodVertical2",           tb::Textures::WoodVertical2},
             {"Water",                   tb::Textures::Water},
+            {"Null",                    tb::Textures::Null},
         };
     }
 
@@ -151,26 +155,26 @@ namespace tb
     namespace Cursors
     {
         // system
-        inline sf::Cursor Arrow;
-        inline sf::Cursor ArrowWait;
-        inline sf::Cursor Wait;
-        inline sf::Cursor Text;
-        inline sf::Cursor Hand;
-        inline sf::Cursor SizeHorizontal;
-        inline sf::Cursor SizeVertical;
-        inline sf::Cursor SizeTopLeftBottomRight;
-        inline sf::Cursor SizeBottomLeftTopRight;
-        inline sf::Cursor SizeAll;
-        inline sf::Cursor Cross;
-        inline sf::Cursor Help;
-        inline sf::Cursor NotAllowed;
+        inline sf::Cursor Arrow(sf::Cursor::Type::Arrow);
+        inline sf::Cursor ArrowWait(sf::Cursor::Type::ArrowWait);
+        inline sf::Cursor Wait(sf::Cursor::Type::Wait);
+        inline sf::Cursor Text(sf::Cursor::Type::Text);
+        inline sf::Cursor Hand(sf::Cursor::Type::Hand);
+        inline sf::Cursor SizeHorizontal(sf::Cursor::Type::SizeHorizontal);
+        inline sf::Cursor SizeVertical(sf::Cursor::Type::SizeVertical);
+        inline sf::Cursor SizeTopLeftBottomRight(sf::Cursor::Type::SizeTopLeftBottomRight);
+        inline sf::Cursor SizeBottomLeftTopRight(sf::Cursor::Type::SizeBottomLeftTopRight);
+        inline sf::Cursor SizeAll(sf::Cursor::Type::SizeAll);
+        inline sf::Cursor Cross(sf::Cursor::Type::Cross);
+        inline sf::Cursor Help(sf::Cursor::Type::Help);
+        inline sf::Cursor NotAllowed(sf::Cursor::Type::NotAllowed);
 
         // custom
-        inline sf::Cursor Crosshair;
-        inline sf::Cursor CrosshairModern;
-        inline sf::Cursor Drag;
-        inline sf::Cursor Inspect;
-        inline sf::Cursor Sword;
+        inline sf::Cursor Crosshair(sf::Cursor::Type::Cross);
+        inline sf::Cursor CrosshairModern(sf::Cursor::Type::Cross);
+        inline sf::Cursor Drag(sf::Cursor::Type::Hand);
+        inline sf::Cursor Inspect(sf::Cursor::Type::Help);
+        inline sf::Cursor Sword(sf::Cursor::Type::Arrow);
 
         inline const std::unordered_map<std::string, sf::Cursor&> SystemCursorNames =
         {
@@ -191,19 +195,19 @@ namespace tb
 
         inline const std::unordered_map<sf::Cursor::Type, sf::Cursor&> SystemCursorTypes =
         {
-            {sf::Cursor::Arrow,                     tb::Cursors::Arrow},
-            {sf::Cursor::ArrowWait,                 tb::Cursors::ArrowWait},
-            {sf::Cursor::Wait,                      tb::Cursors::Wait},
-            {sf::Cursor::Text,                      tb::Cursors::Text},
-            {sf::Cursor::Hand,                      tb::Cursors::Hand},
-            {sf::Cursor::SizeHorizontal,            tb::Cursors::SizeHorizontal},
-            {sf::Cursor::SizeVertical,              tb::Cursors::SizeVertical},
-            {sf::Cursor::SizeTopLeftBottomRight,    tb::Cursors::SizeTopLeftBottomRight},
-            {sf::Cursor::SizeBottomLeftTopRight,    tb::Cursors::SizeBottomLeftTopRight},
-            {sf::Cursor::SizeAll,                   tb::Cursors::SizeAll},
-            {sf::Cursor::Cross,                     tb::Cursors::Cross},
-            {sf::Cursor::Help,                      tb::Cursors::Help},
-            {sf::Cursor::NotAllowed,                tb::Cursors::NotAllowed},
+            {sf::Cursor::Type::Arrow,                     tb::Cursors::Arrow},
+            {sf::Cursor::Type::ArrowWait,                 tb::Cursors::ArrowWait},
+            {sf::Cursor::Type::Wait,                      tb::Cursors::Wait},
+            {sf::Cursor::Type::Text,                      tb::Cursors::Text},
+            {sf::Cursor::Type::Hand,                      tb::Cursors::Hand},
+            {sf::Cursor::Type::SizeHorizontal,            tb::Cursors::SizeHorizontal},
+            {sf::Cursor::Type::SizeVertical,              tb::Cursors::SizeVertical},
+            {sf::Cursor::Type::SizeTopLeftBottomRight,    tb::Cursors::SizeTopLeftBottomRight},
+            {sf::Cursor::Type::SizeBottomLeftTopRight,    tb::Cursors::SizeBottomLeftTopRight},
+            {sf::Cursor::Type::SizeAll,                   tb::Cursors::SizeAll},
+            {sf::Cursor::Type::Cross,                     tb::Cursors::Cross},
+            {sf::Cursor::Type::Help,                      tb::Cursors::Help},
+            {sf::Cursor::Type::NotAllowed,                tb::Cursors::NotAllowed},
         };
 
         inline const std::unordered_map<std::string, sf::Cursor&> CustomCursorNames =

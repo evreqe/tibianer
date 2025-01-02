@@ -3,7 +3,8 @@
 namespace tb
 {
 
-Animation::Animation()
+Animation::Animation() :
+    m_sprite(tb::Textures::Sprites)
 {
     setThingType(tb::ThingType::Animation);
 }
@@ -13,7 +14,8 @@ Animation::~Animation()
     //
 }
 
-Animation::Animation(const sf::Vector2i& tileCoords, tb::ZAxis_t z, std::uint32_t index)
+Animation::Animation(const sf::Vector2i& tileCoords, tb::ZAxis_t z, std::uint32_t index) :
+    m_sprite(tb::Textures::Sprites)
 {
     setThingType(tb::ThingType::Animation);
 
@@ -30,7 +32,8 @@ Animation::Animation(const sf::Vector2i& tileCoords, tb::ZAxis_t z, std::uint32_
     initalize();
 }
 
-Animation::Animation(const sf::Vector2i& tileCoords, tb::ZAxis_t z, const std::string& name)
+Animation::Animation(const sf::Vector2i& tileCoords, tb::ZAxis_t z, const std::string& name) :
+    m_sprite(tb::Textures::Sprites)
 {
     setThingType(tb::ThingType::Animation);
 

@@ -45,10 +45,10 @@ private:
 
 public:
 
-    void handleMouseWheelMovedEvent(sf::Event event);
-    void handleMouseButtonPressedEvent(sf::Event event);
-    void handleMouseButtonReleasedEvent(sf::Event event);
-    void handleResizedEvent(sf::Event event);
+    void handleEventMouseWheelScrolled(const sf::Event::MouseWheelScrolled* eventMouseWheelScrolled);
+    void handleEventMouseButtonPressed(const sf::Event::MouseButtonPressed* eventMouseButtonPressed);
+    void handleEventMouseButtonReleased(const sf::Event::MouseButtonReleased* eventMouseButtonReleased);
+    void handleEventResized(const sf::Event::Resized* eventResized);
 
     void setSizeInLayout();
     void setPositionInLayout();

@@ -122,7 +122,6 @@ bool Map::load(const std::string& fileName)
         {
             m_properties.Author = xmlNode_map_properties_property__value;
         }
-
         else if (xmlNode_map_properties_property__name == "PlayerStartX")
         {
             m_properties.PlayerStartX = xmlNode_map_properties_property.attribute("value").as_int();
@@ -530,8 +529,8 @@ bool Map::isTileCoordsOutOfBounds(const sf::Vector2i& tileCoords)
 {
     if (tileCoords.x < 0) return true;
     if (tileCoords.y < 0) return true;
-    if ((std::uint32_t)tileCoords.x > (m_tileWidth  - 1)) return true;
-    if ((std::uint32_t)tileCoords.y > (m_tileHeight - 1)) return true;
+    if (static_cast<std::uint32_t>(tileCoords.x) > (m_tileWidth  - 1)) return true;
+    if (static_cast<std::uint32_t>(tileCoords.y) > (m_tileHeight - 1)) return true;
 
     return false;
 }

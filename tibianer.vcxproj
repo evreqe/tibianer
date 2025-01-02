@@ -140,7 +140,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalIncludeDirectories>Z:\Code\!libraries_x64\boost_1_85_0\;Z:\Code\!libraries_x64\fmt-11.0.0\include;Z:\Code\!libraries_x64\scnlib-3.0.1\include;Z:\Code\!libraries_x64\pugixml-1.14\include;Z:\Code\!libraries_x64\tomlplusplus-3.4.0;Z:\Code\!libraries_x64\sol2-3.3.0\include;Z:\Code\!libraries_x64\SFML-2.6.1\include;Z:\Code\!libraries_x64\Thor\include;Z:\Code\!libraries_x64\Thor\extlibs\aurora\include;Z:\Code\tibianer\tibianer\;Z:\Code\tibianer\tibianer\boost_zlib;Z:\Code\tibianer\tibianer\boost_base64;Z:\Code\tibianer\tibianer\imgui;Z:\Code\tibianer\tibianer\imgui-sfml;Z:\Code\tibianer\tibianer\magic_enum;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Z:\Code\!libraries_x64\boost_1_85_0\;Z:\Code\!libraries_x64\fmt-11.0.0\include;Z:\Code\!libraries_x64\scnlib-3.0.1\include;Z:\Code\!libraries_x64\pugixml-1.14\include;Z:\Code\!libraries_x64\tomlplusplus-3.4.0;Z:\Code\!libraries_x64\sol2-3.3.0\include;Z:\Code\!libraries_x64\SFML-3.0.0\include;Z:\Code\!libraries_x64\Thor\include;Z:\Code\!libraries_x64\Thor\extlibs\aurora\include;Z:\Code\tibianer\tibianer\;Z:\Code\tibianer\tibianer\boost_zlib;Z:\Code\tibianer\tibianer\boost_base64;Z:\Code\tibianer\tibianer\imgui;Z:\Code\tibianer\tibianer\imgui-sfml;Z:\Code\tibianer\tibianer\magic_enum;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
       <EnableModules>false</EnableModules>
     </ClCompile>
@@ -149,8 +149,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>opengl32.lib;openal32.lib;freetype.lib;ogg.lib;vorbis.lib;vorbisenc.lib;vorbisfile.lib;flac.lib;sfml-audio.lib;sfml-graphics.lib;sfml-main.lib;sfml-network.lib;sfml-system.lib;sfml-window.lib;thor.lib;lua51.lib;luajit.lib;lua-5.4.4.lib;fmt.lib;scn.lib;pugixml.lib;libboost_iostreams-vc143-mt-x64-1_85.lib;libboost_zlib-vc143-mt-x64-1_85.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>Z:\Code\!libraries_x64\SFML-2.6.1\lib;Z:\Code\!libraries_x64\Thor\lib;Z:\Code\!libraries_x64\boost_1_85_0\lib64-msvc-14.3;Z:\Code\!libraries_x64\fmt-11.0.0\lib;Z:\Code\!libraries_x64\scnlib-3.0.1\lib;Z:\Code\!libraries_x64\sol2-3.3.0\lib;Z:\Code\!libraries_x64\pugixml-1.14\lib;Z:\Code\!libraries_x64\LuaJIT-2.1\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;freetype.lib;flac.lib;ogg.lib;vorbis.lib;vorbisenc.lib;vorbisfile.lib;sfml-audio.lib;sfml-graphics.lib;sfml-main-s.lib;sfml-network.lib;sfml-system.lib;sfml-window.lib;thor.lib;lua51.lib;luajit.lib;lua-5.4.4.lib;fmt.lib;scn.lib;pugixml.lib;libboost_iostreams-vc143-mt-x64-1_85.lib;libboost_zlib-vc143-mt-x64-1_85.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>Z:\Code\!libraries_x64\SFML-3.0.0\lib;Z:\Code\!libraries_x64\Thor\lib;Z:\Code\!libraries_x64\boost_1_85_0\lib64-msvc-14.3;Z:\Code\!libraries_x64\fmt-11.0.0\lib;Z:\Code\!libraries_x64\scnlib-3.0.1\lib;Z:\Code\!libraries_x64\sol2-3.3.0\lib;Z:\Code\!libraries_x64\pugixml-1.14\lib;Z:\Code\!libraries_x64\LuaJIT-2.1\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

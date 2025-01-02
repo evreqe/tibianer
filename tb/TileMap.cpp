@@ -164,11 +164,11 @@ tb::Tile::List TileMap::getTileListWithinTileRect(const sf::IntRect& tileRect)
         return tileList;
     }
 
-    std::int32_t x1 = tileRect.left;
-    std::int32_t y1 = tileRect.top;
+    std::int32_t x1 = tileRect.position.x;
+    std::int32_t y1 = tileRect.position.y;
 
-    std::int32_t x2 = x1 + tileRect.width;
-    std::int32_t y2 = y1 + tileRect.height;
+    std::int32_t x2 = x1 + tileRect.size.x;
+    std::int32_t y2 = y1 + tileRect.size.y;
 
     for (std::int32_t tileX = x1; tileX < x2; tileX++)
     {
@@ -486,11 +486,11 @@ bool TileMap::isVisibleWithinTileRect(const sf::IntRect& tileRect)
         return false;
     }
 
-    std::int32_t x1 = tileRect.left;
-    std::int32_t y1 = tileRect.top;
+    std::int32_t x1 = tileRect.position.x;
+    std::int32_t y1 = tileRect.position.y;
 
-    std::int32_t x2 = x1 + tileRect.width;
-    std::int32_t y2 = y1 + tileRect.height;
+    std::int32_t x2 = x1 + tileRect.size.x;
+    std::int32_t y2 = y1 + tileRect.size.y;
 
     for (std::int32_t tileX = x1; tileX < x2; tileX++)
     {
@@ -541,10 +541,14 @@ void TileMap::drawTiles(const sf::IntRect& tileRect, sf::RenderTarget& renderTar
 
     //g_Log.write("Drawing {} tile(s)...\n", tileList.size());
 
-    m_tileVertexList.clear();
-    m_tileVertexList.reserve(m_numTiles * 4);
+    const std::uint32_t tileSize = tb::Constants::TileSize;
 
     sf::Vector2u spriteTextureSize = tb::Textures::Sprites.getSize();
+
+    const std::uint32_t numVertices = m_numTiles * m_numVertexPerTile;
+
+    m_tileVertexList.clear();
+    m_tileVertexList.reserve(numVertices);
 
     for (auto& tile : tileList)
     {
@@ -558,23 +562,24 @@ void TileMap::drawTiles(const sf::IntRect& tileRect, sf::RenderTarget& renderTar
         std::int32_t tileX = tile->getTileX();
         std::int32_t tileY = tile->getTileY();
 
-        const std::uint32_t tileSize = tb::Constants::TileSize;
+        std::uint32_t tileU = (tileSpriteID - 1) % (spriteTextureSize.x / tileSize);
+        std::uint32_t tileV = (tileSpriteID - 1) / (spriteTextureSize.y / tileSize);
 
-        std::uint32_t u = (tileSpriteID - 1) % (spriteTextureSize.x / tileSize);
-        std::uint32_t v = (tileSpriteID - 1) / (spriteTextureSize.y / tileSize);
+        sf::Vertex vertex[m_numVertexPerTile];
 
-        sf::Vertex vertex[4];
+        vertex[0].position = static_cast<sf::Vector2f>(sf::Vector2i(tileX       * tileSize, tileY       * tileSize)); // top left
+        vertex[1].position = static_cast<sf::Vector2f>(sf::Vector2i((tileX + 1) * tileSize, tileY       * tileSize)); // top right
+        vertex[2].position = static_cast<sf::Vector2f>(sf::Vector2i(tileX       * tileSize, (tileY + 1) * tileSize)); // bottom left
+        vertex[3].position = static_cast<sf::Vector2f>(sf::Vector2i(tileX       * tileSize, (tileY + 1) * tileSize)); // bottom left
+        vertex[4].position = static_cast<sf::Vector2f>(sf::Vector2i((tileX + 1) * tileSize, tileY       * tileSize)); // top right
+        vertex[5].position = static_cast<sf::Vector2f>(sf::Vector2i((tileX + 1) * tileSize, (tileY + 1) * tileSize)); // bottom right
 
-        // top left, top right, bottom right, bottom left
-        vertex[0].position = static_cast<sf::Vector2f>(sf::Vector2i(tileX       * tileSize, tileY       * tileSize));
-        vertex[1].position = static_cast<sf::Vector2f>(sf::Vector2i((tileX + 1) * tileSize, tileY       * tileSize));
-        vertex[2].position = static_cast<sf::Vector2f>(sf::Vector2i((tileX + 1) * tileSize, (tileY + 1) * tileSize));
-        vertex[3].position = static_cast<sf::Vector2f>(sf::Vector2i(tileX       * tileSize, (tileY + 1) * tileSize));
-
-        vertex[0].texCoords = static_cast<sf::Vector2f>(sf::Vector2i(u       * tileSize, v       * tileSize));
-        vertex[1].texCoords = static_cast<sf::Vector2f>(sf::Vector2i((u + 1) * tileSize, v       * tileSize));
-        vertex[2].texCoords = static_cast<sf::Vector2f>(sf::Vector2i((u + 1) * tileSize, (v + 1) * tileSize));
-        vertex[3].texCoords = static_cast<sf::Vector2f>(sf::Vector2i(u       * tileSize, (v + 1) * tileSize));
+        vertex[0].texCoords = static_cast<sf::Vector2f>(sf::Vector2i(tileU       * tileSize, tileV           * tileSize));
+        vertex[1].texCoords = static_cast<sf::Vector2f>(sf::Vector2i((tileU + 1) * tileSize, tileV           * tileSize));
+        vertex[2].texCoords = static_cast<sf::Vector2f>(sf::Vector2i(tileU       * tileSize, (tileV + 1)     * tileSize));
+        vertex[3].texCoords = static_cast<sf::Vector2f>(sf::Vector2i(tileU       * tileSize, (tileV + 1)     * tileSize));
+        vertex[4].texCoords = static_cast<sf::Vector2f>(sf::Vector2i((tileU + 1) * tileSize, tileV           * tileSize));
+        vertex[5].texCoords = static_cast<sf::Vector2f>(sf::Vector2i((tileU + 1) * tileSize, (tileV + 1)     * tileSize));
 
         tb::SpriteFlags* tileSpriteFlags = tile->getSpriteFlags();
 
@@ -584,12 +589,16 @@ void TileMap::drawTiles(const sf::IntRect& tileRect, sf::RenderTarget& renderTar
             vertex[1].color = sf::Color::Transparent;
             vertex[2].color = sf::Color::Transparent;
             vertex[3].color = sf::Color::Transparent;
+            vertex[4].color = sf::Color::Transparent;
+            vertex[5].color = sf::Color::Transparent;
         }
 
         m_tileVertexList.push_back(vertex[0]);
         m_tileVertexList.push_back(vertex[1]);
         m_tileVertexList.push_back(vertex[2]);
         m_tileVertexList.push_back(vertex[3]);
+        m_tileVertexList.push_back(vertex[4]);
+        m_tileVertexList.push_back(vertex[5]);
     }
 
     //g_Log.write("m_tileVertexList.size(): {}\n", m_tileVertexList.size());
@@ -599,7 +608,7 @@ void TileMap::drawTiles(const sf::IntRect& tileRect, sf::RenderTarget& renderTar
         sf::RenderStates renderStates;
         renderStates.texture = &tb::Textures::Sprites;
 
-        renderTarget.draw(&m_tileVertexList[0], m_tileVertexList.size(), sf::Quads, renderStates);
+        renderTarget.draw(&m_tileVertexList[0], m_tileVertexList.size(), sf::PrimitiveType::Triangles, renderStates);
     }
 }
 
