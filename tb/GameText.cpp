@@ -1,3 +1,5 @@
+#include "common.h"
+
 #include "tb/GameText.h"
 
 namespace tb
@@ -13,7 +15,7 @@ GameText::~GameText()
     //
 }
 
-bool GameText::setText(tb::BitmapFont* bitmapFont, const sf::Vector2i& tileCoords, tb::ZAxis_t z, const std::string& text, const sf::Color& textColor, bool isCentered)
+bool GameText::setText(tb::BitmapFont* bitmapFont, const sf::Vector2i& tileCoords, tb::ZAxis z, const std::string& text, const sf::Color& textColor, bool isCentered)
 {
     if (bitmapFont == nullptr)
     {
@@ -63,7 +65,7 @@ sf::Vector2i GameText::getTileCoords()
     return m_tileCoords;
 }
 
-tb::ZAxis_t GameText::getZ()
+tb::ZAxis GameText::getZ()
 {
     return m_z;
 }

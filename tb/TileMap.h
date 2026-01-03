@@ -15,7 +15,6 @@
 #include "tb/Sprite.h"
 #include "tb/SpriteBatch.h"
 #include "tb/LightBatch.h"
-
 #include "tb/Thing.h"
 #include "tb/Object.h"
 #include "tb/Creature.h"
@@ -36,12 +35,12 @@ public:
     using List = std::vector<tb::TileMap::Ptr>;
     using Array = std::array<tb::TileMap, tb::Constants::NumZAxis>;
 
-    bool load(std::uint32_t tileWidth, std::uint32_t tileHeight, const tb::SpriteIDList& tileSpriteIDList, const std::string& name, tb::TileMapType tileMapType, tb::ZAxis_t z);
+    bool load(std::uint32_t tileWidth, std::uint32_t tileHeight, const tb::SpriteIDList& tileSpriteIDList, const std::string& name, tb::TileMapType tileMapType, tb::ZAxis z);
 
     bool isTileIndexOutOfBounds(std::uint32_t tileIndex);
 
-    void updateTileSpriteID(tb::Tile::Ptr tile, tb::SpriteID_t spriteID);
-    void updateTileSpriteFlags(tb::Tile::Ptr tile, tb::SpriteID_t spriteID);
+    void updateTileSpriteID(tb::Tile::Ptr tile, tb::SpriteID spriteID);
+    void updateTileSpriteFlags(tb::Tile::Ptr tile, tb::SpriteID spriteID);
 
     tb::SpriteIDList* getTileSpriteIDList();
 
@@ -63,14 +62,14 @@ public:
     tb::TileMapType getTileMapType();
     void setTileMapType(tb::TileMapType tileMapType);
 
-    tb::ZAxis_t getZ();
-    void setZ(tb::ZAxis_t z);
+    tb::ZAxis getZ();
+    void setZ(tb::ZAxis z);
 
     bool isVisibleWithinTileRect(const sf::IntRect& tileRect);
 
     void drawTiles(const sf::IntRect& tileRect, sf::RenderTarget& renderTarget);
     void drawThings(const sf::IntRect& tileRect, sf::RenderTarget& renderTarget);
-    void drawLights(const sf::IntRect& tileRect, sf::RenderTarget& renderTarget, tb::LightBrightness_t lightBrightness);
+    void drawLights(const sf::IntRect& tileRect, sf::RenderTarget& renderTarget, tb::LightBrightness lightBrightness);
 
 private:
 
@@ -85,7 +84,7 @@ private:
 
     std::uint32_t m_numTiles = 0;
 
-    tb::ZAxis_t m_z = tb::ZAxis::Default;
+    tb::ZAxis m_z = tb::Constants::ZAxisDefault;
 
     tb::SpriteIDList m_tileSpriteIDList;
 

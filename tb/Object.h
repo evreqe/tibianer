@@ -21,7 +21,7 @@ public:
 
     Object();
     ~Object();
-    Object(const sf::Vector2i& tileCoords, tb::ZAxis_t z, tb::SpriteID_t spriteID);
+    Object(const sf::Vector2i& tileCoords, tb::ZAxis z, tb::SpriteID spriteID);
 
     using Ptr = std::shared_ptr<tb::Object>;
     using List = std::vector<tb::Object::Ptr>;
@@ -44,6 +44,7 @@ public:
 
     struct ObjectProperties_t
     {
+        bool Animated = false;
         bool Decay = false;
         bool Regenerate = false;
     };
@@ -56,8 +57,8 @@ public:
 
     tb::Sprite* getSprite();
 
-    tb::SpriteID_t getSpriteID();
-    void setSpriteID(tb::SpriteID_t spriteID);
+    tb::SpriteID getSpriteID();
+    void setSpriteID(tb::SpriteID spriteID);
 
     tb::ObjectType getObjectType();
     void setObjectType(tb::ObjectType objectType);
@@ -73,10 +74,13 @@ private:
     ObjectProperties_t m_objectProperties;
 
     tb::Sprite m_sprite;
+    tb::SpriteData::Data* m_spriteData = nullptr;
 
     tb::ObjectType m_objectType = tb::ObjectType::Null;
 
     std::uint32_t m_count = 1;
+
+    tb::AnimationData::Data* m_animationData = nullptr;
 
     sf::Clock m_decayClock;
     sf::Clock m_regenerateClock;

@@ -1,3 +1,5 @@
+#include "common.h"
+
 #include "tb/AnimationData.h"
 
 namespace tb
@@ -15,7 +17,7 @@ AnimationData::~AnimationData()
 
 bool AnimationData::load()
 {
-    tb::Utility::LibToml::LoadFileResult loadFileResult = tb::Utility::LibToml::loadFile(m_table, m_fileName);
+    tb::LibToml::LoadFileResult loadFileResult = tb::LibToml::loadFile(m_table, m_fileName);
 
     g_Log.write("{}", loadFileResult.Text);
 
@@ -68,7 +70,7 @@ bool AnimationData::load()
 
             for (std::uint32_t spriteIndex = 0; auto& spriteNode : *spriteArray)
             {
-                tb::SpriteID_t spriteID = static_cast<tb::SpriteID_t>(spriteNode.value_or(tb::Constants::SpriteIDNull));
+                tb::SpriteID spriteID = static_cast<tb::SpriteID>(spriteNode.value_or(tb::Constants::SpriteIDNull));
                 if (spriteID == tb::Constants::SpriteIDNull)
                 {
                     g_Log.write("ERROR: Sprite ID is zero at index: SpriteList=[Index: {}]\n", spriteIndex);

@@ -1,3 +1,5 @@
+#include "common.h"
+
 #include "tb/EnterGameWindow.h"
 
 namespace tb

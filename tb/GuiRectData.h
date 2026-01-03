@@ -55,7 +55,7 @@ public:
 
 private:
 
-    const std::string m_fileName = "data/gui_rect.txt";
+    const std::string m_fileName = "data/gui_rects.txt";
 
     toml::table m_table;
 

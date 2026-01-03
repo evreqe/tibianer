@@ -57,13 +57,13 @@ public:
     void setPositionInLayout();
 
     void draw();
-    void drawMapLayerAtZ(tb::ZAxis_t z);
+    void drawMapLayerAtZ(tb::ZAxis z);
     void drawTileHighlight();
 
     sf::IntRect getTileRect();
 
-    void setLightBrightness(tb::LightBrightness_t lightBrightness);
-    tb::LightBrightness_t getLightBrightness();
+    void setLightBrightness(tb::LightBrightness lightBrightness);
+    tb::LightBrightness getLightBrightness();
 
     std::uint32_t getNumTilesX();
     std::uint32_t getNumTilesY();
@@ -87,7 +87,7 @@ private:
     sf::RenderTexture m_lightLayerRenderTexture;
     sf::Sprite m_lightLayerSprite;
     sf::BlendMode m_lightBlendMode;
-    tb::LightBrightness_t m_lightBrightness = tb::LightBrightness::Max;
+    tb::LightBrightness m_lightBrightness = tb::Constants::LightBrightnessMax;
 
     tb::Sprite m_tileHighlightSprite;
 

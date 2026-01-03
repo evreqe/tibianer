@@ -1,3 +1,5 @@
+#include "common.h"
+
 #include "tb/SetOutfitWindow.h"
 
 namespace tb
@@ -88,10 +90,10 @@ void SetOutfitWindow::draw()
 
     tb::Creature::OutfitSpriteList* creatureOutfitSpriteList = m_creature->getOutfitSpriteList();
 
-    tb::Sprite* spriteHead = &creatureOutfitSpriteList->at(tb::OutfitIndex::Head).at(magic_enum::enum_integer(tb::Direction::Down));
-    tb::Sprite* spriteBody = &creatureOutfitSpriteList->at(tb::OutfitIndex::Body).at(magic_enum::enum_integer(tb::Direction::Down));
-    tb::Sprite* spriteLegs = &creatureOutfitSpriteList->at(tb::OutfitIndex::Legs).at(magic_enum::enum_integer(tb::Direction::Down));
-    tb::Sprite* spriteFeet = &creatureOutfitSpriteList->at(tb::OutfitIndex::Feet).at(magic_enum::enum_integer(tb::Direction::Down));
+    tb::Sprite* spriteHead = &creatureOutfitSpriteList->at(tb::Constants::OutfitIndexHead).at(magic_enum::enum_integer(tb::Direction::Down));
+    tb::Sprite* spriteBody = &creatureOutfitSpriteList->at(tb::Constants::OutfitIndexBody).at(magic_enum::enum_integer(tb::Direction::Down));
+    tb::Sprite* spriteLegs = &creatureOutfitSpriteList->at(tb::Constants::OutfitIndexLegs).at(magic_enum::enum_integer(tb::Direction::Down));
+    tb::Sprite* spriteFeet = &creatureOutfitSpriteList->at(tb::Constants::OutfitIndexFeet).at(magic_enum::enum_integer(tb::Direction::Down));
 
     if (ImGui::BeginTable("##SetOutfitWindowTable", 2, ImGuiTableFlags_SizingStretchProp))
     {
@@ -105,7 +107,7 @@ void SetOutfitWindow::draw()
 
         drawList->AddRectFilled(cursorScreenPos, ImVec2(cursorScreenPos.x + 64.0f, cursorScreenPos.y + 64.0f), IM_COL32(204, 204, 204, 255));
 
-        tb::Sprite spriteOutfit(tb::Textures::Sprites);
+        tb::Sprite spriteOutfit(tb::Resources::Textures::SpriteSheet);
 
         spriteOutfit.setID(spriteFeet->getID());
         spriteOutfit.setScale(sf::Vector2f(2.0f, 2.0f));

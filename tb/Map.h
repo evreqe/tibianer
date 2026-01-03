@@ -2,14 +2,8 @@
 
 #include "common.h"
 
-#include <boost/algorithm/string.hpp>
-#include <boost/range/algorithm/replace_if.hpp>
-#include <boost/range/algorithm/remove_if.hpp>
-
-#include "boost_base64.hpp"
-#include "boost_zlib.hpp"
-
-#include "pugixml.hpp"
+#include "tb/LibBoost.h"
+#include "tb/LibPugiXml.h"
 
 #include "tb/Constants.h"
 #include "tb/Utility.h"
@@ -18,7 +12,6 @@
 #include "tb/SpriteData.h"
 
 #include "tb/TileMap.h"
-
 #include "tb/Thing.h"
 #include "tb/Entity.h"
 #include "tb/Object.h"
@@ -58,7 +51,7 @@ public:
 
         std::int32_t PlayerStartX = 0;
         std::int32_t PlayerStartY = 0;
-        tb::ZAxis_t PlayerStartZ = tb::ZAxis::Default;
+        tb::ZAxis PlayerStartZ = tb::Constants::ZAxisDefault;
 
         tb::TimeOfDay TimeOfDay = tb::TimeOfDay::Day;
     };
@@ -79,7 +72,7 @@ public:
     bool isTileIndexOutOfBounds(std::uint32_t tileIndex);
     bool isTileCoordsOutOfBounds(const sf::Vector2i& tileCoords);
 
-    tb::Tile::Ptr getTile(const sf::Vector2i& tileCoords, tb::ZAxis_t z);
+    tb::Tile::Ptr getTile(const sf::Vector2i& tileCoords, tb::ZAxis z);
     tb::Tile::Ptr getTileOfThing(tb::Thing::Ptr thing);
 
     const std::string& getFileName();
@@ -94,8 +87,8 @@ public:
 
     std::uint32_t getNumTiles();
 
-    tb::TileMap::Ptr getTileMapOfTilesAtZ(tb::ZAxis_t z);
-    tb::TileMap::Ptr getTileMapOfTileEdgesAtZ(tb::ZAxis_t z);
+    tb::TileMap::Ptr getTileMapOfTilesAtZ(tb::ZAxis z);
+    tb::TileMap::Ptr getTileMapOfTileEdgesAtZ(tb::ZAxis z);
 
 private:
 

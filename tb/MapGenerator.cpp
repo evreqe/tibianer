@@ -1,3 +1,5 @@
+#include "common.h"
+
 #include "tb/MapGenerator.h"
 
 namespace tb
@@ -148,7 +150,7 @@ bool MapGenerator::generateMapFromImageFile(const MapGenerator::Map_t& map, cons
         return false;
     }
 
-    if (mapPlayerStartZ < tb::ZAxis::Min || mapPlayerStartZ > tb::ZAxis::Max)
+    if (mapPlayerStartZ < tb::Constants::ZAxisMin || mapPlayerStartZ > tb::Constants::ZAxisMax)
     {
         g_Log.write("ERROR: mapPlayerStartZ is out of bounds\n");
         return false;
@@ -174,7 +176,7 @@ bool MapGenerator::generateMapFromImageFile(const MapGenerator::Map_t& map, cons
                 {
                     std::uint32_t spriteIDListMax = static_cast<std::uint32_t>(mapGeneratorPixelData.SpriteIDList.size() - 1);
 
-                    std::uint32_t randomSpriteID = tb::Utility::getRandomNumber(0, spriteIDListMax);
+                    std::uint32_t randomSpriteID = tb::Utility::Random::getNumberAsInt<std::uint32_t>(0, spriteIDListMax);
 
                     std::uint32_t spriteID = mapGeneratorPixelData.SpriteIDList.at(randomSpriteID);
 
@@ -184,7 +186,7 @@ bool MapGenerator::generateMapFromImageFile(const MapGenerator::Map_t& map, cons
                     }
                     else if (mapGeneratorPixelData.Type == "Object")
                     {
-                        tileList.push_back(tb::Sprites::Grass);
+                        tileList.push_back(tb::Resources::Sprites::Grass);
 
                         std::uint32_t objectX = x * tb::Constants::TileSize;
                         std::uint32_t objectY = y * tb::Constants::TileSize;
@@ -235,7 +237,7 @@ bool MapGenerator::generateMapFromImageFile(const MapGenerator::Map_t& map, cons
     for (std::size_t tileIndex = 0; tileIndex < tileList.size(); tileIndex++)
     {
         std::uint32_t spriteID = tileList.at(tileIndex);
-        if (spriteID != tb::Sprites::Grass)
+        if (spriteID != tb::Resources::Sprites::Grass)
         {
             continue;
         }
@@ -303,7 +305,7 @@ bool MapGenerator::generateMapFromImageFile(const MapGenerator::Map_t& map, cons
         const std::string objectFormatString = "<object id=\"{}\" gid=\"{}\" x=\"{}\" y=\"{}\" width=\"32\" height=\"32\"/>";
 
         // edge top left
-        if (spriteIDTopLeft == tb::Sprites::Water && spriteIDTopCenter == tb::Sprites::Water && spriteIDLeft == tb::Sprites::Water)
+        if (spriteIDTopLeft == tb::Resources::Sprites::Water && spriteIDTopCenter == tb::Resources::Sprites::Water && spriteIDLeft == tb::Resources::Sprites::Water)
         {
             objectSpriteID = edgesList->at(0);
 
@@ -318,7 +320,7 @@ bool MapGenerator::generateMapFromImageFile(const MapGenerator::Map_t& map, cons
         }
 
         // edge top center
-        if (spriteIDTopCenter == tb::Sprites::Water)
+        if (spriteIDTopCenter == tb::Resources::Sprites::Water)
         {
             objectSpriteID = edgesList->at(1);
 
@@ -333,7 +335,7 @@ bool MapGenerator::generateMapFromImageFile(const MapGenerator::Map_t& map, cons
         }
 
         // edge top right
-        if (spriteIDTopRight == tb::Sprites::Water && spriteIDTopCenter == tb::Sprites::Water && spriteIDRight == tb::Sprites::Water)
+        if (spriteIDTopRight == tb::Resources::Sprites::Water && spriteIDTopCenter == tb::Resources::Sprites::Water && spriteIDRight == tb::Resources::Sprites::Water)
         {
             objectSpriteID = edgesList->at(2);
 
@@ -348,7 +350,7 @@ bool MapGenerator::generateMapFromImageFile(const MapGenerator::Map_t& map, cons
         }
 
         // edge left
-        if (spriteIDLeft == tb::Sprites::Water)
+        if (spriteIDLeft == tb::Resources::Sprites::Water)
         {
             objectSpriteID = edgesList->at(3);
 
@@ -363,7 +365,7 @@ bool MapGenerator::generateMapFromImageFile(const MapGenerator::Map_t& map, cons
         }
 
         // edge right
-        if (spriteIDRight == tb::Sprites::Water)
+        if (spriteIDRight == tb::Resources::Sprites::Water)
         {
             objectSpriteID = edgesList->at(5);
 
@@ -378,7 +380,7 @@ bool MapGenerator::generateMapFromImageFile(const MapGenerator::Map_t& map, cons
         }
 
         // edge bottom left
-        if (spriteIDBottomLeft == tb::Sprites::Water && spriteIDBottomCenter == tb::Sprites::Water && spriteIDLeft == tb::Sprites::Water)
+        if (spriteIDBottomLeft == tb::Resources::Sprites::Water && spriteIDBottomCenter == tb::Resources::Sprites::Water && spriteIDLeft == tb::Resources::Sprites::Water)
         {
             objectSpriteID = edgesList->at(6);
 
@@ -393,7 +395,7 @@ bool MapGenerator::generateMapFromImageFile(const MapGenerator::Map_t& map, cons
         }
 
         // edge bottom center
-        if (spriteIDBottomCenter == tb::Sprites::Water)
+        if (spriteIDBottomCenter == tb::Resources::Sprites::Water)
         {
             objectSpriteID = edgesList->at(7);
 
@@ -408,7 +410,7 @@ bool MapGenerator::generateMapFromImageFile(const MapGenerator::Map_t& map, cons
         }
 
         // edge bottom right
-        if (spriteIDBottomRight == tb::Sprites::Water && spriteIDBottomCenter == tb::Sprites::Water && spriteIDRight == tb::Sprites::Water)
+        if (spriteIDBottomRight == tb::Resources::Sprites::Water && spriteIDBottomCenter == tb::Resources::Sprites::Water && spriteIDRight == tb::Resources::Sprites::Water)
         {
             objectSpriteID = edgesList->at(8);
 
@@ -423,7 +425,7 @@ bool MapGenerator::generateMapFromImageFile(const MapGenerator::Map_t& map, cons
         }
 
         // corner bottom right
-        if (spriteIDBottomCenter == tb::Sprites::Grass && spriteIDRight == tb::Sprites::Grass && spriteIDBottomRight == tb::Sprites::Water)
+        if (spriteIDBottomCenter == tb::Resources::Sprites::Grass && spriteIDRight == tb::Resources::Sprites::Grass && spriteIDBottomRight == tb::Resources::Sprites::Water)
         {
             objectSpriteID = cornersList->at(0);
 
@@ -438,7 +440,7 @@ bool MapGenerator::generateMapFromImageFile(const MapGenerator::Map_t& map, cons
         }
 
         // corner bottom left
-        if (spriteIDBottomCenter == tb::Sprites::Grass && spriteIDLeft == tb::Sprites::Grass && spriteIDBottomLeft == tb::Sprites::Water)
+        if (spriteIDBottomCenter == tb::Resources::Sprites::Grass && spriteIDLeft == tb::Resources::Sprites::Grass && spriteIDBottomLeft == tb::Resources::Sprites::Water)
         {
             objectSpriteID = cornersList->at(1);
 
@@ -453,7 +455,7 @@ bool MapGenerator::generateMapFromImageFile(const MapGenerator::Map_t& map, cons
         }
 
         // corner top right
-        if (spriteIDTopCenter == tb::Sprites::Grass && spriteIDRight == tb::Sprites::Grass && spriteIDTopRight == tb::Sprites::Water)
+        if (spriteIDTopCenter == tb::Resources::Sprites::Grass && spriteIDRight == tb::Resources::Sprites::Grass && spriteIDTopRight == tb::Resources::Sprites::Water)
         {
             objectSpriteID = cornersList->at(2);
 
@@ -468,7 +470,7 @@ bool MapGenerator::generateMapFromImageFile(const MapGenerator::Map_t& map, cons
         }
 
         // corner top left
-        if (spriteIDTopCenter == tb::Sprites::Grass && spriteIDLeft == tb::Sprites::Grass && spriteIDTopLeft == tb::Sprites::Water)
+        if (spriteIDTopCenter == tb::Resources::Sprites::Grass && spriteIDLeft == tb::Resources::Sprites::Grass && spriteIDTopLeft == tb::Resources::Sprites::Water)
         {
             objectSpriteID = cornersList->at(3);
 

@@ -5,7 +5,6 @@
 #include "tb/ImGuiWindow.h"
 
 #include "tb/SpriteData.h"
-
 #include "tb/Sprite.h"
 
 namespace tb
@@ -42,7 +41,7 @@ private:
 
     const char* m_textLinkURL = "https://evretibia.itch.io/tibianer";
 
-    const ImVec2 m_buttonSize = ImVec2(88.0f, 23.0f);
+    const ::ImVec2 m_buttonSize = ImVec2(88.0f, 23.0f);
 
 };
 

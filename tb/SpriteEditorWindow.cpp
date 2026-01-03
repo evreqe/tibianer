@@ -1,3 +1,5 @@
+#include "common.h"
+
 #include "tb/SpriteEditorWindow.h"
 
 namespace tb
@@ -70,9 +72,11 @@ void SpriteEditorWindow::draw()
 
         if (ImGui::BeginChild("##SpriteEditorWindowChildSpritesheet", ImVec2(0, 0), ImGuiChildFlags_Border, ImGuiWindowFlags_AlwaysHorizontalScrollbar | ImGuiWindowFlags_AlwaysVerticalScrollbar))
         {
-            for (tb::SpriteID_t i = 1; i < tb::Constants::NumSprites + 1; i++)
+            auto numSprites = g_SpriteData.getDataList()->size();
+
+            for (tb::SpriteID i = 1; i < numSprites; i++)
             {
-                tb::Sprite sprite(tb::Textures::Sprites);
+                tb::Sprite sprite(tb::Resources::Textures::SpriteSheet);
                 sprite.setID(i);
 
                 std::string imageButtonID = std::format("##SpriteEditorWindowChildSpritesheetButton{}", i);
@@ -85,16 +89,33 @@ void SpriteEditorWindow::draw()
                     loadData();
                 }
 
+                // draw tooltip
+                if (ImGui::BeginItemTooltip())
+                {
+                    std::stringstream toolTipWindowText;
+                    toolTipWindowText << i;
+
+                    std::string spriteName = g_SpriteData.getDataList()->at(i).Name;
+                    if (spriteName.size() != 0)
+                    {
+                        toolTipWindowText << ": " << spriteName;
+                    }
+
+                    ImGui::TextUnformatted(toolTipWindowText.str().c_str());
+
+                    ImGui::EndTooltip();
+                }
+
                 if (i == m_selectedSpriteID)
                 {
-                    tb::Utility::LibImGui::drawRectangleAtCurrentItem(ImColor(255, 0, 255));
+                    tb::LibImGui::drawRectangleAtCurrentItem(ImColor(255, 0, 255));
                 }
 
                 tb::SpriteFlags* spriteFlags = &m_spriteDataList->at(i).SpriteFlags;
 
                 if (spriteFlags->hasFlag(m_highlightSpriteFlag) == true)
                 {
-                    tb::Utility::LibImGui::drawRectangleAtCurrentItem(ImColor(255, 0, 0));
+                    tb::LibImGui::drawRectangleAtCurrentItem(ImColor(255, 0, 0));
                 }
 
                 if (i % 64 != 0)
@@ -103,7 +124,7 @@ void SpriteEditorWindow::draw()
                 }
             }
 
-            tb::Utility::LibImGui::scrollWindowWithMiddleMouseButton();
+            tb::LibImGui::scrollWindowWithMiddleMouseButton();
 
             ImGui::EndChild();
         }
@@ -112,8 +133,8 @@ void SpriteEditorWindow::draw()
 
         ImGui::TextUnformatted(std::format("Sprite: {}", m_selectedSpriteID).c_str());
 
-        tb::Sprite sprite(tb::Textures::Sprites);
-        sprite.setID(static_cast<tb::SpriteID_t>(m_selectedSpriteID));
+        tb::Sprite sprite(tb::Resources::Textures::SpriteSheet);
+        sprite.setID(static_cast<tb::SpriteID>(m_selectedSpriteID));
 
         std::string imageButtonID = std::format("##SpriteEditorWindowSelectedSpriteButton{}", m_selectedSpriteID);
 
@@ -185,8 +206,8 @@ void SpriteEditorWindow::draw()
 
             ImGui::InputText("Animation Name##SpriteEditorWindowInputAnimationName", &m_spriteData->AnimationName);
 
-            ImGui::InputScalar("Tile Width##SpriteEditorWindowInputTileWidth", ImGuiDataType_U8, &m_spriteData->TileWidth, &tb::Constants::LibImGui::InputScalarU8StepOne);
-            ImGui::InputScalar("Tile Height##SpriteEditorWindowInputTileHeight", ImGuiDataType_U8, &m_spriteData->TileHeight, &tb::Constants::LibImGui::InputScalarU8StepOne);
+            ImGui::InputScalar("Tile Width##SpriteEditorWindowInputTileWidth", ImGuiDataType_U8, &m_spriteData->TileWidth, &tb::LibImGui::InputScalarU8Step1);
+            ImGui::InputScalar("Tile Height##SpriteEditorWindowInputTileHeight", ImGuiDataType_U8, &m_spriteData->TileHeight, &tb::LibImGui::InputScalarU8Step1);
 
             ImGui::InputFloat("Weight##SpriteEditorWindowInputWeight", &m_spriteData->Weight, 1.0f, 10.0f, "%.2f");
             ImGui::InputFloat("Light Radius##SpriteEditorWindowInputLightRadius", &m_spriteData->LightRadius, 1.0f, 10.0f, "%.2f");
@@ -200,12 +221,12 @@ void SpriteEditorWindow::draw()
     ImGui::End();
 }
 
-tb::SpriteID_t SpriteEditorWindow::getSelectedSpriteID()
+tb::SpriteID SpriteEditorWindow::getSelectedSpriteID()
 {
     return m_selectedSpriteID;
 }
 
-void SpriteEditorWindow::setSelectedSpriteID(tb::SpriteID_t spriteID)
+void SpriteEditorWindow::setSelectedSpriteID(tb::SpriteID spriteID)
 {
     m_selectedSpriteID = spriteID;
 }

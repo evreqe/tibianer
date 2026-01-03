@@ -1,18 +1,20 @@
+#include "common.h"
+
 #include "tb/EquipmentWindow.h"
 
 namespace tb
 {
 
 EquipmentWindow::EquipmentWindow() :
-    m_equipmentWindowSprite(tb::Textures::GUI),
-    m_neckSlotSprite(tb::Textures::GUI),
-    m_headSlotSprite(tb::Textures::GUI),
-    m_bagSlotSprite(tb::Textures::GUI),
-    m_leftHandSlotSprite(tb::Textures::GUI),
-    m_rightHandSlotSprite(tb::Textures::GUI),
-    m_legsSlotSprite(tb::Textures::GUI),
-    m_chestSlotSprite(tb::Textures::GUI),
-    m_feetSlotSprite(tb::Textures::GUI)
+    m_equipmentWindowSprite(tb::Resources::Textures::GUI),
+    m_neckSlotSprite(tb::Resources::Textures::GUI),
+    m_headSlotSprite(tb::Resources::Textures::GUI),
+    m_bagSlotSprite(tb::Resources::Textures::GUI),
+    m_leftHandSlotSprite(tb::Resources::Textures::GUI),
+    m_rightHandSlotSprite(tb::Resources::Textures::GUI),
+    m_legsSlotSprite(tb::Resources::Textures::GUI),
+    m_chestSlotSprite(tb::Resources::Textures::GUI),
+    m_feetSlotSprite(tb::Resources::Textures::GUI)
 {
     setWindowRenderTextureInitialSize(m_windowRenderTextureSize);
 
@@ -61,7 +63,7 @@ void EquipmentWindow::setPositionInLayout()
 
 void EquipmentWindow::predraw()
 {
-    m_equipmentWindowSprite.setTextureRect(tb::GuiRects::EquipmentWindow);
+    m_equipmentWindowSprite.setTextureRect(tb::Resources::GuiRects::EquipmentWindow);
 }
 
 void EquipmentWindow::draw()

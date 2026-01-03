@@ -1,3 +1,5 @@
+#include "common.h"
+
 #include "tb/MapData.h"
 
 namespace tb

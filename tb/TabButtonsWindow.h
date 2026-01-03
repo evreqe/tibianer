@@ -72,7 +72,7 @@ private:
 
     sf::Sprite m_inventoryButtonSprite;
     const sf::Vector2f m_inventoryButtonPosition = sf::Vector2f(0.0f, 0.0f);
-    sf::IntRect m_inventoryButtonTextureRect = tb::GuiRects::TabButtonsWindowInventoryButtonPressed;
+    sf::IntRect m_inventoryButtonTextureRect = tb::Resources::GuiRects::TabButtonsWindowInventoryButtonPressed;
     const sf::FloatRect m_inventoryButtonRect = sf::FloatRect
     (
         m_inventoryButtonPosition,
@@ -81,7 +81,7 @@ private:
 
     sf::Sprite m_statusButtonSprite;
     const sf::Vector2f m_statusButtonPosition = sf::Vector2f(28.0f, 0.0f);
-    sf::IntRect m_statusButtonTextureRect = tb::GuiRects::TabButtonsWindowStatusButtonReleased;
+    sf::IntRect m_statusButtonTextureRect = tb::Resources::GuiRects::TabButtonsWindowStatusButtonReleased;
     const sf::FloatRect m_statusButtonRect = sf::FloatRect
     (
         m_statusButtonPosition,
@@ -90,7 +90,7 @@ private:
 
     sf::Sprite m_battleButtonSprite;
     const sf::Vector2f m_battleButtonPosition = sf::Vector2f(56.0f, 0.0f);
-    sf::IntRect m_battleButtonTextureRect = tb::GuiRects::TabButtonsWindowBattleButtonReleased;
+    sf::IntRect m_battleButtonTextureRect = tb::Resources::GuiRects::TabButtonsWindowBattleButtonReleased;
     const sf::FloatRect m_battleButtonRect = sf::FloatRect
     (
         m_battleButtonPosition,
@@ -99,7 +99,7 @@ private:
 
     sf::Sprite m_miniMapButtonSprite;
     const sf::Vector2f m_miniMapButtonPosition = sf::Vector2f(84.0f, 0.0f);
-    sf::IntRect m_miniMapButtonTextureRect = tb::GuiRects::TabButtonsWindowMiniMapButtonReleased;
+    sf::IntRect m_miniMapButtonTextureRect = tb::Resources::GuiRects::TabButtonsWindowMiniMapButtonReleased;
     const sf::FloatRect m_miniMapButtonRect = sf::FloatRect
     (
         m_miniMapButtonPosition,

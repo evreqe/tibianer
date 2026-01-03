@@ -200,16 +200,16 @@ void updateJoystickDPadState(ImGuiIO& io);
 void updateJoystickAxisState(ImGuiIO& io);
 
 // clipboard functions
-void setClipboardText(void* /*userData*/, const char* text)
+void setClipboardText(void* /* user_data */, const char* text)
 {
     sf::Clipboard::setString(sf::String::fromUtf8(text, text + std::strlen(text)));
 }
 
-[[nodiscard]] const char* getClipboardText(void* /*userData*/)
+[[nodiscard]] const char* getClipboardText(void* /* user_data */)
 {
     static std::string s_clipboardText;
 
-    const auto tmp = sf::Clipboard::getString().toUtf8();
+    auto tmp = sf::Clipboard::getString().toUtf8();
     s_clipboardText.assign(tmp.begin(), tmp.end());
     return s_clipboardText.c_str();
 }
@@ -306,7 +306,8 @@ bool Init(sf::Window& window, const sf::Vector2f& displaySize, bool loadDefaultF
     s_currWindowCtx = s_windowContexts.emplace_back(std::make_unique<WindowContext>(&window)).get();
     ImGui::SetCurrentContext(s_currWindowCtx->imContext);
 
-    ImGuiIO& io = ImGui::GetIO();
+    ImGuiIO&         io          = ImGui::GetIO();
+    ImGuiPlatformIO& platform_io = ImGui::GetPlatformIO();
 
     // tell ImGui which features we support
     io.BackendFlags |= ImGuiBackendFlags_HasGamepad;
@@ -349,10 +350,10 @@ bool Init(sf::Window& window, const sf::Vector2f& displaySize, bool loadDefaultF
 
 void SetCurrentWindow(const sf::Window& window)
 {
-    const auto found = std::find_if(s_windowContexts.begin(),
-                                    s_windowContexts.end(),
-                                    [&](std::unique_ptr<WindowContext>& ctx)
-                                    { return ctx->window->getNativeHandle() == window.getNativeHandle(); });
+    auto found = std::find_if(s_windowContexts.begin(),
+                              s_windowContexts.end(),
+                              [&](std::unique_ptr<WindowContext>& ctx)
+                              { return ctx->window->getNativeHandle() == window.getNativeHandle(); });
     assert(found != s_windowContexts.end() &&
            "Failed to find the window. Forgot to call ImGui::SFML::Init for the window?");
     s_currWindowCtx = found->get();
@@ -589,10 +590,10 @@ void Shutdown(const sf::Window& window)
     const bool needReplacement = (s_currWindowCtx->window->getNativeHandle() == window.getNativeHandle());
 
     // remove window's context
-    const auto found = std::find_if(s_windowContexts.begin(),
-                                    s_windowContexts.end(),
-                                    [&](std::unique_ptr<WindowContext>& ctx)
-                                    { return ctx->window->getNativeHandle() == window.getNativeHandle(); });
+    auto found = std::find_if(s_windowContexts.begin(),
+                              s_windowContexts.end(),
+                              [&](std::unique_ptr<WindowContext>& ctx)
+                              { return ctx->window->getNativeHandle() == window.getNativeHandle(); });
     assert(found != s_windowContexts.end() &&
            "Window wasn't inited properly: forgot to call ImGui::SFML::Init(window)?");
     s_windowContexts.erase(found); // s_currWindowCtx can become invalid here!
@@ -600,7 +601,7 @@ void Shutdown(const sf::Window& window)
     // set current context to some window for convenience if needed
     if (needReplacement)
     {
-        const auto it = s_windowContexts.begin();
+        auto it = s_windowContexts.begin();
         if (it != s_windowContexts.end())
         {
             // set to some other window
@@ -702,37 +703,10 @@ void SetJoystickRTriggerThreshold(float threshold)
 void SetJoystickMapping(int key, unsigned int joystickButton)
 {
     assert(s_currWindowCtx);
-    // This function now expects ImGuiKey_* values.
-    // For partial backwards compatibility, also expect some ImGuiNavInput_* values.
-    ImGuiKey finalKey{};
-    switch (key)
-    {
-        case ImGuiNavInput_Activate:
-            finalKey = ImGuiKey_GamepadFaceDown;
-            break;
-        case ImGuiNavInput_Cancel:
-            finalKey = ImGuiKey_GamepadFaceRight;
-            break;
-        case ImGuiNavInput_Input:
-            finalKey = ImGuiKey_GamepadFaceUp;
-            break;
-        case ImGuiNavInput_Menu:
-            finalKey = ImGuiKey_GamepadFaceLeft;
-            break;
-        case ImGuiNavInput_FocusPrev:
-        case ImGuiNavInput_TweakSlow:
-            finalKey = ImGuiKey_GamepadL1;
-            break;
-        case ImGuiNavInput_FocusNext:
-        case ImGuiNavInput_TweakFast:
-            finalKey = ImGuiKey_GamepadR1;
-            break;
-        default:
-            assert(key >= ImGuiKey_NamedKey_BEGIN && key < ImGuiKey_NamedKey_END);
-            finalKey = static_cast<ImGuiKey>(key);
-    }
+    assert(key >= ImGuiKey_NamedKey_BEGIN);
+    assert(key < ImGuiKey_NamedKey_END);
     assert(joystickButton < sf::Joystick::ButtonCount);
-    s_currWindowCtx->joystickMapping[joystickButton] = finalKey;
+    s_currWindowCtx->joystickMapping[joystickButton] = static_cast<ImGuiKey>(key);
 }
 
 void SetDPadXAxis(sf::Joystick::Axis dPadXAxis, bool inverted)
@@ -835,7 +809,7 @@ void Image(const sf::Sprite& sprite, const sf::Color& tintColor, const sf::Color
 
 void Image(const sf::Sprite& sprite, const sf::Vector2f& size, const sf::Color& tintColor, const sf::Color& borderColor)
 {
-    const auto [uv0, uv1, textureID] = getSpriteTextureData(sprite);
+    auto [uv0, uv1, textureID] = getSpriteTextureData(sprite);
     ImGui::Image(textureID, toImVec2(size), uv0, uv1, toImColor(tintColor), toImColor(borderColor));
 }
 
@@ -876,7 +850,7 @@ bool ImageButton(const char*              id,
 
 bool ImageButton(const char* id, const sf::Sprite& sprite, const sf::Vector2f& size, const sf::Color& bgColor, const sf::Color& tintColor)
 {
-    const auto [uv0, uv1, textureID] = getSpriteTextureData(sprite);
+    auto [uv0, uv1, textureID] = getSpriteTextureData(sprite);
     return ImGui::ImageButton(id, textureID, toImVec2(size), uv0, uv1, toImColor(bgColor), toImColor(tintColor));
 }
 
@@ -1027,18 +1001,12 @@ void RenderDrawLists(ImDrawData* draw_data)
         const ImDrawList* cmd_list   = draw_data->CmdLists[n];
         const ImDrawVert* vtx_buffer = cmd_list->VtxBuffer.Data;
         const ImDrawIdx*  idx_buffer = cmd_list->IdxBuffer.Data;
-        glVertexPointer(2,
-                        GL_FLOAT,
-                        sizeof(ImDrawVert),
-                        (const GLvoid*)((const char*)vtx_buffer + IM_OFFSETOF(ImDrawVert, pos)));
-        glTexCoordPointer(2,
-                          GL_FLOAT,
-                          sizeof(ImDrawVert),
-                          (const GLvoid*)((const char*)vtx_buffer + IM_OFFSETOF(ImDrawVert, uv)));
+        glVertexPointer(2, GL_FLOAT, sizeof(ImDrawVert), (const GLvoid*)((const char*)vtx_buffer + offsetof(ImDrawVert, pos)));
+        glTexCoordPointer(2, GL_FLOAT, sizeof(ImDrawVert), (const GLvoid*)((const char*)vtx_buffer + offsetof(ImDrawVert, uv)));
         glColorPointer(4,
                        GL_UNSIGNED_BYTE,
                        sizeof(ImDrawVert),
-                       (const GLvoid*)((const char*)vtx_buffer + IM_OFFSETOF(ImDrawVert, col)));
+                       (const GLvoid*)((const char*)vtx_buffer + offsetof(ImDrawVert, col)));
 
         for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++)
         {
@@ -1144,12 +1112,12 @@ void initDefaultJoystickMapping()
 
 void updateJoystickButtonState(ImGuiIO& io)
 {
-    for (unsigned int i = 0; i < sf::Joystick::ButtonCount; ++i)
+    for (int i = 0; i < static_cast<int>(sf::Joystick::ButtonCount); ++i)
     {
         const ImGuiKey key = s_currWindowCtx->joystickMapping[i];
         if (key != ImGuiKey_None)
         {
-            const bool isPressed = sf::Joystick::isButtonPressed(s_currWindowCtx->joystickId, i);
+            const bool isPressed = sf::Joystick::isButtonPressed(s_currWindowCtx->joystickId, static_cast<unsigned>(i));
             if (s_currWindowCtx->windowHasFocus || !isPressed)
             {
                 io.AddKeyEvent(key, isPressed);

@@ -36,7 +36,7 @@ public:
 
     struct Data
     {
-        tb::SpriteID_t SpriteID = 0;
+        tb::SpriteID SpriteID = 0;
         tb::SpriteFlags SpriteFlags;
 
         std::string Name;
@@ -60,7 +60,7 @@ public:
 
     tb::SpriteData::DataList* getDataList();
 
-    tb::SpriteData::Data* getDataBySpriteID(const tb::SpriteID_t& spriteID);
+    tb::SpriteData::Data* getDataBySpriteID(const tb::SpriteID& spriteID);
     tb::SpriteData::Data* getDataByName(const std::string& name);
     tb::SpriteData::Data* getDataByNameSV(std::string_view name);
 

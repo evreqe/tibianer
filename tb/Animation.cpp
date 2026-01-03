@@ -1,10 +1,12 @@
+#include "common.h"
+
 #include "tb/Animation.h"
 
 namespace tb
 {
 
 Animation::Animation() :
-    m_sprite(tb::Textures::Sprites)
+    m_sprite(tb::Resources::Textures::SpriteSheet)
 {
     setThingType(tb::ThingType::Animation);
 }
@@ -14,8 +16,8 @@ Animation::~Animation()
     //
 }
 
-Animation::Animation(const sf::Vector2i& tileCoords, tb::ZAxis_t z, std::uint32_t index) :
-    m_sprite(tb::Textures::Sprites)
+Animation::Animation(const sf::Vector2i& tileCoords, tb::ZAxis z, std::uint32_t index) :
+    m_sprite(tb::Resources::Textures::SpriteSheet)
 {
     setThingType(tb::ThingType::Animation);
 
@@ -24,16 +26,11 @@ Animation::Animation(const sf::Vector2i& tileCoords, tb::ZAxis_t z, std::uint32_
 
     m_animationData = g_AnimationData.getDataByIndex(index);
 
-    if (m_animationData == nullptr)
-    {
-        g_Log.write("ERROR: m_animationData == nullptr\n");
-    }
-
     initalize();
 }
 
-Animation::Animation(const sf::Vector2i& tileCoords, tb::ZAxis_t z, const std::string& name) :
-    m_sprite(tb::Textures::Sprites)
+Animation::Animation(const sf::Vector2i& tileCoords, tb::ZAxis z, const std::string& name) :
+    m_sprite(tb::Resources::Textures::SpriteSheet)
 {
     setThingType(tb::ThingType::Animation);
 
@@ -42,26 +39,26 @@ Animation::Animation(const sf::Vector2i& tileCoords, tb::ZAxis_t z, const std::s
 
     m_animationData = g_AnimationData.getDataByName(name);
 
-    if (m_animationData == nullptr)
-    {
-        g_Log.write("ERROR: m_animationData == nullptr\n");
-    }
-
     initalize();
 }
 
 void Animation::initalize()
 {
+    if (m_animationData == nullptr)
+    {
+        throw std::runtime_error("m_animationData == nullptr");
+    }
+
     m_spriteIDList = &m_animationData->SpriteIDList;
 
     if (m_spriteIDList == nullptr)
     {
-        g_Log.write("ERROR: m_spriteIDList == nullptr\n");
+        throw std::runtime_error("m_spriteIDList == nullptr");
     }
 
     if (m_spriteIDList->size() == 0)
     {
-        g_Log.write("ERROR: m_spriteIDList is empty\n");
+        throw std::runtime_error("m_spriteIDList->size() == 0");
     }
 
     m_sprite.setID(m_spriteIDList->at(0));
@@ -112,7 +109,9 @@ void Animation::advanceFrame()
             }
         }
 
-        m_sprite.setID(m_spriteIDList->at(m_currentFrame));
+        tb::SpriteID spriteID = m_spriteIDList->at(m_currentFrame);
+
+        m_sprite.setID(spriteID);
 
         m_clock.restart();
     }
@@ -121,6 +120,11 @@ void Animation::advanceFrame()
 tb::Sprite* Animation::getSprite()
 {
     return &m_sprite;
+}
+
+tb::SpriteID Animation::getSpriteID()
+{
+    return m_sprite.getID();
 }
 
 tb::AnimationData::Data* Animation::getData()

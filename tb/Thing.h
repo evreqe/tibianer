@@ -76,8 +76,8 @@ public:
     float getPixelY();
     void setPixelY(float pixelY);
 
-    tb::ZAxis_t getZ();
-    void setZ(tb::ZAxis_t z);
+    tb::ZAxis getZ();
+    void setZ(tb::ZAxis z);
 
     tb::ThingType getThingType();
     void setThingType(tb::ThingType thingType);
@@ -99,7 +99,7 @@ private:
     sf::Vector2i m_tileCoords;
     sf::Vector2f m_pixelCoords;
 
-    tb::ZAxis_t m_z = 0;
+    tb::ZAxis m_z = 0;
 
     tb::ThingType m_thingType = tb::ThingType::Null;
 

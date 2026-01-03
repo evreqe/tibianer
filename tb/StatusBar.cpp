@@ -1,3 +1,5 @@
+#include "common.h"
+
 #include "tb/StatusBar.h"
 
 namespace tb

@@ -1,3 +1,5 @@
+#include "common.h"
+
 #include "tb/LightBatch.h"
 
 namespace tb

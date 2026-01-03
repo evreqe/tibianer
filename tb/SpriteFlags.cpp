@@ -1,3 +1,5 @@
+#include "common.h"
+
 #include "tb/SpriteFlags.h"
 
 namespace tb

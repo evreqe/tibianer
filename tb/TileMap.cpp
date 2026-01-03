@@ -1,3 +1,5 @@
+#include "common.h"
+
 #include "tb/TileMap.h"
 
 namespace tb
@@ -13,7 +15,7 @@ TileMap::~TileMap()
     //
 }
 
-bool TileMap::load(std::uint32_t tileWidth, std::uint32_t tileHeight, const tb::SpriteIDList& tileSpriteIDList, const std::string& name, tb::TileMapType tileMapType, tb::ZAxis_t z)
+bool TileMap::load(std::uint32_t tileWidth, std::uint32_t tileHeight, const tb::SpriteIDList& tileSpriteIDList, const std::string& name, tb::TileMapType tileMapType, tb::ZAxis z)
 {
     if (g_SpriteData.isLoaded() == false)
     {
@@ -65,7 +67,7 @@ bool TileMap::load(std::uint32_t tileWidth, std::uint32_t tileHeight, const tb::
     g_Log.write("Tile Map Sprite ID List Size: {}\n", m_tileSpriteIDList.size());
     g_Log.write("Tile Map Type: {}\n", magic_enum::enum_name(m_tileMapType));
 
-    for (std::uint32_t tileIndex = 0; tb::SpriteID_t& tileSpriteID : m_tileSpriteIDList)
+    for (std::uint32_t tileIndex = 0; tb::SpriteID& tileSpriteID : m_tileSpriteIDList)
     {
         //g_Log.write("tileIndex: {}\n", tileIndex);
 
@@ -84,8 +86,7 @@ bool TileMap::load(std::uint32_t tileWidth, std::uint32_t tileHeight, const tb::
 
         tb::SpriteFlags* tileSpriteFlags = &g_SpriteData.getDataList()->at(tileSpriteID).SpriteFlags;
 
-        // TODO: this might not be needed
-        if (tileSpriteID == tb::Constants::SpriteIDNull && m_tileMapType == tb::TileMapType::Tiles)
+        if (m_tileMapType == tb::TileMapType::Tiles && tileSpriteID == tb::Constants::SpriteIDNull)
         {
             tileSpriteFlags->setFlag(tb::SpriteFlag::Null, true);
         }
@@ -130,12 +131,12 @@ bool TileMap::isTileIndexOutOfBounds(std::uint32_t tileIndex)
     return false;
 }
 
-void TileMap::updateTileSpriteID(tb::Tile::Ptr tile, tb::SpriteID_t spriteID)
+void TileMap::updateTileSpriteID(tb::Tile::Ptr tile, tb::SpriteID spriteID)
 {
     tile->setSpriteID(spriteID);
 }
 
-void TileMap::updateTileSpriteFlags(tb::Tile::Ptr tile, tb::SpriteID_t spriteID)
+void TileMap::updateTileSpriteFlags(tb::Tile::Ptr tile, tb::SpriteID spriteID)
 {
     tb::SpriteFlags* tileSpriteFlags = &g_SpriteData.getDataList()->at(spriteID).SpriteFlags;
 
@@ -194,12 +195,7 @@ tb::Tile::List TileMap::getTileListWithinTileRect(const sf::IntRect& tileRect)
                 continue;
             }
 
-            tb::SpriteID_t tileSpriteID = tile->getSpriteID();
-
-            if (tileSpriteID == tb::Constants::SpriteIDNull)
-            {
-                continue;
-            }
+            tb::SpriteID tileSpriteID = tile->getSpriteID();
 
             tileList.push_back(tile);
         }
@@ -311,7 +307,7 @@ bool TileMap::applyTilePatterns()
 
         for (auto& tile : *tileList)
         {
-            tb::SpriteID_t tileSpriteID = tile->getSpriteID();
+            tb::SpriteID tileSpriteID = tile->getSpriteID();
 
             if (std::find(patternData.SpriteIDList.begin(), patternData.SpriteIDList.end(), tileSpriteID) == patternData.SpriteIDList.end())
             {
@@ -328,12 +324,12 @@ bool TileMap::applyTilePatterns()
 
             std::uint32_t spriteIndex = tileColumnIndex;
 
-            while (spriteIndex > static_cast<unsigned int>(patternData.Width - 1))
+            while (spriteIndex > static_cast<std::uint32_t>(patternData.Width - 1))
             {
                 spriteIndex = spriteIndex - patternData.Width;
             }
 
-            while (tileRowIndex > static_cast<unsigned int>(patternData.Height - 1))
+            while (tileRowIndex > static_cast<std::uint32_t>(patternData.Height - 1))
             {
                 tileRowIndex = tileRowIndex - patternData.Height;
             }
@@ -375,7 +371,7 @@ bool TileMap::applyTileObjectPatterns()
 
             for (auto& object : *tileObjectList)
             {
-                tb::SpriteID_t objectSpriteID = object->getSpriteID();
+                tb::SpriteID objectSpriteID = object->getSpriteID();
 
                 if (std::find(patternData.SpriteIDList.begin(), patternData.SpriteIDList.end(), objectSpriteID) != patternData.SpriteIDList.end())
                 {
@@ -466,12 +462,12 @@ void TileMap::setTileMapType(tb::TileMapType tileMapType)
     m_tileMapType = tileMapType;
 }
 
-tb::ZAxis_t TileMap::getZ()
+tb::ZAxis TileMap::getZ()
 {
     return m_z;
 }
 
-void TileMap::setZ(tb::ZAxis_t z)
+void TileMap::setZ(tb::ZAxis z)
 {
     m_z = z;
 }
@@ -516,12 +512,7 @@ bool TileMap::isVisibleWithinTileRect(const sf::IntRect& tileRect)
                 continue;
             }
 
-            tb::SpriteID_t tileSpriteID = tile->getSpriteID();
-
-            if (tileSpriteID == tb::Constants::SpriteIDNull)
-            {
-                continue;
-            }
+            tb::SpriteID tileSpriteID = tile->getSpriteID();
 
             return true;
         }
@@ -543,7 +534,7 @@ void TileMap::drawTiles(const sf::IntRect& tileRect, sf::RenderTarget& renderTar
 
     const std::uint32_t tileSize = tb::Constants::TileSize;
 
-    sf::Vector2u spriteTextureSize = tb::Textures::Sprites.getSize();
+    sf::Vector2u spriteSheetTextureSize = tb::Resources::Textures::SpriteSheet.getSize();
 
     const std::uint32_t numVertices = m_numTiles * m_numVertexPerTile;
 
@@ -552,18 +543,18 @@ void TileMap::drawTiles(const sf::IntRect& tileRect, sf::RenderTarget& renderTar
 
     for (auto& tile : tileList)
     {
-        tb::SpriteID_t tileSpriteID = tile->getSpriteID();
+        tb::SpriteID tileSpriteID = tile->getSpriteID();
 
         if (tileSpriteID == tb::Constants::SpriteIDNull)
         {
-            return;
+            continue;
         }
 
         std::int32_t tileX = tile->getTileX();
         std::int32_t tileY = tile->getTileY();
 
-        std::uint32_t tileU = (tileSpriteID - 1) % (spriteTextureSize.x / tileSize);
-        std::uint32_t tileV = (tileSpriteID - 1) / (spriteTextureSize.y / tileSize);
+        std::uint32_t tileU = (tileSpriteID - 1) % (spriteSheetTextureSize.x / tileSize);
+        std::uint32_t tileV = (tileSpriteID - 1) / (spriteSheetTextureSize.y / tileSize);
 
         sf::Vertex vertex[m_numVertexPerTile];
 
@@ -606,7 +597,7 @@ void TileMap::drawTiles(const sf::IntRect& tileRect, sf::RenderTarget& renderTar
     if (m_tileVertexList.size() != 0)
     {
         sf::RenderStates renderStates;
-        renderStates.texture = &tb::Textures::Sprites;
+        renderStates.texture = &tb::Resources::Textures::SpriteSheet;
 
         renderTarget.draw(&m_tileVertexList[0], m_tileVertexList.size(), sf::PrimitiveType::Triangles, renderStates);
     }
@@ -639,21 +630,7 @@ void TileMap::drawThings(const sf::IntRect& tileRect, sf::RenderTarget& renderTa
             spriteBatch.addSprite(tileEdgeObjectSprite, false);
         }
 
-        tb::Thing::List thingList;
-
-        tb::Object::List* objectList = tile->getObjectList();
-        tb::Creature::List* creatureList = tile->getCreatureList();
-        tb::Animation::List* animationList = tile->getAnimationList();
-
-        std::size_t thingListReserveSize = objectList->size() + creatureList->size() + animationList->size();
-
-        thingList.reserve(thingListReserveSize);
-
-        thingList.insert(thingList.end(), objectList->begin(), objectList->end());
-        thingList.insert(thingList.end(), creatureList->begin(), creatureList->end());
-        thingList.insert(thingList.end(), animationList->begin(), animationList->end());
-
-        std::stable_sort(std::execution::par, thingList.begin(), thingList.end(), tb::Thing::SortByTileCoords_t());
+        tb::Thing::List thingList = tile->createThingList();
 
         for (auto& thing : thingList)
         {
@@ -729,13 +706,13 @@ void TileMap::drawThings(const sf::IntRect& tileRect, sf::RenderTarget& renderTa
     if (spriteBatch.getNumSprites() != 0)
     {
         sf::RenderStates renderStates;
-        renderStates.texture = &tb::Textures::Sprites;
+        renderStates.texture = &tb::Resources::Textures::SpriteSheet;
 
         spriteBatch.draw(renderTarget, renderStates);
     }
 }
 
-void TileMap::drawLights(const sf::IntRect& tileRect, sf::RenderTarget& renderTarget, tb::LightBrightness_t lightBrightness)
+void TileMap::drawLights(const sf::IntRect& tileRect, sf::RenderTarget& renderTarget, tb::LightBrightness lightBrightness)
 {
     tb::Tile::List tileList = getTileListWithinTileRect(tileRect);
 
@@ -750,22 +727,54 @@ void TileMap::drawLights(const sf::IntRect& tileRect, sf::RenderTarget& renderTa
     {
         sf::Vector2f tile1Position = tile1->getPixelCoords();
 
-        tb::Object::List* objectList = tile1->getObjectList();
+        tb::Thing::List thingList = tile1->createThingList();
 
-        for (auto& object : *objectList)
+        for (auto& thing : thingList)
         {
-            tb::SpriteID_t objectSpriteID = object->getSpriteID();
+            tb::SpriteID spriteID = tb::Constants::SpriteIDNull;
 
-            tb::SpriteData::Data* objectSpriteData = &g_SpriteData.getDataList()->at(objectSpriteID);
+            if (thing->getThingType() == tb::ThingType::Object)
+            {
+                tb::Object::Ptr object = std::static_pointer_cast<tb::Object>(thing);
 
-            float objectLightRadius = objectSpriteData->LightRadius;
+                spriteID = object->getSpriteID();
+            }
+            else if (thing->getThingType() == tb::ThingType::Creature)
+            {
+                tb::Creature::Ptr creature = std::static_pointer_cast<tb::Creature>(thing);
 
-            if (objectLightRadius < 1.0f)
+                if (creature->getProperties()->HasOutfit == false)
+                {
+                    std::vector<tb::Sprite*> creatureSpriteList = creature->getSpriteList();
+
+                    if (creatureSpriteList.size() != 0)
+                    {
+                        spriteID = creatureSpriteList.at(0)->getID();
+                    }
+                }
+            }
+            else if (thing->getThingType() == tb::ThingType::Animation)
+            {
+                tb::Animation::Ptr animation = std::static_pointer_cast<tb::Animation>(thing);
+
+                spriteID = animation->getSpriteID();
+            }
+
+            tb::SpriteData::Data* spriteData = &g_SpriteData.getDataList()->at(spriteID);
+
+            if (spriteData->SpriteFlags.hasFlag(tb::SpriteFlag::LightSource) == false)
             {
                 continue;
             }
 
-            objectLightRadius = objectLightRadius * tb::Constants::TileSizeAsFloat;
+            float lightRadius = spriteData->LightRadius;
+
+            if (lightRadius < 1.0f)
+            {
+                continue;
+            }
+
+            lightRadius = lightRadius * tb::Constants::TileSizeAsFloat;
 
             for (auto& tile2 : tileList)
             {
@@ -773,12 +782,12 @@ void TileMap::drawLights(const sf::IntRect& tileRect, sf::RenderTarget& renderTa
 
                 float distance = -1.0f;
 
-                if (tb::Utility::isPositionInsideCircle(tile1Position, tile2Position, objectLightRadius, distance) == false)
+                if (tb::LibSfml::isPositionInsideCircle(tile2Position, tile1Position, lightRadius, distance) == false)
                 {
                     continue;
                 }
 
-                float brightness = ((objectLightRadius - distance) / objectLightRadius) * 255.0f;
+                float brightness = ((lightRadius - distance) / lightRadius) * 255.0f;
 
                 std::uint8_t rgb = static_cast<std::uint8_t>(brightness);
 

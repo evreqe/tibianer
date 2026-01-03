@@ -1,3 +1,5 @@
+#include "common.h"
+
 #include "tb/MiniMapWindow.h"
 
 namespace tb
@@ -123,7 +125,7 @@ void MiniMapWindow::draw()
 
     if (isDebugModeEnabled == true)
     {
-        if (tb::Utility::LibImGui::isActive() == false)
+        if (tb::LibImGui::isActive() == false)
         {
             drawTileHighlight();
         }
@@ -152,7 +154,7 @@ void MiniMapWindow::drawTileMap(const sf::IntRect& tileRect, tb::TileMap::Ptr ti
 
     for (auto& tile : tileList)
     {
-        tb::SpriteID_t tileSpriteID = tile->getSpriteID();
+        tb::SpriteID tileSpriteID = tile->getSpriteID();
 
         if (tileSpriteID == tb::Constants::SpriteIDNull)
         {

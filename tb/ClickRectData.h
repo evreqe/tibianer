@@ -54,7 +54,7 @@ public:
 
 private:
 
-    const std::string m_fileName = "data/click_rect.txt";
+    const std::string m_fileName = "data/click_rects.txt";
 
     toml::table m_table;
 

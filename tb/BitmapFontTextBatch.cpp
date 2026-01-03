@@ -1,3 +1,5 @@
+#include "common.h"
+
 #include "tb/BitmapFontTextBatch.h"
 
 namespace tb

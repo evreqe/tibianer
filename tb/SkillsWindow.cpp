@@ -1,10 +1,12 @@
+#include "common.h"
+
 #include "tb/SkillsWindow.h"
 
 namespace tb
 {
 
 SkillsWindow::SkillsWindow() :
-    m_woodSprite(tb::Textures::Wood)
+    m_woodSprite(tb::Resources::Textures::Wood)
 {
     setWindowRenderTextureInitialSize(m_windowRenderTextureSize);
 
@@ -139,7 +141,7 @@ void SkillsWindow::draw()
 
     float windowSizeScale = getSizeScale();
 
-    m_woodSprite.setTexture(tb::Textures::Wood, true);
+    m_woodSprite.setTexture(tb::Resources::Textures::Wood, true);
     m_woodSprite.setTextureRect(sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(static_cast<int>(windowSize.x), static_cast<int>(windowSize.y))));
 
     windowRenderTexture->draw(m_woodSprite);

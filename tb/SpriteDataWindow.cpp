@@ -1,3 +1,5 @@
+#include "common.h"
+
 #include "tb/SpriteDataWindow.h"
 
 namespace tb
@@ -34,8 +36,8 @@ void SpriteDataWindow::draw()
         {
             for (std::int32_t i = clipper.DisplayStart; i < clipper.DisplayEnd; i++)
             {
-                tb::Sprite sprite(tb::Textures::Sprites);
-                sprite.setID(static_cast<tb::SpriteID_t>(i));
+                tb::Sprite sprite(tb::Resources::Textures::SpriteSheet);
+                sprite.setID(static_cast<tb::SpriteID>(i));
 
                 std::string imageButtonID = std::format("##SpriteDataWindowChildDataButton{}", i);
 

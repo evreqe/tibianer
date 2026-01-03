@@ -6,7 +6,7 @@
 #include "tb/Utility.h"
 #include "tb/Log.h"
 
-#include <windows.h>
+#include "tb/WindowsApi.h"
 
 namespace tb
 {

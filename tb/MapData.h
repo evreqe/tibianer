@@ -2,7 +2,7 @@
 
 #include "common.h"
 
-#include "pugixml.hpp"
+#include "tb/LibPugiXml.h"
 
 #include "tb/Constants.h"
 #include "tb/Utility.h"

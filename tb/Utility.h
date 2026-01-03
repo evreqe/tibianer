@@ -2,66 +2,91 @@
 
 #include "common.h"
 
-#include "tb/Constants.h"
-
 namespace tb
 {
     namespace Utility
     {
-        static std::random_device randomDevice;
-        static std::default_random_engine randomEngine(randomDevice());
-
-        static bool isPositionInsideCircle(sf::Vector2f center, sf::Vector2f position, float radius, float& distance)
-        {
-            float dx = center.x - position.x;
-            float dy = center.y - position.y;
-
-            distance = std::sqrtf(dx * dx + dy * dy);
-
-            return distance <= radius;
-
-            //float distanceSquared = dx * dx + dy * dy;
-
-            //return distanceSquared <= radius * radius;
-        }
-
         static void toggleBool(bool& b)
         {
             b = !b;
         }
 
-        static float calculateDistance(sf::Vector2f position1, sf::Vector2f position2)
+        namespace Random
         {
-            return std::sqrtf(std::powf(position1.x - position2.x, 2.0f) + std::powf(position1.y - position2.y, 2.0f));
-        }
+            static std::random_device randomDevice;
+            static std::default_random_engine randomEngine(randomDevice());
 
-        static std::uint32_t getRandomNumber(std::uint32_t min, std::uint32_t max)
-        {
-            std::uniform_int_distribution<std::uint32_t> uniformDistribution(min, max);
-
-            return uniformDistribution(randomEngine);
-        }
-
-        static float getRandomNumberAsFloat(float min, float max)
-        {
-            std::uniform_real_distribution<float> uniformDistribution(min, max);
-
-            return uniformDistribution(randomEngine);
-        }
-
-        static std::string readFileToString(const char* fileName)
-        {
-            if (fileName == nullptr || std::strlen(fileName) == 0)
+            template <typename T>
+            requires std::is_integral_v<T>
+            static T getNumberAsInt(T min, T max)
             {
-                return {};
+                std::uniform_int_distribution<T> uniformDistribution(min, max);
+
+                return uniformDistribution(randomEngine);
             }
 
-            std::ifstream file(fileName);
-            auto fileSize = std::filesystem::file_size(fileName);
-            std::string text(fileSize, '\0');
-            file.read(text.data(), fileSize);
-            file.close();
-            return text;
+            template <typename T>
+            requires std::is_floating_point_v<T>
+            static T getNumberAsReal(T min, T max)
+            {
+                std::uniform_real_distribution<T> uniformDistribution(min, max);
+
+                return uniformDistribution(randomEngine);
+            }
+        }
+
+        namespace File
+        {
+            static bool exists(const char* fileName)
+            {
+                if (fileName == nullptr || std::strlen(fileName) == 0)
+                {
+                    return false;
+                }
+
+                return std::filesystem::exists(fileName);
+            }
+
+            static bool create(const char* fileName)
+            {
+                if (fileName == nullptr || std::strlen(fileName) == 0)
+                {
+                    return false;
+                }
+
+                std::ofstream file(fileName);
+                file.close();
+
+                return true;
+            }
+
+            static std::string readToString(const char* fileName)
+            {
+                if (fileName == nullptr || std::strlen(fileName) == 0)
+                {
+                    return {};
+                }
+
+                if (std::filesystem::exists(fileName) == false)
+                {
+                    return {};
+                }
+
+                auto fileSize = std::filesystem::file_size(fileName);
+
+                if (fileSize == 0)
+                {
+                    return {};
+                }
+
+                std::string text(fileSize, '\0');
+
+                std::ifstream file(fileName);
+                file.read(text.data(), fileSize);
+                file.close();
+
+                return text;
+            }
         }
 
         namespace String
@@ -114,112 +139,6 @@ namespace tb
                     beginPosition = beginPosition + to.length();
                 }
                 return subject;
-            }
-        }
-
-        namespace LibImGui
-        {
-            static bool isActive()
-            {
-                auto io = ImGui::GetIO();
-
-                if (io.WantCaptureKeyboard == true || io.WantCaptureMouse == true)
-                {
-                    return true;
-                }
-
-                if (ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow) == true)
-                {
-                    return true;
-                }
-
-                if (ImGui::IsAnyItemHovered() == true)
-                {
-                    return true;
-                }
-
-                return false;
-            }
-
-            static void drawRectangleAtCurrentItem(const ImColor& color)
-            {
-                auto min = ImGui::GetItemRectMin();
-                auto max = ImGui::GetItemRectMax();
-
-                ImGui::GetWindowDrawList()->AddRect(min, max, color);
-            }
-
-            static void scrollWindowWithMiddleMouseButton()
-            {
-                ImGuiIO io = ImGui::GetIO();
-
-                ::ImGuiWindow* window = ImGui::GetCurrentWindow();
-
-                if (window->Rect().Contains(io.MousePos) == false)
-                {
-                    return;
-                }
-
-                // check if middle mouse button held down
-                if (io.MouseDown[2] == false)
-                {
-                    return;
-                }
-
-                ImVec2 mouseDelta = io.MouseDelta;
-
-                mouseDelta.x = -mouseDelta.x;
-                mouseDelta.y = -mouseDelta.y;
-
-                ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeAll);
-
-                if (mouseDelta.x != 0.0f)
-                {
-                    ImGui::SetScrollX(window, window->Scroll.x + mouseDelta.x);
-                }
-
-                if (mouseDelta.y != 0.0f)
-                {
-                    ImGui::SetScrollY(window, window->Scroll.y + mouseDelta.y);
-                }
-            }
-        }
-
-        namespace LibToml
-        {
-            struct LoadFileResult
-            {
-                bool Success = false;
-                std::string Text;
-            };
-
-            static LoadFileResult loadFile(toml::table& table, const std::string& fileName)
-            {
-                LoadFileResult result;
-
-                if (std::filesystem::exists(fileName) == false)
-                {
-                    result.Text = std::format("ERROR: File does not exist: {}\n", fileName);
-                    result.Success = false;
-                    return result;
-                }
-
-                table.clear();
-
-                try
-                {
-                    table = toml::parse_file(fileName);
-                }
-                catch (const toml::parse_error& parseError)
-                {
-                    result.Text = std::format("ERROR: Failed to load TOML data from file: {}\nDescription: {}\nLine: {}\nColumn: {}\n", fileName, parseError.description(), parseError.source().begin.line, parseError.source().begin.column);
-                    result.Success = false;
-                    return result;
-                }
-
-                result.Text = std::format("Loaded TOML data from file: {}\n", fileName);
-                result.Success = true;
-                return result;
             }
         }
     }

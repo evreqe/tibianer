@@ -42,7 +42,7 @@ public:
         std::string Author;
         std::uint32_t PlayerStartX = 0;
         std::uint32_t PlayerStartY = 0;
-        std::uint32_t PlayerStartZ = tb::ZAxis::Default;
+        std::uint32_t PlayerStartZ = tb::Constants::ZAxisDefault;
     };
 
     template<typename... Args>

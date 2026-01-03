@@ -1,17 +1,13 @@
 #pragma once
 
-// modules do not work LOL
-//import std;
-
-// SFML exception bug
-#pragma warning(disable: 4275)
-
 #include <cctype>
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
+
+#include <stdexcept>
 #include <stdfloat>
 
 #include <algorithm>
@@ -48,25 +44,8 @@
 #include <utility>
 #include <vector>
 
-#undef FMT_UNICODE
-#define FMT_UNICODE 0
-#include "fmt/core.h"
-#include "fmt/format.h"
-#include "fmt/ostream.h"
-#include "fmt/ranges.h"
-#include "fmt/compile.h"
-#include "fmt/std.h"
-
-#include "imgui.h"
-#include "imgui_internal.h"
-#include "imgui_stdlib.h"
-
-#include "imgui-SFML.h"
-
-#include "toml.hpp"
-
-#include "magic_enum.hpp"
-using namespace magic_enum::bitwise_operators;
-
-#include <SFML/Graphics.hpp>
-#include <SFML/Audio.hpp>
+#include "tb/LibFmt.h"
+#include "tb/LibImGui.h"
+#include "tb/LibMagicEnum.h"
+#include "tb/LibSfml.h"
+#include "tb/LibToml.h"

@@ -21,12 +21,12 @@ public:
 
     using List = std::vector<tb::Sprite>;
 
-    tb::SpriteID_t getID();
-    void setID(tb::SpriteID_t spriteID);
+    tb::SpriteID getID();
+    void setID(tb::SpriteID spriteID);
 
-    void setTileWidthAndHeightByID(tb::SpriteID_t spriteID);
+    void setTileWidthAndHeightByID(tb::SpriteID spriteID);
 
-    sf::IntRect getTextureRectByID(tb::SpriteID_t spriteID, std::uint8_t tileWidth, std::uint8_t tileHeight);
+    sf::IntRect getTextureRectByID(tb::SpriteID spriteID, std::uint8_t tileWidth, std::uint8_t tileHeight);
     void updateTextureRect();
 
     std::uint8_t getTileWidth();
@@ -37,7 +37,7 @@ public:
 
 private:
 
-    tb::SpriteID_t m_spriteID = tb::Constants::SpriteIDDefault;
+    tb::SpriteID m_spriteID = tb::Constants::SpriteIDDefault;
 
     std::uint8_t m_tileWidth = 1;
     std::uint8_t m_tileHeight = 1;

@@ -5,7 +5,6 @@
 #include "tb/ImGuiWindow.h"
 
 #include "tb/SpriteData.h"
-
 #include "tb/Sprite.h"
 
 namespace tb

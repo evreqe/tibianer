@@ -1,3 +1,5 @@
+#include "common.h"
+
 #include "tb/OptionsData.h"
 
 namespace tb
@@ -15,7 +17,7 @@ OptionsData::~OptionsData()
 
 bool OptionsData::load()
 {
-    tb::Utility::LibToml::LoadFileResult loadFileResult = tb::Utility::LibToml::loadFile(m_table, m_fileName);
+    tb::LibToml::LoadFileResult loadFileResult = tb::LibToml::loadFile(m_table, m_fileName);
 
     g_Log.write("{}", loadFileResult.Text);
 

@@ -1,3 +1,5 @@
+#include "common.h"
+
 #include "tb/OverlayWindow.h"
 
 namespace tb

@@ -2,6 +2,8 @@
 
 #include "common.h"
 
+#include "tb/Utility.h"
+
 #include "tb/ImGuiWindow.h"
 
 #include "tb/MenuBar.h"
@@ -45,8 +47,8 @@ public:
 
     void draw();
 
-    tb::SpriteID_t getSelectedSpriteID();
-    void setSelectedSpriteID(tb::SpriteID_t spriteID);
+    tb::SpriteID getSelectedSpriteID();
+    void setSelectedSpriteID(tb::SpriteID spriteID);
 
 private:
 
@@ -60,7 +62,7 @@ private:
 
     tb::SpriteData::Data m_spriteDataBackup;
 
-    tb::SpriteID_t m_selectedSpriteID = 1;
+    tb::SpriteID m_selectedSpriteID = 1;
 
     tb::SpriteFlag m_highlightSpriteFlag = tb::SpriteFlag::Null;
 

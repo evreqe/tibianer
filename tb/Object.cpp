@@ -1,10 +1,12 @@
+#include "common.h"
+
 #include "tb/Object.h"
 
 namespace tb
 {
 
 Object::Object() :
-    m_sprite(tb::Textures::Sprites)
+    m_sprite(tb::Resources::Textures::SpriteSheet)
 {
     setThingType(tb::ThingType::Object);
 }
@@ -19,8 +21,8 @@ Object::ObjectProperties_t* Object::getObjectProperties()
     return &m_objectProperties;
 }
 
-Object::Object(const sf::Vector2i& tileCoords, tb::ZAxis_t z, tb::SpriteID_t spriteID) :
-    m_sprite(tb::Textures::Sprites)
+Object::Object(const sf::Vector2i& tileCoords, tb::ZAxis z, tb::SpriteID spriteID) :
+    m_sprite(tb::Resources::Textures::SpriteSheet)
 {
     setThingType(tb::ThingType::Object);
 
@@ -50,42 +52,24 @@ void Object::update()
 
 void Object::animate()
 {
-    tb::SpriteID_t spriteID = getSpriteID();
-
-    tb::SpriteData::DataList* spriteDataList = g_SpriteData.getDataList();
-
-    if (spriteDataList == nullptr)
+    if (m_objectProperties.Animated == false)
     {
         return;
     }
 
-    tb::SpriteData::Data* spriteData = &spriteDataList->at(spriteID);
-
-    if (spriteData== nullptr)
+    if (m_animationData == nullptr)
     {
         return;
     }
 
-    if (spriteData->SpriteFlags.hasFlag(tb::SpriteFlag::Animated) == false)
-    {
-        return;
-    }
-
-    std::string_view animationName = spriteData->AnimationName;
-
-    tb::AnimationData::Data* animationData = g_AnimationData.getDataByNameSV(animationName);
-
-    if (animationData == nullptr)
-    {
-        return;
-    }
-
-    tb::SpriteIDList* spriteIDList = &animationData->SpriteIDList;
+    tb::SpriteIDList* spriteIDList = &m_animationData->SpriteIDList;
 
     if (spriteIDList == nullptr)
     {
         return;
     }
+
+    tb::SpriteID spriteID = getSpriteID();
 
     auto findIt = std::find(spriteIDList->begin(), spriteIDList->end(), spriteID);
 
@@ -170,16 +154,42 @@ tb::Sprite* Object::getSprite()
     return &m_sprite;
 }
 
-tb::SpriteID_t Object::getSpriteID()
+tb::SpriteID Object::getSpriteID()
 {
     return m_sprite.getID();
 }
 
-void Object::setSpriteID(tb::SpriteID_t spriteID)
+void Object::setSpriteID(tb::SpriteID spriteID)
 {
     m_sprite.setID(spriteID);
 
     m_sprite.setTileWidthAndHeightByID(spriteID);
+
+    tb::SpriteData::DataList* spriteDataList = g_SpriteData.getDataList();
+
+    if (spriteDataList != nullptr)
+    {
+        tb::SpriteData::Data* spriteData = &spriteDataList->at(spriteID);
+
+        if (spriteData != nullptr)
+        {
+            m_spriteData = spriteData;
+
+            if (spriteData->SpriteFlags.hasFlag(tb::SpriteFlag::Animated) == true)
+            {
+                m_objectProperties.Animated = true;
+
+                std::string_view animationName = spriteData->AnimationName;
+
+                tb::AnimationData::Data* animationData = g_AnimationData.getDataByNameSV(animationName);
+
+                if (animationData != nullptr)
+                {
+                    m_animationData = animationData;
+                }
+            }
+        }
+    }
 
     //tb::SpriteData::Data* data = &g_SpriteData.getDataList()->at(spriteID);
 

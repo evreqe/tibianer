@@ -1,3 +1,5 @@
+#include "common.h"
+
 #include "tb/HotkeysWindow.h"
 
 namespace tb

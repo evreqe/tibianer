@@ -1,3 +1,5 @@
+#include "common.h"
+
 #include "tb/BitmapFontText.h"
 
 namespace tb

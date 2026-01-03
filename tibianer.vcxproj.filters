@@ -324,6 +324,33 @@
     <ClCompile Include="tb\JoystickData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="tb\WindowsApi.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\LibImGui.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\LibToml.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\LibFmt.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\LibMagicEnum.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\LibSfml.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\LibBoost.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\LibPugiXml.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="common.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -651,6 +678,36 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="tb\JoystickData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\WindowsApi.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\LibImGui.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\LibToml.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\LibFmt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\LibMagicEnum.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\LibSfml.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\LibBoost.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\LibPugiXml.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\Types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\Resources.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

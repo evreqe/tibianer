@@ -1,3 +1,5 @@
+#include "common.h"
+
 #include "tb/MenuBar.h"
 
 namespace tb
@@ -117,8 +119,8 @@ void MenuBar::draw()
 
             ImGui::SeparatorText("Light Brightness##MenuItemGameWindowSeparatorLightBrightness");
 
-            static int lightBrightness = tb::LightBrightness::Max;
-            if (ImGui::DragInt("##MenuItemGameWindowDragIntLightBrightness", &lightBrightness, 1.0f, tb::LightBrightness::Min, tb::LightBrightness::Max))
+            static int lightBrightness = tb::Constants::LightBrightnessMax;
+            if (ImGui::DragInt("##MenuItemGameWindowDragIntLightBrightness", &lightBrightness, 1.0f, tb::Constants::LightBrightnessMin, tb::Constants::LightBrightnessMax))
             {
                 g_GameWindow.setLightBrightness(lightBrightness);
             }
@@ -128,7 +130,29 @@ void MenuBar::draw()
 
         if (ImGui::BeginMenu("Render Window##MenuItemRenderWindow"))
         {
-            ImGui::SeparatorText("4:3##MenuItemRenderWindowResolutionSeparator4by3");
+            ImGui::SeparatorText("Frames Per Second##MenuItemRenderWindowFramesPerSecondSeparator");
+
+            if (ImGui::MenuItem("10 FPS##MenuItemRenderWindowFramesPerSecond1", 0))
+            {
+                g_RenderWindow.getWindow()->setFramerateLimit(10);
+            }
+
+            if (ImGui::MenuItem("30 FPS##MenuItemRenderWindowFramesPerSecond2", 0))
+            {
+                g_RenderWindow.getWindow()->setFramerateLimit(30);
+            }
+
+            if (ImGui::MenuItem("60 FPS##MenuItemRenderWindowFramesPerSecond3", 0))
+            {
+                g_RenderWindow.getWindow()->setFramerateLimit(60);
+            }
+
+            if (ImGui::MenuItem("120 FPS##MenuItemRenderWindowFramesPerSecond4", 0))
+            {
+                g_RenderWindow.getWindow()->setFramerateLimit(120);
+            }
+
+            ImGui::SeparatorText("Resolution 4:3##MenuItemRenderWindowResolutionSeparator4by3");
 
             if (ImGui::MenuItem("640x480##MenuItemRenderWindowResolution1", 0))
             {
@@ -145,7 +169,7 @@ void MenuBar::draw()
                 g_RenderWindow.setSizeAndCenter(sf::Vector2u(1024, 768));
             }
 
-            ImGui::SeparatorText("16:9##MenuItemRenderWindowResolutionSeparator16by9");
+            ImGui::SeparatorText("Resolution 16:9##MenuItemRenderWindowResolutionSeparator16by9");
 
             if (ImGui::MenuItem("720p##MenuItemRenderWindowResolution4", 0))
             {

@@ -1,3 +1,5 @@
+#include "common.h"
+
 #include "tb/SpriteData.h"
 
 namespace tb
@@ -15,7 +17,7 @@ SpriteData::~SpriteData()
 
 bool SpriteData::load()
 {
-    tb::Utility::LibToml::LoadFileResult loadFileResult = tb::Utility::LibToml::loadFile(m_table, m_fileName);
+    tb::LibToml::LoadFileResult loadFileResult = tb::LibToml::loadFile(m_table, m_fileName);
 
     g_Log.write("{}", loadFileResult.Text);
 
@@ -45,7 +47,7 @@ bool SpriteData::load()
 
         tb::SpriteData::Data data;
 
-        data.SpriteID = static_cast<tb::SpriteID_t>(i);
+        data.SpriteID = static_cast<tb::SpriteID>(i);
 
         data.Name = m_table[index]["Name"].value_or("");
         data.Article = m_table[index]["Article"].value_or("");
@@ -82,7 +84,7 @@ bool SpriteData::load()
 
     if (m_dataList.size() != m_numToLoad + 1)
     {
-        g_Log.write("ERROR: Loaded data has the wrong size, {} instead of {}\n", m_dataList.size(), m_numToLoad + 1);
+        g_Log.write("ERROR: Loaded data has the wrong size, {} instead of {}\n", m_dataList.size(), m_numToLoad);
         return false;
     }
 
@@ -151,7 +153,7 @@ tb::SpriteData::DataList* SpriteData::getDataList()
     return &m_dataList;
 }
 
-tb::SpriteData::Data* SpriteData::getDataBySpriteID(const tb::SpriteID_t& spriteID)
+tb::SpriteData::Data* SpriteData::getDataBySpriteID(const tb::SpriteID& spriteID)
 {
     return &m_dataList.at(spriteID);
 }

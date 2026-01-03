@@ -28,26 +28,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -140,27 +140,66 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalIncludeDirectories>Z:\Code\!libraries_x64\boost_1_85_0\;Z:\Code\!libraries_x64\fmt-11.0.0\include;Z:\Code\!libraries_x64\scnlib-3.0.1\include;Z:\Code\!libraries_x64\pugixml-1.14\include;Z:\Code\!libraries_x64\tomlplusplus-3.4.0;Z:\Code\!libraries_x64\sol2-3.3.0\include;Z:\Code\!libraries_x64\SFML-3.0.0\include;Z:\Code\!libraries_x64\Thor\include;Z:\Code\!libraries_x64\Thor\extlibs\aurora\include;Z:\Code\tibianer\tibianer\;Z:\Code\tibianer\tibianer\boost_zlib;Z:\Code\tibianer\tibianer\boost_base64;Z:\Code\tibianer\tibianer\imgui;Z:\Code\tibianer\tibianer\imgui-sfml;Z:\Code\tibianer\tibianer\magic_enum;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Z:\Code\!libraries_x64\boost_1_85_0\;Z:\Code\!libraries_x64\fmt-11.0.0\include;Z:\Code\!libraries_x64\spdlog-1.15.1\include;Z:\Code\!libraries_x64\scnlib-3.0.1\include;Z:\Code\!libraries_x64\pugixml-1.14\include;Z:\Code\!libraries_x64\tomlplusplus-3.4.0;Z:\Code\!libraries_x64\sol2-3.3.0\include;Z:\Code\!libraries_x64\SFML-3.0.1\include;Z:\Code\!libraries_x64\Thor\include;Z:\Code\!libraries_x64\Thor\extlibs\aurora\include;Z:\Code\tibianer\tibianer\;Z:\Code\tibianer\tibianer\boost_zlib;Z:\Code\tibianer\tibianer\boost_base64;Z:\Code\tibianer\tibianer\imgui;Z:\Code\tibianer\tibianer\imgui-sfml;Z:\Code\tibianer\tibianer\magic_enum;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
       <EnableModules>false</EnableModules>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>common.h</PrecompiledHeaderFile>
+      <ForcedIncludeFiles>
+      </ForcedIncludeFiles>
+      <BuildStlModules>false</BuildStlModules>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>opengl32.lib;freetype.lib;flac.lib;ogg.lib;vorbis.lib;vorbisenc.lib;vorbisfile.lib;sfml-audio.lib;sfml-graphics.lib;sfml-main-s.lib;sfml-network.lib;sfml-system.lib;sfml-window.lib;thor.lib;lua51.lib;luajit.lib;lua-5.4.4.lib;fmt.lib;scn.lib;pugixml.lib;libboost_iostreams-vc143-mt-x64-1_85.lib;libboost_zlib-vc143-mt-x64-1_85.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>Z:\Code\!libraries_x64\SFML-3.0.0\lib;Z:\Code\!libraries_x64\Thor\lib;Z:\Code\!libraries_x64\boost_1_85_0\lib64-msvc-14.3;Z:\Code\!libraries_x64\fmt-11.0.0\lib;Z:\Code\!libraries_x64\scnlib-3.0.1\lib;Z:\Code\!libraries_x64\sol2-3.3.0\lib;Z:\Code\!libraries_x64\pugixml-1.14\lib;Z:\Code\!libraries_x64\LuaJIT-2.1\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;freetype.lib;flac.lib;ogg.lib;vorbis.lib;vorbisenc.lib;vorbisfile.lib;sfml-audio.lib;sfml-graphics.lib;sfml-main.lib;sfml-network.lib;sfml-system.lib;sfml-window.lib;thor.lib;lua51.lib;luajit.lib;lua-5.4.4.lib;spdlog.lib;fmt.lib;scn.lib;pugixml.lib;libboost_iostreams-vc143-mt-x64-1_85.lib;libboost_zlib-vc143-mt-x64-1_85.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>Z:\Code\!libraries_x64\SFML-3.0.1\lib;Z:\Code\!libraries_x64\Thor\lib;Z:\Code\!libraries_x64\boost_1_85_0\lib64-msvc-14.3;Z:\Code\!libraries_x64\spdlog-1.15.1\lib;Z:\Code\!libraries_x64\fmt-11.0.0\lib;Z:\Code\!libraries_x64\scnlib-3.0.1\lib;Z:\Code\!libraries_x64\sol2-3.3.0\lib;Z:\Code\!libraries_x64\pugixml-1.14\lib;Z:\Code\!libraries_x64\LuaJIT-2.1\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="imgui-sfml\imgui-SFML.cpp" />
-    <ClCompile Include="imgui\imgui.cpp" />
-    <ClCompile Include="imgui\imgui_demo.cpp" />
-    <ClCompile Include="imgui\imgui_draw.cpp" />
-    <ClCompile Include="imgui\imgui_stdlib.cpp" />
-    <ClCompile Include="imgui\imgui_tables.cpp" />
-    <ClCompile Include="imgui\imgui_widgets.cpp" />
+    <ClCompile Include="common.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="imgui-sfml\imgui-SFML.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_demo.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_draw.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_stdlib.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_tables.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_widgets.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </PrecompiledHeaderFile>
+    </ClCompile>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="tb\AboutTibianerWindow.cpp" />
     <ClCompile Include="tb\AboutTibiaWindow.cpp" />
@@ -195,6 +234,41 @@
     <ClCompile Include="tb\HotkeysWindow.cpp" />
     <ClCompile Include="tb\Joystick.cpp" />
     <ClCompile Include="tb\JoystickData.cpp" />
+    <ClCompile Include="tb\LibBoost.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="tb\LibFmt.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="tb\LibImGui.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="tb\LibMagicEnum.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="tb\LibPugiXml.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="tb\LibSfml.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="tb\LibToml.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </PrecompiledHeaderFile>
+    </ClCompile>
     <ClCompile Include="tb\Light.cpp" />
     <ClCompile Include="tb\LightBatch.cpp" />
     <ClCompile Include="tb\LogWindow.cpp" />
@@ -246,6 +320,7 @@
     <ClCompile Include="tb\TipsAndTricksWindow.cpp" />
     <ClCompile Include="tb\WaterAnimationData.cpp" />
     <ClCompile Include="tb\ImGuiWindow.cpp" />
+    <ClCompile Include="tb\WindowsApi.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="boost_base64\boost_base64.hpp" />
@@ -305,6 +380,13 @@
     <ClInclude Include="tb\HotkeysWindow.h" />
     <ClInclude Include="tb\Joystick.h" />
     <ClInclude Include="tb\JoystickData.h" />
+    <ClInclude Include="tb\LibBoost.h" />
+    <ClInclude Include="tb\LibFmt.h" />
+    <ClInclude Include="tb\LibImGui.h" />
+    <ClInclude Include="tb\LibMagicEnum.h" />
+    <ClInclude Include="tb\LibPugiXml.h" />
+    <ClInclude Include="tb\LibSfml.h" />
+    <ClInclude Include="tb\LibToml.h" />
     <ClInclude Include="tb\Light.h" />
     <ClInclude Include="tb\LightBatch.h" />
     <ClInclude Include="tb\LogWindow.h" />
@@ -332,6 +414,7 @@
     <ClInclude Include="tb\Projectile.h" />
     <ClInclude Include="tb\RayCast.h" />
     <ClInclude Include="tb\RenderWindow.h" />
+    <ClInclude Include="tb\Resources.h" />
     <ClInclude Include="tb\Script.h" />
     <ClInclude Include="tb\ScriptManager.h" />
     <ClInclude Include="tb\SetOutfitWindow.h" />
@@ -354,9 +437,11 @@
     <ClInclude Include="tb\TileMap.h" />
     <ClInclude Include="tb\TipsAndTricksData.h" />
     <ClInclude Include="tb\TipsAndTricksWindow.h" />
+    <ClInclude Include="tb\Types.h" />
     <ClInclude Include="tb\Utility.h" />
     <ClInclude Include="tb\WaterAnimationData.h" />
     <ClInclude Include="tb\ImGuiWindow.h" />
+    <ClInclude Include="tb\WindowsApi.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />

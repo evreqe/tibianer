@@ -1,3 +1,5 @@
+#include "common.h"
+
 #include "tb/Map.h"
 
 namespace tb
@@ -132,7 +134,7 @@ bool Map::load(const std::string& fileName)
         }
         else if (xmlNode_map_properties_property__name == "PlayerStartZ")
         {
-            m_properties.PlayerStartZ = static_cast<tb::ZAxis_t>(xmlNode_map_properties_property.attribute("value").as_uint());
+            m_properties.PlayerStartZ = static_cast<tb::ZAxis>(xmlNode_map_properties_property.attribute("value").as_uint());
         }
         else if (xmlNode_map_properties_property__name == "TimeOfDay")
         {
@@ -158,7 +160,7 @@ bool Map::load(const std::string& fileName)
 
         //g_Log.write("xml_node map_group__name: {}\n", xmlNode_map_group__name);
 
-        tb::ZAxis_t tileMapZ = static_cast<tb::ZAxis_t>(xmlNode_map_group.attribute("name").as_uint()); // z-axis is the name of the Group Layer in Tiled Editor
+        tb::ZAxis tileMapZ = static_cast<tb::ZAxis>(xmlNode_map_group.attribute("name").as_uint()); // z-axis is the name of the Group Layer in Tiled Editor
 
         pugi::xml_node xmlNode_map_group_layer_node = xmlNode_map_group.child("layer");
         if (xmlNode_map_group_layer_node == NULL)
@@ -264,7 +266,7 @@ bool Map::load(const std::string& fileName)
                     std::uint32_t tileSpriteID;
                     xmlNode_map_group_layer_data__istringstream.read(reinterpret_cast<char*>(&tileSpriteID), 4);
 
-                    tileSpriteIDList.push_back((tb::SpriteID_t)tileSpriteID);
+                    tileSpriteIDList.push_back((tb::SpriteID)tileSpriteID);
                 }
             }
             else
@@ -278,7 +280,7 @@ bool Map::load(const std::string& fileName)
                 std::istringstream tokenStream(xmlNode_map_group_layer_data__string);
                 while (std::getline(tokenStream, token, ','))
                 {
-                    tb::SpriteID_t spriteID = static_cast<tb::SpriteID_t>(std::stoi(token));
+                    tb::SpriteID spriteID = static_cast<tb::SpriteID>(std::stoi(token));
 
                     //g_Log.write("Sprite ID: {}\n", spriteID);
 
@@ -352,7 +354,7 @@ bool Map::load(const std::string& fileName)
 
                 for (auto& xmlNode_map_group_objectgroup_object : xmlNode_map_group_objectgroup.children("object"))
                 {
-                    tb::SpriteID_t objectSpriteID = static_cast<tb::SpriteID_t>(xmlNode_map_group_objectgroup_object.attribute("gid").as_uint());
+                    tb::SpriteID objectSpriteID = static_cast<tb::SpriteID>(xmlNode_map_group_objectgroup_object.attribute("gid").as_uint());
 
                     //g_Log.write("object sprite ID: {}\n", objectSpriteID);
 
@@ -535,7 +537,7 @@ bool Map::isTileCoordsOutOfBounds(const sf::Vector2i& tileCoords)
     return false;
 }
 
-tb::Tile::Ptr Map::getTile(const sf::Vector2i& tileCoords, tb::ZAxis_t z)
+tb::Tile::Ptr Map::getTile(const sf::Vector2i& tileCoords, tb::ZAxis z)
 {
     tb::TileMap::Ptr tileMap = getTileMapOfTilesAtZ(z);
 
@@ -607,7 +609,7 @@ std::uint32_t Map::getNumTiles()
     return m_numTiles;
 }
 
-tb::TileMap::Ptr Map::getTileMapOfTilesAtZ(tb::ZAxis_t z)
+tb::TileMap::Ptr Map::getTileMapOfTilesAtZ(tb::ZAxis z)
 {
     auto it = std::find_if
     (
@@ -626,7 +628,7 @@ tb::TileMap::Ptr Map::getTileMapOfTilesAtZ(tb::ZAxis_t z)
     return *it;
 }
 
-tb::TileMap::Ptr Map::getTileMapOfTileEdgesAtZ(tb::ZAxis_t z)
+tb::TileMap::Ptr Map::getTileMapOfTileEdgesAtZ(tb::ZAxis z)
 {
     auto it = std::find_if
     (

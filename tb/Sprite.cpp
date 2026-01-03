@@ -1,3 +1,5 @@
+#include "common.h"
+
 #include "tb/Sprite.h"
 
 namespace tb
@@ -14,44 +16,50 @@ Sprite::~Sprite()
     //
 }
 
-tb::SpriteID_t Sprite::getID()
+tb::SpriteID Sprite::getID()
 {
     return m_spriteID;
 }
 
-void Sprite::setID(tb::SpriteID_t spriteID)
+void Sprite::setID(tb::SpriteID spriteID)
 {
     m_spriteID = spriteID;
 
     updateTextureRect();
 }
 
-void Sprite::setTileWidthAndHeightByID(tb::SpriteID_t spriteID)
+void Sprite::setTileWidthAndHeightByID(tb::SpriteID spriteID)
 {
     tb::SpriteData::Data* spriteData = &g_SpriteData.getDataList()->at(spriteID);
 
-     m_tileWidth = spriteData->TileWidth;
+    m_tileWidth = spriteData->TileWidth;
     m_tileHeight = spriteData->TileHeight;
 
     updateTextureRect();
 }
 
-sf::IntRect Sprite::getTextureRectByID(tb::SpriteID_t spriteID, std::uint8_t tileWidth, std::uint8_t tileHeight)
+sf::IntRect Sprite::getTextureRectByID(tb::SpriteID spriteID, std::uint8_t tileWidth, std::uint8_t tileHeight)
 {
-    // index in the spritesheet starts at 1
-    spriteID = spriteID - 1;
+    const std::int32_t tileSize = tb::Constants::TileSize;
 
-    sf::Vector2u spritesTextureSize = tb::Textures::Sprites.getSize();
-
-    if (spritesTextureSize.x == 0 || spritesTextureSize.y == 0)
+    if (spriteID == 0)
     {
-        throw std::runtime_error("ERROR: Invalid texture size");
+        return sf::IntRect({0, 0}, {tileSize, tileSize});
     }
 
-    const std::uint32_t tileSize = tb::Constants::TileSize;
+    // index in the spritesheet starts at 1 instead of 0
+    // this is because Tiled Editor indexes the tiles and objects starting at 1
+    spriteID = spriteID - 1;
+
+    sf::Vector2u spriteSheetTextureSize = tb::Resources::Textures::SpriteSheet.getSize();
+
+    if (spriteSheetTextureSize.x == 0 || spriteSheetTextureSize.y == 0)
+    {
+        throw std::runtime_error("ERROR: Invalid texture size for sprites is going to cause divide by zero");
+    }
     
-    std::int32_t tileU = (spriteID % (spritesTextureSize.x / tileSize)) * tileSize;
-    std::int32_t tileV = (spriteID / (spritesTextureSize.y / tileSize)) * tileSize;
+    std::int32_t tileU = (spriteID % (spriteSheetTextureSize.x / tileSize)) * tileSize;
+    std::int32_t tileV = (spriteID / (spriteSheetTextureSize.y / tileSize)) * tileSize;
     
     tileU = tileU - ((tileWidth  - 1) * tileSize);
     tileV = tileV - ((tileHeight - 1) * tileSize);

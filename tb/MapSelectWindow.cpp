@@ -1,3 +1,5 @@
+#include "common.h"
+
 #include "tb/MapSelectWindow.h"
 
 namespace tb
@@ -73,9 +75,9 @@ void MapSelectWindow::draw()
                 {
                     setIsVisible(false);
 
-                    g_Game.setGameState(tb::GameState::LoadingMap);
-
                     g_Game.loadMapUsingThread(m_selectedMapData->FileName);
+
+                    g_Game.setGameState(tb::GameState::LoadingMap);
                 }
             }
 

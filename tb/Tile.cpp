@@ -1,3 +1,5 @@
+#include "common.h"
+
 #include "tb/Tile.h"
 
 namespace tb
@@ -23,12 +25,12 @@ void Tile::setTileIndex(std::uint32_t tileIndex)
     m_tileIndex = tileIndex;
 }
 
-tb::SpriteID_t Tile::getSpriteID()
+tb::SpriteID Tile::getSpriteID()
 {
     return m_spriteID;
 }
 
-void Tile::setSpriteID(tb::SpriteID_t spriteID)
+void Tile::setSpriteID(tb::SpriteID spriteID)
 {
     m_spriteID = spriteID;
 }
@@ -52,7 +54,7 @@ void Tile::setPixelCoords(const sf::Vector2f& pixelCoords)
 {
     m_pixelCoords = pixelCoords;
 
-    if (pixelCoords.x < 0.0f)
+    if (pixelCoords.x <= 0.0f)
     {
         m_tileCoords.x = 0;
     }
@@ -61,7 +63,7 @@ void Tile::setPixelCoords(const sf::Vector2f& pixelCoords)
         m_tileCoords.x = static_cast<int>(pixelCoords.x / tb::Constants::TileSizeAsFloat);
     }
 
-    if (pixelCoords.y < 0.0f)
+    if (pixelCoords.y <= 0.0f)
     {
         m_tileCoords.y = 0;
     }
@@ -80,7 +82,14 @@ void Tile::setPixelX(float pixelX)
 {
     m_pixelCoords.x = pixelX;
 
-    m_tileCoords.x = static_cast<int>(pixelX / tb::Constants::TileSizeAsFloat);
+    if (pixelX <= 0.0f)
+    {
+        m_tileCoords.x = 0;
+    }
+    else
+    {
+        m_tileCoords.x = static_cast<int>(pixelX / tb::Constants::TileSizeAsFloat);
+    }
 }
 
 float Tile::getPixelY()
@@ -92,7 +101,14 @@ void Tile::setPixelY(float pixelY)
 {
     m_pixelCoords.y = pixelY;
 
-    m_tileCoords.y = static_cast<int>(pixelY / tb::Constants::TileSizeAsFloat);
+    if (pixelY <= 0.0f)
+    {
+        m_tileCoords.y = 0;
+    }
+    else
+    {
+        m_tileCoords.y = static_cast<int>(pixelY / tb::Constants::TileSizeAsFloat);
+    }
 }
 
 sf::Vector2i Tile::getTileCoords()
@@ -132,12 +148,12 @@ void Tile::setTileY(std::int32_t tileY)
     m_pixelCoords.y = static_cast<float>(tileY * tb::Constants::TileSize);
 }
 
-tb::ZAxis_t Tile::getZ()
+tb::ZAxis Tile::getZ()
 {
     return m_z;
 }
 
-void Tile::setZ(tb::ZAxis_t z)
+void Tile::setZ(tb::ZAxis z)
 {
     m_z = z;
 }
@@ -200,6 +216,30 @@ void Tile::addEntity(tb::Entity::Ptr entity)
 void Tile::removeEntity(tb::Entity::Ptr entity)
 {
     std::erase(m_entityList, entity);
+}
+
+tb::Thing::List Tile::createThingList()
+{
+    tb::Thing::List thingList;
+
+    tb::Object::List* objectList = getObjectList();
+    tb::Creature::List* creatureList = getCreatureList();
+    tb::Animation::List* animationList = getAnimationList();
+
+    std::size_t thingListReserveSize = 
+        objectList->size()           +
+        creatureList->size()         +
+        animationList->size();
+
+    thingList.reserve(thingListReserveSize);
+
+    thingList.insert(thingList.end(), objectList->begin(), objectList->end());
+    thingList.insert(thingList.end(), creatureList->begin(), creatureList->end());
+    thingList.insert(thingList.end(), animationList->begin(), animationList->end());
+
+    std::stable_sort(std::execution::par, thingList.begin(), thingList.end(), tb::Thing::SortByTileCoords_t());
+
+    return thingList;
 }
 
 tb::Object::List* Tile::getObjectList()

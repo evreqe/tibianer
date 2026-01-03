@@ -21,40 +21,30 @@ public:
 
     Animation();
     ~Animation();
-    Animation(const sf::Vector2i& tileCoords, tb::ZAxis_t z, std::uint32_t index);
-    Animation(const sf::Vector2i& tileCoords, tb::ZAxis_t z, const std::string& name);
+    Animation(const sf::Vector2i& tileCoords, tb::ZAxis z, std::uint32_t index);
+    Animation(const sf::Vector2i& tileCoords, tb::ZAxis z, const std::string& name);
 
     using Ptr = std::shared_ptr<tb::Animation>;
     using List = std::vector<tb::Animation::Ptr>;
 
     void initalize();
-
     void update();
-
     void advanceFrame();
 
     tb::Sprite* getSprite();
-
+    tb::SpriteID getSpriteID();
     tb::AnimationData::Data* getData();
-
     tb::SpriteIDList* getSpriteIDList();
-
     sf::Clock* getClock();
 
 private:
 
     tb::Sprite m_sprite;
-
     tb::AnimationData::Data* m_animationData = nullptr;
-
     tb::SpriteIDList* m_spriteIDList = nullptr;
-
     sf::Clock m_clock;
-
     std::uint32_t m_currentFrame = 0;
-
     sf::Time m_frameTime = sf::seconds(0.1f);
-
     std::uint32_t m_numRepeat = 0;
 
 };

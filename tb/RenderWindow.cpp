@@ -1,3 +1,5 @@
+#include "common.h"
+
 #include "tb/RenderWindow.h"
 
 namespace tb
@@ -50,10 +52,10 @@ bool RenderWindow::create()
 
     if (startMaximized == true)
     {
-        m_window.setSize(sf::Vector2u(sf::VideoMode::getDesktopMode().size.x, sf::VideoMode::getDesktopMode().size.y));
+        m_window.setSize(sf::VideoMode::getDesktopMode().size);
         m_window.setPosition(sf::Vector2i(0, 0));
 
-        ::ShowWindow(m_window.getNativeHandle(), SW_MAXIMIZE);
+        tb::WindowsApi::MaximizeWindow(m_window.getNativeHandle());
     }
 
     const std::optional<sf::Cursor> arrowCursor = sf::Cursor::createFromSystem(sf::Cursor::Type::Arrow);
@@ -71,6 +73,16 @@ bool RenderWindow::create()
 
 void RenderWindow::setSizeAndCenter(sf::Vector2u size)
 {
+    sf::WindowHandle renderWindowHandle = m_window.getNativeHandle();
+
+    // normalize render window
+    tb::WindowsApi::NormalizeWindow(renderWindowHandle);
+
+    sf::Vector2u desktopWindowSize = sf::VideoMode::getDesktopMode().size;
+
+    g_Log.write("desktop window size: {},{}\n", desktopWindowSize.x, desktopWindowSize.y);
+
+    // size is too small, set to minimum width and height
     if (size.x < m_widthMinimum)
     {
         size.x = m_widthMinimum;
@@ -81,61 +93,48 @@ void RenderWindow::setSizeAndCenter(sf::Vector2u size)
         size.y = m_heightMinimum;
     }
 
-    HWND renderWindow = m_window.getNativeHandle();
-
-    HWND desktopWindow = ::GetDesktopWindow();
-
-    RECT desktopRect;
-    ::GetWindowRect(desktopWindow, &desktopRect);
-
-    std::uint32_t desktopWidth  = desktopRect.right  - desktopRect.left;
-    std::uint32_t desktopHeight = desktopRect.bottom - desktopRect.top;
-
-    g_Log.write("desktop window size: {},{}\n", desktopWidth, desktopHeight);
-
-    // new size is too big to fit inside the desktop
-    if (size.x > desktopWidth || size.y > desktopHeight)
+    // size is too big to fit inside the desktop window, set to desktop window size
+    if (size.x > desktopWindowSize.x)
     {
-        // maximize window
-        ::ShowWindow(renderWindow, SW_MAXIMIZE);
-        return;
+        size.x = desktopWindowSize.x;
     }
 
-    // check if window is minimized or maximized
-    if (::IsIconic(renderWindow) == TRUE || ::IsZoomed(renderWindow) == TRUE)
+    if (size.y > desktopWindowSize.y)
     {
-        // restore window
-        ::ShowWindow(renderWindow, SW_NORMAL);
+        size.y = desktopWindowSize.y;
     }
+
+    g_Log.write("size: {},{}\n", size.x, size.y);
 
     m_window.setSize(size);
 
-    RECT renderWindowRect;
-    ::GetWindowRect(renderWindow, &renderWindowRect);
-
-    std::uint32_t renderWindowWidth  = renderWindowRect.right  - renderWindowRect.left;
-    std::uint32_t renderWindowHeight = renderWindowRect.bottom - renderWindowRect.top;
-
-    // center window
-    m_window.setPosition
-    (
-        sf::Vector2i
-        (
-            (desktopWidth  / 2) - (renderWindowWidth  / 2),
-            (desktopHeight / 2) - (renderWindowHeight / 2)
-        )
-    );
-
-    // prevent window from going offscreen
-    ::GetWindowRect(renderWindow, &renderWindowRect);
-
-    if (renderWindowRect.left < 0 || renderWindowRect.top < 0)
+    // size is the same as or greather than the desktop window size, maximize render window
+    if (size.x >= desktopWindowSize.x || size.y >= desktopWindowSize.y)
     {
-        // cut window size in half
-        setSizeAndCenter(sf::Vector2u(desktopWidth / 2, desktopHeight / 2));
+        // maximize render window
+        tb::WindowsApi::MaximizeWindow(renderWindowHandle);
+        return;
+    }
 
-        // maximize window
-        ::ShowWindow(renderWindow, SW_MAXIMIZE);
+    sf::Vector2u renderWindowSize = m_window.getSize();
+
+    g_Log.write("render window size: {},{}\n", renderWindowSize.x, renderWindowSize.y);
+
+    if (desktopWindowSize.x != 0 && desktopWindowSize.y != 0 && renderWindowSize.x != 0 && renderWindowSize.y != 0)
+    {
+        sf::Vector2i centerPosition =
+        {
+            static_cast<int>((desktopWindowSize.x / 2) - (renderWindowSize.x / 2)),
+            static_cast<int>((desktopWindowSize.y / 2) - (renderWindowSize.y / 2))
+        };
+
+        g_Log.write("center position: {},{}\n", centerPosition.x, centerPosition.y);
+
+        // center render window
+        if (centerPosition.x != 0 && centerPosition.y != 0)
+        {
+            m_window.setPosition(centerPosition);
+        }
     }
 }
 

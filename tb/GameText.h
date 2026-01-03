@@ -2,7 +2,7 @@
 
 #include "common.h"
 
-#include <boost/algorithm/string.hpp>
+#include "tb/LibBoost.h"
 
 #include "tb/Constants.h"
 #include "tb/Utility.h"
@@ -22,11 +22,11 @@ public:
     GameText();
     ~GameText();
 
-    bool setText(tb::BitmapFont* bitmapFont, const sf::Vector2i& tileCoords, tb::ZAxis_t z, const std::string& text, const sf::Color& textColor, bool isCentered = true);
+    bool setText(tb::BitmapFont* bitmapFont, const sf::Vector2i& tileCoords, tb::ZAxis z, const std::string& text, const sf::Color& textColor, bool isCentered = true);
 
     sf::Vector2i getTileCoords();
 
-    tb::ZAxis_t getZ();
+    tb::ZAxis getZ();
 
     std::string getText();
 
@@ -42,7 +42,7 @@ private:
 
     sf::Vector2i m_tileCoords;
 
-    tb::ZAxis_t m_z = tb::ZAxis::Default;
+    tb::ZAxis m_z = tb::Constants::ZAxisDefault;
 
     std::string m_text;
 

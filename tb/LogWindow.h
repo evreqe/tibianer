@@ -2,6 +2,8 @@
 
 #include "common.h"
 
+#include "tb/Utility.h"
+
 #include "tb/ImGuiWindow.h"
 
 #include "tb/Log.h"

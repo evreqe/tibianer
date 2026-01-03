@@ -92,6 +92,9 @@ private:
     std::string m_logText;
     std::size_t m_logTextReserveSize = 256;
 
+    //spdlog
+    //std::shared_ptr<spdlog::logger> m_logger;
+
 };
 
 }

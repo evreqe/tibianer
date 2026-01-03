@@ -1,3 +1,5 @@
+#include "common.h"
+
 #include "tb/CommentsWindow.h"
 
 namespace tb

@@ -67,8 +67,6 @@
 #include "tb/AboutTibianerWindow.h"
 #include "tb/MapGeneratorWindow.h"
 
-#include <windows.h> // must be included last due to conflicts
-
 namespace tb
 {
 
@@ -145,7 +143,7 @@ public:
     bool loadConfig();
     bool loadData();
 
-    bool loadGlobalsFromData();
+    bool loadResources();
     bool loadTextures();
     bool loadFonts();
     bool loadBitmapFonts();
@@ -199,12 +197,12 @@ public:
 
     sf::Vector2i getMousePositionInDesktop();
 
-    tb::VisibleZ_t getVisibleZOfPlayer();
+    tb::ZAxisVisible getZAxisVisibleOfPlayer();
 
     bool createPlayer();
 
-    bool spawnAnimationByIndex(const sf::Vector2i& tileCoords, tb::ZAxis_t z, std::uint32_t index);
-    bool spawnAnimationByName(const sf::Vector2i& tileCoords, tb::ZAxis_t z, const std::string& name);
+    bool spawnAnimationByIndex(const sf::Vector2i& tileCoords, tb::ZAxis z, std::uint32_t index);
+    bool spawnAnimationByName(const sf::Vector2i& tileCoords, tb::ZAxis z, const std::string& name);
 
     void handleEventClosed();
     void handleEventResized(const sf::Event::Resized* eventResized);
@@ -225,6 +223,9 @@ public:
 
     void handleKeyboardInput();
     void handleJoystickInput();
+
+    void handleCameraMovement();
+    void handlePlayerMovement();
 
     void setMouseCursor(const sf::Cursor& cursor);
     void fixMouseCursorForWindowResize(sf::RenderWindow* renderWindow);
@@ -264,7 +265,7 @@ public:
 
     tb::Tile::Ptr getTileByThingMovementDirection(tb::Thing::Ptr thing, tb::MovementDirection direction);
 
-    bool findCeilingAbovePlayerAtZ(tb::ZAxis_t z);
+    bool findCeilingAbovePlayerAtZ(tb::ZAxis z);
 
     void handleCreatureMovement(tb::Creature::Ptr creature, tb::MovementDirection movementDirection);
 
@@ -294,13 +295,10 @@ private:
     sf::Clock m_framesPerSecondClock;
     sf::Time m_framesPerSecondCurrentTime;
     sf::Time m_framesPerSecondPreviousTime;
-    float m_framesPerSecond;
+    float m_framesPerSecond = 0.0f;
 
     unsigned int m_joystickIndex = 0;
     tb::JoystickList m_joystickList;
-
-    sf::Clock m_cameraKeyPressedClock;
-    const sf::Time m_cameraKeyPressedTime = sf::milliseconds(100);
 
     const std::filesystem::path m_systemFontFileName = "fonts/system.ttf";
 
@@ -321,7 +319,12 @@ private:
         {"SystemFixed",    m_systemFixedBitmapFont},
     };
 
+    sf::Clock m_cameraMovementClock;
+    const sf::Time m_cameraMovementTime = sf::milliseconds(100);
+
     tb::Creature::Ptr m_player = nullptr;
+    sf::Clock m_playerMovementClock;
+     const sf::Time m_playerMovementTime = sf::milliseconds(100);
 
 };
 

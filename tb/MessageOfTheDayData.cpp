@@ -1,3 +1,5 @@
+#include "common.h"
+
 #include "tb/MessageOfTheDayData.h"
 
 namespace tb
@@ -87,7 +89,7 @@ std::string MessageOfTheDayData::getMessageOfTheDay()
 
     if (day > numMessages)
     {
-        messageIndex = tb::Utility::getRandomNumber(0, static_cast<std::uint32_t>(numMessages - 1));
+        messageIndex = tb::Utility::Random::getNumberAsInt<std::uint32_t>(0, static_cast<std::uint32_t>(numMessages - 1));
     }
     else
     {

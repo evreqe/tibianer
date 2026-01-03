@@ -1,10 +1,12 @@
+#include "common.h"
+
 #include "tb/StatusWindow.h"
 
 namespace tb
 {
 
 StatusWindow::StatusWindow() :
-    m_statusWindowSprite(tb::Textures::GUI)
+    m_statusWindowSprite(tb::Resources::Textures::GUI)
 {
     setWindowRenderTextureInitialSize(m_windowRenderTextureSize);
 
@@ -53,7 +55,7 @@ void StatusWindow::setPositionInLayout()
 
 void StatusWindow::predraw()
 {
-    m_statusWindowSprite.setTextureRect(tb::GuiRects::StatusWindow);
+    m_statusWindowSprite.setTextureRect(tb::Resources::GuiRects::StatusWindow);
 }
 
 void StatusWindow::draw()

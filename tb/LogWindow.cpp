@@ -1,3 +1,5 @@
+#include "common.h"
+
 #include "tb/LogWindow.h"
 
 namespace tb
@@ -28,6 +30,8 @@ void LogWindow::draw()
     const std::string logText = g_Log.getText();
 
     ImGui::TextUnformatted(logText.c_str());
+
+    tb::LibImGui::scrollWindowWithMiddleMouseButton();
 
     ImGui::EndChild();
 

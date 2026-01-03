@@ -1,10 +1,12 @@
+#include "common.h"
+
 #include "tb/SfmlGuiWindow.h"
 
 namespace tb
 {
 
 SfmlGuiWindow::SfmlGuiWindow() :
-    m_windowSprite(tb::Textures::Null)
+    m_windowSprite(tb::Resources::Textures::Null)
 {
     //
 }

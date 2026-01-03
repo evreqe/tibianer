@@ -21,7 +21,7 @@ public:
 
     Creature();
     ~Creature();
-    Creature(const sf::Vector2i& tileCoords, tb::ZAxis_t z);
+    Creature(const sf::Vector2i& tileCoords, tb::ZAxis z);
 
     using Ptr = std::shared_ptr<tb::Creature>;
     using List = std::vector<tb::Creature::Ptr>;

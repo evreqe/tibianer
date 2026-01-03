@@ -1,3 +1,5 @@
+#include "common.h"
+
 #include "tb/MessageOfTheDayWindow.h"
 
 namespace tb

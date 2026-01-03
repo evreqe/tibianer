@@ -1,3 +1,5 @@
+#include "common.h"
+
 #include "tb/AboutTibiaWindow.h"
 
 namespace tb
@@ -26,8 +28,8 @@ void AboutTibiaWindow::draw()
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
 
-        tb::Sprite sprite(tb::Textures::Sprites);
-        sprite.setID(tb::Sprites::TbIconLarge);
+        tb::Sprite sprite(tb::Resources::Textures::SpriteSheet);
+        sprite.setID(tb::Resources::Sprites::TbIconLarge);
 
         ImGui::Image(sprite);
 

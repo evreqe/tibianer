@@ -38,8 +38,8 @@ public:
     std::uint32_t getTileIndex();
     void setTileIndex(std::uint32_t tileIndex);
 
-    tb::SpriteID_t getSpriteID();
-    void setSpriteID(tb::SpriteID_t spriteID);
+    tb::SpriteID getSpriteID();
+    void setSpriteID(tb::SpriteID spriteID);
 
     tb::SpriteFlags* getSpriteFlags();
     void setSpriteFlags(const tb::SpriteFlags& spriteFlags);
@@ -62,8 +62,8 @@ public:
     std::int32_t getTileY();
     void setTileY(std::int32_t tileY);
 
-    tb::ZAxis_t getZ();
-    void setZ(tb::ZAxis_t z);
+    tb::ZAxis getZ();
+    void setZ(tb::ZAxis z);
 
     std::uint8_t getHeight();
     void setHeight(std::uint8_t height);
@@ -83,6 +83,8 @@ public:
     void addEntity(tb::Entity::Ptr entity);
     void removeEntity(tb::Entity::Ptr entity);
 
+    tb::Thing::List createThingList();
+
     tb::Object::List* getObjectList();
     tb::Object::List* getTileEdgeObjectList();
     tb::Creature::List* getCreatureList();
@@ -93,14 +95,14 @@ private:
 
     std::uint32_t m_tileIndex = 0; // index of the tile on the screen from left to right, top to bottom
 
-    tb::SpriteID_t m_spriteID = 0;
+    tb::SpriteID m_spriteID = tb::Constants::SpriteIDNull;
 
     tb::SpriteFlags m_spriteFlags;
 
     sf::Vector2i m_tileCoords;
     sf::Vector2f m_pixelCoords;
 
-    tb::ZAxis_t m_z = tb::ZAxis::Default;
+    tb::ZAxis m_z = tb::Constants::ZAxisDefault;
 
     std::uint8_t m_height = 0; // number of objects stacked vertically on the tile
 

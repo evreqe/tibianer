@@ -1,3 +1,5 @@
+#include "common.h"
+
 #include "tb/Thing.h"
 
 namespace tb
@@ -74,7 +76,7 @@ void Thing::setPixelCoords(const sf::Vector2f& pixelCoords)
 {
     m_pixelCoords = pixelCoords;
 
-    if (pixelCoords.x < 0.0f)
+    if (pixelCoords.x <= 0.0f)
     {
         m_tileCoords.x = 0;
     }
@@ -83,7 +85,7 @@ void Thing::setPixelCoords(const sf::Vector2f& pixelCoords)
         m_tileCoords.x = static_cast<int>(pixelCoords.x / tb::Constants::TileSizeAsFloat);
     }
 
-    if (pixelCoords.y < 0.0f)
+    if (pixelCoords.y <= 0.0f)
     {
         m_tileCoords.y = 0;
     }
@@ -102,7 +104,7 @@ void Thing::setPixelX(float pixelX)
 {
     m_pixelCoords.x = pixelX;
 
-    if (pixelX < 0.0f)
+    if (pixelX <= 0.0f)
     {
         m_tileCoords.x = 0;
     }
@@ -121,7 +123,7 @@ void Thing::setPixelY(float pixelY)
 {
     m_pixelCoords.y = pixelY;
 
-    if (pixelY < 0.0f)
+    if (pixelY <= 0.0f)
     {
         m_tileCoords.y = 0;
     }
@@ -131,12 +133,12 @@ void Thing::setPixelY(float pixelY)
     }
 }
 
-tb::ZAxis_t Thing::getZ()
+tb::ZAxis Thing::getZ()
 {
     return m_z;
 }
 
-void Thing::setZ(tb::ZAxis_t z)
+void Thing::setZ(tb::ZAxis z)
 {
     m_z = z;
 }

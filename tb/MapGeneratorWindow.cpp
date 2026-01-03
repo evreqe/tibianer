@@ -1,3 +1,5 @@
+#include "common.h"
+
 #include "tb/MapGeneratorWindow.h"
 
 namespace tb
@@ -89,7 +91,7 @@ void MapGeneratorWindow::draw()
     ImGui::InputInt("##MapGeneratorWindowInputMapPlayerStartY", (int*)&m_map.PlayerStartY, 1, tb::Constants::TileSize);
 
     ImGui::TextUnformatted("Player Start Z:");
-    ImGui::SliderInt("##MapGeneratorWindowInputMapPlayerStartZ", (int*)&m_map.PlayerStartZ, tb::ZAxis::Min, tb::ZAxis::Max);
+    ImGui::SliderInt("##MapGeneratorWindowInputMapPlayerStartZ", (int*)&m_map.PlayerStartZ, tb::Constants::ZAxisMin, tb::Constants::ZAxisMax);
 
     if (ImGui::Button("Generate##MapGeneratorWindowButtonGenerate", m_buttonSize))
     {

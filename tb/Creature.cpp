@@ -1,10 +1,12 @@
+#include "common.h"
+
 #include "tb/Creature.h"
 
 namespace tb
 {
 
 Creature::Creature() :
-    m_dummySprite(tb::Textures::Sprites)
+    m_dummySprite(tb::Resources::Textures::SpriteSheet)
 {
     setThingType(tb::ThingType::Creature);
 }
@@ -14,16 +16,16 @@ Creature::~Creature()
     //
 }
 
-Creature::Creature(const sf::Vector2i& tileCoords, tb::ZAxis_t z) :
-    m_dummySprite(tb::Textures::Sprites)
+Creature::Creature(const sf::Vector2i& tileCoords, tb::ZAxis z) :
+    m_dummySprite(tb::Resources::Textures::SpriteSheet)
 {
     setThingType(tb::ThingType::Creature);
 
     setTileCoords(tileCoords);
     setZ(z);
 
-    m_dummySprite.setID(2182);
-    m_dummySprite.setTileWidthAndHeightByID(2182);
+    m_dummySprite.setID(2181);
+    m_dummySprite.setTileWidthAndHeightByID(2181);
 }
 
 Creature::Properties_t* Creature::getProperties()
@@ -210,18 +212,18 @@ void Creature::setOutfitSprites(std::uint8_t head, std::uint8_t body, std::uint8
         m_outfitSpriteList.at(i).clear();
     }
 
-    m_outfitSpriteIDArray.at(tb::OutfitIndex::Head) = g_OutfitSpritesData.getDataList()->at(tb::OutfitIndex::Head).SpriteIDList_List.at(head);
-    m_outfitSpriteIDArray.at(tb::OutfitIndex::Body) = g_OutfitSpritesData.getDataList()->at(tb::OutfitIndex::Body).SpriteIDList_List.at(body);
-    m_outfitSpriteIDArray.at(tb::OutfitIndex::Legs) = g_OutfitSpritesData.getDataList()->at(tb::OutfitIndex::Legs).SpriteIDList_List.at(legs);
-    m_outfitSpriteIDArray.at(tb::OutfitIndex::Feet) = g_OutfitSpritesData.getDataList()->at(tb::OutfitIndex::Feet).SpriteIDList_List.at(feet);
+    m_outfitSpriteIDArray.at(tb::Constants::OutfitIndexHead) = g_OutfitSpritesData.getDataList()->at(tb::Constants::OutfitIndexHead).SpriteIDList_List.at(head);
+    m_outfitSpriteIDArray.at(tb::Constants::OutfitIndexBody) = g_OutfitSpritesData.getDataList()->at(tb::Constants::OutfitIndexBody).SpriteIDList_List.at(body);
+    m_outfitSpriteIDArray.at(tb::Constants::OutfitIndexLegs) = g_OutfitSpritesData.getDataList()->at(tb::Constants::OutfitIndexLegs).SpriteIDList_List.at(legs);
+    m_outfitSpriteIDArray.at(tb::Constants::OutfitIndexFeet) = g_OutfitSpritesData.getDataList()->at(tb::Constants::OutfitIndexFeet).SpriteIDList_List.at(feet);
 
     for (std::uint32_t i = 0; i < tb::Constants::NumOutfitSpriteIndex; i++)
     {
         for (std::uint32_t j = 0; j < tb::Constants::NumOutfitSpriteDirections; j++)
         {
-            tb::SpriteID_t spriteID = m_outfitSpriteIDArray.at(i).at(j);
+            tb::SpriteID spriteID = m_outfitSpriteIDArray.at(i).at(j);
 
-            tb::Sprite sprite(tb::Textures::Sprites);
+            tb::Sprite sprite(tb::Resources::Textures::SpriteSheet);
             sprite.setID(spriteID);
 
             m_outfitSpriteList.at(i).push_back(sprite);
@@ -265,10 +267,10 @@ std::vector<tb::Sprite*> Creature::getSpriteList()
 
     if (m_properties.HasOutfit == true)
     {
-        tb::Sprite* spriteHead = &m_outfitSpriteList.at(tb::OutfitIndex::Head).at(magic_enum::enum_integer(m_direction));
-        tb::Sprite* spriteBody = &m_outfitSpriteList.at(tb::OutfitIndex::Body).at(magic_enum::enum_integer(m_direction));
-        tb::Sprite* spriteLegs = &m_outfitSpriteList.at(tb::OutfitIndex::Legs).at(magic_enum::enum_integer(m_direction));
-        tb::Sprite* spriteFeet = &m_outfitSpriteList.at(tb::OutfitIndex::Feet).at(magic_enum::enum_integer(m_direction));
+        tb::Sprite* spriteHead = &m_outfitSpriteList.at(tb::Constants::OutfitIndexHead).at(magic_enum::enum_integer(m_direction));
+        tb::Sprite* spriteBody = &m_outfitSpriteList.at(tb::Constants::OutfitIndexBody).at(magic_enum::enum_integer(m_direction));
+        tb::Sprite* spriteLegs = &m_outfitSpriteList.at(tb::Constants::OutfitIndexLegs).at(magic_enum::enum_integer(m_direction));
+        tb::Sprite* spriteFeet = &m_outfitSpriteList.at(tb::Constants::OutfitIndexFeet).at(magic_enum::enum_integer(m_direction));
 
         spriteList.push_back(spriteFeet);
         spriteList.push_back(spriteLegs);

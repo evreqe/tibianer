@@ -1,12 +1,14 @@
+#include "common.h"
+
 #include "tb/GameWindow.h"
 
 namespace tb
 {
 
 GameWindow::GameWindow() :
-    m_windowLayerSprite(tb::Textures::Null),
-    m_lightLayerSprite(tb::Textures::Null),
-    m_tileHighlightSprite(tb::Textures::Sprites)
+    m_windowLayerSprite(tb::Resources::Textures::Null),
+    m_lightLayerSprite(tb::Resources::Textures::Null),
+    m_tileHighlightSprite(tb::Resources::Textures::SpriteSheet)
 {
     setWindowRenderTextureInitialSize(m_windowRenderTextureSize);
 
@@ -137,12 +139,18 @@ void GameWindow::draw()
 
     sf::Vector2 viewPositionOffset = getViewPositionOffset();
 
-    viewPosition.x += viewPositionOffset.x;
-    viewPosition.y += viewPositionOffset.y;
-
     sf::View* view = getView();
 
     view->setCenter(viewPosition);
+    view->move(viewPositionOffset);
+
+    //sf::Vector2f viewCenter = view->getCenter();
+    //sf::Vector2f viewSize = view->getSize();
+    //sf::FloatRect viewViewport = view->getViewport();
+    //g_Log.write("----- View Debug -----\n");
+    //g_Log.write("--> View Center: x{},y{}\n", viewCenter.x, viewCenter.y);
+    //g_Log.write("--> View Size: x{},y{}\n", viewSize.x, viewSize.y);
+    //g_Log.write("--> View Viewport: x{},y{},w{},h{}\n", viewViewport.position.x, viewViewport.position.y, viewViewport.size.x, viewViewport.size.y);
 
     sf::RenderTexture* windowRenderTexture = getWindowRenderTexture();
 
@@ -167,13 +175,15 @@ void GameWindow::draw()
         windowRenderTexture->clear(sf::Color::Black);
     }
 
-    tb::ZAxis_t playerZ = player->getZ();
+    tb::ZAxis playerZ = player->getZ();
 
-    tb::VisibleZ_t playerVisibleZ = g_Game.getVisibleZOfPlayer();
+    tb::ZAxisVisible zAxisVisibleOfPlayer = g_Game.getZAxisVisibleOfPlayer();
 
     sf::IntRect tileRect = getTileRect();
 
-    for (tb::ZAxis_t z = playerVisibleZ.Begin; z < playerVisibleZ.End; z++)
+    //g_Log.write("Tile Rect Debug: x{},y{},w{},h{}\n", tileRect.position.x, tileRect.position.y, tileRect.size.x, tileRect.size.y);
+
+    for (tb::ZAxis z = zAxisVisibleOfPlayer.Begin; z < zAxisVisibleOfPlayer.End; z++)
     {
         // check for ceilings and rooftops above the player
         if (z < tb::Constants::NumZAxis && z > playerZ)
@@ -204,9 +214,11 @@ void GameWindow::draw()
     drawToRenderWindow();
 }
 
-void GameWindow::drawMapLayerAtZ(tb::ZAxis_t z)
+void GameWindow::drawMapLayerAtZ(tb::ZAxis z)
 {
     sf::IntRect tileRect = getTileRect();
+
+    //g_Log.write("Tile Rect Debug: x{},y{},w{},h{}\n", tileRect.position.x, tileRect.position.y, tileRect.size.x, tileRect.size.y);
 
     sf::IntRect tileRectIncreased = tileRect;
 
@@ -243,13 +255,14 @@ void GameWindow::drawMapLayerAtZ(tb::ZAxis_t z)
 
     if (tileMapTiles == nullptr)
     {
+        g_Log.write("ERROR: tileMapTiles == nullptr at z: {}\n", z);
         return;
     }
 
-    tb::ZAxis_t playerZ = g_Game.getPlayer()->getZ();
+    tb::ZAxis playerZ = g_Game.getPlayer()->getZ();
 
     // only animate water for the default z-axis and while the player is aboveground
-    if (playerZ >= tb::ZAxis::Default && z == tb::ZAxis::Default)
+    if (playerZ >= tb::Constants::ZAxisDefault && z == tb::Constants::ZAxisDefault)
     {
         sf::Time animatedWaterTimeElapsed = m_animatedWaterClock.getElapsedTime();
         if (animatedWaterTimeElapsed >= m_animatedWaterTime)
@@ -313,7 +326,7 @@ void GameWindow::drawMapLayerAtZ(tb::ZAxis_t z)
 
     if (m_properties.ShowTileHighlight == true)
     {
-        if (tb::Utility::LibImGui::isActive() == false)
+        if (tb::LibImGui::isActive() == false)
         {
             drawTileHighlight();
         }
@@ -348,7 +361,7 @@ void GameWindow::drawTileHighlight()
 
     if (isZoomed() == false)
     {
-        m_tileHighlightSprite.setID(tb::Sprites::TileHighlight);
+        m_tileHighlightSprite.setID(tb::Resources::Sprites::TileHighlight);
         m_tileHighlightSprite.setPosition(mousePixelCoords);
 
         m_windowLayerRenderTexture.draw(m_tileHighlightSprite);
@@ -374,8 +387,14 @@ sf::IntRect GameWindow::getTileRect()
     sf::Vector2i viewPositionOffset = static_cast<sf::Vector2i>(getViewPositionOffset());
 
     // convert from pixel coords to tile coords
-    viewPositionOffset.x /= tb::Constants::TileSize;
-    viewPositionOffset.y /= tb::Constants::TileSize;
+    if (viewPositionOffset.x != 0)
+    {
+        viewPositionOffset.x /= tb::Constants::TileSize;
+    }
+    if (viewPositionOffset.y != 0)
+    {
+        viewPositionOffset.y /= tb::Constants::TileSize;
+    }
 
     tileX += viewPositionOffset.x;
     tileY += viewPositionOffset.y;
@@ -389,12 +408,12 @@ sf::IntRect GameWindow::getTileRect()
     return sf::IntRect(sf::Vector2i(tileX, tileY), sf::Vector2i(tileWidth, tileHeight));
 }
 
-void GameWindow::setLightBrightness(tb::LightBrightness_t lightBrightness)
+void GameWindow::setLightBrightness(tb::LightBrightness lightBrightness)
 {
     m_lightBrightness = lightBrightness;
 }
 
-tb::LightBrightness_t GameWindow::getLightBrightness()
+tb::LightBrightness GameWindow::getLightBrightness()
 {
     return m_lightBrightness;
 }

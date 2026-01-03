@@ -1,6 +1,6 @@
-#include "resource.h"
-
 #include "common.h"
+
+#include "resource.h"
 
 #include "tb/Game.h"
 

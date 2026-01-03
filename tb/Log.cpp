@@ -1,3 +1,5 @@
+#include "common.h"
+
 #include "tb/Log.h"
 
 namespace tb
@@ -17,7 +19,10 @@ void Log::vwrite(const FormatString_t& formatString, fmt::format_args args)
 {
     const auto& sourceLocation = formatString.sourceLocation;
 
-    m_sourceLocationText = fmt::format("[{}] ", sourceLocation);
+    std::string_view sourceLocationFileName = sourceLocation.file_name();
+    std::string_view sourceLocationFileNameShort = sourceLocationFileName.substr(sourceLocationFileName.find_last_of('\\') + 1);
+
+    m_sourceLocationText = fmt::format("[{}:{}: {}] ", sourceLocationFileNameShort, sourceLocation.line(), sourceLocation.function_name());
 
     std::stringstream ss;
     ss << m_sourceLocationText;
