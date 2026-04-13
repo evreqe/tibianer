@@ -84,6 +84,7 @@ bool SpriteBatch::addSprite(tb::Sprite* sprite, bool applyTileWidthAndHeightOffs
 void SpriteBatch::clear()
 {
     m_vertexList.clear();
+    m_vertexList.resize(m_maxVertices);
 
     m_numSprites = 0;
 }

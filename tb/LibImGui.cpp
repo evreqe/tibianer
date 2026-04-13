@@ -1,9 +1,6 @@
-#include "tb/LibImGui.h"
+#include "tb/LibIMGUI.h"
 
-namespace tb
-{
-
-namespace LibImGui
+namespace tb::LibIMGUI
 {
 
 bool isActive()
@@ -88,8 +85,6 @@ bool scrollWindowWithMiddleMouseButton()
     }
 
     return true;
-}
-
 }
 
 }

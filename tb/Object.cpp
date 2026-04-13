@@ -16,18 +16,18 @@ Object::~Object()
     //
 }
 
-Object::ObjectProperties_t* Object::getObjectProperties()
+Object::Properties* Object::getProperties()
 {
-    return &m_objectProperties;
+    return &m_properties;
 }
 
-Object::Object(const sf::Vector2i& tileCoords, tb::ZAxis z, tb::SpriteID spriteID) :
+Object::Object(const sf::Vector2i& tileCoords, tb::AxisZ axisZ, tb::SpriteID spriteID) :
     m_sprite(tb::Resources::Textures::SpriteSheet)
 {
     setThingType(tb::ThingType::Object);
 
     setTileCoords(tileCoords);
-    setZ(z);
+    setAxisZ(axisZ);
 
     setSpriteID(spriteID);
 
@@ -45,14 +45,14 @@ Object::Object(const sf::Vector2i& tileCoords, tb::ZAxis z, tb::SpriteID spriteI
 
 void Object::update()
 {
-    sf::Vector2f pixelCoords = getPixelCoords();
+    tb::PixelCoords pixelCoords = getPixelCoords();
 
     m_sprite.setPosition(pixelCoords);
 }
 
 void Object::animate()
 {
-    if (m_objectProperties.Animated == false)
+    if (m_properties.IsAnimated == false)
     {
         return;
     }
@@ -177,7 +177,7 @@ void Object::setSpriteID(tb::SpriteID spriteID)
 
             if (spriteData->SpriteFlags.hasFlag(tb::SpriteFlag::Animated) == true)
             {
-                m_objectProperties.Animated = true;
+                m_properties.IsAnimated = true;
 
                 std::string_view animationName = spriteData->AnimationName;
 

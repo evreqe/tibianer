@@ -3,6 +3,7 @@
 #include "common.h"
 
 #include "tb/Constants.h"
+#include "tb/Resources.h"
 #include "tb/Utility.h"
 
 #include "tb/SpriteData.h"
@@ -21,12 +22,12 @@ public:
 
     Object();
     ~Object();
-    Object(const sf::Vector2i& tileCoords, tb::ZAxis z, tb::SpriteID spriteID);
+    Object(const sf::Vector2i& tileCoords, tb::AxisZ axisZ, tb::SpriteID spriteID);
 
     using Ptr = std::shared_ptr<tb::Object>;
     using List = std::vector<tb::Object::Ptr>;
 
-    struct SortBySpriteID_t
+    struct SortBySpriteID
     {
         bool operator()(tb::Object::Ptr a, tb::Object::Ptr b) const
         {
@@ -34,7 +35,7 @@ public:
         }
     };
 
-    struct SortByCount_t
+    struct SortByCount
     {
         bool operator()(tb::Object::Ptr a, tb::Object::Ptr b) const
         {
@@ -42,14 +43,14 @@ public:
         }
     };
 
-    struct ObjectProperties_t
+    struct Properties
     {
-        bool Animated = false;
-        bool Decay = false;
-        bool Regenerate = false;
+        bool IsAnimated = false;
+        bool IsDecaying = false;
+        bool IsRegenerating = false;
     };
 
-    ObjectProperties_t* getObjectProperties();
+    Properties* getProperties();
 
     void update();
 
@@ -71,7 +72,7 @@ public:
 
 private:
 
-    ObjectProperties_t m_objectProperties;
+    Properties m_properties;
 
     tb::Sprite m_sprite;
     tb::SpriteData::Data* m_spriteData = nullptr;

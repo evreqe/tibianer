@@ -3,27 +3,31 @@
 #include "common.h"
 
 #include "tb/Constants.h"
+#include "tb/Resources.h"
 #include "tb/Utility.h"
 #include "tb/Log.h"
 
+#include "tb/ResourceLoader.h"
+
 #include "tb/OptionsData.h"
 #include "tb/MapData.h"
-#include "tb/TextureData.h"
-#include "tb/SpriteData.h"
-#include "tb/BitmapFontData.h"
+
 #include "tb/PatternData.h"
 #include "tb/WaterAnimationData.h"
 #include "tb/OutfitSpritesData.h"
 #include "tb/MessageOfTheDayData.h"
-#include "tb/ClickRectData.h"
-#include "tb/GuiRectData.h"
-#include "tb/CursorData.h"
-#include "tb/FontData.h"
+#include "tb/TextureRectData.h"
 #include "tb/HotkeysData.h"
+#include "tb/TextureData.h"
+#include "tb/FontData.h"
+#include "tb/BitmapFontData.h"
+#include "tb/CursorData.h"
+#include "tb/SpriteData.h"
 #include "tb/AnimationData.h"
 #include "tb/MapGeneratorData.h"
 #include "tb/MapGeneratorPixelData.h"
 
+#include "tb/GUI.h"
 #include "tb/Thing.h"
 #include "tb/Object.h"
 #include "tb/Creature.h"
@@ -36,6 +40,7 @@
 #include "tb/Map.h"
 #include "tb/MapGenerator.h"
 #include "tb/Joystick.h"
+#include "tb/JoystickManager.h"
 
 #include "tb/MenuBar.h"
 #include "tb/StatusBar.h"
@@ -93,101 +98,22 @@ private:
 
 public:
 
-    struct Properties_t
+    struct Properties
     {
-        bool ShowMenuBar = true;
-        bool ShowStatusBar = true;
-
-        bool ShowDemoWindow = false;
-        bool ShowStackToolWindow = false;
-
-        bool ShowErrorLoadingMapPopup = false;
-        bool ShowEndGamePopup = false;
+        bool IsMouseLeftButtonPressed = false;
+        bool IsMouseDragging = false;
 
         bool IsAnyKeyboardKeyPressed = false;
-
         bool IsAnyJoystickButtonPressed = false;
     };
 
-    struct GuiProperties_t
-    {
-        float Scale = 1.0f;
-
-        bool ShowEquipmentWindow = false;
-        bool ShowStatusWindow = false;
-        bool ShowMiniMapWindow = true;
-
-        bool TabButtonsWindowInventoryButtonIsPressed = true;
-        bool TabButtonsWindowStatusButtonIsPressed = false;
-        bool TabButtonsWindowBattleButtonIsPressed = false;
-        bool TabButtonsWindowMiniMapButtonIsPressed = false;
-
-        bool ShowInventoryWindow = true;
-        bool ShowSkillsWindow = false;
-        bool ShowBattleWindow = false;
-
-        bool BattleButtonsWindowFullAttackButtonIsPressed = true;
-        bool BattleButtonsWindowHalfAttackHalfDefenseButtonIsPressed = false;
-        bool BattleButtonsWindowFullDefenseButtonIsPressed = false;
-
-        bool BattleButtonsWindowFollowButtonIsPressed = false;
-        bool BattleButtonsWindowFollowDistanceButtonIsPressed = false;
-        bool BattleButtonsWindowDoNotFollowButtonIsPressed = true;
-    };
-
-    Properties_t* getProperties();
-    GuiProperties_t* getGuiProperties();
-
-    bool initImGui();
+    Properties* getProperties();
 
     bool loadConfig();
     bool loadData();
 
-    bool loadResources();
-    bool loadTextures();
-    bool loadFonts();
-    bool loadBitmapFonts();
-    bool loadCursors();
-    bool loadSprites();
-    bool loadAnimations();
-    bool loadGuiRects();
-
     bool loadMap(const std::string& fileName);
     void loadMapUsingThread(const std::string& fileName);
-
-    void drawDockSpace();
-
-    void drawFramesPerSecond();
-
-    void drawLoadingText();
-
-    sf::FloatRect getGuiFullLayoutRect();
-    sf::FloatRect getGuiLeftLayoutRect();
-    sf::FloatRect getGuiRightLayoutRect();
-
-    void drawToolTip(const std::string& text);
-
-    void drawWoodBackground();
-    void drawWoodBorder(sf::FloatRect rect, bool drawBlackRectangle);
-    void drawBackgroundTextureWithWoodBorder(const sf::Texture& texture);
-
-    sf::FloatRect getClickRect(const sf::Texture& texture, const std::string& name);
-
-    void drawDebugRect(sf::FloatRect rect);
-
-    void drawSfmlWindows();
-    void drawDebugRectForSfmlWindows();
-    void drawWoodBorderForSfmlWindows();
-
-    void setSizeInLayoutForSfmlWindows();
-    void setPositionInLayoutForSfmlWindows();
-    void setSizeScaleForSfmlWindows(float scale);
-    void updateLayoutForSfmlWindows();
-
-    void drawImGuiWindows();
-
-    void doEndGamePopup();
-    void doErrorLoadingMapPopup();
 
     void doGameStateTesting();
     void doGameStateEnterGame();
@@ -197,12 +123,12 @@ public:
 
     sf::Vector2i getMousePositionInDesktop();
 
-    tb::ZAxisVisible getZAxisVisibleOfPlayer();
+    tb::AxisZVisibility getPlayerAxisZVisibility();
 
     bool createPlayer();
 
-    bool spawnAnimationByIndex(const sf::Vector2i& tileCoords, tb::ZAxis z, std::uint32_t index);
-    bool spawnAnimationByName(const sf::Vector2i& tileCoords, tb::ZAxis z, const std::string& name);
+    bool spawnAnimationByIndex(const tb::TileCoords& tileCoords, tb::AxisZ axisZ, std::uint32_t index);
+    bool spawnAnimationByName(const tb::TileCoords& tileCoords, tb::AxisZ axisZ, const std::string& name);
 
     void handleEventClosed();
     void handleEventResized(const sf::Event::Resized* eventResized);
@@ -211,6 +137,7 @@ public:
     void handleEventMouseWheelScrolled(const sf::Event::MouseWheelScrolled* eventMouseWheelScrolled);
     void handleEventMouseButtonPressed(const sf::Event::MouseButtonPressed* eventMouseButtonPressed);
     void handleEventMouseButtonReleased(const sf::Event::MouseButtonReleased* eventMouseButtonReleased);
+    void handleEventMouseMoved(const sf::Event::MouseMoved* eventMouseMoved);
     void handleEventKeyPressed(const sf::Event::KeyPressed* eventKeyPressed);
     void handleEventKeyReleased(const sf::Event::KeyReleased* eventKeyReleased);
     void handleEventJoystickConnected(const sf::Event::JoystickConnected* eventJoystickConnected);
@@ -218,7 +145,11 @@ public:
     void handleEventJoystickMoved(const sf::Event::JoystickMoved* eventJoystickMoved);
     void handleEventJoystickButtonPressed(const sf::Event::JoystickButtonPressed* eventJoystickButtonPressed);
     void handleEventJoystickButtonReleased(const sf::Event::JoystickButtonReleased* eventJoystickButtonReleased);
-    
+
+    void initializeFramesPerSecond();
+    void calculateFramesPerSecond();
+    float getFramesPerSecond();
+
     void processEvents();
 
     void handleKeyboardInput();
@@ -230,16 +161,9 @@ public:
     void setMouseCursor(const sf::Cursor& cursor);
     void fixMouseCursorForWindowResize(sf::RenderWindow* renderWindow);
 
-    unsigned int getJoystickIndex();
-    void setJoystickIndex(unsigned int index);
-    tb::JoystickList* getJoystickList();
-    void updateJoystickIndexForAll();
-    void updateJoystickPropertiesForAll();
-    void updateJoystickStateForAll();
-
     void createTileFileFromImageFile(const std::string& fileName);
 
-    void doOverlayText();
+    void updateOverlayWindowText();
 
     void waitForKeyPress();
     void exit();
@@ -252,9 +176,6 @@ public:
     bool isDebugModeEnabled();
     void toggleDebugMode();
 
-    void toggleDemoWindow();
-    void toggleStackToolWindow();
-
     tb::GameState getGameState();
     void setGameState(tb::GameState gameState);
 
@@ -265,59 +186,32 @@ public:
 
     tb::Tile::Ptr getTileByThingMovementDirection(tb::Thing::Ptr thing, tb::MovementDirection direction);
 
-    bool findCeilingAbovePlayerAtZ(tb::ZAxis z);
+    bool doesCeilingExistAbovePlayerAtAxisZ(tb::AxisZ axisZ);
 
     void handleCreatureMovement(tb::Creature::Ptr creature, tb::MovementDirection movementDirection);
 
     bool doMoveThingFromTileToTile(tb::Thing::Ptr thing, tb::Tile::Ptr toTile);
 
-    tb::BitmapFont* getClassicBitmapFont();
-    tb::BitmapFont* getTinyBitmapFont();
-    tb::BitmapFont* getModernBitmapFont();
-    tb::BitmapFont* getSystemBitmapFont();
-
 private:
 
-    Properties_t m_properties;
-    GuiProperties_t m_guiProperties;
+    Properties m_properties;
 
     tb::GameState m_gameState = tb::GameState::EnterGame;
 
     std::future<bool> m_loadMapThread;
-    std::future_status m_loadMapThreadStatus;
-
-    const std::uint32_t m_minimumTextureSizeRequiredToRun = 2048;
-
-    sf::RectangleShape m_backgroundTextureShape;
+    std::future_status m_loadMapThreadStatus = std::future_status::deferred;
 
     sf::Clock m_deltaClock;
+
+    sf::Clock m_mouseDragClock;
+    const sf::Time m_mouseDragTime = sf::milliseconds(100);
+    sf::Vector2i m_mouseDragStartPosition;
+    std::int32_t m_mouseDragDistanceThreshold = 4;
 
     sf::Clock m_framesPerSecondClock;
     sf::Time m_framesPerSecondCurrentTime;
     sf::Time m_framesPerSecondPreviousTime;
     float m_framesPerSecond = 0.0f;
-
-    unsigned int m_joystickIndex = 0;
-    tb::JoystickList m_joystickList;
-
-    const std::filesystem::path m_systemFontFileName = "fonts/system.ttf";
-
-    tb::BitmapFont m_classicBitmapFont;
-    tb::BitmapFont m_tinyBitmapFont;
-    tb::BitmapFont m_modernBitmapFont;
-    tb::BitmapFont m_modern2BitmapFont;
-    tb::BitmapFont m_systemBitmapFont;
-    tb::BitmapFont m_systemFixedBitmapFont;
-
-    const std::unordered_map<std::string, tb::BitmapFont&> m_bitmapFontNames =
-    {
-        {"Classic",        m_classicBitmapFont},
-        {"Tiny",           m_tinyBitmapFont},
-        {"Modern",         m_modernBitmapFont},
-        {"Modern2",        m_modern2BitmapFont},
-        {"System",         m_systemBitmapFont},
-        {"SystemFixed",    m_systemFixedBitmapFont},
-    };
 
     sf::Clock m_cameraMovementClock;
     const sf::Time m_cameraMovementTime = sf::milliseconds(100);

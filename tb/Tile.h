@@ -8,6 +8,8 @@
 
 #include "tb/SpriteFlags.h"
 
+#include "tb/TileBase.h"
+
 #include "tb/Entity.h"
 #include "tb/Object.h"
 #include "tb/Creature.h"
@@ -16,7 +18,7 @@
 namespace tb
 {
 
-class Tile
+class Tile : public tb::TileBase
 {
 
 public:
@@ -27,7 +29,7 @@ public:
     using Ptr = std::shared_ptr<tb::Tile>;
     using List = std::vector<tb::Tile::Ptr>;
 
-    struct SortByTileIndex_t
+    struct SortByTileIndex
     {
         bool operator()(tb::Tile::Ptr a, tb::Tile::Ptr b) const
         {
@@ -35,35 +37,11 @@ public:
         }
     };
 
-    std::uint32_t getTileIndex();
-    void setTileIndex(std::uint32_t tileIndex);
-
     tb::SpriteID getSpriteID();
     void setSpriteID(tb::SpriteID spriteID);
 
     tb::SpriteFlags* getSpriteFlags();
     void setSpriteFlags(const tb::SpriteFlags& spriteFlags);
-
-    sf::Vector2f getPixelCoords();
-    void setPixelCoords(const sf::Vector2f& pixelCoords);
-
-    float getPixelX();
-    void setPixelX(float pixelX);
-
-    float getPixelY();
-    void setPixelY(float pixelY);
-
-    sf::Vector2i getTileCoords();
-    void setTileCoords(const sf::Vector2i& tileCoords);
-
-    std::int32_t getTileX();
-    void setTileX(std::int32_t tileX);
-
-    std::int32_t getTileY();
-    void setTileY(std::int32_t tileY);
-
-    tb::ZAxis getZ();
-    void setZ(tb::ZAxis z);
 
     std::uint8_t getHeight();
     void setHeight(std::uint8_t height);
@@ -93,16 +71,9 @@ public:
 
 private:
 
-    std::uint32_t m_tileIndex = 0; // index of the tile on the screen from left to right, top to bottom
-
     tb::SpriteID m_spriteID = tb::Constants::SpriteIDNull;
 
     tb::SpriteFlags m_spriteFlags;
-
-    sf::Vector2i m_tileCoords;
-    sf::Vector2f m_pixelCoords;
-
-    tb::ZAxis m_z = tb::Constants::ZAxisDefault;
 
     std::uint8_t m_height = 0; // number of objects stacked vertically on the tile
 

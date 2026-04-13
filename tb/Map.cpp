@@ -15,7 +15,7 @@ Map::~Map()
     //
 }
 
-Map::Properties_t* Map::getProperties()
+Map::Properties* Map::getProperties()
 {
     return &m_properties;
 }
@@ -24,13 +24,13 @@ bool Map::load(const std::string& fileName)
 {
     if (g_SpriteData.isLoaded() == false)
     {
-        g_Log.write("ERROR: Sprite data is not loaded\n");
+        g_Log.write("ERROR: sprite data is not loaded\n");
         return false;
     }
 
     if (std::filesystem::exists(fileName) == false)
     {
-        g_Log.write("ERROR: File does not exist: {}\n", fileName);
+        g_Log.write("ERROR: file does not exist: {}\n", fileName);
         return false;
     }
 
@@ -43,7 +43,7 @@ bool Map::load(const std::string& fileName)
 
     if (xmlParseResult.status != pugi::xml_parse_status::status_ok)
     {
-        g_Log.write("ERROR: Failed to load map from file: {}\nDescription: {}\nOffset: {}\n", fileName, xmlParseResult.description(), xmlParseResult.offset);
+        g_Log.write("ERROR: failed to load map from file: {}\nDescription: {}\nOffset: {}\n", fileName, xmlParseResult.description(), xmlParseResult.offset);
         return false;
     }
 
@@ -60,7 +60,7 @@ bool Map::load(const std::string& fileName)
 
     if (orientation != "orthogonal")
     {
-        g_Log.write("ERROR: In Tiled Editor, under Map Properties, 'Orientation' must equal 'Orthogonal'\n");
+        g_Log.write("ERROR: in Tiled Editor, under Map Properties, 'Orientation' must have value of 'Orthogonal'\n");
         return false;
     }
 
@@ -68,7 +68,7 @@ bool Map::load(const std::string& fileName)
 
     if (tileRenderOrder != "right-down")
     {
-        g_Log.write("ERROR: In Tiled Editor, under Map Properties, 'Tile Render Order' must equal 'Right Down'\n");
+        g_Log.write("ERROR: in Tiled Editor, under Map Properties, 'Tile Render Order' must have value of 'Right Down'\n");
         return false;
     }
 
@@ -77,7 +77,7 @@ bool Map::load(const std::string& fileName)
 
     if (tileSizeX != tb::Constants::TileSize || tileSizeY != tb::Constants::TileSize)
     {
-        g_Log.write("ERROR: In Tiled Editor, under Map Properties, 'Tile Width' and 'Tile Height' must equal '{}'\n", tb::Constants::TileSize);
+        g_Log.write("ERROR: in Tiled Editor, under Map Properties, 'Tile Width' and 'Tile Height' must have value of '{}'\n", tb::Constants::TileSize);
         return false;
     }
 
@@ -134,7 +134,7 @@ bool Map::load(const std::string& fileName)
         }
         else if (xmlNode_map_properties_property__name == "PlayerStartZ")
         {
-            m_properties.PlayerStartZ = static_cast<tb::ZAxis>(xmlNode_map_properties_property.attribute("value").as_uint());
+            m_properties.PlayerStartZ = static_cast<tb::AxisZ>(xmlNode_map_properties_property.attribute("value").as_uint());
         }
         else if (xmlNode_map_properties_property__name == "TimeOfDay")
         {
@@ -160,7 +160,7 @@ bool Map::load(const std::string& fileName)
 
         //g_Log.write("xml_node map_group__name: {}\n", xmlNode_map_group__name);
 
-        tb::ZAxis tileMapZ = static_cast<tb::ZAxis>(xmlNode_map_group.attribute("name").as_uint()); // z-axis is the name of the Group Layer in Tiled Editor
+        tb::AxisZ tileMapAxisZ = static_cast<tb::AxisZ>(xmlNode_map_group.attribute("name").as_uint()); // z-axis is the name of the Group Layer in Tiled Editor
 
         pugi::xml_node xmlNode_map_group_layer_node = xmlNode_map_group.child("layer");
         if (xmlNode_map_group_layer_node == NULL)
@@ -202,9 +202,9 @@ bool Map::load(const std::string& fileName)
                     xmlNode_map_group_layer_data__compression != "zlib"
                 )
                 {
-                    g_Log.write("ERROR: Your map is compressed but may be using the wrong tile layer format'\n");
-                    g_Log.write("ERROR: In Tiled Editor, under Map Properties, 'Tile Layer Format' must be 'Base64 (zlib compressed)'\n");
-                    g_Log.write("ERROR: 'data' attribute 'encoding' must be 'base64' and 'data' attribute 'compression' must be 'zlib'\n");
+                    g_Log.write("ERROR: your map is compressed but may be using the wrong tile layer format'\n");
+                    g_Log.write("ERROR: in Tiled Editor, under Map Properties, 'Tile Layer Format' must have value of 'Base64 (zlib compressed)'\n");
+                    g_Log.write("ERROR: 'data' attribute 'encoding' must have value of 'base64' and 'data' attribute 'compression' must have value of 'zlib'\n");
                     return false;
                 }
             }
@@ -212,9 +212,9 @@ bool Map::load(const std::string& fileName)
             {
                 if (xmlNode_map_group_layer_data__encoding != "csv")
                 {
-                    g_Log.write("ERROR: Your map is NOT compressed but may be using the wrong tile layer format'\n");
-                    g_Log.write("ERROR: In Tiled Editor, under Map Properties, 'Tile Layer Format' must be 'CSV'\n");
-                    g_Log.write("ERROR: 'data' attribute 'encoding' must be 'csv' and 'data' attribute 'compression' must not exist\n");
+                    g_Log.write("ERROR: your map is NOT compressed but may be using the wrong tile layer format'\n");
+                    g_Log.write("ERROR: in Tiled Editor, under Map Properties, 'Tile Layer Format' must have value of 'CSV'\n");
+                    g_Log.write("ERROR: 'data' attribute 'encoding' must have value of 'csv' and 'data' attribute 'compression' must not exist\n");
                     return false;
                 }
             }
@@ -245,11 +245,11 @@ bool Map::load(const std::string& fileName)
 
                 g_Log.write("Decoding Base64 encoding...\n");
 
-                xmlNode_map_group_layer_data__string = boost_base64_decode(xmlNode_map_group_layer_data__string);
+                xmlNode_map_group_layer_data__string = tb::LibBoost::Base64::decodeString(xmlNode_map_group_layer_data__string);
 
                 g_Log.write("Decompressing zlib compression...\n");
 
-                xmlNode_map_group_layer_data__string = boost_zlib_decompress_string(xmlNode_map_group_layer_data__string);
+                xmlNode_map_group_layer_data__string = tb::LibBoost::ZLib::decompressString(xmlNode_map_group_layer_data__string);
 
                 if (xmlNode_map_group_layer_data__string.size() == 0)
                 {
@@ -307,7 +307,7 @@ bool Map::load(const std::string& fileName)
             }
 
             tb::TileMap::Ptr tileMap = std::make_shared<tb::TileMap>();
-            tileMap->load(m_tileWidth, m_tileHeight, tileSpriteIDList, xmlNode_map_group_layer__name, tileMapType, tileMapZ);
+            tileMap->load(m_tileWidth, m_tileHeight, tileSpriteIDList, xmlNode_map_group_layer__name, tileMapType, tileMapAxisZ);
 
             if (tileMapType == tb::TileMapType::Tiles)
             {
@@ -358,16 +358,16 @@ bool Map::load(const std::string& fileName)
 
                     //g_Log.write("object sprite ID: {}\n", objectSpriteID);
 
-                    sf::Vector2f objectPixelCoords;
+                    tb::PixelCoords objectPixelCoords;
 
                     objectPixelCoords.x = xmlNode_map_group_objectgroup_object.attribute("x").as_float();
                     objectPixelCoords.y = xmlNode_map_group_objectgroup_object.attribute("y").as_float();
 
                     //g_Log.write("object pixel coords: {}x{}\n", objectPixelCoords.x, objectPixelCoords.y);
 
-                    std::uint32_t objectTileIndex = getTileIndexByPixelCoords(objectPixelCoords);
+                    tb::TileIndex objectTileIndex = getTileIndexByPixelCoords(objectPixelCoords);
 
-                    sf::Vector2i objectTileCoords = getTileCoordsByPixelCoords(objectPixelCoords);
+                    tb::TileCoords objectTileCoords = getTileCoordsByPixelCoords(objectPixelCoords);
 
                     //  this was an old bug in Tiled Editor that was fixed by Orientation and Tile Render Order
                     //tileCoords.y -= 1; // have to subtract one due to Tiled Editor
@@ -376,9 +376,9 @@ bool Map::load(const std::string& fileName)
 
                     if (mapObjectLayerType == tb::MapObjectLayerType::Objects || mapObjectLayerType == tb::MapObjectLayerType::TileEdgeObjects)
                     {
-                        tb::Object::Ptr object = std::make_shared<tb::Object>(objectTileCoords, tileMapZ, objectSpriteID);
+                        tb::Object::Ptr object = std::make_shared<tb::Object>(objectTileCoords, tileMapAxisZ, objectSpriteID);
 
-                        tb::TileMap::Ptr tileMap = getTileMapOfTilesAtZ(tileMapZ);
+                        tb::TileMap::Ptr tileMap = getTileMapOfTilesAtAxisZ(tileMapAxisZ);
 
                         if (tileMap == nullptr)
                         {
@@ -430,7 +430,7 @@ bool Map::load(const std::string& fileName)
     {
         if (tileMap->applyTileObjectPatterns() == false)
         {
-            g_Log.write("ERROR: Failed to apply tile object patterns to tile map at z: {}\n", tileMap->getZ());
+            g_Log.write("ERROR: failed to apply tile object patterns to tile map at z: {}\n", tileMap->getAxisZ());
             return false;
         }
     }
@@ -442,62 +442,62 @@ bool Map::load(const std::string& fileName)
     return true;
 }
 
-std::uint32_t Map::getTileIndexByTileCoords(const sf::Vector2i& tileCoords)
+tb::TileIndex Map::getTileIndexByTileCoords(const tb::TileCoords& tileCoords)
 {
     return tileCoords.x + (tileCoords.y * m_tileWidth);
 }
 
-std::uint32_t Map::getTileIndexByPixelCoords(const sf::Vector2f& pixelCoords)
+tb::TileIndex Map::getTileIndexByPixelCoords(const tb::PixelCoords& pixelCoords)
 {
-    std::int32_t tileX = 0;
-    std::int32_t tileY = 0;
+    tb::TileCoord tileX = 0;
+    tb::TileCoord tileY = 0;
 
     if (pixelCoords.x != 0.0f)
     {
-        tileX = static_cast<std::int32_t>(pixelCoords.x / tb::Constants::TileSizeAsFloat);
+        tileX = static_cast<tb::TileCoord>(pixelCoords.x / tb::Constants::TileSizeAsFloat);
     }
 
     if (pixelCoords.y != 0.0f)
     {
-        tileY = static_cast<std::int32_t>(pixelCoords.y / tb::Constants::TileSizeAsFloat);
+        tileY = static_cast<tb::TileCoord>(pixelCoords.y / tb::Constants::TileSizeAsFloat);
     }
 
     return tileX + (tileY * m_tileWidth);
 }
 
-sf::Vector2f Map::getPixelCoordsByTileCoords(const sf::Vector2i& tileCoords)
+tb::TileCoords Map::getTileCoordsByPixelCoords(const tb::PixelCoords& pixelCoords)
 {
-    sf::Vector2f pixelCoords;
-
-    pixelCoords.x = static_cast<float>(tileCoords.x * tb::Constants::TileSize);
-    pixelCoords.y = static_cast<float>(tileCoords.y * tb::Constants::TileSize);
-
-    return pixelCoords;
-}
-
-sf::Vector2i Map::getTileCoordsByPixelCoords(const sf::Vector2f& pixelCoords)
-{
-    sf::Vector2i tileCoords;
+    tb::TileCoords tileCoords;
 
     tileCoords.x = 0;
     tileCoords.y = 0;
 
     if (pixelCoords.x != 0.0f)
     {
-        tileCoords.x = static_cast<int>(pixelCoords.x / tb::Constants::TileSizeAsFloat);
+        tileCoords.x = static_cast<tb::TileCoord>(pixelCoords.x / tb::Constants::TileSizeAsFloat);
     }
 
     if (pixelCoords.y != 0.0f)
     {
-        tileCoords.y = static_cast<int>(pixelCoords.y / tb::Constants::TileSizeAsFloat);
+        tileCoords.y = static_cast<tb::TileCoord>(pixelCoords.y / tb::Constants::TileSizeAsFloat);
     }
 
     return tileCoords;
 }
 
-sf::Vector2i Map::getTileCoordsByTileIndex(std::uint32_t tileIndex)
+tb::PixelCoords Map::getPixelCoordsByTileCoords(const tb::TileCoords& tileCoords)
 {
-    sf::Vector2i tileCoords;
+    tb::PixelCoords pixelCoords;
+
+    pixelCoords.x = static_cast<tb::PixelCoord>(tileCoords.x * tb::Constants::TileSize);
+    pixelCoords.y = static_cast<tb::PixelCoord>(tileCoords.y * tb::Constants::TileSize);
+
+    return pixelCoords;
+}
+
+tb::TileCoords Map::getTileCoordsByTileIndex(tb::TileIndex tileIndex)
+{
+    tb::TileCoords tileCoords;
 
     tileCoords.x = (tileIndex % m_tileWidth) * tb::Constants::TileSize;
     tileCoords.y = (tileIndex / m_tileHeight);
@@ -505,19 +505,19 @@ sf::Vector2i Map::getTileCoordsByTileIndex(std::uint32_t tileIndex)
     return tileCoords;
 }
 
-sf::Vector2f Map::getPixelCoordsByTileIndex(std::uint32_t tileIndex)
+tb::PixelCoords Map::getPixelCoordsByTileIndex(tb::TileIndex tileIndex)
 {
-    sf::Vector2i tileCoords = getTileCoordsByTileIndex(tileIndex);
+    tb::TileCoords tileCoords = getTileCoordsByTileIndex(tileIndex);
 
-    sf::Vector2f pixelCoords;
+    tb::PixelCoords pixelCoords;
 
-    pixelCoords.x = static_cast<float>(tileCoords.x * tb::Constants::TileSize);
-    pixelCoords.y = static_cast<float>(tileCoords.x * tb::Constants::TileSize);
+    pixelCoords.x = static_cast<tb::PixelCoord>(tileCoords.x * tb::Constants::TileSize);
+    pixelCoords.y = static_cast<tb::PixelCoord>(tileCoords.x * tb::Constants::TileSize);
 
     return pixelCoords;
 }
 
-bool Map::isTileIndexOutOfBounds(std::uint32_t tileIndex)
+bool Map::isTileIndexOutOfBounds(tb::TileIndex tileIndex)
 {
     if (tileIndex > (m_numTiles - 1))
     {
@@ -527,7 +527,7 @@ bool Map::isTileIndexOutOfBounds(std::uint32_t tileIndex)
     return false;
 }
 
-bool Map::isTileCoordsOutOfBounds(const sf::Vector2i& tileCoords)
+bool Map::isTileCoordsOutOfBounds(const tb::TileCoords& tileCoords)
 {
     if (tileCoords.x < 0) return true;
     if (tileCoords.y < 0) return true;
@@ -537,9 +537,9 @@ bool Map::isTileCoordsOutOfBounds(const sf::Vector2i& tileCoords)
     return false;
 }
 
-tb::Tile::Ptr Map::getTile(const sf::Vector2i& tileCoords, tb::ZAxis z)
+tb::Tile::Ptr Map::getTile(const tb::TileCoords& tileCoords, tb::AxisZ axisZ)
 {
-    tb::TileMap::Ptr tileMap = getTileMapOfTilesAtZ(z);
+    tb::TileMap::Ptr tileMap = getTileMapOfTilesAtAxisZ(axisZ);
 
     if (tileMap == nullptr)
     {
@@ -553,25 +553,25 @@ tb::Tile::Ptr Map::getTile(const sf::Vector2i& tileCoords, tb::ZAxis z)
         return nullptr;
     }
 
-    std::uint32_t tileIndex = getTileIndexByTileCoords(tileCoords);
+    tb::TileIndex tileIndex = getTileIndexByTileCoords(tileCoords);
 
     if (isTileIndexOutOfBounds(tileIndex) == true)
     {
-        g_Log.write("ERROR: Tile index is out of bounds: {}\n", tileIndex);
+        g_Log.write("ERROR: tile index is out of bounds: {}\n", tileIndex);
         return nullptr;
     }
 
     return tileList->at(tileIndex);
 }
 
-tb::Tile::Ptr Map::getTileOfThing(tb::Thing::Ptr thing)
+tb::Tile::Ptr Map::getTileAtThing(tb::Thing::Ptr thing)
 {
     if (thing == nullptr)
     {
         return nullptr;
     }
 
-    return getTile(thing->getTileCoords(), thing->getZ());
+    return getTile(thing->getTileCoords(), thing->getAxisZ());
 }
 
 const std::string& Map::getFileName()
@@ -609,14 +609,14 @@ std::uint32_t Map::getNumTiles()
     return m_numTiles;
 }
 
-tb::TileMap::Ptr Map::getTileMapOfTilesAtZ(tb::ZAxis z)
+tb::TileMap::Ptr Map::getTileMapOfTilesAtAxisZ(tb::AxisZ axisZ)
 {
     auto it = std::find_if
     (
         m_tileMapOfTilesList.begin(), m_tileMapOfTilesList.end(),
-        [&z](const tb::TileMap::Ptr& tileMap)
+        [&axisZ](const tb::TileMap::Ptr& tileMap)
         {
-            return tileMap->getZ() == z;
+            return tileMap->getAxisZ() == axisZ;
         }
     );
 
@@ -628,14 +628,14 @@ tb::TileMap::Ptr Map::getTileMapOfTilesAtZ(tb::ZAxis z)
     return *it;
 }
 
-tb::TileMap::Ptr Map::getTileMapOfTileEdgesAtZ(tb::ZAxis z)
+tb::TileMap::Ptr Map::getTileMapOfTileEdgesAtAxisZ(tb::AxisZ axisZ)
 {
     auto it = std::find_if
     (
         m_tileMapOfTileEdgesList.begin(), m_tileMapOfTileEdgesList.end(),
-        [&z](const tb::TileMap::Ptr& tileMap)
+        [&axisZ](const tb::TileMap::Ptr& tileMap)
         {
-            return tileMap->getZ() == z;
+            return tileMap->getAxisZ() == axisZ;
         }
     );
 

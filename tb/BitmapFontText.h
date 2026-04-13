@@ -17,19 +17,19 @@ public:
     BitmapFontText();
     ~BitmapFontText();
 
-    struct TextLine_t
+    struct TextLine
     {
         std::uint32_t Index = 0;
         std::string Text;
         sf::FloatRect Rect;
-        std::vector<sf::Vertex*> VertexPointerList;
+        tb::VertexPointerList VertexPointerList;
     };
 
     bool setText(tb::BitmapFont* bitmapFont, const std::string& text, const sf::Color& color);
 
     tb::BitmapFont* getBitmapFont();
 
-    std::vector<sf::Vertex>* getVertexList();
+    tb::VertexList* getVertexList();
 
     sf::FloatRect getRect();
 
@@ -49,7 +49,7 @@ private:
 
     tb::BitmapFont* m_bitmapFont = nullptr;
 
-    std::vector<sf::Vertex> m_vertexList;
+    tb::VertexList m_vertexList;
 
     static const std::uint32_t m_numVertexPerGlyph = 6;
 
@@ -63,7 +63,7 @@ private:
 
     tb::TextJustifyType m_textJustifyType = tb::TextJustifyType::Left;
 
-    std::vector<tb::BitmapFontText::TextLine_t> m_textLineList;
+    std::vector<tb::BitmapFontText::TextLine> m_textLineList;
 
     const std::uint32_t m_numTextLinesToReserve = 8;
 

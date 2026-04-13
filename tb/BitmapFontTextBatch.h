@@ -32,7 +32,7 @@ private:
 
     tb::BitmapFont* m_bitmapFont = nullptr;
 
-    std::vector<sf::Vertex> m_vertexList;
+    tb::VertexList m_vertexList;
 
     std::uint32_t m_numBitmapFontText = 0;
 

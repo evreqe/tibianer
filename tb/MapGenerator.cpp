@@ -68,17 +68,15 @@ bool MapGenerator::generateMapFromImageFile(const MapGenerator::Map_t& map, cons
         return false;
     }
 
-    const std::string& mapImageFileName = std::format("map_generator/images/{}", imageFileName);
-
-    if (mapImageFileName.contains(".png") == false)
+    if (imageFileName.contains(".png") == false)
     {
-        g_Log.write("ERROR: mapImageFileName must have *.png file extension\n");
+        g_Log.write("ERROR: imageFileName must have *.png file extension\n");
         return false;
     }
 
-    if (mapImageFileName.empty() == true)
+    if (imageFileName.empty() == true)
     {
-        g_Log.write("ERROR: mapImageFileName is empty\n");
+        g_Log.write("ERROR: imageFileName is empty\n");
         return false;
     }
 
@@ -119,9 +117,9 @@ bool MapGenerator::generateMapFromImageFile(const MapGenerator::Map_t& map, cons
     }
 
     sf::Image image;
-    if (image.loadFromFile(mapImageFileName) == false)
+    if (image.loadFromFile(imageFileName) == false)
     {
-        g_Log.write("ERROR: Cannot open file: {}\n", mapImageFileName);
+        g_Log.write("ERROR: cannot open file: {}\n", imageFileName);
         return false;
     }
 
@@ -150,7 +148,7 @@ bool MapGenerator::generateMapFromImageFile(const MapGenerator::Map_t& map, cons
         return false;
     }
 
-    if (mapPlayerStartZ < tb::Constants::ZAxisMin || mapPlayerStartZ > tb::Constants::ZAxisMax)
+    if (mapPlayerStartZ < tb::Constants::AxisZMin || mapPlayerStartZ > tb::Constants::AxisZMax)
     {
         g_Log.write("ERROR: mapPlayerStartZ is out of bounds\n");
         return false;
@@ -242,41 +240,41 @@ bool MapGenerator::generateMapFromImageFile(const MapGenerator::Map_t& map, cons
             continue;
         }
 
-        sf::Vector2i tileCoords;
+        tb::TileCoords tileCoords;
         tileCoords.x = static_cast<int>(tileIndex % imageWidth);
         tileCoords.y = static_cast<int>(tileIndex / imageHeight);
 
         //tileIndex = tileCoords.x + (tileCoords.y * imageWidth);
 
-        sf::Vector2i tileCoordsTopLeft;
+        tb::TileCoords tileCoordsTopLeft;
         tileCoordsTopLeft.x = tileCoords.x - 1;
         tileCoordsTopLeft.y = tileCoords.y - 1;
 
-        sf::Vector2i tileCoordsTopCenter;
+        tb::TileCoords tileCoordsTopCenter;
         tileCoordsTopCenter.x = tileCoords.x;
         tileCoordsTopCenter.y = tileCoords.y - 1;
 
-        sf::Vector2i tileCoordsTopRight;
+        tb::TileCoords tileCoordsTopRight;
         tileCoordsTopRight.x = tileCoords.x + 1;
         tileCoordsTopRight.y = tileCoords.y - 1;
 
-        sf::Vector2i tileCoordsLeft;
+        tb::TileCoords tileCoordsLeft;
         tileCoordsLeft.x = tileCoords.x - 1;
         tileCoordsLeft.y = tileCoords.y;
 
-        sf::Vector2i tileCoordsRight;
+        tb::TileCoords tileCoordsRight;
         tileCoordsRight.x = tileCoords.x + 1;
         tileCoordsRight.y = tileCoords.y;
 
-        sf::Vector2i tileCoordsBottomLeft;
+        tb::TileCoords tileCoordsBottomLeft;
         tileCoordsBottomLeft.x = tileCoords.x - 1;
         tileCoordsBottomLeft.y = tileCoords.y + 1;
 
-        sf::Vector2i tileCoordsBottomCenter;
+        tb::TileCoords tileCoordsBottomCenter;
         tileCoordsBottomCenter.x = tileCoords.x;
         tileCoordsBottomCenter.y = tileCoords.y + 1;
 
-        sf::Vector2i tileCoordsBottomRight;
+        tb::TileCoords tileCoordsBottomRight;
         tileCoordsBottomRight.x = tileCoords.x + 1;
         tileCoordsBottomRight.y = tileCoords.y + 1;
 
@@ -298,9 +296,9 @@ bool MapGenerator::generateMapFromImageFile(const MapGenerator::Map_t& map, cons
         std::uint32_t spriteIDBottomCenter = tileList.at(tileIndexBottomCenter);
         std::uint32_t spriteIDBottomRight  = tileList.at(tileIndexBottomRight);
 
-        uint32_t objectSpriteID = 0;
+        std::uint32_t objectSpriteID = 0;
 
-        sf::Vector2i* objectTileCoords = nullptr;
+        tb::TileCoords* objectTileCoords = nullptr;
 
         const std::string objectFormatString = "<object id=\"{}\" gid=\"{}\" x=\"{}\" y=\"{}\" width=\"32\" height=\"32\"/>";
 
@@ -314,7 +312,7 @@ bool MapGenerator::generateMapFromImageFile(const MapGenerator::Map_t& map, cons
             std::uint32_t objectX = objectTileCoords->x * tb::Constants::TileSize;
             std::uint32_t objectY = objectTileCoords->y * tb::Constants::TileSize;
 
-            std::string objectAsString = dynamicFormat(objectFormatString, objectIndex, objectSpriteID, objectX, objectY);
+            std::string objectAsString = tb::LibFMT::DynamicFormat(objectFormatString, objectIndex, objectSpriteID, objectX, objectY);
 
             tileEdgeObjectList.push_back(objectAsString);
         }
@@ -329,7 +327,7 @@ bool MapGenerator::generateMapFromImageFile(const MapGenerator::Map_t& map, cons
             std::uint32_t objectX = objectTileCoords->x * tb::Constants::TileSize;
             std::uint32_t objectY = objectTileCoords->y * tb::Constants::TileSize;
 
-            std::string objectAsString = dynamicFormat(objectFormatString, objectIndex, objectSpriteID, objectX, objectY);
+            std::string objectAsString = tb::LibFMT::DynamicFormat(objectFormatString, objectIndex, objectSpriteID, objectX, objectY);
 
             tileEdgeObjectList.push_back(objectAsString);
         }
@@ -344,7 +342,7 @@ bool MapGenerator::generateMapFromImageFile(const MapGenerator::Map_t& map, cons
             std::uint32_t objectX = objectTileCoords->x * tb::Constants::TileSize;
             std::uint32_t objectY = objectTileCoords->y * tb::Constants::TileSize;
 
-            std::string objectAsString = dynamicFormat(objectFormatString, objectIndex, objectSpriteID, objectX, objectY);
+            std::string objectAsString = tb::LibFMT::DynamicFormat(objectFormatString, objectIndex, objectSpriteID, objectX, objectY);
 
             tileEdgeObjectList.push_back(objectAsString);
         }
@@ -359,7 +357,7 @@ bool MapGenerator::generateMapFromImageFile(const MapGenerator::Map_t& map, cons
             std::uint32_t objectX = objectTileCoords->x * tb::Constants::TileSize;
             std::uint32_t objectY = objectTileCoords->y * tb::Constants::TileSize;
 
-            std::string objectAsString = dynamicFormat(objectFormatString, objectIndex, objectSpriteID, objectX, objectY);
+            std::string objectAsString = tb::LibFMT::DynamicFormat(objectFormatString, objectIndex, objectSpriteID, objectX, objectY);
 
             tileEdgeObjectList.push_back(objectAsString);
         }
@@ -374,7 +372,7 @@ bool MapGenerator::generateMapFromImageFile(const MapGenerator::Map_t& map, cons
             std::uint32_t objectX = objectTileCoords->x * tb::Constants::TileSize;
             std::uint32_t objectY = objectTileCoords->y * tb::Constants::TileSize;
 
-            std::string objectAsString = dynamicFormat(objectFormatString, objectIndex, objectSpriteID, objectX, objectY);
+            std::string objectAsString = tb::LibFMT::DynamicFormat(objectFormatString, objectIndex, objectSpriteID, objectX, objectY);
 
             tileEdgeObjectList.push_back(objectAsString);
         }
@@ -389,7 +387,7 @@ bool MapGenerator::generateMapFromImageFile(const MapGenerator::Map_t& map, cons
             std::uint32_t objectX = objectTileCoords->x * tb::Constants::TileSize;
             std::uint32_t objectY = objectTileCoords->y * tb::Constants::TileSize;
 
-            std::string objectAsString = dynamicFormat(objectFormatString, objectIndex, objectSpriteID, objectX, objectY);
+            std::string objectAsString = tb::LibFMT::DynamicFormat(objectFormatString, objectIndex, objectSpriteID, objectX, objectY);
 
             tileEdgeObjectList.push_back(objectAsString);
         }
@@ -404,7 +402,7 @@ bool MapGenerator::generateMapFromImageFile(const MapGenerator::Map_t& map, cons
             std::uint32_t objectX = objectTileCoords->x * tb::Constants::TileSize;
             std::uint32_t objectY = objectTileCoords->y * tb::Constants::TileSize;
 
-            std::string objectAsString = dynamicFormat(objectFormatString, objectIndex, objectSpriteID, objectX, objectY);
+            std::string objectAsString = tb::LibFMT::DynamicFormat(objectFormatString, objectIndex, objectSpriteID, objectX, objectY);
 
             tileEdgeObjectList.push_back(objectAsString);
         }
@@ -419,7 +417,7 @@ bool MapGenerator::generateMapFromImageFile(const MapGenerator::Map_t& map, cons
             std::uint32_t objectX = objectTileCoords->x * tb::Constants::TileSize;
             std::uint32_t objectY = objectTileCoords->y * tb::Constants::TileSize;
 
-            std::string objectAsString = dynamicFormat(objectFormatString, objectIndex, objectSpriteID, objectX, objectY);
+            std::string objectAsString = tb::LibFMT::DynamicFormat(objectFormatString, objectIndex, objectSpriteID, objectX, objectY);
 
             tileEdgeObjectList.push_back(objectAsString);
         }
@@ -434,7 +432,7 @@ bool MapGenerator::generateMapFromImageFile(const MapGenerator::Map_t& map, cons
             std::uint32_t objectX = objectTileCoords->x * tb::Constants::TileSize;
             std::uint32_t objectY = objectTileCoords->y * tb::Constants::TileSize;
 
-            std::string objectAsString = dynamicFormat(objectFormatString, objectIndex, objectSpriteID, objectX, objectY);
+            std::string objectAsString = tb::LibFMT::DynamicFormat(objectFormatString, objectIndex, objectSpriteID, objectX, objectY);
 
             tileEdgeObjectList.push_back(objectAsString);
         }
@@ -449,7 +447,7 @@ bool MapGenerator::generateMapFromImageFile(const MapGenerator::Map_t& map, cons
             std::uint32_t objectX = objectTileCoords->x * tb::Constants::TileSize;
             std::uint32_t objectY = objectTileCoords->y * tb::Constants::TileSize;
 
-            std::string objectAsString = dynamicFormat(objectFormatString, objectIndex, objectSpriteID, objectX, objectY);
+            std::string objectAsString = tb::LibFMT::DynamicFormat(objectFormatString, objectIndex, objectSpriteID, objectX, objectY);
 
             tileEdgeObjectList.push_back(objectAsString);
         }
@@ -464,7 +462,7 @@ bool MapGenerator::generateMapFromImageFile(const MapGenerator::Map_t& map, cons
             std::uint32_t objectX = objectTileCoords->x * tb::Constants::TileSize;
             std::uint32_t objectY = objectTileCoords->y * tb::Constants::TileSize;
 
-            std::string objectAsString = dynamicFormat(objectFormatString, objectIndex, objectSpriteID, objectX, objectY);
+            std::string objectAsString = tb::LibFMT::DynamicFormat(objectFormatString, objectIndex, objectSpriteID, objectX, objectY);
 
             tileEdgeObjectList.push_back(objectAsString);
         }
@@ -479,7 +477,7 @@ bool MapGenerator::generateMapFromImageFile(const MapGenerator::Map_t& map, cons
             std::uint32_t objectX = objectTileCoords->x * tb::Constants::TileSize;
             std::uint32_t objectY = objectTileCoords->y * tb::Constants::TileSize;
 
-            std::string objectAsString = dynamicFormat(objectFormatString, objectIndex, objectSpriteID, objectX, objectY);
+            std::string objectAsString = tb::LibFMT::DynamicFormat(objectFormatString, objectIndex, objectSpriteID, objectX, objectY);
 
             tileEdgeObjectList.push_back(objectAsString);
         }

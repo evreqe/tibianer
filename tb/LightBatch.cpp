@@ -57,6 +57,7 @@ bool LightBatch::addLight(sf::Vector2f position, sf::Color color)
 void LightBatch::clear()
 {
     m_vertexList.clear();
+    m_vertexList.resize(m_maxVertices);
 
     m_numLights = 0;
 }

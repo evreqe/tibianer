@@ -4,5 +4,5 @@
 #include <boost/range/algorithm/replace_if.hpp>
 #include <boost/range/algorithm/remove_if.hpp>
 
-#include "boost_base64.hpp"
-#include "boost_zlib.hpp"
+#include "LibBoostBase64.h"
+#include "LibBoostZLIB.h"

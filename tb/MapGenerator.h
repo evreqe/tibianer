@@ -3,6 +3,7 @@
 #include "common.h"
 
 #include "tb/Constants.h"
+#include "tb/Resources.h"
 #include "tb/Utility.h"
 #include "tb/Log.h"
 
@@ -42,14 +43,8 @@ public:
         std::string Author;
         std::uint32_t PlayerStartX = 0;
         std::uint32_t PlayerStartY = 0;
-        std::uint32_t PlayerStartZ = tb::Constants::ZAxisDefault;
+        std::uint32_t PlayerStartZ = tb::Constants::AxisZDefault;
     };
-
-    template<typename... Args>
-    std::string dynamicFormat(std::string_view fmt, Args&&... args)
-    {
-        return std::vformat(fmt, std::make_format_args(args...));
-    }
 
     std::string getTemplateFileText();
     bool generateMapFromImageFile(const MapGenerator::Map_t& map, const std::string& imageFileName, const std::string& outputFileName);

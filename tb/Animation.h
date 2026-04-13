@@ -3,6 +3,7 @@
 #include "common.h"
 
 #include "tb/Constants.h"
+#include "tb/Resources.h"
 #include "tb/Utility.h"
 
 #include "tb/SpriteData.h"
@@ -21,8 +22,8 @@ public:
 
     Animation();
     ~Animation();
-    Animation(const sf::Vector2i& tileCoords, tb::ZAxis z, std::uint32_t index);
-    Animation(const sf::Vector2i& tileCoords, tb::ZAxis z, const std::string& name);
+    Animation(const tb::TileCoords& tileCoords, tb::AxisZ axisZ, std::uint32_t index);
+    Animation(const tb::TileCoords& tileCoords, tb::AxisZ axisZ, const std::string& name);
 
     using Ptr = std::shared_ptr<tb::Animation>;
     using List = std::vector<tb::Animation::Ptr>;
@@ -33,15 +34,15 @@ public:
 
     tb::Sprite* getSprite();
     tb::SpriteID getSpriteID();
-    tb::AnimationData::Data* getData();
     tb::SpriteIDList* getSpriteIDList();
+    tb::AnimationData::Data* getData();
     sf::Clock* getClock();
 
 private:
 
     tb::Sprite m_sprite;
-    tb::AnimationData::Data* m_animationData = nullptr;
     tb::SpriteIDList* m_spriteIDList = nullptr;
+    tb::AnimationData::Data* m_animationData = nullptr;
     sf::Clock m_clock;
     std::uint32_t m_currentFrame = 0;
     sf::Time m_frameTime = sf::seconds(0.1f);

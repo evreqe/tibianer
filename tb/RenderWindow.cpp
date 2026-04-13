@@ -15,7 +15,7 @@ RenderWindow::~RenderWindow()
     //
 }
 
-RenderWindow::Properties_t* RenderWindow::getProperties()
+RenderWindow::Properties* RenderWindow::getProperties()
 {
     return &m_properties;
 }
@@ -30,7 +30,7 @@ bool RenderWindow::create()
     }
     else
     {
-        g_Log.write("ERROR: Failed to load icon file: {}\n", m_iconFileName);
+        g_Log.write("ERROR: failed to load icon file: {}\n", m_iconFileName);
         return false;
     }
 
@@ -55,13 +55,13 @@ bool RenderWindow::create()
         m_window.setSize(sf::VideoMode::getDesktopMode().size);
         m_window.setPosition(sf::Vector2i(0, 0));
 
-        tb::WindowsApi::MaximizeWindow(m_window.getNativeHandle());
+        tb::WindowsAPI::MaximizeWindow(m_window.getNativeHandle());
     }
 
     const std::optional<sf::Cursor> arrowCursor = sf::Cursor::createFromSystem(sf::Cursor::Type::Arrow);
     if (arrowCursor.has_value() == false)
     {
-        g_Log.write("ERROR: Failed to create arrow cursor\n");
+        g_Log.write("ERROR: failed to create arrow cursor\n");
         return false;
     }
 
@@ -76,7 +76,7 @@ void RenderWindow::setSizeAndCenter(sf::Vector2u size)
     sf::WindowHandle renderWindowHandle = m_window.getNativeHandle();
 
     // normalize render window
-    tb::WindowsApi::NormalizeWindow(renderWindowHandle);
+    tb::WindowsAPI::NormalizeWindow(renderWindowHandle);
 
     sf::Vector2u desktopWindowSize = sf::VideoMode::getDesktopMode().size;
 
@@ -112,7 +112,7 @@ void RenderWindow::setSizeAndCenter(sf::Vector2u size)
     if (size.x >= desktopWindowSize.x || size.y >= desktopWindowSize.y)
     {
         // maximize render window
-        tb::WindowsApi::MaximizeWindow(renderWindowHandle);
+        tb::WindowsAPI::MaximizeWindow(renderWindowHandle);
         return;
     }
 

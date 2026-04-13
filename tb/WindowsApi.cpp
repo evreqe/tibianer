@@ -1,6 +1,6 @@
 #include "common.h"
 
-#include "tb/WindowsApi.h"
+#include "tb/WindowsAPI.h"
 
 #ifndef NOMINMAX
 #define NOMINMAX
@@ -12,10 +12,7 @@
 
 #include <windows.h>
 
-namespace tb
-{
-
-namespace WindowsApi
+namespace tb::WindowsAPI
 {
 
 void ShowWindow(sf::WindowHandle windowHandle)
@@ -56,8 +53,6 @@ bool IsWindowMinimized(sf::WindowHandle windowHandle)
 bool IsWindowMaximized(sf::WindowHandle windowHandle)
 {
     return ::IsZoomed(windowHandle) == TRUE;
-}
-
 }
 
 }

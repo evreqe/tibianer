@@ -2,7 +2,7 @@
 
 #include "common.h"
 
-#include "tb/SfmlGuiWindow.h"
+#include "tb/SFMLGUIWindow.h"
 
 #include "tb/Constants.h"
 #include "tb/Utility.h"
@@ -18,7 +18,7 @@
 namespace tb
 {
 
-class GameWindow : public SfmlGuiWindow
+class GameWindow : public SFMLGUIWindow
 {
 
 public:
@@ -41,12 +41,12 @@ private:
 
 public:
 
-    struct Properties_t
+    struct Properties
     {
         bool ShowTileHighlight = true;
     };
 
-    Properties_t* getProperties();
+    Properties* getProperties();
 
     void handleEventMouseWheelScrolled(const sf::Event::MouseWheelScrolled* eventMouseWheelScrolled);
     void handleEventMouseButtonPressed(const sf::Event::MouseButtonPressed* eventMouseButtonPressed);
@@ -57,10 +57,10 @@ public:
     void setPositionInLayout();
 
     void draw();
-    void drawMapLayerAtZ(tb::ZAxis z);
+    void drawMapLayerAtAxisZ(tb::AxisZ axisZ);
     void drawTileHighlight();
 
-    sf::IntRect getTileRect();
+    tb::TileRect getTileRect();
 
     void setLightBrightness(tb::LightBrightness lightBrightness);
     tb::LightBrightness getLightBrightness();
@@ -75,10 +75,9 @@ public:
 
 private:
 
-    Properties_t m_properties;
+    Properties m_properties;
 
     const sf::Vector2f m_viewSize = sf::Vector2f(416.0f, 288.0f);
-
     const sf::Vector2i m_windowRenderTextureSize = sf::Vector2i(416, 288);
 
     sf::RenderTexture m_windowLayerRenderTexture;

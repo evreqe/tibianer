@@ -3,6 +3,7 @@
 #include "common.h"
 
 #include "tb/Constants.h"
+#include "tb/Resources.h"
 #include "tb/Utility.h"
 #include "Tb/Log.h"
 

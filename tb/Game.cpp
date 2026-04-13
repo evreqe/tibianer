@@ -15,41 +15,9 @@ Game::~Game()
     //
 }
 
-Game::Properties_t* Game::getProperties()
+Game::Properties* Game::getProperties()
 {
     return &m_properties;
-}
-
-Game::GuiProperties_t* Game::getGuiProperties()
-{
-    return &m_guiProperties;
-}
-
-bool Game::initImGui()
-{
-    bool initResult = ImGui::SFML::Init(*g_RenderWindow.getWindow());
-
-    if (initResult == false)
-    {
-        g_Log.write("ERROR: ImGui::SFML::Init() failed\n");
-        return false;
-    }
-
-    ImGui::StyleColorsLight();
-
-    ImGuiStyle* style = &ImGui::GetStyle();
-
-    style->FrameBorderSize = 1.0f;
-    style->TabBorderSize = 1.0f;
-
-    ImGuiIO& imguiIO = ImGui::GetIO();
-
-    imguiIO.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-
-    imguiIO.ConfigWindowsMoveFromTitleBarOnly = true;
-    imguiIO.ConfigDockingWithShift = true;
-
-    return true;
 }
 
 bool Game::loadConfig()
@@ -57,14 +25,14 @@ bool Game::loadConfig()
     g_Log.write("Loading options data\n");
     if (g_OptionsData.load() == false)
     {
-        g_Log.write("ERROR: Failed to load options data\n");
+        g_Log.write("ERROR: failed to load options data\n");
         return false;
     }
 
     g_Log.write("Loading hotkeys data\n");
     if (g_HotkeysData.load() == false)
     {
-        g_Log.write("ERROR: Failed to load hotkeys data\n");
+        g_Log.write("ERROR: failed to load hotkeys data\n");
         return false;
     }
 
@@ -76,484 +44,99 @@ bool Game::loadData()
     g_Log.write("Loading map data\n");
     if (g_MapData.load() == false)
     {
-        g_Log.write("ERROR: Failed to load map data\n");
+        g_Log.write("ERROR: failed to load map data\n");
         return false;
     }
 
     g_Log.write("Loading texture data\n");
     if (g_TextureData.load() == false)
     {
-        g_Log.write("ERROR: Failed to load texture data\n");
+        g_Log.write("ERROR: failed to load texture data\n");
         return false;
     }
 
     g_Log.write("Loading sprite data\n");
     if (g_SpriteData.load() == false)
     {
-        g_Log.write("ERROR: Failed to load sprite data\n");
+        g_Log.write("ERROR: failed to load sprite data\n");
         return false;
     }
 
     g_Log.write("Loading font data\n");
     if (g_FontData.load() == false)
     {
-        g_Log.write("ERROR: Failed to load font data\n");
+        g_Log.write("ERROR: failed to load font data\n");
         return false;
     }
 
     g_Log.write("Loading bitmap font data\n");
     if (g_BitmapFontData.load() == false)
     {
-        g_Log.write("ERROR: Failed to load bitmap font data\n");
+        g_Log.write("ERROR: failed to load bitmap font data\n");
         return false;
     }
 
     g_Log.write("Loading pattern data\n");
     if (g_PatternData.load() == false)
     {
-        g_Log.write("ERROR: Failed to load pattern data\n");
+        g_Log.write("ERROR: failed to load pattern data\n");
         return false;
     }
 
     g_Log.write("Loading water animation data\n");
     if (g_WaterAnimationData.load() == false)
     {
-        g_Log.write("ERROR: Failed to load water animation data\n");
+        g_Log.write("ERROR: failed to load water animation data\n");
         return false;
     }
 
     g_Log.write("Loading outfit sprites data\n");
     if (g_OutfitSpritesData.load() == false)
     {
-        g_Log.write("ERROR: Failed to load outfit sprites data\n");
+        g_Log.write("ERROR: failed to load outfit sprites data\n");
         return false;
     }
 
     g_Log.write("Loading message of the day data\n");
     if (g_MessageOfTheDayData.load() == false)
     {
-        g_Log.write("ERROR: Failed to load message of the day data\n");
+        g_Log.write("ERROR: failed to load message of the day data\n");
         return false;
     }
 
-    g_Log.write("Loading click rect data\n");
-    if (g_ClickRectData.load() == false)
+    g_Log.write("Loading texture rect data\n");
+    if (g_TextureRectData.load() == false)
     {
-        g_Log.write("ERROR: Failed to load click rect data\n");
-        return false;
-    }
-
-    g_Log.write("Loading gui rect data\n");
-    if (g_GuiRectData.load() == false)
-    {
-        g_Log.write("ERROR: Failed to load GUI rect data\n");
+        g_Log.write("ERROR: failed to load texture rect data\n");
         return false;
     }
 
     g_Log.write("Loading cursor data\n");
     if (g_CursorData.load() == false)
     {
-        g_Log.write("ERROR: Failed to load cursor data\n");
+        g_Log.write("ERROR: failed to load cursor data\n");
         return false;
     }
 
     g_Log.write("Loading animation data\n");
     if (g_AnimationData.load() == false)
     {
-        g_Log.write("ERROR: Failed to load animation data\n");
+        g_Log.write("ERROR: failed to load animation data\n");
         return false;
     }
 
     g_Log.write("Loading map generator data\n");
     if (g_MapGeneratorData.load() == false)
     {
-        g_Log.write("ERROR: Failed to load map generator data\n");
+        g_Log.write("ERROR: failed to load map generator data\n");
         return false;
     }
 
     g_Log.write("Loading map generator pixel data\n");
     if (g_MapGeneratorPixelData.load() == false)
     {
-        g_Log.write("ERROR: Failed to load map generator pixel data\n");
+        g_Log.write("ERROR: failed to load map generator pixel data\n");
         return false;
-    }
-
-    return true;
-}
-
-bool Game::loadResources()
-{
-    g_Log.write("Loading textures\n");
-    if (loadTextures() == false)
-    {
-        g_Log.write("ERROR: Failed to load textures\n");
-        return false;
-    }
-
-    g_Log.write("Loading fonts\n");
-    if (loadFonts() == false)
-    {
-        g_Log.write("ERROR: Failed to load fonts\n");
-        return false;
-    }
-
-    g_Log.write("Loading bitmap fonts\n");
-    if (loadBitmapFonts() == false)
-    {
-        g_Log.write("ERROR: Failed to load bitmap fonts\n");
-        return false;
-    }
-
-    g_Log.write("Loading cursors\n");
-    if (loadCursors() == false)
-    {
-        g_Log.write("ERROR: Failed to load cursors\n");
-        return false;
-    }
-
-    g_Log.write("Loading sprites\n");
-    if (loadSprites() == false)
-    {
-        g_Log.write("ERROR: Failed to load sprites\n");
-        return false;
-    }
-
-    g_Log.write("Loading animations\n");
-    if (loadAnimations() == false)
-    {
-        g_Log.write("ERROR: Failed to load animations\n");
-        return false;
-    }
-
-    g_Log.write("Loading GUI rects\n");
-    if (loadGuiRects() == false)
-    {
-        g_Log.write("ERROR: Failed to load gui rects\n");
-        return false;
-    }
-
-    return true;
-}
-
-bool Game::loadTextures()
-{
-    std::uint32_t maximumTextureSize = sf::Texture::getMaximumSize();
-
-    if (maximumTextureSize < m_minimumTextureSizeRequiredToRun)
-    {
-        g_Log.write("ERROR: Your computer supports a maximum texture size of {}\n", maximumTextureSize);
-        g_Log.write("----> This game requires at least {} texture size in order to run\n", m_minimumTextureSizeRequiredToRun);
-        return false;
-    }
-
-    if (g_TextureData.isLoaded() == false)
-    {
-        g_Log.write("ERROR: Texture data is not loaded\n");
-        return false;
-    }
-
-    tb::TextureData::DataList* textureDataList = g_TextureData.getDataList();
-
-    for (auto& textureData : *textureDataList)
-    {
-        bool isFound = false;
-
-        for (auto& [textureName, textureObject] : tb::Resources::Textures::NameTable)
-        {
-            if (textureData.Name == textureName)
-            {
-                if (textureObject.loadFromFile(textureData.FileName, false, sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(textureData.Width, textureData.Height))) == true)
-                {
-                    // tiled textures
-                    if (textureData.Repeated == true)
-                    {
-                        textureObject.setRepeated(true);
-                    }
-
-                    isFound = true;
-                    break;
-                }
-            }
-        }
-
-        if (isFound == true)
-        {
-            g_Log.write("Loaded texture '{}' from file: {}\n", textureData.Name, textureData.FileName);
-        }
-        else
-        {
-            g_Log.write("ERROR: Failed to load texture '{}' from file: {}\n", textureData.Name, textureData.FileName);
-            return false;
-        }
-    }
-
-    return true;
-}
-
-bool Game::loadFonts()
-{
-    if (g_FontData.isLoaded() == false)
-    {
-        g_Log.write("ERROR: Font data is not loaded\n");
-        return false;
-    }
-
-    tb::FontData::DataList* fontDataList = g_FontData.getDataList();
-
-    for (auto& fontData : *fontDataList)
-    {
-        bool isFound = false;
-
-        for (auto& [fontName, fontObject] : tb::Resources::Fonts::NameTable)
-        {
-            if (fontData.Name == fontName)
-            {
-                if (fontObject.openFromFile(fontData.FileName) == true)
-                {
-                    isFound = true;
-                    break;
-                }
-            }
-        }
-
-        if (isFound == true)
-        {
-            g_Log.write("Loaded font '{}' from file: {}\n", fontData.Name, fontData.FileName);
-        }
-        else
-        {
-            g_Log.write("ERROR: Failed to load font '{}' from file: {}\n", fontData.Name, fontData.FileName);
-            return false;
-        }
-    }
-
-    return true;
-}
-
-bool Game::loadBitmapFonts()
-{
-    if (g_BitmapFontData.isLoaded() == false)
-    {
-        g_Log.write("ERROR: Bitmap Font data is not loaded\n");
-        return false;
-    }
-
-    tb::BitmapFontData::DataList* bitmapFontDataList = g_BitmapFontData.getDataList();
-
-    for (auto& bitmapFontData : *bitmapFontDataList)
-    {
-        bool isFound = false;
-
-        for (auto& [bitmapFontName, bitmapFontObject] : m_bitmapFontNames)
-        {
-            if (bitmapFontData.Name == bitmapFontName)
-            {
-                if
-                (
-                    bitmapFontObject.load
-                    (
-                        bitmapFontData.FileName,
-                        sf::Vector2u(bitmapFontData.GlyphWidth, bitmapFontData.GlyphHeight),
-                        bitmapFontData.CharacterSpace,
-                        bitmapFontData.CharacterHeight,
-                        &bitmapFontData.CharacterWidthList
-                    ) == true
-                )
-                {
-                    isFound = true;
-                    break;
-                }
-            }
-        }
-
-        if (isFound == true)
-        {
-            g_Log.write("Loaded bitmap font '{}' from file: {}\n", bitmapFontData.Name, bitmapFontData.FileName);
-        }
-        else
-        {
-            g_Log.write("ERROR: Failed to load bitmap font '{}' from file: {}\n", bitmapFontData.Name, bitmapFontData.FileName);
-            return false;
-        }
-    }
-
-    return true;
-}
-
-bool Game::loadCursors()
-{
-    if (g_CursorData.isLoaded() == false)
-    {
-        g_Log.write("ERROR: Cursor data is not loaded\n");
-        return false;
-    }
-
-    // system cursors
-    for (auto& [cursorType, cursorObject] : tb::Resources::Cursors::System::TypeTable)
-    {
-        auto cursorResult = cursorObject.createFromSystem(cursorType);
-        if (cursorResult.has_value() == false)
-        {
-            g_Log.write("ERROR: Failed to create system cursors");
-            return false;
-        }
-    }
-
-    tb::CursorData::DataList* cursorDataList = g_CursorData.getDataList();
-
-    // custom cursors
-    for (auto& cursorData : *cursorDataList)
-    {
-        bool isFound = false;
-
-        for (auto& [cursorName, cursorObject] : tb::Resources::Cursors::Custom::NameTable)
-        {
-            if (cursorData.Name == cursorName)
-            {
-                const std::uint8_t* cursorPixels = cursorData.Image.getPixelsPtr();
-
-                sf::Vector2u cursorSize = sf::Vector2u(cursorData.Width, cursorData.Height);
-
-                sf::Vector2u cursorHotSpot = sf::Vector2u(cursorData.HotSpotX, cursorData.HotSpotY);
-
-                auto cursorResult = cursorObject.createFromPixels(cursorPixels, cursorSize, cursorHotSpot);
-                if (cursorResult.has_value() == true)
-                {
-                    isFound = true;
-                    break;
-                }
-            }
-        }
-
-        if (isFound == true)
-        {
-            g_Log.write("Loaded cursor '{}' from file: {}\n", cursorData.Name, cursorData.FileName);
-        }
-        else
-        {
-            g_Log.write("ERROR: Failed to load cursor '{}' from file: {}\n", cursorData.Name, cursorData.FileName);
-            return false;
-        }
-    }
-
-    return true;
-}
-
-bool Game::loadSprites()
-{
-    if (g_SpriteData.isLoaded() == false)
-    {
-        g_Log.write("ERROR: Sprite data is not loaded\n");
-        return false;
-    }
-
-    tb::SpriteData::DataList* spriteDataList = g_SpriteData.getDataList();
-
-    for (auto& [spriteName, spriteID] : tb::Resources::Sprites::NameTable)
-    {
-        bool isFound = false;
-
-        for (auto& spriteData : *spriteDataList)
-        {
-            if (spriteData.Name == spriteName)
-            {
-                spriteID = spriteData.SpriteID;
-
-                isFound = true;
-                break;
-            }
-        }
-
-        if (isFound == true)
-        {
-            g_Log.write("Loaded sprite '{}' to sprite ID: {}\n", spriteName, spriteID);
-        }
-        else
-        {
-            g_Log.write("ERROR: Failed to load sprite '{}' to sprite ID: {}\n", spriteName, spriteID);
-            return false;
-        }
-    }
-
-    return true;
-}
-
-bool Game::loadAnimations()
-{
-    if (g_AnimationData.isLoaded() == false)
-    {
-        g_Log.write("ERROR: Animation data is not loaded\n");
-        return false;
-    }
-
-    tb::AnimationData::DataList* animationDataList = g_AnimationData.getDataList();
-
-    for (auto& [animationName, animationIndex] : tb::Resources::Animations::NameTable)
-    {
-        bool isFound = false;
-
-        for (auto& animationData : *animationDataList)
-        {
-            if (animationData.Name == animationName)
-            {
-                animationIndex = animationData.Index;
-
-                isFound = true;
-                break;
-            }
-        }
-
-        if (isFound == true)
-        {
-            g_Log.write("Loaded animation '{}' to index: {}\n", animationName, animationIndex);
-        }
-        else
-        {
-            g_Log.write("ERROR: Failed to load animation '{}' to index: {}\n", animationName, animationIndex);
-            return false;
-        }
-    }
-
-    return true;
-}
-
-bool Game::loadGuiRects()
-{
-    if (g_GuiRectData.isLoaded() == false)
-    {
-        g_Log.write("ERROR: GUI Rect data is not loaded\n");
-        return false;
-    }
-
-    tb::GuiRectData::DataList* guiRectDataList = g_GuiRectData.getDataList();
-
-    for (auto& [guiRectName, guiRect] : tb::Resources::GuiRects::NameTable)
-    {
-        bool isFound = false;
-
-        for (auto& guiRectData : *guiRectDataList)
-        {
-            if (guiRectData.Name == guiRectName)
-            {
-                guiRect.position.x    = guiRectData.X;
-                guiRect.position.y    = guiRectData.Y;
-                guiRect.size.x        = guiRectData.Width;
-                guiRect.size.y        = guiRectData.Height;
-
-                isFound = true;
-                break;
-            }
-        }
-
-        if (isFound == true)
-        {
-            g_Log.write("Loaded gui rect for '{}'\n", guiRectName);
-        }
-        else
-        {
-            g_Log.write("ERROR: Failed to load gui rect for '{}'\n", guiRectName);
-            return false;
-        }
     }
 
     return true;
@@ -564,7 +147,7 @@ bool Game::loadMap(const std::string& fileName)
     g_Log.write("Loading map\n");
     if (g_Map.load(fileName) == false)
     {
-        g_Log.write("ERROR: Failed to load map from file: {}\n", fileName);
+        g_Log.write("ERROR: failed to load map from file: {}\n", fileName);
         return false;
     }
 
@@ -573,7 +156,7 @@ bool Game::loadMap(const std::string& fileName)
     g_Log.write("Creating player\n");
     if (createPlayer() == false)
     {
-        g_Log.write("ERROR: Failed to create player\n");
+        g_Log.write("ERROR: failed to create player\n");
     }
 
     return true;
@@ -584,637 +167,7 @@ void Game::loadMapUsingThread(const std::string& fileName)
     m_loadMapThread = std::async(std::launch::async, &Game::loadMap, &g_Game, fileName);
 }
 
-void Game::drawDockSpace()
-{
-    ImGuiDockNodeFlags dockSpaceFlags = ImGuiDockNodeFlags_PassthruCentralNode;
 
-    ImGuiWindowFlags dockSpaceWindowFlags = ImGuiWindowFlags_None;
-    dockSpaceWindowFlags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-    dockSpaceWindowFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
-
-    const ImGuiViewport* viewport = ImGui::GetMainViewport();
-
-    const float menuBarHeight = g_MenuBar.getHeight();
-    const float statusBarHeight = g_StatusBar.getHeight();
-
-    ImVec2 windowPosition = viewport->Pos;
-    windowPosition.y += menuBarHeight;
-
-    ImVec2 windowSize = viewport->Size;
-    windowSize.y = windowSize.y - statusBarHeight + menuBarHeight;
-
-    ImGui::SetNextWindowBgAlpha(0.0f);
-    ImGui::SetNextWindowPos(windowPosition);
-    ImGui::SetNextWindowSize(windowSize);
-    ImGui::SetNextWindowViewport(viewport->ID);
-
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-
-    bool isDockSpaceVisible = true;
-
-    ImGui::Begin("DockSpace##DockSpaceWindow", &isDockSpaceVisible, dockSpaceWindowFlags);
-
-    ImGui::PopStyleVar(3);
-
-    ImGuiID dockSpaceID = ImGui::GetID("MyDockSpace");
-    ImGui::DockSpace(dockSpaceID, ImVec2(0.0f, 0.0f), dockSpaceFlags);
-
-    ImGui::End();
-}
-
-void Game::drawFramesPerSecond()
-{
-    m_framesPerSecondCurrentTime = m_framesPerSecondClock.getElapsedTime();
-
-    m_framesPerSecond = 1.0f / (m_framesPerSecondCurrentTime.asSeconds() - m_framesPerSecondPreviousTime.asSeconds());
-
-    std::string framesPerSecondText = std::format("FPS: {}", std::floorf(m_framesPerSecond));
-
-    tb::BitmapFontText framesPerSecondBitmapFontText;
-    framesPerSecondBitmapFontText.setText(&m_tinyBitmapFont, framesPerSecondText, sf::Color::White);
-    framesPerSecondBitmapFontText.setPosition(sf::Vector2f(1.0f, 1.0f + g_MenuBar.getHeight()));
-
-    sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
-
-    renderWindow->draw(framesPerSecondBitmapFontText);
-
-    m_framesPerSecondPreviousTime = m_framesPerSecondCurrentTime;
-}
-
-void Game::drawLoadingText()
-{
-    sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
-
-    sf::Font loadingTextFont;
-    if (loadingTextFont.openFromFile(m_systemFontFileName) == false)
-    {
-        g_Log.write("ERROR: Failed to draw loading text\n");
-
-        // blue screen of death
-        renderWindow->clear(sf::Color::Blue);
-        renderWindow->display();
-
-        return;
-    }
-
-    sf::Text loadingText(loadingTextFont);
-    loadingText.setCharacterSize(13);
-    loadingText.setFillColor(sf::Color::White);
-    loadingText.setString("Loading...");
-
-    sf::FloatRect loadingTextRect = loadingText.getLocalBounds();
-
-    loadingText.setOrigin(sf::Vector2f(loadingTextRect.position.x + loadingTextRect.size.x / 2.0f, loadingTextRect.position.y + loadingTextRect.size.y / 2.0f));
-    loadingText.setPosition(renderWindow->getView().getCenter());
-
-    renderWindow->clear(sf::Color::Black);
-    renderWindow->draw(loadingText);
-    renderWindow->display();
-}
-
-sf::FloatRect Game::getGuiFullLayoutRect()
-{
-    sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
-
-    sf::Vector2f renderWindowSize = static_cast<sf::Vector2f>(renderWindow->getSize());
-
-    float menuBarHeight = g_MenuBar.getHeight();
-    float statusBarHeight = g_StatusBar.getHeight();
-
-    const float paddingRenderWindow = tb::Constants::PaddingRenderWindow;
-
-    sf::FloatRect layoutRect;
-    layoutRect.position.x    = paddingRenderWindow;
-    layoutRect.position.y    = paddingRenderWindow + menuBarHeight;
-    layoutRect.size.x        = renderWindowSize.x - (paddingRenderWindow * 2.0f);
-    layoutRect.size.y        = renderWindowSize.y - (paddingRenderWindow * 2.0f) - menuBarHeight - statusBarHeight;
-
-    return layoutRect;
-}
-
-sf::FloatRect Game::getGuiLeftLayoutRect()
-{
-    sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
-
-    sf::Vector2f renderWindowSize = static_cast<sf::Vector2f>(renderWindow->getSize());
-
-    float paddingRenderWindow = tb::Constants::PaddingRenderWindow;
-
-    float guiRightLayoutWidth = tb::Constants::GuiRightLayoutWidthAsFloat * m_guiProperties.Scale;
-
-    float paddingBetweenLeftAndRightLayoutRect = tb::Constants::PaddingBetweenLeftAndRightLayoutRect;
-
-    float menuBarHeight = g_MenuBar.getHeight();
-    float statusBarHeight = g_StatusBar.getHeight();
-
-    sf::FloatRect layoutRect;
-    layoutRect.position.x    = paddingRenderWindow;
-    layoutRect.position.y    = paddingRenderWindow + menuBarHeight;
-    layoutRect.size.x        = renderWindowSize.x - (paddingRenderWindow * 2.0f) - guiRightLayoutWidth - paddingBetweenLeftAndRightLayoutRect;
-    layoutRect.size.y        = renderWindowSize.y - (paddingRenderWindow * 2.0f) - menuBarHeight - statusBarHeight;
-
-    return layoutRect;
-}
-
-sf::FloatRect Game::getGuiRightLayoutRect()
-{
-    sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
-
-    sf::Vector2f renderWindowSize = static_cast<sf::Vector2f>(renderWindow->getSize());
-
-    float paddingRenderWindow = tb::Constants::PaddingRenderWindow;
-
-    float guiRightLayoutWidth = tb::Constants::GuiRightLayoutWidthAsFloat * m_guiProperties.Scale;
-
-    float menuBarHeight = g_MenuBar.getHeight();
-    float statusBarHeight = g_StatusBar.getHeight();
-
-    sf::FloatRect layoutRect;
-    layoutRect.position.x    = renderWindowSize.x - paddingRenderWindow - guiRightLayoutWidth;
-    layoutRect.position.y    = paddingRenderWindow + menuBarHeight;
-    layoutRect.size.x        = guiRightLayoutWidth;
-    layoutRect.size.y        = renderWindowSize.y - (paddingRenderWindow * 2.0f) - menuBarHeight - statusBarHeight;
-
-    return layoutRect;
-}
-
-void Game::drawToolTip(const std::string& text)
-{
-    sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
-
-    tb::BitmapFontText bitmapFontText;
-    bitmapFontText.setText(&m_tinyBitmapFont, text, sf::Color::White);
-
-    sf::FloatRect bitmapFontRect = bitmapFontText.getRect();
-
-    sf::Vector2f mousePosition = static_cast<sf::Vector2f>(sf::Mouse::getPosition());
-
-    const float toolTipVerticalOffset = 16.0f;
-
-    sf::RectangleShape shape;
-    shape.setTexture(&tb::Resources::Textures::Wood);
-    shape.setFillColor(sf::Color::Transparent);
-    shape.setOutlineColor(sf::Color::Black);
-    shape.setOutlineThickness(1.0f);
-    shape.setSize(sf::Vector2f(bitmapFontRect.size.x, bitmapFontRect.size.y));
-    shape.setPosition(sf::Vector2f(mousePosition.x, mousePosition.y + toolTipVerticalOffset));
-
-    renderWindow->draw(shape);
-}
-
-void Game::drawWoodBackground()
-{
-    sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
-
-    sf::Vector2u renderWindowSize = renderWindow->getSize();
-
-    sf::Sprite wood(tb::Resources::Textures::Wood);
-    wood.setTextureRect(sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(renderWindowSize.x, renderWindowSize.y)));
-
-    renderWindow->draw(wood);
-}
-
-void Game::drawWoodBorder(sf::FloatRect rect, bool drawBlackRectangle)
-{
-    sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
-
-    if (drawBlackRectangle == true)
-    {
-        sf::RectangleShape blackRect;
-        blackRect.setPosition(rect.position);
-        blackRect.setSize(rect.size);
-        blackRect.setFillColor(sf::Color::Transparent);
-        blackRect.setOutlineColor(sf::Color::Black);
-        blackRect.setOutlineThickness(1.0f);
-
-        renderWindow->draw(blackRect);
-
-        // enlarge the rectangle by 1 pixel to account for the black rectangle
-        rect.position.x -= 1.0f;
-        rect.position.y -= 1.0f;
-        rect.size.x     += 2.0f;
-        rect.size.y     += 2.0f;
-    }
-
-    sf::Sprite woodHorizontal(tb::Resources::Textures::WoodHorizontal);
-    sf::Sprite woodHorizontal2(tb::Resources::Textures::WoodHorizontal2);
-
-    sf::Sprite woodVertical(tb::Resources::Textures::WoodVertical);
-    sf::Sprite woodVertical2(tb::Resources::Textures::WoodVertical2);
-
-    sf::Vector2u woodHorizontalSize = tb::Resources::Textures::WoodHorizontal.getSize();
-    sf::Vector2u woodHorizontal2Size = tb::Resources::Textures::WoodHorizontal2.getSize();
-
-    sf::Vector2u woodVerticalSize = tb::Resources::Textures::WoodVertical.getSize();
-    sf::Vector2u woodVertical2Size = tb::Resources::Textures::WoodVertical2.getSize();
-
-    // top
-    woodHorizontal.setPosition(sf::Vector2f(static_cast<float>(rect.position.x - woodVerticalSize.x), static_cast<float>(rect.position.y - woodHorizontalSize.y)));
-    woodHorizontal.setTextureRect(sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(static_cast<int>(rect.size.x + (woodVerticalSize.x * 2)), static_cast<int>(woodHorizontalSize.y))));
-
-    // bottom
-    woodHorizontal2.setPosition(sf::Vector2f(static_cast<float>(rect.position.x - woodVertical2Size.x), rect.position.y + rect.size.y));
-    woodHorizontal2.setTextureRect(sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(static_cast<int>(rect.size.x + (woodVertical2Size.x * 2)), static_cast<int>(woodHorizontal2Size.y))));
-
-    // left
-    woodVertical.setPosition(sf::Vector2f(static_cast<float>(rect.position.x - woodVerticalSize.x), rect.position.y));
-    woodVertical.setTextureRect(sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(static_cast<int>(woodVerticalSize.x), static_cast<int>(rect.size.y))));
-
-    // right
-    woodVertical2.setPosition(sf::Vector2f(rect.position.x + rect.size.x, rect.position.y));
-    woodVertical2.setTextureRect(sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(static_cast<int>(woodHorizontal2Size.y), static_cast<int>(rect.size.y))));
-
-    renderWindow->draw(woodHorizontal);
-    renderWindow->draw(woodHorizontal2);
-    renderWindow->draw(woodVertical);
-    renderWindow->draw(woodVertical2);
-}
-
-void Game::drawBackgroundTextureWithWoodBorder(const sf::Texture& texture)
-{
-    sf::FloatRect layoutRect = getGuiFullLayoutRect();
-
-    m_backgroundTextureShape.setTexture(&texture, true);
-    m_backgroundTextureShape.setPosition(layoutRect.position);
-    m_backgroundTextureShape.setSize(layoutRect.size);
-
-    sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
-
-    renderWindow->draw(m_backgroundTextureShape);
-
-    drawWoodBorder(m_backgroundTextureShape.getGlobalBounds(), true);
-}
-
-sf::FloatRect Game::getClickRect(const sf::Texture& texture, const std::string& name)
-{
-    sf::FloatRect clickRect;
-
-    tb::ClickRectData::Data* clickRectData = g_ClickRectData.getDataByName(name);
-
-    if (clickRectData == nullptr)
-    {
-        g_Log.write("ERROR: clickRectData == nullptr with name '{}'\n", name);
-
-        clickRect.position.x = 0.0f;
-        clickRect.position.y = 0.0f;
-        clickRect.size.x = 0.0f;
-        clickRect.size.y = 0.0f;
-
-        return clickRect;
-    }
-
-    sf::Vector2f textureSize = static_cast<sf::Vector2f>(texture.getSize());
-
-    sf::Vector2f backgroundTextureSize = m_backgroundTextureShape.getSize();
-
-    sf::Vector2f backgroundTextureScale;
-    backgroundTextureScale.x = backgroundTextureSize.x / textureSize.x;
-    backgroundTextureScale.y = backgroundTextureSize.y / textureSize.y;
-
-    sf::Vector2f backgroundTexturePosition = m_backgroundTextureShape.getPosition();
-
-    clickRect.position.x = backgroundTexturePosition.x + (static_cast<float>(clickRectData->X) * backgroundTextureScale.x);
-    clickRect.position.y = backgroundTexturePosition.y + (static_cast<float>(clickRectData->Y) * backgroundTextureScale.y);
-
-    clickRect.size.x = static_cast<float>(clickRectData->Width)  * backgroundTextureScale.x;
-    clickRect.size.y = static_cast<float>(clickRectData->Height) * backgroundTextureScale.y;
-
-    return clickRect;
-}
-
-void Game::drawDebugRect(sf::FloatRect rect)
-{
-    sf::RectangleShape rectangleShape;
-    rectangleShape.setPosition(rect.position);
-    rectangleShape.setSize(rect.size);
-    rectangleShape.setFillColor(sf::Color::Transparent);
-    rectangleShape.setOutlineColor(sf::Color::Magenta);
-    rectangleShape.setOutlineThickness(1.0f);
-
-    sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
-
-    renderWindow->draw(rectangleShape);
-}
-
-void Game::drawSfmlWindows()
-{
-    g_GameWindow.draw();
-
-    if (m_guiProperties.ShowEquipmentWindow == true)
-    {
-        g_EquipmentWindow.draw();
-    }
-
-    if (m_guiProperties.ShowStatusWindow == true)
-    {
-        g_StatusWindow.draw();
-    }
-
-    if (m_guiProperties.ShowMiniMapWindow == true)
-    {
-        g_MiniMapWindow.draw();
-    }
-
-    g_TabButtonsWindow.draw();
-
-    if (m_guiProperties.ShowSkillsWindow == true)
-    {
-        g_SkillsWindow.draw();
-    }
-
-    drawWoodBorderForSfmlWindows();
-
-    if (isDebugModeEnabled() == true)
-    {
-        drawDebugRectForSfmlWindows();
-    }
-}
-
-void Game::drawDebugRectForSfmlWindows()
-{
-    if (tb::LibImGui::isActive() == true)
-    {
-        return;
-    }
-
-    if (g_GameWindow.isMouseInsideWindow() == true)
-    {
-        drawDebugRect(g_GameWindow.getRect());
-    }
-
-    if (m_guiProperties.ShowEquipmentWindow == true)
-    {
-        if (g_EquipmentWindow.isMouseInsideWindow() == true)
-        {
-            drawDebugRect(g_EquipmentWindow.getRect());
-        }
-    }
-
-    if (m_guiProperties.ShowStatusWindow == true)
-    {
-        if (g_StatusWindow.isMouseInsideWindow() == true)
-        {
-            drawDebugRect(g_StatusWindow.getRect());
-        }
-    }
-
-    if (m_guiProperties.ShowMiniMapWindow == true)
-    {
-        if (g_MiniMapWindow.isMouseInsideWindow() == true)
-        {
-            drawDebugRect(g_MiniMapWindow.getRect());
-        }
-    }
-
-    if (g_TabButtonsWindow.isMouseInsideWindow() == true)
-    {
-        drawDebugRect(g_TabButtonsWindow.getRect());
-    }
-
-    if (m_guiProperties.ShowSkillsWindow == true)
-    {
-        if (g_SkillsWindow.isMouseInsideWindow() == true)
-        {
-            drawDebugRect(g_SkillsWindow.getRect());
-        }
-    }
-}
-
-void Game::drawWoodBorderForSfmlWindows()
-{
-    drawWoodBorder(g_GameWindow.getRect(), true);
-
-    if (m_guiProperties.ShowEquipmentWindow == true)
-    {
-        drawWoodBorder(g_EquipmentWindow.getRect(), true);
-    }
-
-    if (m_guiProperties.ShowStatusWindow == true)
-    {
-        drawWoodBorder(g_StatusWindow.getRect(), true);
-    }
-
-    if (m_guiProperties.ShowMiniMapWindow == true)
-    {
-        drawWoodBorder(g_MiniMapWindow.getRect(), true);
-    }
-
-    if (m_guiProperties.ShowSkillsWindow == true)
-    {
-        drawWoodBorder(g_SkillsWindow.getRect(), true);
-    }
-}
-
-void Game::setSizeInLayoutForSfmlWindows()
-{
-    g_SkillsWindow.setSizeInLayout();
-}
-
-void Game::setPositionInLayoutForSfmlWindows()
-{
-    // order is important
-
-    g_EquipmentWindow.setPositionInLayout();
-
-    g_StatusWindow.setPositionInLayout();
-
-    g_MiniMapWindow.setPositionInLayout();
-
-    g_TabButtonsWindow.setPositionInLayout();
-
-    g_SkillsWindow.setPositionInLayout();
-
-    g_GameWindow.setPositionInLayout();
-}
-
-void Game::setSizeScaleForSfmlWindows(float scale)
-{
-    m_guiProperties.Scale = scale;
-
-    g_EquipmentWindow.setSizeScale(scale);
-    g_StatusWindow.setSizeScale(scale);
-    g_MiniMapWindow.setSizeScale(scale);
-    g_TabButtonsWindow.setSizeScale(scale);
-    g_SkillsWindow.setSizeScale(scale);
-
-    updateLayoutForSfmlWindows();
-}
-
-void Game::updateLayoutForSfmlWindows()
-{
-    setPositionInLayoutForSfmlWindows();
-    setSizeInLayoutForSfmlWindows();
-}
-
-void Game::drawImGuiWindows()
-{
-    if (*g_MenuBar.getIsVisible() == true)
-    {
-        g_MenuBar.draw();
-    }
-
-    if (*g_StatusBar.getIsVisible() == true)
-    {
-        g_StatusBar.draw();
-    }
-
-    drawDockSpace();
-
-    if (m_properties.ShowDemoWindow == true)
-    {
-        ImGui::ShowDemoWindow(&m_properties.ShowDemoWindow);
-    }
-
-    if (m_properties.ShowStackToolWindow == true)
-    {
-        ImGui::ShowStackToolWindow(&m_properties.ShowStackToolWindow);
-    }
-
-    if (*g_SpriteEditorWindow.getIsVisible() == true)
-    {
-        g_SpriteEditorWindow.draw();
-    }
-
-    if (*g_SpriteDataWindow.getIsVisible() == true)
-    {
-        g_SpriteDataWindow.draw();
-    }
-
-    if (*g_LogWindow.getIsVisible() == true)
-    {
-        g_LogWindow.draw();
-    }
-
-    if (*g_OptionsWindow.getIsVisible() == true)
-    {
-        g_OptionsWindow.draw();
-    }
-
-    if (*g_HotkeysWindow.getIsVisible() == true)
-    {
-        g_HotkeysWindow.draw();
-    }
-
-    if (*g_SetOutfitWindow.getIsVisible() == true)
-    {
-        g_SetOutfitWindow.draw();
-    }
-
-    if (*g_CommentsWindow.getIsVisible() == true)
-    {
-        g_CommentsWindow.draw();
-    }
-
-    if (*g_MessageOfTheDayWindow.getIsVisible() == true)
-    {
-        g_MessageOfTheDayWindow.draw();
-    }
-
-    if (*g_ConnectionWindow.getIsVisible() == true)
-    {
-        g_ConnectionWindow.draw();
-    }
-
-    if (*g_ControlsWindow.getIsVisible() == true)
-    {
-        g_ControlsWindow.draw();
-    }
-
-    if (*g_TipsAndTricksWindow.getIsVisible() == true)
-    {
-        g_TipsAndTricksWindow.draw();
-    }
-
-    if (*g_AboutTibiaWindow.getIsVisible() == true)
-    {
-        g_AboutTibiaWindow.draw();
-    }
-
-    if (*g_AboutTibianerWindow.getIsVisible() == true)
-    {
-        g_AboutTibianerWindow.draw();
-    }
-
-    if (*g_MapGeneratorWindow.getIsVisible() == true)
-    {
-        g_MapGeneratorWindow.draw();
-    }
-
-    if (m_gameState == tb::GameState::InGame)
-    {
-        if (*g_OverlayWindow.getIsVisible() == true)
-        {
-            g_OverlayWindow.draw();
-        }
-    }
-}
-
-void Game::doEndGamePopup()
-{
-    if (m_properties.ShowEndGamePopup == true)
-    {
-        ImGui::OpenPopup("End Game##EndGamePopup");
-    }
-
-    ImVec2 viewportCenter = ImGui::GetMainViewport()->GetCenter();
-    ImGui::SetNextWindowPos(viewportCenter, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
-
-    if (ImGui::BeginPopupModal("End Game##EndGamePopup", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings))
-    {
-        ImGui::TextUnformatted("Are you sure you want to end this game?");
-
-        ImGui::Separator();
-
-        if (ImGui::Button("Yes##EndGamePopupButtonYes", tb::LibImGui::PopupButtonSize))
-        {
-            ImGui::CloseCurrentPopup();
-
-            m_properties.ShowEndGamePopup = false;
-
-            endGame();
-        }
-
-        ImGui::SameLine();
-
-        if (ImGui::Button("No##EndGamePopupButtonNo", tb::LibImGui::PopupButtonSize))
-        {
-            ImGui::CloseCurrentPopup();
-
-            m_properties.ShowEndGamePopup = false;
-        }
-
-        ImGui::EndPopup();
-    }
-}
-
-void Game::doErrorLoadingMapPopup()
-{
-    if (m_properties.ShowErrorLoadingMapPopup == true)
-    {
-        ImGui::OpenPopup("Error##ErrorLoadingMapPopup");
-    }
-
-    ImVec2 viewportCenter = ImGui::GetMainViewport()->GetCenter();
-    ImGui::SetNextWindowPos(viewportCenter, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
-
-    if (ImGui::BeginPopupModal("Error##ErrorLoadingMapPopup", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings))
-    {
-        ImGui::TextUnformatted("Failed to load map file!\nSee log for details.");
-
-        ImGui::Separator();
-
-        if (ImGui::Button("OK##ErrorLoadingMapPopupButtonOK", tb::LibImGui::PopupButtonSize))
-        {
-            m_properties.ShowErrorLoadingMapPopup = false;
-
-            ImGui::CloseCurrentPopup();
-        }
-
-        ImGui::EndPopup();
-    }
-}
 
 void Game::doGameStateTesting()
 {
@@ -1381,7 +334,7 @@ void Game::doGameStateTesting()
 */
 
     tb::BitmapFontText bitmapText;
-    bitmapText.setText(&m_systemFixedBitmapFont, "Hello, world! ABCDEFGHIJKLMNOPQRSTUVWXYZ\nabcdefghijklmnopqqrstuvwxyz\n1234567890\n!@#$%^&*()-+[]\n", sf::Color::Black);
+    bitmapText.setText(&tb::Resources::BitmapFonts::SystemFixedBitmapFont, "Hello, world! ABCDEFGHIJKLMNOPQRSTUVWXYZ\nabcdefghijklmnopqqrstuvwxyz\n1234567890\n!@#$%^&*()-+[]\n", sf::Color::Black);
     bitmapText.setPosition(sf::Vector2f(100.0f, 100.0f));
 
     renderWindow->draw(bitmapText);
@@ -1389,32 +342,27 @@ void Game::doGameStateTesting()
 
 void Game::doGameStateEnterGame()
 {
-    drawBackgroundTextureWithWoodBorder(tb::Resources::Textures::EnterGame);
+    g_GUI.drawBackgroundTextureWithWoodBorder(tb::Resources::Textures::EnterGame);
 
     if (isDebugModeEnabled() == true)
     {
-        if (tb::LibImGui::isActive() == false)
+        if (tb::LibIMGUI::isActive() == false)
         {
-            sf::FloatRect enterGameClickRect = getClickRect(tb::Resources::Textures::EnterGame, "EnterGame");
+            sf::FloatRect enterGameClickRect = g_GUI.getClickRect(tb::Resources::Textures::EnterGame, "EnterGame");
 
             sf::Vector2f mousePosition = g_RenderWindow.getMousePosition2f();
 
             if (enterGameClickRect.contains(mousePosition) == true)
             {
-                drawDebugRect(enterGameClickRect);
+                g_GUI.drawDebugRect(enterGameClickRect);
             }
         }
-    }
-
-    if (*g_EnterGameWindow.getIsVisible() == true)
-    {
-        g_EnterGameWindow.draw();
     }
 }
 
 void Game::doGameStateLoadingMap()
 {
-    drawBackgroundTextureWithWoodBorder(tb::Resources::Textures::Loading);
+    g_GUI.drawBackgroundTextureWithWoodBorder(tb::Resources::Textures::Loading);
 
     m_loadMapThreadStatus = m_loadMapThread.wait_for(std::chrono::milliseconds(1));
 
@@ -1430,11 +378,13 @@ void Game::doGameStateLoadingMap()
             }
             else
             {
-                m_properties.ShowErrorLoadingMapPopup = true;
+                tb::GUI::Properties* guiProperties = g_GUI.getProperties();
+
+                guiProperties->ShowErrorLoadingMapPopup = true;
 
                 setGameState(tb::GameState::MapSelect);
 
-                g_MapSelectWindow.setIsVisible(true);
+                g_MapSelectWindow.setVisible(true);
             }
         }
     }
@@ -1442,25 +392,21 @@ void Game::doGameStateLoadingMap()
 
 void Game::doGameStateMapSelect()
 {
-    drawBackgroundTextureWithWoodBorder(tb::Resources::Textures::MapSelect);
+    g_GUI.drawBackgroundTextureWithWoodBorder(tb::Resources::Textures::MapSelect);
 
-    if (*g_MapSelectWindow.getIsVisible() == true)
-    {
-        g_MapSelectWindow.draw();
-    }
-    else
+    if (*g_MapSelectWindow.isVisible() == false)
     {
         setGameState(tb::GameState::EnterGame);
     }
 
-    doErrorLoadingMapPopup();
+    g_GUI.doErrorLoadingMapPopup();
 }
 
 void Game::doGameStateInGame()
 {
-    drawSfmlWindows();
+    g_GUI.SFMLWindows_draw();
 
-    doEndGamePopup();
+    g_GUI.doEndGamePopup();
 }
 
 sf::Vector2i Game::getMousePositionInDesktop()
@@ -1469,34 +415,34 @@ sf::Vector2i Game::getMousePositionInDesktop()
     return sf::Mouse::getPosition();
 }
 
-tb::ZAxisVisible Game::getZAxisVisibleOfPlayer()
+tb::AxisZVisibility Game::getPlayerAxisZVisibility()
 {
-    tb::ZAxisVisible zAxisVisible;
-    zAxisVisible.Begin = tb::Constants::ZAxisMin;
-    zAxisVisible.End   = tb::Constants::ZAxisMax;
+    tb::AxisZVisibility axisZVisibility;
+    axisZVisibility.Begin = tb::Constants::AxisZMin;
+    axisZVisibility.End   = tb::Constants::AxisZMax;
 
-    tb::ZAxis playerZ = m_player->getZ();
+    tb::AxisZ playerAxisZ = m_player->getAxisZ();
 
     // check if the player is underground
-    if (playerZ < tb::Constants::ZAxisDefault)
+    if (playerAxisZ < tb::Constants::AxisZDefault)
     {
         // get all z-axis that are underground
-        zAxisVisible.Begin = tb::Constants::ZAxisMin;
-        zAxisVisible.End   = tb::Constants::ZAxisDefault - 1;
+        axisZVisibility.Begin = tb::Constants::AxisZMin;
+        axisZVisibility.End   = tb::Constants::AxisZDefault - 1;
     }
     else
     {
         // get all z-axis that are aboveground
-        zAxisVisible.Begin = tb::Constants::ZAxisDefault;
-        zAxisVisible.End   = tb::Constants::ZAxisMax;
+        axisZVisibility.Begin = tb::Constants::AxisZDefault;
+        axisZVisibility.End   = tb::Constants::AxisZMax;
     }
 
-    return zAxisVisible;
+    return axisZVisibility;
 }
 
 bool Game::createPlayer()
 {
-    tb::Map::Properties_t* mapProperties = g_Map.getProperties();
+    tb::Map::Properties* mapProperties = g_Map.getProperties();
 
     tb::Creature::Ptr player = std::make_shared<tb::Creature>
     (
@@ -1504,7 +450,7 @@ bool Game::createPlayer()
         mapProperties->PlayerStartZ
     );
 
-    tb::Creature::Properties_t* playerProperties = player->getProperties();
+    tb::Creature::Properties* playerProperties = player->getProperties();
     playerProperties->IsPlayer = true;
     playerProperties->HasOutfit = true;
 
@@ -1524,7 +470,7 @@ bool Game::createPlayer()
 
     m_player = player;
 
-    tb::Tile::Ptr tile = g_Map.getTileOfThing(m_player);
+    tb::Tile::Ptr tile = g_Map.getTileAtThing(m_player);
 
     if (tile == nullptr)
     {
@@ -1537,23 +483,23 @@ bool Game::createPlayer()
     g_Log.write("Tile Index: {}\n", tile->getTileIndex());
     g_Log.write("Tile X: {}\n", tile->getTileX());
     g_Log.write("Tile Y: {}\n", tile->getTileY());
-    g_Log.write("Tile Z: {}\n", tile->getZ());
+    g_Log.write("Tile Z: {}\n", tile->getAxisZ());
     g_Log.write("Tile Sprite ID: {}\n", tile->getSpriteID());
 
-    sf::Vector2i playerTileCoords = m_player->getTileCoords();
+    tb::TileCoords playerTileCoords = m_player->getTileCoords();
 
-    tb::ZAxis playerZ = m_player->getZ();
+    tb::AxisZ playerAxisZ = m_player->getAxisZ();
 
-    g_Log.write("Player Tile Coords: {},{},{}\n", playerTileCoords.x, playerTileCoords.y, playerZ);
+    g_Log.write("Player Tile Coords: {},{},{}\n", playerTileCoords.x, playerTileCoords.y, playerAxisZ);
 
-    spawnAnimationByIndex(playerTileCoords, playerZ, tb::Resources::Animations::BlueOrbSpellEffect);
+    spawnAnimationByIndex(playerTileCoords, playerAxisZ, tb::Resources::Animations::BlueOrbSpellEffect);
 
     return true;
 }
 
-bool Game::spawnAnimationByIndex(const sf::Vector2i& tileCoords, tb::ZAxis z, std::uint32_t index)
+bool Game::spawnAnimationByIndex(const tb::TileCoords& tileCoords, tb::AxisZ axisZ, std::uint32_t index)
 {
-    tb::Animation::Ptr animation = std::make_shared<tb::Animation>(tileCoords, z, index);
+    tb::Animation::Ptr animation = std::make_shared<tb::Animation>(tileCoords, axisZ, index);
 
     if (animation == nullptr)
     {
@@ -1561,7 +507,7 @@ bool Game::spawnAnimationByIndex(const sf::Vector2i& tileCoords, tb::ZAxis z, st
         return false;
     }
 
-    tb::Tile::Ptr tile = g_Map.getTile(tileCoords, z);
+    tb::Tile::Ptr tile = g_Map.getTile(tileCoords, axisZ);
 
     if (tile == nullptr)
     {
@@ -1574,11 +520,11 @@ bool Game::spawnAnimationByIndex(const sf::Vector2i& tileCoords, tb::ZAxis z, st
     return true;
 }
 
-bool Game::spawnAnimationByName(const sf::Vector2i& tileCoords, tb::ZAxis z, const std::string& name)
+bool Game::spawnAnimationByName(const tb::TileCoords& tileCoords, tb::AxisZ axisZ, const std::string& name)
 {
-    tb::Animation::Ptr animation = std::make_shared<tb::Animation>(tileCoords, z, name);
+    tb::Animation::Ptr animation = std::make_shared<tb::Animation>(tileCoords, axisZ, name);
 
-    tb::Tile::Ptr tile = g_Map.getTile(tileCoords, z);
+    tb::Tile::Ptr tile = g_Map.getTile(tileCoords, axisZ);
 
     if (tile == nullptr)
     {
@@ -1660,7 +606,15 @@ void Game::handleEventMouseButtonPressed(const sf::Event::MouseButtonPressed* ev
 
     if (eventMouseButtonPressed->button == sf::Mouse::Button::Left)
     {
-        //
+        m_properties.IsMouseLeftButtonPressed = true;
+
+        if (m_properties.IsMouseDragging == false)
+        {
+            m_mouseDragStartPosition.x = eventMouseButtonPressed->position.x;
+            m_mouseDragStartPosition.y = eventMouseButtonPressed->position.y;
+
+            m_mouseDragClock.restart();
+        }
     }
 }
 
@@ -1690,13 +644,46 @@ void Game::handleEventMouseButtonReleased(const sf::Event::MouseButtonReleased* 
 
     if (eventMouseButtonReleased->button == sf::Mouse::Button::Left)
     {
+        m_properties.IsMouseLeftButtonPressed = false;
+
+        if (m_properties.IsMouseDragging == true)
+        {
+            setMouseCursor(tb::Resources::Cursors::System::Arrow);
+
+            m_properties.IsMouseDragging = false;
+        }
+
         if (m_gameState == tb::GameState::EnterGame)
         {
-            sf::FloatRect enterGameClickRect = getClickRect(tb::Resources::Textures::EnterGame, "EnterGame");
+            sf::FloatRect enterGameClickRect = g_GUI.getClickRect(tb::Resources::Textures::EnterGame, "EnterGame");
 
             if (enterGameClickRect.contains(mousePosition) == true)
             {
-                g_EnterGameWindow.setIsVisible(true);
+                g_EnterGameWindow.setVisible(true);
+            }
+        }
+    }
+}
+
+void Game::handleEventMouseMoved(const sf::Event::MouseMoved* eventMouseMoved)
+{
+    if (m_properties.IsMouseLeftButtonPressed == true)
+    {
+        if (m_properties.IsMouseDragging == false)
+        {
+            sf::Vector2i distance = tb::LibSFML::getDistanceBetweenPositions2i(m_mouseDragStartPosition, eventMouseMoved->position);
+
+            if (distance.x >= m_mouseDragDistanceThreshold || distance.y >= m_mouseDragDistanceThreshold)
+            {
+                sf::Time mouseDragTime = m_mouseDragClock.getElapsedTime();
+                if (mouseDragTime >= m_mouseDragTime)
+                {
+                    setMouseCursor(tb::Resources::Cursors::Custom::Drag);
+
+                    m_properties.IsMouseDragging = true;
+
+                    m_mouseDragClock.restart();
+                }
             }
         }
     }
@@ -1710,7 +697,7 @@ void Game::handleEventKeyPressed(const sf::Event::KeyPressed* eventKeyPressed)
     {
         if (eventKeyPressed->code == sf::Keyboard::Key::B)
         {
-            spawnAnimationByIndex(m_player->getTileCoords(), m_player->getZ(), tb::Resources::Animations::BlueOrbSpellEffect);
+            spawnAnimationByIndex(m_player->getTileCoords(), m_player->getAxisZ(), tb::Resources::Animations::BlueOrbSpellEffect);
         }
     }
 }
@@ -1722,34 +709,12 @@ void Game::handleEventKeyReleased(const sf::Event::KeyReleased* eventKeyReleased
 
 void Game::handleEventJoystickConnected(const sf::Event::JoystickConnected* eventJoystickConnected)
 {
-    m_joystickIndex = eventJoystickConnected->joystickId;
-
-    updateJoystickPropertiesForAll();
-
-    g_Log.write("Joystick Connected Index: {}\n", m_joystickIndex);
-
-    tb::Joystick::Properties_t* joystickProperties = m_joystickList[m_joystickIndex].getProperties();
-
-    g_Log.write("--> Name: {}\n", joystickProperties->Name);
-    g_Log.write("--> Product ID: {}\n", joystickProperties->ProductID);
-    g_Log.write("--> Vendor ID: {}\n", joystickProperties->VendorID);
-    g_Log.write("--> Button Count: {}\n", joystickProperties->ButtonCount);
+    g_JoystickManager.handleEventJoystickConnected(eventJoystickConnected);
 }
 
 void Game::handleEventJoystickDisconnected(const sf::Event::JoystickDisconnected* eventJoystickDisconnected)
 {
-    unsigned int joystickIndex = eventJoystickDisconnected->joystickId;
-
-    updateJoystickPropertiesForAll();
-
-    g_Log.write("Joystick Disconnected Index: {}\n", joystickIndex);
-
-    tb::Joystick::Properties_t* joystickProperties = m_joystickList[joystickIndex].getProperties();
-
-    g_Log.write("--> Name: {}\n", joystickProperties->Name);
-    g_Log.write("--> Product ID: {}\n", joystickProperties->ProductID);
-    g_Log.write("--> Vendor ID: {}\n", joystickProperties->VendorID);
-    g_Log.write("--> Button Count: {}\n", joystickProperties->ButtonCount);
+    g_JoystickManager.handleEventJoystickDisconnected(eventJoystickDisconnected);
 }
 
 void Game::handleEventJoystickMoved(const sf::Event::JoystickMoved* eventJoystickMoved)
@@ -1769,11 +734,33 @@ void Game::handleEventJoystickButtonReleased(const sf::Event::JoystickButtonRele
     g_Log.write("Joystick Button Released: {}\n", eventJoystickButtonReleased->button);
 }
 
+void Game::initializeFramesPerSecond()
+{
+    m_framesPerSecondClock.restart();
+    m_framesPerSecondPreviousTime = m_framesPerSecondClock.getElapsedTime();
+}
+
+void Game::calculateFramesPerSecond()
+{
+    m_framesPerSecondCurrentTime = m_framesPerSecondClock.getElapsedTime();
+
+    m_framesPerSecond = 1.0f / (m_framesPerSecondCurrentTime.asSeconds() - m_framesPerSecondPreviousTime.asSeconds());
+
+    m_framesPerSecondPreviousTime = m_framesPerSecondCurrentTime;
+}
+
+float Game::getFramesPerSecond()
+{
+    return m_framesPerSecond;
+}
+
 void Game::processEvents()
 {
+    bool libIMGUIIsActive = tb::LibIMGUI::isActive();
+
     sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
 
-    tb::RenderWindow::Properties_t* renderWindowProperties = g_RenderWindow.getProperties();
+    tb::RenderWindow::Properties* renderWindowProperties = g_RenderWindow.getProperties();
 
     bool renderWindowIsFocused = renderWindowProperties->IsFocused;
 
@@ -1806,7 +793,7 @@ void Game::processEvents()
             handleEventJoystickDisconnected(eventJoystickDisconnected);
         }
 
-        if (tb::LibImGui::isActive() == false)
+        if (renderWindowIsFocused == true && libIMGUIIsActive == false)
         {
             if (const sf::Event::MouseWheelScrolled* eventMouseWheelScrolled = event->getIf<sf::Event::MouseWheelScrolled>())
             {
@@ -1819,6 +806,10 @@ void Game::processEvents()
             else if (const sf::Event::MouseButtonReleased* eventMouseButtonReleased = event->getIf<sf::Event::MouseButtonReleased>())
             {
                 handleEventMouseButtonReleased(eventMouseButtonReleased);
+            }
+            else if (const sf::Event::MouseMoved* eventMouseMoved = event->getIf<sf::Event::MouseMoved>())
+            {
+                handleEventMouseMoved(eventMouseMoved);
             }
             else if (const sf::Event::KeyPressed* eventKeyPressed = event->getIf<sf::Event::KeyPressed>())
             {
@@ -1843,11 +834,11 @@ void Game::processEvents()
         }
     }
 
-    if (renderWindowIsFocused == true && tb::LibImGui::isActive() == false)
+    if (renderWindowIsFocused == true && libIMGUIIsActive == false)
     {
         handleKeyboardInput();
 
-        updateJoystickStateForAll();
+        g_JoystickManager.updateJoystickStates();
         handleJoystickInput();
     }
 }
@@ -1860,7 +851,7 @@ void Game::handleKeyboardInput()
 
 void Game::handleJoystickInput()
 {
-    tb::Joystick* joystick = &m_joystickList[m_joystickIndex];
+    tb::Joystick* joystick = g_JoystickManager.getJoystick();
 
     if (joystick == nullptr)
     {
@@ -1872,7 +863,7 @@ void Game::handleJoystickInput()
         return;
     }
 
-    tb::Joystick::State_t* joystickState = joystick->getState();
+    tb::Joystick::State* joystickState = joystick->getState();
 
     if (m_gameState == tb::GameState::InGame)
     {
@@ -1900,128 +891,135 @@ void Game::handleJoystickInput()
 
 void Game::handleCameraMovement()
 {
-    if (isDebugModeEnabled() == true)
+    if (isDebugModeEnabled() == false)
     {
-        if (m_gameState == tb::GameState::InGame)
+        return;
+    }
+
+    if (m_gameState != tb::GameState::InGame)
+    {
+        return;
+    }
+
+    sf::Time cameraMovementTimeElapsed = m_cameraMovementClock.getElapsedTime();
+
+    if (cameraMovementTimeElapsed >= m_cameraMovementTime)
+    {
+        // camera reset
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Numpad0) == true || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num0) == true)
         {
-            sf::Time cameraMovementTimeElapsed = m_cameraMovementClock.getElapsedTime();
+            g_GameWindow.resetViewPositionOffset();
 
-            if (cameraMovementTimeElapsed >= m_cameraMovementTime)
-            {
-                // camera reset
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Numpad0) == true || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num0) == true)
-                {
-                    g_GameWindow.resetViewPositionOffset();
+            m_cameraMovementClock.restart();
+        }
 
-                    m_cameraMovementClock.restart();
-                }
+        // camera up
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Numpad8) == true || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num8) == true)
+        {
+            sf::Vector2f viewPositionOffset = g_GameWindow.getViewPositionOffset();
 
-                // camera up
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Numpad8) == true || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num8) == true)
-                {
-                    sf::Vector2f viewPositionOffset = g_GameWindow.getViewPositionOffset();
+            viewPositionOffset.y -= tb::Constants::TileSizeAsFloat;
 
-                    viewPositionOffset.y -= tb::Constants::TileSizeAsFloat;
+            g_Log.write("View Position Offset: {},{}\n", viewPositionOffset.x, viewPositionOffset.y);
 
-                    g_Log.write("View Position Offset: {},{}\n", viewPositionOffset.x, viewPositionOffset.y);
+            g_GameWindow.setViewPositionOffset(viewPositionOffset);
 
-                    g_GameWindow.setViewPositionOffset(viewPositionOffset);
+            m_cameraMovementClock.restart();
+        }
 
-                    m_cameraMovementClock.restart();
-                }
+        // camera right
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Numpad6) == true || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num6) == true)
+        {
+            sf::Vector2f viewPositionOffset = g_GameWindow.getViewPositionOffset();
 
-                // camera right
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Numpad6) == true || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num6) == true)
-                {
-                    sf::Vector2f viewPositionOffset = g_GameWindow.getViewPositionOffset();
+            viewPositionOffset.x += tb::Constants::TileSizeAsFloat;
 
-                    viewPositionOffset.x += tb::Constants::TileSizeAsFloat;
+            g_Log.write("View Position Offset: {},{}\n", viewPositionOffset.x, viewPositionOffset.y);
 
-                    g_Log.write("View Position Offset: {},{}\n", viewPositionOffset.x, viewPositionOffset.y);
+            g_GameWindow.setViewPositionOffset(viewPositionOffset);
 
-                    g_GameWindow.setViewPositionOffset(viewPositionOffset);
+            m_cameraMovementClock.restart();
+        }
 
-                    m_cameraMovementClock.restart();
-                }
+        // camera down
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Numpad5) == true || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num5) == true)
+        {
+            sf::Vector2f viewPositionOffset = g_GameWindow.getViewPositionOffset();
 
-                // camera down
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Numpad5) == true || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num5) == true)
-                {
-                    sf::Vector2f viewPositionOffset = g_GameWindow.getViewPositionOffset();
+            viewPositionOffset.y += tb::Constants::TileSizeAsFloat;
 
-                    viewPositionOffset.y += tb::Constants::TileSizeAsFloat;
+            g_Log.write("View Position Offset: {},{}\n", viewPositionOffset.x, viewPositionOffset.y);
 
-                    g_Log.write("View Position Offset: {},{}\n", viewPositionOffset.x, viewPositionOffset.y);
+            g_GameWindow.setViewPositionOffset(viewPositionOffset);
 
-                    g_GameWindow.setViewPositionOffset(viewPositionOffset);
+            m_cameraMovementClock.restart();
+        }
 
-                    m_cameraMovementClock.restart();
-                }
+        // camera left
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Numpad4) == true || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num4) == true)
+        {
+            sf::Vector2f viewPositionOffset = g_GameWindow.getViewPositionOffset();
 
-                // camera left
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Numpad4) == true || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num4) == true)
-                {
-                    sf::Vector2f viewPositionOffset = g_GameWindow.getViewPositionOffset();
+            viewPositionOffset.x -= tb::Constants::TileSizeAsFloat;
 
-                    viewPositionOffset.x -= tb::Constants::TileSizeAsFloat;
+            g_Log.write("View Position Offset: {},{}\n", viewPositionOffset.x, viewPositionOffset.y);
 
-                    g_Log.write("View Position Offset: {},{}\n", viewPositionOffset.x, viewPositionOffset.y);
+            g_GameWindow.setViewPositionOffset(viewPositionOffset);
 
-                    g_GameWindow.setViewPositionOffset(viewPositionOffset);
-
-                    m_cameraMovementClock.restart();
-                }
-            }
+            m_cameraMovementClock.restart();
         }
     }
 }
 
 void Game::handlePlayerMovement()
 {
-    if (m_gameState == tb::GameState::InGame)
+    if (m_gameState != tb::GameState::InGame)
     {
-        sf::Time playerMovementTimeElapsed = m_playerMovementClock.getElapsedTime();
+        return;
+    }
 
-        if (playerMovementTimeElapsed >= m_playerMovementTime)
+    sf::Time playerMovementTimeElapsed = m_playerMovementClock.getElapsedTime();
+
+    if (playerMovementTimeElapsed >= m_playerMovementTime)
+    {
+        bool isMovementKeyPressed = false;
+        tb::MovementDirection playerMovementDirection = tb::MovementDirection::Null;
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W))
         {
-            bool isMovementKeyPressed = false;
-            tb::MovementDirection playerMovementDirection = tb::MovementDirection::Null;
+            isMovementKeyPressed = true;
+            playerMovementDirection = tb::MovementDirection::Up;
+        }
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D))
+        {
+            isMovementKeyPressed = true;
+            playerMovementDirection = tb::MovementDirection::Right;
+        }
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S))
+        {
+            isMovementKeyPressed = true;
+            playerMovementDirection = tb::MovementDirection::Down;
+        }
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A))
+        {
+            isMovementKeyPressed = true;
+            playerMovementDirection = tb::MovementDirection::Left;
+        }
 
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W))
+        if (isMovementKeyPressed == true && playerMovementDirection != tb::MovementDirection::Null)
+        {
+            // this resets the camera movement when the player moves, so the camera doesn't stay in the offset position when the player moves
+            sf::Vector2f gameWindowViewPositionOffset = g_GameWindow.getViewPositionOffset();
+            if (gameWindowViewPositionOffset.x != 0 || gameWindowViewPositionOffset.y != 0)
             {
-                isMovementKeyPressed = true;
-                playerMovementDirection = tb::MovementDirection::Up;
-            }
-            else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D))
-            {
-                isMovementKeyPressed = true;
-                playerMovementDirection = tb::MovementDirection::Right;
-            }
-            else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S))
-            {
-                isMovementKeyPressed = true;
-                playerMovementDirection = tb::MovementDirection::Down;
-            }
-            else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A))
-            {
-                isMovementKeyPressed = true;
-                playerMovementDirection = tb::MovementDirection::Left;
-            }
-
-            if (isMovementKeyPressed == true && playerMovementDirection != tb::MovementDirection::Null)
-            {
-                sf::Vector2f gameWindowViewPositionOffset = g_GameWindow.getViewPositionOffset();
-                if (gameWindowViewPositionOffset.x != 0 || gameWindowViewPositionOffset.y != 0)
-                {
-                    g_GameWindow.resetViewPositionOffset();
-                    m_playerMovementClock.restart();
-                    return;
-                }
-
-                handleCreatureMovement(m_player, playerMovementDirection);
-
+                g_GameWindow.resetViewPositionOffset();
                 m_playerMovementClock.restart();
+                return;
             }
+
+            handleCreatureMovement(m_player, playerMovementDirection);
+
+            m_playerMovementClock.restart();
         }
     }
 }
@@ -2035,7 +1033,7 @@ void Game::setMouseCursor(const sf::Cursor& cursor)
 
 void Game::fixMouseCursorForWindowResize(sf::RenderWindow* renderWindow)
 {
-    // this function fixes a bug between imgui, SFML and imgui-SFML
+    // this function fixes a bug between IMGUI, SFML and imgui-SFML
     // where the mouse cursor doesn't work correctly when resizing the window
 
     static ImGuiIO& imguiIO = ImGui::GetIO();
@@ -2054,49 +1052,8 @@ void Game::fixMouseCursorForWindowResize(sf::RenderWindow* renderWindow)
 
             renderWindow->setMouseCursor(tb::Resources::Cursors::System::Arrow);
         }
+
         imguiHasCursorPrev = imguiHasCursor;
-    }
-}
-
-unsigned int Game::getJoystickIndex()
-{
-    return m_joystickIndex;
-}
-
-void Game::setJoystickIndex(unsigned int index)
-{
-    m_joystickIndex = index;
-}
-
-tb::JoystickList* Game::getJoystickList()
-{
-    return &m_joystickList;
-}
-
-void Game::updateJoystickIndexForAll()
-{
-    for (unsigned int i = 0; i < sf::Joystick::Count; i++)
-    {
-        m_joystickList[i].setIndex(i);
-    }
-}
-
-void Game::updateJoystickPropertiesForAll()
-{
-    for (unsigned int i = 0; i < sf::Joystick::Count; i++)
-    {
-        if (sf::Joystick::isConnected(i) == true)
-        {
-            m_joystickList[i].updateProperties();
-        }
-    }
-}
-
-void Game::updateJoystickStateForAll()
-{
-    for (unsigned int i = 0; i < sf::Joystick::Count; i++)
-    {
-        m_joystickList[i].updateState();
     }
 }
 
@@ -2107,14 +1064,14 @@ void Game::createTileFileFromImageFile(const std::string& fileName)
 
     if (file.is_open() == false)
     {
-        g_Log.write("ERROR: Cannot open file: tiles.txt\n");
+        g_Log.write("ERROR: cannot open file: tiles.txt\n");
         return;
     }
 
     sf::Image image;
     if (image.loadFromFile(fileName) == false)
     {
-        g_Log.write("ERROR: Cannot open file: {}\n", fileName);
+        g_Log.write("ERROR: cannot open file: {}\n", fileName);
         return;
     }
 
@@ -2213,13 +1170,13 @@ void Game::createTileFileFromImageFile(const std::string& fileName)
     file.close();
 }
 
-void Game::doOverlayText()
+void Game::updateOverlayWindowText()
 {
     g_OverlayWindow.clearTextList();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    tb::Creature::Outfit_t* playerOutfit = m_player->getOutfit();
+    tb::Creature::Outfit* playerOutfit = m_player->getOutfit();
 
     std::string playerText = std::format
     (
@@ -2227,7 +1184,7 @@ void Game::doOverlayText()
 Player X,Y,Z: {},{},{}\n\
 Player Outfit: {},{},{},{}\n\
 ",
-        m_player->getTileX(), m_player->getTileY(), m_player->getZ(),
+        m_player->getTileX(), m_player->getTileY(), m_player->getAxisZ(),
         playerOutfit->Head, playerOutfit->Body, playerOutfit->Legs, playerOutfit->Feet
     );
 
@@ -2238,8 +1195,10 @@ Player Outfit: {},{},{},{}\n\
     sf::Vector2i mousePositionInDesktop = getMousePositionInDesktop();
     sf::Vector2i mousePositionInRenderWindow = g_RenderWindow.getMousePosition2i();
     sf::Vector2f mousePixelPositionInGameWindow = g_GameWindow.getMousePixelPosition();
-    sf::Vector2f mousePixelCoordsInGameWindow = g_GameWindow.getMousePixelCoords();
-    sf::Vector2i mouseTileCoordsInGameWindow = g_GameWindow.getMouseTileCoords();
+    tb::PixelCoords mousePixelCoordsInGameWindow = g_GameWindow.getMousePixelCoords();
+    tb::TileCoords mouseTileCoordsInGameWindow = g_GameWindow.getMouseTileCoords();
+    bool mouseIsLeftButtonPressed = m_properties.IsMouseLeftButtonPressed;
+    bool mouseIsDragging = m_properties.IsMouseDragging;
 
     std::string mouseText = std::format
     (
@@ -2249,29 +1208,33 @@ Render Window Mouse Position: {},{}\n\
 Game Window Mouse Pixel Position: {},{}\n\
 Game Window Mouse Pixel Coords: {},{}\n\
 Game Window Mouse Tile Coords: {},{}\n\
+Mouse Left Button Pressed: {}\n\
+Mouse Dragging: {}\n\
 ",
         mousePositionInDesktop.x, mousePositionInDesktop.y,
         mousePositionInRenderWindow.x, mousePositionInRenderWindow.y,
         mousePixelPositionInGameWindow.x, mousePixelPositionInGameWindow.y,
         mousePixelCoordsInGameWindow.x, mousePixelCoordsInGameWindow.y,
-        mouseTileCoordsInGameWindow.x, mouseTileCoordsInGameWindow.y
+        mouseTileCoordsInGameWindow.x, mouseTileCoordsInGameWindow.y,
+        mouseIsLeftButtonPressed,
+        mouseIsDragging
     );
 
     g_OverlayWindow.addTextToList(mouseText);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    tb::Joystick* joystick = &m_joystickList[m_joystickIndex];
+    tb::Joystick* joystick = g_JoystickManager.getJoystick();
 
     if (joystick->isConnected() == false)
     {
-        std::string joystickDisconnectedText = std::format("Joystick Index {} is disconnected!\n", m_joystickIndex);
+        std::string joystickDisconnectedText = std::format("Joystick Index {} is disconnected!\n", joystick->getIndex());
 
         g_OverlayWindow.addTextToList(joystickDisconnectedText);
     }
     else
     {
-        tb::Joystick::State_t* joystickState = joystick->getState();
+        tb::Joystick::State* joystickState = joystick->getState();
 
         std::string joystickButtonText;
         joystickButtonText.reserve(1024);
@@ -2344,14 +1307,14 @@ void Game::run()
     g_Log.write("Loading config\n");
     if (loadConfig() == false)
     {
-        g_Log.write("ERROR: Failed to load config\n");
+        g_Log.write("ERROR: failed to load config\n");
         exit();
         return;
     }
 
     tb::OptionsData::Data* optionsData = g_OptionsData.getData();
 
-    tb::Log::Properties_t* logProperties = g_Log.getProperties();
+    tb::Log::Properties* logProperties = g_Log.getProperties();
     logProperties->IsEnabled = optionsData->LogIsEnabled;
     logProperties->PrintToConsole = optionsData->LogPrintToConsole;
     logProperties->WriteToFile = optionsData->LogWriteToFile;
@@ -2359,7 +1322,7 @@ void Game::run()
     g_Log.write("Creating render window\n");
     if (g_RenderWindow.create() == false)
     {
-        g_Log.write("ERROR: Failed to create render window\n");
+        g_Log.write("ERROR: failed to create render window\n");
         exit();
         return;
     }
@@ -2372,12 +1335,13 @@ void Game::run()
         return;
     }
 
-    drawLoadingText();
+    g_Log.write("Drawing loading text\n");
+    g_GUI.drawLoadingText();
 
-    g_Log.write("Initializing ImGui\n");
-    if (initImGui() == false)
+    g_Log.write("Initializing IMGUI\n");
+    if (g_GUI.initializeIMGUI() == false)
     {
-        g_Log.write("ERROR: Failed to initialize ImGui\n");
+        g_Log.write("ERROR: failed to initialize IMGUI\n");
         exit();
         return;
     }
@@ -2385,30 +1349,32 @@ void Game::run()
     g_Log.write("Loading data\n");
     if (loadData() == false)
     {
-        g_Log.write("ERROR: Failed to load data\n");
+        g_Log.write("ERROR: failed to load data\n");
         exit();
         return;
     }
 
     g_Log.write("Loading resources\n");
-    if (loadResources() == false)
+    if (g_ResourceLoader.loadAll() == false)
     {
-        g_Log.write("ERROR: Failed to load resources\n");
+        g_Log.write("ERROR: failed to load resources\n");
         exit();
         return;
     }
 
-    updateLayoutForSfmlWindows();
+    g_Log.write("Updating layout for SFML windows\n");
+    g_GUI.SFMLWindows_updateLayout();
 
     g_Log.write("Updating joystick\n");
 
     sf::Joystick::update();
-    updateJoystickIndexForAll();
-    updateJoystickPropertiesForAll();
+    g_JoystickManager.updateJoystickIndices();
+    g_JoystickManager.updateJoystickProperties();
 
-    g_Log.write("Start rendering...\n");
+    g_Log.write("Initializing frames per second\n");
+    initializeFramesPerSecond();
 
-    m_framesPerSecondPreviousTime = m_framesPerSecondClock.getElapsedTime();
+    g_Log.write("Starting rendering loop\n");
 
     while (renderWindow->isOpen() == true)
     {
@@ -2421,9 +1387,9 @@ void Game::run()
 
         renderWindow->clear(sf::Color::Black);
 
-        drawWoodBackground();
+        g_GUI.drawWoodBackground();
 
-        setPositionInLayoutForSfmlWindows();
+        g_GUI.SFMLWindows_setPositionInLayout();
 
         if (m_gameState == tb::GameState::Testing)
         {
@@ -2445,12 +1411,14 @@ void Game::run()
         {
             doGameStateInGame();
 
-            doOverlayText();
+            updateOverlayWindowText();
         }
 
-        drawImGuiWindows();
+        g_GUI.IMGUIWindows_draw();
 
-        drawFramesPerSecond();
+        calculateFramesPerSecond();
+
+        g_GUI.drawFramesPerSecond();
 
         ImGui::SFML::Render(*renderWindow);
 
@@ -2495,16 +1463,6 @@ void Game::toggleDebugMode()
     tb::Utility::toggleBool(optionsData->GameDebugMode);
 
     g_OptionsData.save();
-}
-
-void Game::toggleDemoWindow()
-{
-    tb::Utility::toggleBool(m_properties.ShowDemoWindow);
-}
-
-void Game::toggleStackToolWindow()
-{
-    tb::Utility::toggleBool(m_properties.ShowStackToolWindow);
 }
 
 tb::GameState Game::getGameState()
@@ -2612,7 +1570,7 @@ tb::Tile::Ptr Game::getTileByThingMovementDirection(tb::Thing::Ptr thing, tb::Mo
 {
     sf::Vector2i vectorByMovementDirection = getVectorByMovementDirection(movementDirection);
 
-    tb::TileMap::Ptr tileMap = g_Map.getTileMapOfTilesAtZ(thing->getZ());
+    tb::TileMap::Ptr tileMap = g_Map.getTileMapOfTilesAtAxisZ(thing->getAxisZ());
 
     if (tileMap == nullptr)
     {
@@ -2626,14 +1584,14 @@ tb::Tile::Ptr Game::getTileByThingMovementDirection(tb::Thing::Ptr thing, tb::Mo
         return nullptr;
     }
 
-    sf::Vector2i tileCoords = sf::Vector2i(thing->getTileX() + vectorByMovementDirection.x, thing->getTileY() + vectorByMovementDirection.y);
+    tb::TileCoords tileCoords = tb::TileCoords(thing->getTileX() + vectorByMovementDirection.x, thing->getTileY() + vectorByMovementDirection.y);
 
     if (g_Map.isTileCoordsOutOfBounds(tileCoords) == true)
     {
         return nullptr;
     }
 
-    std::uint32_t tileIndex = g_Map.getTileIndexByTileCoords(tileCoords);
+    tb::TileIndex tileIndex = g_Map.getTileIndexByTileCoords(tileCoords);
 
     if (g_Map.isTileIndexOutOfBounds(tileIndex) == true)
     {
@@ -2643,9 +1601,9 @@ tb::Tile::Ptr Game::getTileByThingMovementDirection(tb::Thing::Ptr thing, tb::Mo
     return tileList->at(tileIndex);
 }
 
-bool Game::findCeilingAbovePlayerAtZ(tb::ZAxis z)
+bool Game::doesCeilingExistAbovePlayerAtAxisZ(tb::AxisZ axisZ)
 {
-    tb::TileMap::Ptr tileMap = g_Map.getTileMapOfTilesAtZ(z);
+    tb::TileMap::Ptr tileMap = g_Map.getTileMapOfTilesAtAxisZ(axisZ);
 
     if (tileMap == nullptr)
     {
@@ -2664,20 +1622,20 @@ bool Game::findCeilingAbovePlayerAtZ(tb::ZAxis z)
         return false;
     }
 
-    std::int32_t playerX = m_player->getTileX();
-    std::int32_t playerY = m_player->getTileY();
+    tb::TileCoord playerTileX = m_player->getTileX();
+    tb::TileCoord playerTileY = m_player->getTileY();
 
-    tb::ZAxis playerZ = m_player->getZ();
+    tb::AxisZ playerAxisZ = m_player->getAxisZ();
 
-    std::vector<std::uint32_t> tileIndexList;
+    std::vector<tb::TileIndex> tileIndexList;
     tileIndexList.reserve(16);
 
     for (int i = -2; i < 2; i++)
     {
-        sf::Vector2i tileCoords1 = sf::Vector2i(playerX - 2, playerY + i);
-        sf::Vector2i tileCoords2 = sf::Vector2i(playerX - 1, playerY + i);
-        sf::Vector2i tileCoords3 = sf::Vector2i(playerX,     playerY + i);
-        sf::Vector2i tileCoords4 = sf::Vector2i(playerX + 1, playerY + i);
+        tb::TileCoords tileCoords1 = tb::TileCoords(playerTileX - 2, playerTileY + i);
+        tb::TileCoords tileCoords2 = tb::TileCoords(playerTileX - 1, playerTileY + i);
+        tb::TileCoords tileCoords3 = tb::TileCoords(playerTileX,     playerTileY + i);
+        tb::TileCoords tileCoords4 = tb::TileCoords(playerTileX + 1, playerTileY + i);
 
         if (g_Map.isTileCoordsOutOfBounds(tileCoords1) == false)
         {
@@ -2700,7 +1658,7 @@ bool Game::findCeilingAbovePlayerAtZ(tb::ZAxis z)
         }
     }
 
-    for (std::uint32_t tileIndex : tileIndexList)
+    for (tb::TileIndex tileIndex : tileIndexList)
     {
         if (g_Map.isTileIndexOutOfBounds(tileIndex) == true)
         {
@@ -2714,7 +1672,7 @@ bool Game::findCeilingAbovePlayerAtZ(tb::ZAxis z)
             continue;
         }
 
-        if (tile->getZ() > playerZ)
+        if (tile->getAxisZ() > playerAxisZ)
         {
             return true;
         }
@@ -2730,7 +1688,7 @@ void Game::handleCreatureMovement(tb::Creature::Ptr creature, tb::MovementDirect
         return;
     }
 
-    tb::Creature::Properties_t* creatureProperties = creature->getProperties();
+    tb::Creature::Properties* creatureProperties = creature->getProperties();
 
     if (creatureProperties->IsDead == true || creatureProperties->IsSleeping == true)
     {
@@ -2762,7 +1720,7 @@ void Game::handleCreatureMovement(tb::Creature::Ptr creature, tb::MovementDirect
 
 bool Game::doMoveThingFromTileToTile(tb::Thing::Ptr thing, tb::Tile::Ptr toTile)
 {
-    tb::Tile::Ptr fromTile = g_Map.getTileOfThing(thing);
+    tb::Tile::Ptr fromTile = g_Map.getTileAtThing(thing);
 
     if (fromTile == nullptr || toTile == nullptr)
     {
@@ -2778,8 +1736,8 @@ bool Game::doMoveThingFromTileToTile(tb::Thing::Ptr thing, tb::Tile::Ptr toTile)
 
     tb::ThingType thingType = thing->getThingType();
 
-    tb::ZAxis fromTileZ = fromTile->getZ();
-    tb::ZAxis toTileZ = toTile->getZ();
+    tb::AxisZ fromTileAxisZ = fromTile->getAxisZ();
+    tb::AxisZ toTileAxisZ = toTile->getAxisZ();
 
     tb::SpriteData::DataList* spriteDataList = g_SpriteData.getDataList();
 
@@ -2824,32 +1782,12 @@ bool Game::doMoveThingFromTileToTile(tb::Thing::Ptr thing, tb::Tile::Ptr toTile)
         fromTileCreatureList->erase(fromTileCreatureIt);
 
         thing->setTileCoords(toTile->getTileCoords());
-        thing->setZ(toTileZ);
+        thing->setAxisZ(toTileAxisZ);
     }
 
     // Object
 
     return true;
-}
-
-tb::BitmapFont* Game::getClassicBitmapFont()
-{
-    return &m_classicBitmapFont;
-}
-
-tb::BitmapFont* Game::getTinyBitmapFont()
-{
-    return &m_tinyBitmapFont;
-}
-
-tb::BitmapFont* Game::getModernBitmapFont()
-{
-    return &m_modernBitmapFont;
-}
-
-tb::BitmapFont* Game::getSystemBitmapFont()
-{
-    return &m_systemBitmapFont;
 }
 
 }

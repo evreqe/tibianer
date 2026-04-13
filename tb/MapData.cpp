@@ -62,7 +62,7 @@ bool MapData::load()
     {
         if (std::filesystem::exists(fileName) == false)
         {
-            g_Log.write("ERROR: File does not exist: {}\n", fileName);
+            g_Log.write("ERROR: file does not exist: {}\n", fileName);
             return false;
         }
 
@@ -71,7 +71,7 @@ bool MapData::load()
 
         if (xmlParseResult.status != pugi::xml_parse_status::status_ok)
         {
-            g_Log.write("ERROR: Failed to load map from file: {}\nDescription: {}\nOffset: {}\n", fileName, xmlParseResult.description(), xmlParseResult.offset);
+            g_Log.write("ERROR: failed to load map from file: {}\nDescription: {}\nOffset: {}\n", fileName, xmlParseResult.description(), xmlParseResult.offset);
             return false;
         }
 
@@ -166,7 +166,7 @@ bool MapData::load()
 
     if (m_dataList.size() == 0)
     {
-        g_Log.write("ERROR: Loaded data is empty\n");
+        g_Log.write("ERROR: loaded data is empty\n");
         return false;
     }
 

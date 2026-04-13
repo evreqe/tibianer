@@ -2,8 +2,6 @@
 
 #include "common.h"
 
-#include "tb/LibBoost.h"
-
 #include "tb/Constants.h"
 #include "tb/Utility.h"
 #include "tb/Log.h"
@@ -22,11 +20,11 @@ public:
     GameText();
     ~GameText();
 
-    bool setText(tb::BitmapFont* bitmapFont, const sf::Vector2i& tileCoords, tb::ZAxis z, const std::string& text, const sf::Color& textColor, bool isCentered = true);
+    bool setText(tb::BitmapFont* bitmapFont, const tb::TileCoords& tileCoords, tb::AxisZ axisZ, const std::string& text, const sf::Color& textColor, bool isCentered = true);
 
-    sf::Vector2i getTileCoords();
+    tb::TileCoords getTileCoords();
 
-    tb::ZAxis getZ();
+    tb::AxisZ getAxisZ();
 
     std::string getText();
 
@@ -40,9 +38,9 @@ private:
 
     sf::Texture* m_texture = nullptr;
 
-    sf::Vector2i m_tileCoords;
+    tb::TileCoords m_tileCoords;
 
-    tb::ZAxis m_z = tb::Constants::ZAxisDefault;
+    tb::AxisZ m_axisZ = tb::Constants::AxisZDefault;
 
     std::string m_text;
 

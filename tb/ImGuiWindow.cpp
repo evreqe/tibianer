@@ -1,48 +1,48 @@
 #include "common.h"
 
-#include "tb/ImGuiWindow.h"
+#include "tb/IMGUIWindow.h"
 
 namespace tb
 {
 
-ImGuiWindow::ImGuiWindow()
+IMGUIWindow::IMGUIWindow()
 {
     //
 }
 
-ImGuiWindow::~ImGuiWindow()
+IMGUIWindow::~IMGUIWindow()
 {
     //
 }
 
-bool* ImGuiWindow::getIsVisible()
+bool* IMGUIWindow::isVisible()
 {
     return &m_isVisible;
 }
 
-void ImGuiWindow::setIsVisible(bool b)
+void IMGUIWindow::setVisible(bool b)
 {
     m_isVisible = b;
 }
 
-void ImGuiWindow::toggleIsVisible()
+void IMGUIWindow::toggleVisible()
 {
     m_isVisible = !m_isVisible;
 }
 
-void ImGuiWindow::center()
+void IMGUIWindow::center()
 {
     auto viewport = ImGui::GetMainViewport();
     ImGui::SetNextWindowPos(viewport->GetCenter(), ImGuiCond_None, ImVec2(0.5f, 0.5f));
 }
 
-void ImGuiWindow::centerOnAppearing()
+void IMGUIWindow::centerOnAppearing()
 {
     auto viewport = ImGui::GetMainViewport();
     ImGui::SetNextWindowPos(viewport->GetCenter(), ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
 }
 
-void ImGuiWindow::centerOnFirstUseEver()
+void IMGUIWindow::centerOnFirstUseEver()
 {
     auto viewport = ImGui::GetMainViewport();
     ImGui::SetNextWindowPos(viewport->GetCenter(), ImGuiCond_FirstUseEver, ImVec2(0.5f, 0.5f));

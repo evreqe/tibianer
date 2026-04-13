@@ -140,7 +140,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalIncludeDirectories>Z:\Code\!libraries_x64\boost_1_85_0\;Z:\Code\!libraries_x64\fmt-11.0.0\include;Z:\Code\!libraries_x64\spdlog-1.15.1\include;Z:\Code\!libraries_x64\scnlib-3.0.1\include;Z:\Code\!libraries_x64\pugixml-1.14\include;Z:\Code\!libraries_x64\tomlplusplus-3.4.0;Z:\Code\!libraries_x64\sol2-3.3.0\include;Z:\Code\!libraries_x64\SFML-3.0.1\include;Z:\Code\!libraries_x64\Thor\include;Z:\Code\!libraries_x64\Thor\extlibs\aurora\include;Z:\Code\tibianer\tibianer\;Z:\Code\tibianer\tibianer\boost_zlib;Z:\Code\tibianer\tibianer\boost_base64;Z:\Code\tibianer\tibianer\imgui;Z:\Code\tibianer\tibianer\imgui-sfml;Z:\Code\tibianer\tibianer\magic_enum;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Z:\Code\!libraries_x64\boost_1_85_0\;Z:\Code\!libraries_x64\fmt-11.0.0\include;Z:\Code\!libraries_x64\spdlog-1.15.1\include;Z:\Code\!libraries_x64\scnlib-3.0.1\include;Z:\Code\!libraries_x64\pugixml-1.14\include;Z:\Code\!libraries_x64\tomlplusplus-3.4.0;Z:\Code\!libraries_x64\sol2-3.3.0\include;Z:\Code\!libraries_x64\SFML-3.0.2\include;Z:\Code\!libraries_x64\Thor\include;Z:\Code\!libraries_x64\Thor\extlibs\aurora\include;Z:\Code\tibianer\tibianer\;Z:\Code\tibianer\tibianer\dependencies\imgui;Z:\Code\tibianer\tibianer\dependencies\imgui-sfml;Z:\Code\tibianer\tibianer\dependencies\magic_enum;Z:\Code\tibianer\tibianer\dependencies\visit_struct;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
       <EnableModules>false</EnableModules>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -156,7 +156,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>opengl32.lib;freetype.lib;flac.lib;ogg.lib;vorbis.lib;vorbisenc.lib;vorbisfile.lib;sfml-audio.lib;sfml-graphics.lib;sfml-main.lib;sfml-network.lib;sfml-system.lib;sfml-window.lib;thor.lib;lua51.lib;luajit.lib;lua-5.4.4.lib;spdlog.lib;fmt.lib;scn.lib;pugixml.lib;libboost_iostreams-vc143-mt-x64-1_85.lib;libboost_zlib-vc143-mt-x64-1_85.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>Z:\Code\!libraries_x64\SFML-3.0.1\lib;Z:\Code\!libraries_x64\Thor\lib;Z:\Code\!libraries_x64\boost_1_85_0\lib64-msvc-14.3;Z:\Code\!libraries_x64\spdlog-1.15.1\lib;Z:\Code\!libraries_x64\fmt-11.0.0\lib;Z:\Code\!libraries_x64\scnlib-3.0.1\lib;Z:\Code\!libraries_x64\sol2-3.3.0\lib;Z:\Code\!libraries_x64\pugixml-1.14\lib;Z:\Code\!libraries_x64\LuaJIT-2.1\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>Z:\Code\!libraries_x64\SFML-3.0.2\lib;Z:\Code\!libraries_x64\Thor\lib;Z:\Code\!libraries_x64\boost_1_85_0\lib64-msvc-14.3;Z:\Code\!libraries_x64\spdlog-1.15.1\lib;Z:\Code\!libraries_x64\fmt-11.0.0\lib;Z:\Code\!libraries_x64\scnlib-3.0.1\lib;Z:\Code\!libraries_x64\sol2-3.3.0\lib;Z:\Code\!libraries_x64\pugixml-1.14\lib;Z:\Code\!libraries_x64\LuaJIT-2.1\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -165,40 +165,26 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="imgui-sfml\imgui-SFML.cpp">
+    <ClCompile Include="dependencies\imgui-sfml\imgui-SFML.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-      </PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="imgui\imgui.cpp">
+    <ClCompile Include="dependencies\imgui\imgui.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-      </PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="imgui\imgui_demo.cpp">
+    <ClCompile Include="dependencies\imgui\imgui_demo.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-      </PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="imgui\imgui_draw.cpp">
+    <ClCompile Include="dependencies\imgui\imgui_draw.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-      </PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="imgui\imgui_stdlib.cpp">
+    <ClCompile Include="dependencies\imgui\imgui_stdlib.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-      </PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="imgui\imgui_tables.cpp">
+    <ClCompile Include="dependencies\imgui\imgui_tables.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-      </PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="imgui\imgui_widgets.cpp">
+    <ClCompile Include="dependencies\imgui\imgui_widgets.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-      </PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="tb\AboutTibianerWindow.cpp" />
@@ -213,7 +199,6 @@
     <ClCompile Include="tb\BitmapFontText.cpp" />
     <ClCompile Include="tb\ChatInputTextWindow.cpp" />
     <ClCompile Include="tb\ChatTextWindow.cpp" />
-    <ClCompile Include="tb\ClickRectData.cpp" />
     <ClCompile Include="tb\CommentsWindow.cpp" />
     <ClCompile Include="tb\ConnectionWindow.cpp" />
     <ClCompile Include="tb\Container.cpp" />
@@ -229,22 +214,25 @@
     <ClCompile Include="tb\FloatingText.cpp" />
     <ClCompile Include="tb\FontData.cpp" />
     <ClCompile Include="tb\GameWindow.cpp" />
-    <ClCompile Include="tb\GuiRectData.cpp" />
+    <ClCompile Include="tb\GUI.cpp" />
+    <ClCompile Include="tb\ResourceLoader.cpp" />
+    <ClCompile Include="tb\TextureRectData.cpp" />
     <ClCompile Include="tb\HotkeysData.cpp" />
     <ClCompile Include="tb\HotkeysWindow.cpp" />
     <ClCompile Include="tb\Joystick.cpp" />
     <ClCompile Include="tb\JoystickData.cpp" />
+    <ClCompile Include="tb\JoystickManager.cpp" />
     <ClCompile Include="tb\LibBoost.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="tb\LibFmt.cpp">
+    <ClCompile Include="tb\LibFMT.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="tb\LibImGui.cpp">
+    <ClCompile Include="tb\LibIMGUI.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </PrecompiledHeaderFile>
@@ -254,17 +242,17 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="tb\LibPugiXml.cpp">
+    <ClCompile Include="tb\LibXML.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="tb\LibSfml.cpp">
+    <ClCompile Include="tb\LibSFML.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="tb\LibToml.cpp">
+    <ClCompile Include="tb\LibTOML.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </PrecompiledHeaderFile>
@@ -299,7 +287,7 @@
     <ClCompile Include="tb\Script.cpp" />
     <ClCompile Include="tb\ScriptManager.cpp" />
     <ClCompile Include="tb\SetOutfitWindow.cpp" />
-    <ClCompile Include="tb\SfmlGuiWindow.cpp" />
+    <ClCompile Include="tb\SFMLGUIWindow.cpp" />
     <ClCompile Include="tb\SkillsWindow.cpp" />
     <ClCompile Include="tb\SpellData.cpp" />
     <ClCompile Include="tb\Sprite.cpp" />
@@ -315,36 +303,40 @@
     <ClCompile Include="tb\TextureData.cpp" />
     <ClCompile Include="tb\Thing.cpp" />
     <ClCompile Include="tb\Tile.cpp" />
+    <ClCompile Include="tb\TileBase.cpp" />
     <ClCompile Include="tb\TileMap.cpp" />
     <ClCompile Include="tb\TipsAndTricksData.cpp" />
     <ClCompile Include="tb\TipsAndTricksWindow.cpp" />
     <ClCompile Include="tb\WaterAnimationData.cpp" />
-    <ClCompile Include="tb\ImGuiWindow.cpp" />
-    <ClCompile Include="tb\WindowsApi.cpp" />
+    <ClCompile Include="tb\IMGUIWindow.cpp" />
+    <ClCompile Include="tb\WindowsAPI.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="boost_base64\boost_base64.hpp" />
-    <ClInclude Include="boost_zlib\boost_zlib.hpp" />
     <ClInclude Include="common.h" />
-    <ClInclude Include="imgui-sfml\imconfig-SFML.h" />
-    <ClInclude Include="imgui-sfml\imgui-SFML.h" />
-    <ClInclude Include="imgui-sfml\imgui-SFML_export.h" />
-    <ClInclude Include="imgui\imconfig.h" />
-    <ClInclude Include="imgui\imgui.h" />
-    <ClInclude Include="imgui\imgui_internal.h" />
-    <ClInclude Include="imgui\imgui_stdlib.h" />
-    <ClInclude Include="imgui\imstb_rectpack.h" />
-    <ClInclude Include="imgui\imstb_textedit.h" />
-    <ClInclude Include="imgui\imstb_truetype.h" />
-    <ClInclude Include="magic_enum\magic_enum.hpp" />
-    <ClInclude Include="magic_enum\magic_enum_all.hpp" />
-    <ClInclude Include="magic_enum\magic_enum_containers.hpp" />
-    <ClInclude Include="magic_enum\magic_enum_flags.hpp" />
-    <ClInclude Include="magic_enum\magic_enum_format.hpp" />
-    <ClInclude Include="magic_enum\magic_enum_fuse.hpp" />
-    <ClInclude Include="magic_enum\magic_enum_iostream.hpp" />
-    <ClInclude Include="magic_enum\magic_enum_switch.hpp" />
-    <ClInclude Include="magic_enum\magic_enum_utility.hpp" />
+    <ClInclude Include="common_types.h" />
+    <ClInclude Include="dependencies\imgui-sfml\imconfig-SFML.h" />
+    <ClInclude Include="dependencies\imgui-sfml\imgui-SFML.h" />
+    <ClInclude Include="dependencies\imgui-sfml\imgui-SFML_export.h" />
+    <ClInclude Include="dependencies\imgui\imconfig.h" />
+    <ClInclude Include="dependencies\imgui\imgui.h" />
+    <ClInclude Include="dependencies\imgui\imgui_internal.h" />
+    <ClInclude Include="dependencies\imgui\imgui_stdlib.h" />
+    <ClInclude Include="dependencies\imgui\imstb_rectpack.h" />
+    <ClInclude Include="dependencies\imgui\imstb_textedit.h" />
+    <ClInclude Include="dependencies\imgui\imstb_truetype.h" />
+    <ClInclude Include="dependencies\magic_enum\magic_enum.hpp" />
+    <ClInclude Include="dependencies\magic_enum\magic_enum_all.hpp" />
+    <ClInclude Include="dependencies\magic_enum\magic_enum_containers.hpp" />
+    <ClInclude Include="dependencies\magic_enum\magic_enum_flags.hpp" />
+    <ClInclude Include="dependencies\magic_enum\magic_enum_format.hpp" />
+    <ClInclude Include="dependencies\magic_enum\magic_enum_fuse.hpp" />
+    <ClInclude Include="dependencies\magic_enum\magic_enum_iostream.hpp" />
+    <ClInclude Include="dependencies\magic_enum\magic_enum_switch.hpp" />
+    <ClInclude Include="dependencies\magic_enum\magic_enum_utility.hpp" />
+    <ClInclude Include="dependencies\visit_struct\visit_struct.hpp" />
+    <ClInclude Include="dependencies\visit_struct\visit_struct_boost_fusion.hpp" />
+    <ClInclude Include="dependencies\visit_struct\visit_struct_boost_hana.hpp" />
+    <ClInclude Include="dependencies\visit_struct\visit_struct_intrusive.hpp" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="tb\AboutTibianerWindow.h" />
     <ClInclude Include="tb\AboutTibiaWindow.h" />
@@ -358,7 +350,6 @@
     <ClInclude Include="tb\BitmapFontText.h" />
     <ClInclude Include="tb\ChatInputTextWindow.h" />
     <ClInclude Include="tb\ChatTextWindow.h" />
-    <ClInclude Include="tb\ClickRectData.h" />
     <ClInclude Include="tb\CommentsWindow.h" />
     <ClInclude Include="tb\ConnectionWindow.h" />
     <ClInclude Include="tb\Constants.h" />
@@ -371,22 +362,29 @@
     <ClInclude Include="tb\EditTextWindow.h" />
     <ClInclude Include="tb\EnterGameWindow.h" />
     <ClInclude Include="tb\Entity.h" />
+    <ClInclude Include="tb\Enums.h" />
     <ClInclude Include="tb\EquipmentWindow.h" />
     <ClInclude Include="tb\FloatingText.h" />
     <ClInclude Include="tb\FontData.h" />
     <ClInclude Include="tb\GameWindow.h" />
-    <ClInclude Include="tb\GuiRectData.h" />
+    <ClInclude Include="tb\GUI.h" />
+    <ClInclude Include="tb\LibFMTDynamicFormat.h" />
+    <ClInclude Include="tb\ResourceLoader.h" />
+    <ClInclude Include="tb\TextureRectData.h" />
     <ClInclude Include="tb\HotkeysData.h" />
     <ClInclude Include="tb\HotkeysWindow.h" />
     <ClInclude Include="tb\Joystick.h" />
     <ClInclude Include="tb\JoystickData.h" />
+    <ClInclude Include="tb\JoystickManager.h" />
     <ClInclude Include="tb\LibBoost.h" />
-    <ClInclude Include="tb\LibFmt.h" />
-    <ClInclude Include="tb\LibImGui.h" />
+    <ClInclude Include="tb\LibBoostBase64.h" />
+    <ClInclude Include="tb\LibBoostZLIB.h" />
+    <ClInclude Include="tb\LibFMT.h" />
+    <ClInclude Include="tb\LibIMGUI.h" />
     <ClInclude Include="tb\LibMagicEnum.h" />
-    <ClInclude Include="tb\LibPugiXml.h" />
-    <ClInclude Include="tb\LibSfml.h" />
-    <ClInclude Include="tb\LibToml.h" />
+    <ClInclude Include="tb\LibXML.h" />
+    <ClInclude Include="tb\LibSFML.h" />
+    <ClInclude Include="tb\LibTOML.h" />
     <ClInclude Include="tb\Light.h" />
     <ClInclude Include="tb\LightBatch.h" />
     <ClInclude Include="tb\LogWindow.h" />
@@ -418,7 +416,7 @@
     <ClInclude Include="tb\Script.h" />
     <ClInclude Include="tb\ScriptManager.h" />
     <ClInclude Include="tb\SetOutfitWindow.h" />
-    <ClInclude Include="tb\SfmlGuiWindow.h" />
+    <ClInclude Include="tb\SFMLGUIWindow.h" />
     <ClInclude Include="tb\SkillsWindow.h" />
     <ClInclude Include="tb\SpellData.h" />
     <ClInclude Include="tb\Sprite.h" />
@@ -434,14 +432,15 @@
     <ClInclude Include="tb\TextureData.h" />
     <ClInclude Include="tb\Thing.h" />
     <ClInclude Include="tb\Tile.h" />
+    <ClInclude Include="tb\TileBase.h" />
     <ClInclude Include="tb\TileMap.h" />
     <ClInclude Include="tb\TipsAndTricksData.h" />
     <ClInclude Include="tb\TipsAndTricksWindow.h" />
     <ClInclude Include="tb\Types.h" />
     <ClInclude Include="tb\Utility.h" />
     <ClInclude Include="tb\WaterAnimationData.h" />
-    <ClInclude Include="tb\ImGuiWindow.h" />
-    <ClInclude Include="tb\WindowsApi.h" />
+    <ClInclude Include="tb\IMGUIWindow.h" />
+    <ClInclude Include="tb\WindowsAPI.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />

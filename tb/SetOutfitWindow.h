@@ -2,7 +2,7 @@
 
 #include "common.h"
 
-#include "tb/ImGuiWindow.h"
+#include "tb/IMGUIWindow.h"
 
 #include "tb/SpriteData.h"
 #include "tb/OptionsData.h"
@@ -13,7 +13,7 @@
 namespace tb
 {
 
-class SetOutfitWindow : public tb::ImGuiWindow
+class SetOutfitWindow : public tb::IMGUIWindow
 {
 
 public:
@@ -52,7 +52,7 @@ private:
 
     tb::Creature::Ptr m_creature = nullptr;
 
-    tb::Creature::Outfit_t* m_creatureOutfit = nullptr;
+    tb::Creature::Outfit* m_creatureOutfit = nullptr;
 
     const ImVec2 m_buttonSize = ImVec2(123.0f, 29.0f);
 

@@ -16,36 +16,36 @@ Creature::~Creature()
     //
 }
 
-Creature::Creature(const sf::Vector2i& tileCoords, tb::ZAxis z) :
+Creature::Creature(const tb::TileCoords& tileCoords, tb::AxisZ axisZ) :
     m_dummySprite(tb::Resources::Textures::SpriteSheet)
 {
     setThingType(tb::ThingType::Creature);
 
     setTileCoords(tileCoords);
-    setZ(z);
+    setAxisZ(axisZ);
 
     m_dummySprite.setID(2181);
     m_dummySprite.setTileWidthAndHeightByID(2181);
 }
 
-Creature::Properties_t* Creature::getProperties()
+Creature::Properties* Creature::getProperties()
 {
     return &m_properties;
 }
 
-Creature::Skills_t* Creature::getSkills()
+Creature::Skills* Creature::getSkills()
 {
     return &m_skills;
 }
 
-Creature::Outfit_t* Creature::getOutfit()
+Creature::Outfit* Creature::getOutfit()
 {
     return &m_outfit;
 }
 
 void Creature::update()
 {
-    sf::Vector2f pixelCoords = getPixelCoords();
+    tb::PixelCoords pixelCoords = getPixelCoords();
 
     m_dummySprite.setPosition(pixelCoords);
 
@@ -114,9 +114,9 @@ void Creature::setTileOffset(std::uint8_t tileOffset)
     //
 }
 
-std::string Creature::getName()
+std::string* Creature::getName()
 {
-    return m_name;
+    return &m_name;
 }
 
 void Creature::setName(const std::string& name)
@@ -124,9 +124,9 @@ void Creature::setName(const std::string& name)
     m_name = name;
 }
 
-std::string Creature::getDescription()
+std::string* Creature::getDescription()
 {
-    return m_description;
+    return &m_description;
 }
 
 void Creature::setDescription(const std::string& description)

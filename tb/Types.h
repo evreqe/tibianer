@@ -4,30 +4,33 @@
 
 namespace tb
 {
-    using u8 = std::uint8_t;
-    using u16 = std::uint16_t;
-    using u32 = std::uint32_t;
-    using u64 = std::uint64_t;
 
-    using i8 = std::int8_t;
-    using i16 = std::int16_t;
-    using i32 = std::int32_t;
-    using i64 = std::int64_t;
+using TileIndex = std::uint32_t;
 
-    using f32 = float;
-    using f64 = double;
+using TileCoords = sf::Vector2i;
+using PixelCoords = sf::Vector2f;
 
-    using SpriteID = std::uint16_t;
-    using SpriteIDList = std::vector<tb::SpriteID>;
+using TileCoord = std::int32_t;
+using PixelCoord = float;
 
-    using ZAxis = std::uint8_t;
+using TileRect = sf::IntRect;
+using PixelRect = sf::FloatRect;
 
-    struct ZAxisVisible
-    {
-        tb::ZAxis Begin;
-        tb::ZAxis End;
-    };
+using VertexList = std::vector<sf::Vertex>;
+using VertexPointerList = std::vector<sf::Vertex*>;
 
-    using LightBrightness = std::uint8_t;
-    using OutfitIndex = std::uint8_t;
+using SpriteID = std::uint16_t;
+using SpriteIDList = std::vector<tb::SpriteID>;
+
+using AxisZ = std::uint8_t;
+
+struct AxisZVisibility
+{
+    tb::AxisZ Begin;
+    tb::AxisZ End;
+};
+
+using LightBrightness = std::uint8_t;
+using OutfitIndex = std::uint8_t;
+
 }

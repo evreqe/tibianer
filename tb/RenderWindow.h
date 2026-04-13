@@ -6,7 +6,7 @@
 #include "tb/Utility.h"
 #include "tb/Log.h"
 
-#include "tb/WindowsApi.h"
+#include "tb/WindowsAPI.h"
 
 namespace tb
 {
@@ -34,7 +34,7 @@ private:
 
 public:
 
-    struct Properties_t
+    struct Properties
     {
         std::uint32_t FrameRateLimit = 60;
 
@@ -44,7 +44,7 @@ public:
         bool IsFocused = true;
     };
 
-    Properties_t* getProperties();
+    Properties* getProperties();
 
     bool create();
 
@@ -64,7 +64,7 @@ public:
 
 private:
 
-    Properties_t m_properties;
+    Properties m_properties;
 
     sf::RenderWindow m_window;
 

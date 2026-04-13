@@ -2,9 +2,6 @@
 
 #include "common.h"
 
-#include "tb/LibBoost.h"
-#include "tb/LibPugiXml.h"
-
 #include "tb/Constants.h"
 #include "tb/Utility.h"
 #include "tb/Log.h"
@@ -43,37 +40,37 @@ private:
 
 public:
 
-    struct Properties_t
+    struct Properties
     {
         std::string Name;
         std::string Author;
         std::string Description;
 
-        std::int32_t PlayerStartX = 0;
-        std::int32_t PlayerStartY = 0;
-        tb::ZAxis PlayerStartZ = tb::Constants::ZAxisDefault;
+        tb::TileCoord PlayerStartX = 0;
+        tb::TileCoord PlayerStartY = 0;
+        tb::AxisZ PlayerStartZ = tb::Constants::AxisZDefault;
 
         tb::TimeOfDay TimeOfDay = tb::TimeOfDay::Day;
     };
 
-    Properties_t* getProperties();
+    Properties* getProperties();
 
     bool load(const std::string& fileName);
 
-    std::uint32_t getTileIndexByTileCoords(const sf::Vector2i& tileCoords);
-    std::uint32_t getTileIndexByPixelCoords(const sf::Vector2f& pixelCoords);
+    tb::TileIndex getTileIndexByTileCoords(const tb::TileCoords& tileCoords);
+    tb::TileIndex getTileIndexByPixelCoords(const tb::PixelCoords& pixelCoords);
 
-    sf::Vector2f getPixelCoordsByTileCoords(const sf::Vector2i& tileCoords);
-    sf::Vector2i getTileCoordsByPixelCoords(const sf::Vector2f& pixelCoords);
+    tb::TileCoords getTileCoordsByPixelCoords(const tb::PixelCoords& pixelCoords);
+    tb::PixelCoords getPixelCoordsByTileCoords(const tb::TileCoords& tileCoords);
 
-    sf::Vector2i getTileCoordsByTileIndex(std::uint32_t tileIndex);
-    sf::Vector2f getPixelCoordsByTileIndex(std::uint32_t tileIndex);
+    tb::TileCoords getTileCoordsByTileIndex(tb::TileIndex tileIndex);
+    tb::PixelCoords getPixelCoordsByTileIndex(tb::TileIndex tileIndex);
 
-    bool isTileIndexOutOfBounds(std::uint32_t tileIndex);
-    bool isTileCoordsOutOfBounds(const sf::Vector2i& tileCoords);
+    bool isTileIndexOutOfBounds(tb::TileIndex tileIndex);
+    bool isTileCoordsOutOfBounds(const tb::TileCoords& tileCoords);
 
-    tb::Tile::Ptr getTile(const sf::Vector2i& tileCoords, tb::ZAxis z);
-    tb::Tile::Ptr getTileOfThing(tb::Thing::Ptr thing);
+    tb::Tile::Ptr getTile(const tb::TileCoords& tileCoords, tb::AxisZ axisZ);
+    tb::Tile::Ptr getTileAtThing(tb::Thing::Ptr thing);
 
     const std::string& getFileName();
 
@@ -87,12 +84,12 @@ public:
 
     std::uint32_t getNumTiles();
 
-    tb::TileMap::Ptr getTileMapOfTilesAtZ(tb::ZAxis z);
-    tb::TileMap::Ptr getTileMapOfTileEdgesAtZ(tb::ZAxis z);
+    tb::TileMap::Ptr getTileMapOfTilesAtAxisZ(tb::AxisZ axisZ);
+    tb::TileMap::Ptr getTileMapOfTileEdgesAtAxisZ(tb::AxisZ axisZ);
 
 private:
 
-    Properties_t m_properties;
+    Properties m_properties;
 
     std::string m_fileName;
 

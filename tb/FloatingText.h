@@ -24,7 +24,7 @@ class FloatingText : public tb::DrawableAndTransformable
 
 public:
 
-    void setText(tb::BitmapFont& bitmapFont, sf::Vector2u tileCoords, int z, std::string text, sf::Color textColor)
+    void setText(tb::BitmapFont& bitmapFont, tb::TileCoords tileCoords, int z, std::string text, sf::Color textColor)
     {
         m_texture = bitmapFont.getTexture();
 

@@ -25,13 +25,13 @@ public:
 
 private:
 
-    std::vector<sf::Vertex> m_vertexList;
+    tb::VertexList m_vertexList;
 
     std::uint32_t m_numLights = 0;
 
     std::uint32_t m_maxLights = 4096;
 
-    const uint32_t m_numVertexPerLight = 6;
+    const std::uint32_t m_numVertexPerLight = 6;
 
     std::uint32_t m_maxVertices = m_maxLights * m_numVertexPerLight;
 };

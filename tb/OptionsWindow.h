@@ -2,7 +2,7 @@
 
 #include "common.h"
 
-#include "tb/ImGuiWindow.h"
+#include "tb/IMGUIWindow.h"
 
 #include "tb/OptionsData.h"
 #include "tb/Game.h"
@@ -10,7 +10,7 @@
 namespace tb
 {
 
-class OptionsWindow : public tb::ImGuiWindow
+class OptionsWindow : public tb::IMGUIWindow
 {
 
 public:

@@ -44,8 +44,12 @@
 #include <utility>
 #include <vector>
 
-#include "tb/LibFmt.h"
-#include "tb/LibImGui.h"
+#include "common_types.h"
+
+#include "tb/LibBoost.h"
+#include "tb/LibFMT.h"
+#include "tb/LibIMGUI.h"
 #include "tb/LibMagicEnum.h"
-#include "tb/LibSfml.h"
-#include "tb/LibToml.h"
+#include "tb/LibSFML.h"
+#include "tb/LibTOML.h"
+#include "tb/LibXML.h"

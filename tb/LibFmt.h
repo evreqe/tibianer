@@ -8,3 +8,5 @@
 #include "fmt/ranges.h"
 #include "fmt/compile.h"
 #include "fmt/std.h"
+
+#include "tb/LibFMTDynamicFormat.h"

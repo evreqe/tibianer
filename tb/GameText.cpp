@@ -15,7 +15,7 @@ GameText::~GameText()
     //
 }
 
-bool GameText::setText(tb::BitmapFont* bitmapFont, const sf::Vector2i& tileCoords, tb::ZAxis z, const std::string& text, const sf::Color& textColor, bool isCentered)
+bool GameText::setText(tb::BitmapFont* bitmapFont, const tb::TileCoords& tileCoords, tb::AxisZ axisZ, const std::string& text, const sf::Color& textColor, bool isCentered)
 {
     if (bitmapFont == nullptr)
     {
@@ -27,7 +27,7 @@ bool GameText::setText(tb::BitmapFont* bitmapFont, const sf::Vector2i& tileCoord
 
     m_tileCoords = tileCoords;
 
-    m_z = z;
+    m_axisZ = axisZ;
 
     m_text = text;
 
@@ -60,14 +60,14 @@ bool GameText::setText(tb::BitmapFont* bitmapFont, const sf::Vector2i& tileCoord
     return true;
 }
 
-sf::Vector2i GameText::getTileCoords()
+tb::TileCoords GameText::getTileCoords()
 {
     return m_tileCoords;
 }
 
-tb::ZAxis GameText::getZ()
+tb::AxisZ GameText::getAxisZ()
 {
-    return m_z;
+    return m_axisZ;
 }
 
 std::string GameText::getText()

@@ -4,14 +4,14 @@
 
 #include "tb/Utility.h"
 
-#include "tb/ImGuiWindow.h"
+#include "tb/IMGUIWindow.h"
 
 #include "tb/Log.h"
 
 namespace tb
 {
 
-class LogWindow : public tb::ImGuiWindow
+class LogWindow : public tb::IMGUIWindow
 {
 
 public:

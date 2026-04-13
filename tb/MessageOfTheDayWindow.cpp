@@ -31,9 +31,9 @@ void MessageOfTheDayWindow::draw()
 
     center();
 
-    bool* isVisible = getIsVisible();
+    bool* pIsVisible = isVisible();
 
-    ImGui::Begin("Message of the Day##MessageOfTheDayWindow", isVisible, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
+    ImGui::Begin("Message of the Day##MessageOfTheDayWindow", pIsVisible, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
 
     ImGui::TextUnformatted(m_messageOfTheDayText.c_str());
 
@@ -43,7 +43,7 @@ void MessageOfTheDayWindow::draw()
 
     if (ImGui::Button("OK##MessageOfTheDayWindowButtonOK", m_buttonSize))
     {
-        setIsVisible(false);
+        setVisible(false);
     }
 
     ImGui::End();

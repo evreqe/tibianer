@@ -6,13 +6,10 @@
 #include "imgui_internal.h"
 #include "imgui_stdlib.h"
 
-#include "tb/LibSfml.h"
+#include "tb/LibSFML.h"
 #include "imgui-SFML.h"
 
-namespace tb
-{
-
-namespace LibImGui
+namespace tb::LibIMGUI
 {
 
 inline const std::uint8_t InputScalarU8Step1 = 1;
@@ -30,4 +27,3 @@ bool scrollWindowWithMiddleMouseButton();
 
 }
 
-}

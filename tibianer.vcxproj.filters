@@ -51,24 +51,6 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="imgui\imgui_demo.cpp">
-      <Filter>Source Files\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui\imgui_draw.cpp">
-      <Filter>Source Files\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui\imgui_widgets.cpp">
-      <Filter>Source Files\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui\imgui.cpp">
-      <Filter>Source Files\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui\imgui_tables.cpp">
-      <Filter>Source Files\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui-sfml\imgui-SFML.cpp">
-      <Filter>Source Files\imgui-sfml</Filter>
-    </ClCompile>
     <ClCompile Include="tb\BitmapFont.cpp">
       <Filter>Source Files\tb</Filter>
     </ClCompile>
@@ -123,7 +105,7 @@
     <ClCompile Include="tb\Map.cpp">
       <Filter>Source Files\tb</Filter>
     </ClCompile>
-    <ClCompile Include="tb\ImGuiWindow.cpp">
+    <ClCompile Include="tb\IMGUIWindow.cpp">
       <Filter>Source Files\tb</Filter>
     </ClCompile>
     <ClCompile Include="tb\Log.cpp">
@@ -164,9 +146,6 @@
     </ClCompile>
     <ClCompile Include="tb\MapSelectWindow.cpp">
       <Filter>Source Files\tb</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui\imgui_stdlib.cpp">
-      <Filter>Source Files\imgui</Filter>
     </ClCompile>
     <ClCompile Include="tb\MapData.cpp">
       <Filter>Source Files\tb</Filter>
@@ -261,7 +240,7 @@
     <ClCompile Include="tb\TipsAndTricksData.cpp">
       <Filter>Source Files\tb</Filter>
     </ClCompile>
-    <ClCompile Include="tb\GuiRectData.cpp">
+    <ClCompile Include="tb\TextureRectData.cpp">
       <Filter>Source Files\tb</Filter>
     </ClCompile>
     <ClCompile Include="tb\CommentsWindow.cpp">
@@ -273,16 +252,13 @@
     <ClCompile Include="tb\ControlsWindow.cpp">
       <Filter>Source Files\tb</Filter>
     </ClCompile>
-    <ClCompile Include="tb\ClickRectData.cpp">
-      <Filter>Source Files\tb</Filter>
-    </ClCompile>
     <ClCompile Include="tb\LightBatch.cpp">
       <Filter>Source Files\tb</Filter>
     </ClCompile>
     <ClCompile Include="tb\FontData.cpp">
       <Filter>Source Files\tb</Filter>
     </ClCompile>
-    <ClCompile Include="tb\SfmlGuiWindow.cpp">
+    <ClCompile Include="tb\SFMLGUIWindow.cpp">
       <Filter>Source Files\tb</Filter>
     </ClCompile>
     <ClCompile Include="tb\BattleButtonsWindow.cpp">
@@ -324,70 +300,70 @@
     <ClCompile Include="tb\JoystickData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="tb\WindowsApi.cpp">
+    <ClCompile Include="tb\WindowsAPI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="tb\LibImGui.cpp">
+    <ClCompile Include="tb\LibIMGUI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="tb\LibToml.cpp">
+    <ClCompile Include="tb\LibTOML.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="tb\LibFmt.cpp">
+    <ClCompile Include="tb\LibFMT.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="tb\LibMagicEnum.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="tb\LibSfml.cpp">
+    <ClCompile Include="tb\LibSFML.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="tb\LibBoost.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="tb\LibPugiXml.cpp">
+    <ClCompile Include="tb\LibXML.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="common.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dependencies\imgui\imgui.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dependencies\imgui\imgui_demo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dependencies\imgui\imgui_draw.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dependencies\imgui\imgui_stdlib.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dependencies\imgui\imgui_tables.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dependencies\imgui\imgui_widgets.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dependencies\imgui-sfml\imgui-SFML.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\JoystickManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\TileBase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\GUI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tb\ResourceLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imconfig.h">
-      <Filter>Header Files\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imgui.h">
-      <Filter>Header Files\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imgui_internal.h">
-      <Filter>Header Files\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imstb_rectpack.h">
-      <Filter>Header Files\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imstb_textedit.h">
-      <Filter>Header Files\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imstb_truetype.h">
-      <Filter>Header Files\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="boost_base64\boost_base64.hpp">
-      <Filter>Header Files\boost_base64</Filter>
-    </ClInclude>
-    <ClInclude Include="boost_zlib\boost_zlib.hpp">
-      <Filter>Header Files\boost_zlib</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui-sfml\imconfig-SFML.h">
-      <Filter>Header Files\imgui-sfml</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui-sfml\imgui-SFML.h">
-      <Filter>Header Files\imgui-sfml</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui-sfml\imgui-SFML_export.h">
-      <Filter>Header Files\imgui-sfml</Filter>
     </ClInclude>
     <ClInclude Include="tb\Utility.h">
       <Filter>Header Files\tb</Filter>
@@ -449,7 +425,7 @@
     <ClInclude Include="common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="tb\ImGuiWindow.h">
+    <ClInclude Include="tb\IMGUIWindow.h">
       <Filter>Header Files\tb</Filter>
     </ClInclude>
     <ClInclude Include="tb\Log.h">
@@ -493,9 +469,6 @@
     </ClInclude>
     <ClInclude Include="tb\MapSelectWindow.h">
       <Filter>Header Files\tb</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui\imgui_stdlib.h">
-      <Filter>Header Files\imgui</Filter>
     </ClInclude>
     <ClInclude Include="tb\MapData.h">
       <Filter>Header Files\tb</Filter>
@@ -590,7 +563,7 @@
     <ClInclude Include="tb\TipsAndTricksData.h">
       <Filter>Header Files\tb</Filter>
     </ClInclude>
-    <ClInclude Include="tb\GuiRectData.h">
+    <ClInclude Include="tb\TextureRectData.h">
       <Filter>Header Files\tb</Filter>
     </ClInclude>
     <ClInclude Include="tb\CommentsWindow.h">
@@ -602,16 +575,13 @@
     <ClInclude Include="tb\ControlsWindow.h">
       <Filter>Header Files\tb</Filter>
     </ClInclude>
-    <ClInclude Include="tb\ClickRectData.h">
-      <Filter>Header Files\tb</Filter>
-    </ClInclude>
     <ClInclude Include="tb\LightBatch.h">
       <Filter>Header Files\tb</Filter>
     </ClInclude>
     <ClInclude Include="tb\FontData.h">
       <Filter>Header Files\tb</Filter>
     </ClInclude>
-    <ClInclude Include="tb\SfmlGuiWindow.h">
+    <ClInclude Include="tb\SFMLGUIWindow.h">
       <Filter>Header Files\tb</Filter>
     </ClInclude>
     <ClInclude Include="tb\BattleButtonsWindow.h">
@@ -627,33 +597,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="tb\MapGeneratorPixelData.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="magic_enum\magic_enum.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="magic_enum\magic_enum_all.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="magic_enum\magic_enum_containers.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="magic_enum\magic_enum_flags.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="magic_enum\magic_enum_format.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="magic_enum\magic_enum_fuse.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="magic_enum\magic_enum_iostream.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="magic_enum\magic_enum_switch.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="magic_enum\magic_enum_utility.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="tb\MapGeneratorWindow.h">
@@ -680,34 +623,130 @@
     <ClInclude Include="tb\JoystickData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="tb\WindowsApi.h">
+    <ClInclude Include="tb\WindowsAPI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="tb\LibImGui.h">
+    <ClInclude Include="tb\LibIMGUI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="tb\LibToml.h">
+    <ClInclude Include="tb\LibTOML.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="tb\LibFmt.h">
+    <ClInclude Include="tb\LibFMT.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="tb\LibMagicEnum.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="tb\LibSfml.h">
+    <ClInclude Include="tb\LibSFML.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="tb\LibBoost.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="tb\LibPugiXml.h">
+    <ClInclude Include="tb\LibXML.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="tb\Types.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="tb\Resources.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\LibBoostBase64.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\LibBoostZLIB.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="common_types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\Enums.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dependencies\imgui\imconfig.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dependencies\imgui\imgui.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dependencies\imgui\imgui_internal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dependencies\imgui\imgui_stdlib.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dependencies\imgui\imstb_rectpack.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dependencies\imgui\imstb_textedit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dependencies\imgui\imstb_truetype.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dependencies\imgui-sfml\imconfig-SFML.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dependencies\imgui-sfml\imgui-SFML.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dependencies\imgui-sfml\imgui-SFML_export.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dependencies\magic_enum\magic_enum.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dependencies\magic_enum\magic_enum_all.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dependencies\magic_enum\magic_enum_containers.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dependencies\magic_enum\magic_enum_flags.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dependencies\magic_enum\magic_enum_format.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dependencies\magic_enum\magic_enum_fuse.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dependencies\magic_enum\magic_enum_iostream.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dependencies\magic_enum\magic_enum_switch.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dependencies\magic_enum\magic_enum_utility.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dependencies\visit_struct\visit_struct.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dependencies\visit_struct\visit_struct_boost_fusion.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dependencies\visit_struct\visit_struct_boost_hana.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dependencies\visit_struct\visit_struct_intrusive.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\JoystickManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\LibFMTDynamicFormat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\TileBase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\GUI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tb\ResourceLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

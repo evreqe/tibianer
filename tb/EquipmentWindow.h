@@ -2,7 +2,7 @@
 
 #include "common.h"
 
-#include "tb/SfmlGuiWindow.h"
+#include "tb/SFMLGUIWindow.h"
 
 #include "tb/Constants.h"
 #include "tb/Utility.h"
@@ -18,7 +18,7 @@
 namespace tb
 {
 
-class EquipmentWindow : public SfmlGuiWindow
+class EquipmentWindow : public SFMLGUIWindow
 {
 
 public:
@@ -140,9 +140,9 @@ private:
         m_slotSize
     );
 
-    const sf::Vector2f m_viewSize = sf::Vector2f(tb::Constants::GuiRightLayoutWidthAsFloat, 108.0f);
+    const sf::Vector2f m_viewSize = sf::Vector2f(tb::Constants::GUIRightLayoutWidthAsFloat, 108.0f);
 
-    const sf::Vector2i m_windowRenderTextureSize = sf::Vector2i(tb::Constants::GuiRightLayoutWidthAsInt, tb::Constants::GuiRightLayoutWidthAsInt);
+    const sf::Vector2i m_windowRenderTextureSize = sf::Vector2i(tb::Constants::GUIRightLayoutWidthAsInt, tb::Constants::GUIRightLayoutWidthAsInt);
 
 };
 

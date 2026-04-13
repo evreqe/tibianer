@@ -17,7 +17,7 @@ MapGeneratorData::~MapGeneratorData()
 
 bool MapGeneratorData::load()
 {
-    tb::LibToml::LoadFileResult loadFileResult = tb::LibToml::loadFile(m_table, m_fileName);
+    tb::LibTOML::LoadFileResult loadFileResult = tb::LibTOML::loadFile(m_table, m_fileName);
 
     g_Log.write("{}", loadFileResult.Text);
 
@@ -32,7 +32,7 @@ bool MapGeneratorData::load()
 
     if (m_data.TemplateFileName.empty() == true)
     {
-        g_Log.write("ERROR: TemplateFileName is empty\n");
+        g_Log.write("ERROR: 'TemplateFileName' is empty\n");
         return false;
     }
 

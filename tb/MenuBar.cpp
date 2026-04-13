@@ -7,7 +7,7 @@ namespace tb
 
 MenuBar::MenuBar()
 {
-    setIsVisible(true);
+    setVisible(true);
 }
 
 MenuBar::~MenuBar()
@@ -21,7 +21,7 @@ void MenuBar::draw()
 
     tb::GameState gameState = g_Game.getGameState();
 
-    tb::Game::Properties_t* gameProperties = g_Game.getProperties();
+    tb::GUI::Properties* GUIProperties = g_GUI.getProperties();
 
     sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
 
@@ -33,9 +33,9 @@ void MenuBar::draw()
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 
-    bool* isVisible = getIsVisible();
+    bool* pIsVisible = isVisible();
 
-    ImGui::Begin("##MenuBarWindow", isVisible, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize);
+    ImGui::Begin("##MenuBarWindow", pIsVisible, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize);
 
     ImGui::PopStyleVar(2);
 
@@ -45,12 +45,12 @@ void MenuBar::draw()
         {
             if (ImGui::MenuItem("Options...##MenuItemFileOptions", 0))
             {
-                g_OptionsWindow.setIsVisible(true);
+                g_OptionsWindow.setVisible(true);
             }
 
             if (ImGui::MenuItem("Hotkeys...##MenuItemFileHotkeys", 0))
             {
-                g_HotkeysWindow.setIsVisible(true);
+                g_HotkeysWindow.setVisible(true);
             }
 
             ImGui::Separator();
@@ -67,12 +67,12 @@ void MenuBar::draw()
         {
             if (ImGui::MenuItem("Enter Game...##MenuItemGameEnterGame", 0, nullptr, gameState == tb::GameState::EnterGame))
             {
-                g_EnterGameWindow.setIsVisible(true);
+                g_EnterGameWindow.setVisible(true);
             }
 
             if (ImGui::MenuItem("End Game##MenuItemGameEndGame", 0, nullptr, gameState == tb::GameState::InGame))
             {
-                gameProperties->ShowEndGamePopup = true;
+                GUIProperties->ShowEndGamePopup = true;
             }
 
             ImGui::EndMenu();
@@ -82,17 +82,17 @@ void MenuBar::draw()
         {
             if (ImGui::MenuItem("Set Outfit...##MenuItemInfoSetOutfit", 0, nullptr, gameState == tb::GameState::InGame))
             {
-                g_SetOutfitWindow.toggleIsVisible();
+                g_SetOutfitWindow.toggleVisible();
             }
 
             if (ImGui::MenuItem("Comments...##MenuItemInfoComments", 0, nullptr, isDebugModeEnabled == true))
             {
-                g_CommentsWindow.toggleIsVisible();
+                g_CommentsWindow.toggleVisible();
             }
 
             if (ImGui::MenuItem("Message of the Day...##MenuItemInfoMessageOfTheDay", 0))
             {
-                g_MessageOfTheDayWindow.toggleIsVisible();
+                g_MessageOfTheDayWindow.toggleVisible();
             }
 
             ImGui::EndMenu();
@@ -152,6 +152,11 @@ void MenuBar::draw()
                 g_RenderWindow.getWindow()->setFramerateLimit(120);
             }
 
+            if (ImGui::MenuItem("240 FPS##MenuItemRenderWindowFramesPerSecond5", 0))
+            {
+                g_RenderWindow.getWindow()->setFramerateLimit(240);
+            }
+
             ImGui::SeparatorText("Resolution 4:3##MenuItemRenderWindowResolutionSeparator4by3");
 
             if (ImGui::MenuItem("640x480##MenuItemRenderWindowResolution1", 0))
@@ -200,17 +205,17 @@ void MenuBar::draw()
 
             if (ImGui::MenuItem("1x##MenuItemUserInterfaceScale1", 0))
             {
-                g_Game.setSizeScaleForSfmlWindows(1.0f);
+                g_GUI.SFMLWindows_setSizeScale(1.0f);
             }
 
             if (ImGui::MenuItem("2x##MenuItemUserInterfaceScale2", 0))
             {
-                g_Game.setSizeScaleForSfmlWindows(2.0f);
+                g_GUI.SFMLWindows_setSizeScale(2.0f);
             }
 
             if (ImGui::MenuItem("4x##MenuItemUserInterfaceScale3", 0))
             {
-                g_Game.setSizeScaleForSfmlWindows(4.0f);
+                g_GUI.SFMLWindows_setSizeScale(4.0f);
             }
 
             ImGui::EndMenu();
@@ -222,17 +227,17 @@ void MenuBar::draw()
             {
                 if (sf::Joystick::isConnected(i) == true)
                 {
-                    tb::JoystickList* joystickList = g_Game.getJoystickList();
+                    tb::JoystickList* joystickList = g_JoystickManager.getJoystickList();
 
-                    tb::Joystick::Properties_t* joystickProperties = joystickList->at(i).getProperties();
+                    tb::Joystick::Properties* joystickProperties = joystickList->at(i).getProperties();
 
                     std::string joystickMenuItemText = std::format("{}: {}##MenuItemGamepadControllerIndex{}", i, joystickProperties->Name, i);
 
-                    bool isChecked = i == g_Game.getJoystickIndex();
+                    bool isChecked = i == g_JoystickManager.getJoystickIndex();
 
                     if (ImGui::MenuItem(joystickMenuItemText.c_str(), 0, isChecked))
                     {
-                        g_Game.setJoystickIndex(i);
+                        g_JoystickManager.setJoystickIndex(i);
                     }
                 }
                 else
@@ -257,27 +262,27 @@ void MenuBar::draw()
 
             if (ImGui::MenuItem("Sprite Editor...##MenuItemDeveloperSpriteEditor", 0))
             {
-                g_SpriteEditorWindow.toggleIsVisible();
+                g_SpriteEditorWindow.toggleVisible();
             }
 
             if (ImGui::MenuItem("Sprite Data...##MenuItemDeveloperSpriteData", 0))
             {
-                g_SpriteDataWindow.toggleIsVisible();
+                g_SpriteDataWindow.toggleVisible();
             }
 
             if (ImGui::MenuItem("Map Generator...##MenuItemDeveloperMapGeneratorWindow", 0))
             {
-                g_MapGeneratorWindow.toggleIsVisible();
+                g_MapGeneratorWindow.toggleVisible();
             }
 
             if (ImGui::MenuItem("Overlay...##MenuItemDeveloperOverlayWindow", 0, nullptr, gameState == tb::GameState::InGame))
             {
-                g_OverlayWindow.toggleIsVisible();
+                g_OverlayWindow.toggleVisible();
             }
 
             if (ImGui::MenuItem("Log...##MenuItemDeveloperLogWindow", 0))
             {
-                g_LogWindow.toggleIsVisible();
+                g_LogWindow.toggleVisible();
             }
 
             ImGui::SeparatorText("Game State##MenuItemDeveloperSeparatorGameState");
@@ -313,12 +318,12 @@ void MenuBar::draw()
 
             if (ImGui::MenuItem("Demo Window...##MenuItemDeveloperDemoWindow", 0))
             {
-                g_Game.toggleDemoWindow();
+                g_GUI.toggleDemoWindow();
             }
 
             if (ImGui::MenuItem("Stack Tool Window...##MenuItemDeveloperStackToolWindow", 0))
             {
-                g_Game.toggleStackToolWindow();
+                g_GUI.toggleStackToolWindow();
             }
 
             ImGui::EndMenu();
@@ -331,29 +336,29 @@ void MenuBar::draw()
         {
             if (ImGui::MenuItem("Connection...##MenuItemHelpConnection", 0, nullptr, isDebugModeEnabled == true))
             {
-                g_ConnectionWindow.toggleIsVisible();
+                g_ConnectionWindow.toggleVisible();
             }
 
             if (ImGui::MenuItem("Controls...##MenuItemHelpControls", 0))
             {
-                g_ControlsWindow.toggleIsVisible();
+                g_ControlsWindow.toggleVisible();
             }
 
             if (ImGui::MenuItem("Tips & Tricks...##MenuItemHelpTipsAndTricks", 0))
             {
-                g_TipsAndTricksWindow.toggleIsVisible();
+                g_TipsAndTricksWindow.toggleVisible();
             }
 
             ImGui::Separator();
 
             if (ImGui::MenuItem("About Tibia...##MenuItemHelpAboutTibia", 0))
             {
-                g_AboutTibiaWindow.toggleIsVisible();
+                g_AboutTibiaWindow.toggleVisible();
             }
 
             if (ImGui::MenuItem("About Tibianer...##MenuItemHelpAboutTibianer", 0))
             {
-                g_AboutTibianerWindow.toggleIsVisible();
+                g_AboutTibianerWindow.toggleVisible();
             }
 
             ImGui::EndMenu();
@@ -367,7 +372,9 @@ void MenuBar::draw()
 
 float MenuBar::getHeight()
 {
-    if (*getIsVisible() == false)
+    bool* pIsVisible = isVisible();
+
+    if (*pIsVisible == false)
     {
         return 0.0f;
     }

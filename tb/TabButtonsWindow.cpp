@@ -51,10 +51,10 @@ void TabButtonsWindow::handleEventMouseButtonPressed(const sf::Event::MouseButto
 {
     sf::Vector2f mousePosition = getMousePixelPosition();
 
+    tb::GUI::Properties* GUIProperties = g_GUI.getProperties();
+
     if (eventMouseButtonPressed->button == sf::Mouse::Button::Left)
     {
-        tb::Game::GuiProperties_t* gameGuiProperties = g_Game.getGuiProperties();
-
         sf::FloatRect inventoryButtonRect = getInventoryButtonRect();
         sf::FloatRect statusButtonRect = getStatusButtonRect();
         sf::FloatRect battleButtonRect = getBattleButtonRect();
@@ -62,74 +62,74 @@ void TabButtonsWindow::handleEventMouseButtonPressed(const sf::Event::MouseButto
 
         if (inventoryButtonRect.contains(mousePosition) == true)
         {
-            gameGuiProperties->TabButtonsWindowInventoryButtonIsPressed = true;
-            gameGuiProperties->TabButtonsWindowStatusButtonIsPressed = false;
-            gameGuiProperties->TabButtonsWindowBattleButtonIsPressed = false;
-            gameGuiProperties->TabButtonsWindowMiniMapButtonIsPressed = false;
+            GUIProperties->TabButtonsWindowInventoryButtonIsPressed = true;
+            GUIProperties->TabButtonsWindowStatusButtonIsPressed = false;
+            GUIProperties->TabButtonsWindowBattleButtonIsPressed = false;
+            GUIProperties->TabButtonsWindowMiniMapButtonIsPressed = false;
 
-            //gameGuiProperties->ShowEquipmentWindow = x;
-            //gameGuiProperties->ShowStatusWindow = x;
-            //gameGuiProperties->ShowMiniMapWindow = x;
+            //GUIProperties->ShowEquipmentWindow = x;
+            //GUIProperties->ShowStatusWindow = x;
+            //GUIProperties->ShowMiniMapWindow = x;
 
-            gameGuiProperties->ShowInventoryWindow = true;
-            gameGuiProperties->ShowSkillsWindow = false;
-            gameGuiProperties->ShowBattleWindow = false;
+            GUIProperties->ShowInventoryWindow = true;
+            GUIProperties->ShowSkillsWindow = false;
+            GUIProperties->ShowBattleWindow = false;
 
-            m_inventoryButtonSprite.setTextureRect(tb::Resources::GuiRects::TabButtonsWindowInventoryButtonPressed);
+            m_inventoryButtonSprite.setTextureRect(tb::Resources::TextureRects::GUI::TabButtonsWindowInventoryButtonPressed);
         }
 
         if (statusButtonRect.contains(mousePosition) == true)
         {
-            gameGuiProperties->TabButtonsWindowInventoryButtonIsPressed = false;
-            gameGuiProperties->TabButtonsWindowStatusButtonIsPressed = true;
-            gameGuiProperties->TabButtonsWindowBattleButtonIsPressed = false;
-            gameGuiProperties->TabButtonsWindowMiniMapButtonIsPressed = false;
+            GUIProperties->TabButtonsWindowInventoryButtonIsPressed = false;
+            GUIProperties->TabButtonsWindowStatusButtonIsPressed = true;
+            GUIProperties->TabButtonsWindowBattleButtonIsPressed = false;
+            GUIProperties->TabButtonsWindowMiniMapButtonIsPressed = false;
 
-            gameGuiProperties->ShowEquipmentWindow = false;
-            gameGuiProperties->ShowStatusWindow = true;
-            gameGuiProperties->ShowMiniMapWindow = false;
+            GUIProperties->ShowEquipmentWindow = false;
+            GUIProperties->ShowStatusWindow = true;
+            GUIProperties->ShowMiniMapWindow = false;
 
-            gameGuiProperties->ShowInventoryWindow = false;
-            gameGuiProperties->ShowSkillsWindow = true;
-            gameGuiProperties->ShowBattleWindow = false;
+            GUIProperties->ShowInventoryWindow = false;
+            GUIProperties->ShowSkillsWindow = true;
+            GUIProperties->ShowBattleWindow = false;
 
-            m_statusButtonSprite.setTextureRect(tb::Resources::GuiRects::TabButtonsWindowStatusButtonPressed);
+            m_statusButtonSprite.setTextureRect(tb::Resources::TextureRects::GUI::TabButtonsWindowStatusButtonPressed);
         }
 
         if (battleButtonRect.contains(mousePosition) == true)
         {
-            gameGuiProperties->TabButtonsWindowInventoryButtonIsPressed = false;
-            gameGuiProperties->TabButtonsWindowStatusButtonIsPressed = false;
-            gameGuiProperties->TabButtonsWindowBattleButtonIsPressed = true;
-            gameGuiProperties->TabButtonsWindowMiniMapButtonIsPressed = false;
+            GUIProperties->TabButtonsWindowInventoryButtonIsPressed = false;
+            GUIProperties->TabButtonsWindowStatusButtonIsPressed = false;
+            GUIProperties->TabButtonsWindowBattleButtonIsPressed = true;
+            GUIProperties->TabButtonsWindowMiniMapButtonIsPressed = false;
 
-            gameGuiProperties->ShowEquipmentWindow = true;
-            gameGuiProperties->ShowStatusWindow = false;
-            gameGuiProperties->ShowMiniMapWindow = false;
+            GUIProperties->ShowEquipmentWindow = true;
+            GUIProperties->ShowStatusWindow = false;
+            GUIProperties->ShowMiniMapWindow = false;
 
-            gameGuiProperties->ShowInventoryWindow = false;
-            gameGuiProperties->ShowSkillsWindow = false;
-            gameGuiProperties->ShowBattleWindow = true;
+            GUIProperties->ShowInventoryWindow = false;
+            GUIProperties->ShowSkillsWindow = false;
+            GUIProperties->ShowBattleWindow = true;
 
-            m_battleButtonSprite.setTextureRect(tb::Resources::GuiRects::TabButtonsWindowBattleButtonPressed);
+            m_battleButtonSprite.setTextureRect(tb::Resources::TextureRects::GUI::TabButtonsWindowBattleButtonPressed);
         }
 
         if (miniMapButtonRect.contains(mousePosition) == true)
         {
-            gameGuiProperties->TabButtonsWindowInventoryButtonIsPressed = false;
-            gameGuiProperties->TabButtonsWindowStatusButtonIsPressed = false;
-            gameGuiProperties->TabButtonsWindowBattleButtonIsPressed = false;
-            gameGuiProperties->TabButtonsWindowMiniMapButtonIsPressed = true;
+            GUIProperties->TabButtonsWindowInventoryButtonIsPressed = false;
+            GUIProperties->TabButtonsWindowStatusButtonIsPressed = false;
+            GUIProperties->TabButtonsWindowBattleButtonIsPressed = false;
+            GUIProperties->TabButtonsWindowMiniMapButtonIsPressed = true;
 
-            gameGuiProperties->ShowEquipmentWindow = false;
-            gameGuiProperties->ShowStatusWindow = false;
-            gameGuiProperties->ShowMiniMapWindow = true;
+            GUIProperties->ShowEquipmentWindow = false;
+            GUIProperties->ShowStatusWindow = false;
+            GUIProperties->ShowMiniMapWindow = true;
 
-            //gameGuiProperties->ShowInventoryWindow = x;
-            //gameGuiProperties->ShowSkillsWindow = x;
-            //gameGuiProperties->ShowBattleWindow = x;
+            //GUIProperties->ShowInventoryWindow = x;
+            //GUIProperties->ShowSkillsWindow = x;
+            //GUIProperties->ShowBattleWindow = x;
 
-            m_miniMapButtonSprite.setTextureRect(tb::Resources::GuiRects::TabButtonsWindowMiniMapButtonPressed);
+            m_miniMapButtonSprite.setTextureRect(tb::Resources::TextureRects::GUI::TabButtonsWindowMiniMapButtonPressed);
         }
 
         updateButtons();
@@ -143,53 +143,57 @@ void TabButtonsWindow::handleEventMouseButtonReleased(const sf::Event::MouseButt
 
 void TabButtonsWindow::updateButtons()
 {
-    tb::Game::GuiProperties_t* guiProperties = g_Game.getGuiProperties();
+    tb::GUI::Properties* GUIProperties = g_GUI.getProperties();
 
-    // inventory
-    if (guiProperties->TabButtonsWindowInventoryButtonIsPressed == true)
+    // inventory buttons
+
+    if (GUIProperties->TabButtonsWindowInventoryButtonIsPressed == true)
     {
-        m_inventoryButtonTextureRect = tb::Resources::GuiRects::TabButtonsWindowInventoryButtonPressed;
+        m_inventoryButtonTextureRect = tb::Resources::TextureRects::GUI::TabButtonsWindowInventoryButtonPressed;
     }
     else
     {
-        m_inventoryButtonTextureRect = tb::Resources::GuiRects::TabButtonsWindowInventoryButtonReleased;
+        m_inventoryButtonTextureRect = tb::Resources::TextureRects::GUI::TabButtonsWindowInventoryButtonReleased;
     }
 
     m_inventoryButtonSprite.setTextureRect(m_inventoryButtonTextureRect);
 
-    // status
-    if (guiProperties->TabButtonsWindowStatusButtonIsPressed == true)
+    // status buttons
+
+    if (GUIProperties->TabButtonsWindowStatusButtonIsPressed == true)
     {
-        m_statusButtonTextureRect = tb::Resources::GuiRects::TabButtonsWindowStatusButtonPressed;
+        m_statusButtonTextureRect = tb::Resources::TextureRects::GUI::TabButtonsWindowStatusButtonPressed;
     }
     else
     {
-        m_statusButtonTextureRect = tb::Resources::GuiRects::TabButtonsWindowStatusButtonReleased;
+        m_statusButtonTextureRect = tb::Resources::TextureRects::GUI::TabButtonsWindowStatusButtonReleased;
     }
 
     m_statusButtonSprite.setTextureRect(m_statusButtonTextureRect);
 
-    // battle
-    if (guiProperties->TabButtonsWindowBattleButtonIsPressed == true)
+    // battle buttons
+
+    if (GUIProperties->TabButtonsWindowBattleButtonIsPressed == true)
     {
-        m_battleButtonTextureRect = tb::Resources::GuiRects::TabButtonsWindowBattleButtonPressed;
+        m_battleButtonTextureRect = tb::Resources::TextureRects::GUI::TabButtonsWindowBattleButtonPressed;
     }
     else
     {
-        m_battleButtonTextureRect = tb::Resources::GuiRects::TabButtonsWindowBattleButtonReleased;
+        m_battleButtonTextureRect = tb::Resources::TextureRects::GUI::TabButtonsWindowBattleButtonReleased;
     }
 
     m_battleButtonSprite.setTextureRect(m_battleButtonTextureRect);
 
 
-    // minimap
-    if (guiProperties->TabButtonsWindowMiniMapButtonIsPressed == true)
+    // minimap buttons
+
+    if (GUIProperties->TabButtonsWindowMiniMapButtonIsPressed == true)
     {
-        m_miniMapButtonTextureRect = tb::Resources::GuiRects::TabButtonsWindowMiniMapButtonPressed;
+        m_miniMapButtonTextureRect = tb::Resources::TextureRects::GUI::TabButtonsWindowMiniMapButtonPressed;
     }
     else
     {
-        m_miniMapButtonTextureRect = tb::Resources::GuiRects::TabButtonsWindowMiniMapButtonReleased;
+        m_miniMapButtonTextureRect = tb::Resources::TextureRects::GUI::TabButtonsWindowMiniMapButtonReleased;
     }
 
     m_miniMapButtonSprite.setTextureRect(m_miniMapButtonTextureRect);
@@ -197,15 +201,15 @@ void TabButtonsWindow::updateButtons()
 
 void TabButtonsWindow::setPositionInLayout()
 {
-    sf::FloatRect guiRightLayoutRect = g_Game.getGuiRightLayoutRect();
+    sf::FloatRect GUIRightLayoutRect = g_GUI.getRightLayoutRect();
 
     sf::FloatRect miniMapWindowRect = g_MiniMapWindow.getRect();
 
-    float padding = tb::Constants::PaddingRenderWindow;
+    float paddinRenderWindow = tb::Constants::GUIPaddingRenderWindow;
 
     sf::Vector2f windowPosition;
-    windowPosition.x = guiRightLayoutRect.position.x;
-    windowPosition.y = miniMapWindowRect.position.y + miniMapWindowRect.size.y + padding;
+    windowPosition.x = GUIRightLayoutRect.position.x;
+    windowPosition.y = miniMapWindowRect.position.y + miniMapWindowRect.size.y + paddinRenderWindow;
 
     setPosition(windowPosition);
 }

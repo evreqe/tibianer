@@ -2,17 +2,19 @@
 
 #include "common.h"
 
-#include "tb/ImGuiWindow.h"
+#include "tb/IMGUIWindow.h"
 
 #include "tb/Constants.h"
 
 #include "tb/RenderWindow.h"
+
+#include "tb/GUI.h"
 #include "tb/Game.h"
 
 namespace tb
 {
 
-class StatusBar : public tb::ImGuiWindow
+class StatusBar : public tb::IMGUIWindow
 {
 
 public:

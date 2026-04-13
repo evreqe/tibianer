@@ -17,7 +17,7 @@ CursorData::~CursorData()
 
 bool CursorData::load()
 {
-    tb::LibToml::LoadFileResult loadFileResult = tb::LibToml::loadFile(m_table, m_fileName);
+    tb::LibTOML::LoadFileResult loadFileResult = tb::LibTOML::loadFile(m_table, m_fileName);
 
     g_Log.write("{}", loadFileResult.Text);
 
@@ -69,7 +69,7 @@ bool CursorData::load()
 
             if (data.Image.loadFromFile(data.FileName) == false)
             {
-                g_Log.write("ERROR: Failed to load image from file: {}\n", data.FileName);
+                g_Log.write("ERROR: failed to load image from file: {}\n", data.FileName);
                 foundError = true;
                 return false;
             }
@@ -80,7 +80,7 @@ bool CursorData::load()
 
             if (imageSize.x == 0 || imageSize.y == 0)
             {
-                g_Log.write("ERROR: Image size 'Width' or 'Height' is zero\n");
+                g_Log.write("ERROR: image size 'Width' or 'Height' is zero\n");
                 foundError = true;
                 return false;
             }
@@ -128,7 +128,7 @@ bool CursorData::load()
 
     if (foundError == true)
     {
-        g_Log.write("ERROR: Cannot load data because an error was found\n");
+        g_Log.write("ERROR: cannot load data because an error was found\n");
         return false;
     }
 
@@ -136,7 +136,7 @@ bool CursorData::load()
 
     if (m_dataList.size() == 0)
     {
-        g_Log.write("ERROR: Loaded data list is empty\n");
+        g_Log.write("ERROR: loaded data is empty\n");
         return false;
     }
 

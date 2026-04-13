@@ -19,9 +19,9 @@ void AboutTibiaWindow::draw()
 {
     center();
 
-    bool* isVisible = getIsVisible();
+    bool* pIsVisible = isVisible();
 
-    ImGui::Begin("About Tibia...##AboutTibiaWindow", isVisible, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
+    ImGui::Begin("About Tibia...##AboutTibiaWindow", pIsVisible, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
 
     if (ImGui::BeginTable("##AboutTibiaWindowTable", 3, ImGuiTableFlags_SizingStretchProp))
     {
@@ -62,7 +62,7 @@ void AboutTibiaWindow::draw()
 
     if (ImGui::Button("OK##AboutTibiaWindowButtonOK", m_buttonSize))
     {
-        setIsVisible(false);
+        setVisible(false);
     }
 
     ImGui::End();

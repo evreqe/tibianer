@@ -2,12 +2,12 @@
 
 #include "common.h"
 
-#include "tb/ImGuiWindow.h"
+#include "tb/IMGUIWindow.h"
 
 namespace tb
 {
 
-class CommentsWindow : public tb::ImGuiWindow
+class CommentsWindow : public tb::IMGUIWindow
 {
 
 public:

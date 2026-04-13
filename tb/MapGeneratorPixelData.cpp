@@ -17,7 +17,7 @@ MapGeneratorPixelData::~MapGeneratorPixelData()
 
 bool MapGeneratorPixelData::load()
 {
-    tb::LibToml::LoadFileResult loadFileResult = tb::LibToml::loadFile(m_table, m_fileName);
+    tb::LibTOML::LoadFileResult loadFileResult = tb::LibTOML::loadFile(m_table, m_fileName);
 
     g_Log.write("{}", loadFileResult.Text);
 
@@ -29,8 +29,6 @@ bool MapGeneratorPixelData::load()
     m_dataList.clear();
     m_dataList.reserve(m_numToReserve);
 
-    const std::uint32_t numGlyphs = tb::Constants::BitmapFonts::NumGlyphs;
-
     auto arrayOf = m_table["MapGeneratorPixel"].as_array();
 
     std::uint32_t arrayIndex = 0;
@@ -39,7 +37,7 @@ bool MapGeneratorPixelData::load()
 
     arrayOf->for_each
     (
-        [this, &numGlyphs, &arrayIndex, &foundError](toml::table& arrayTable)
+        [this, &arrayIndex, &foundError](toml::table& arrayTable)
         {
             tb::MapGeneratorPixelData::Data data;
 
@@ -266,7 +264,7 @@ bool MapGeneratorPixelData::load()
 
     if (foundError == true)
     {
-        g_Log.write("ERROR: Cannot load data because an error was found\n");
+        g_Log.write("ERROR: cannot load data because an error was found\n");
         return false;
     }
 
@@ -274,7 +272,7 @@ bool MapGeneratorPixelData::load()
 
     if (m_dataList.size() == 0)
     {
-        g_Log.write("ERROR: Loaded data is empty\n");
+        g_Log.write("ERROR: loaded data is empty\n");
         return false;
     }
 

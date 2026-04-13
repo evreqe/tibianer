@@ -56,14 +56,14 @@ void EquipmentWindow::handleEventMouseButtonReleased(const sf::Event::MouseButto
 
 void EquipmentWindow::setPositionInLayout()
 {
-    sf::FloatRect guiRightLayoutRect = g_Game.getGuiRightLayoutRect();
+    sf::FloatRect GUIRightLayoutRect = g_GUI.getRightLayoutRect();
 
-    setPosition(guiRightLayoutRect.position);
+    setPosition(GUIRightLayoutRect.position);
 }
 
 void EquipmentWindow::predraw()
 {
-    m_equipmentWindowSprite.setTextureRect(tb::Resources::GuiRects::EquipmentWindow);
+    m_equipmentWindowSprite.setTextureRect(tb::Resources::TextureRects::GUI::EquipmentWindow);
 }
 
 void EquipmentWindow::draw()

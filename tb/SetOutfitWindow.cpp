@@ -70,9 +70,9 @@ void SetOutfitWindow::draw()
 
     center();
 
-    bool* isVisible = getIsVisible();
+    bool* pIsVisible = isVisible();
 
-    ImGui::Begin("Set Your Outfit##SetOutfitWindow", isVisible, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
+    ImGui::Begin("Set Your Outfit##SetOutfitWindow", pIsVisible, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
 
     if (m_creature == nullptr)
     {
@@ -266,7 +266,7 @@ void SetOutfitWindow::draw()
 
         onClose();
 
-        setIsVisible(false);
+        setVisible(false);
     }
 
     ImGui::SameLine();
@@ -275,7 +275,7 @@ void SetOutfitWindow::draw()
     {
         onClose();
 
-        setIsVisible(false);
+        setVisible(false);
     }
 
     ImGui::End();

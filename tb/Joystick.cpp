@@ -68,12 +68,12 @@ void Joystick::updateState()
     m_state.AxisPOVY = getAxisPosition(sf::Joystick::Axis::PovY);
 }
 
-Joystick::Properties_t* Joystick::getProperties()
+Joystick::Properties* Joystick::getProperties()
 {
     return &m_properties;
 }
 
-Joystick::State_t* Joystick::getState()
+Joystick::State* Joystick::getState()
 {
     return &m_state;
 }

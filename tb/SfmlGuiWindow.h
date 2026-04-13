@@ -3,19 +3,20 @@
 #include "common.h"
 
 #include "tb/Constants.h"
+#include "tb/Resources.h"
 
 #include "tb/RenderWindow.h"
 
 namespace tb
 {
 
-class SfmlGuiWindow
+class SFMLGUIWindow
 {
 
 public:
 
-    SfmlGuiWindow();
-    ~SfmlGuiWindow();
+    SFMLGUIWindow();
+    ~SFMLGUIWindow();
 
     void initalize();
 
@@ -27,8 +28,8 @@ public:
 
     sf::Vector2f getMousePixelPosition();
 
-    sf::Vector2f getMousePixelCoords();
-    sf::Vector2i getMouseTileCoords();
+    tb::PixelCoords getMousePixelCoords();
+    tb::TileCoords getMouseTileCoords();
 
     bool isMouseInsideWindow();
 

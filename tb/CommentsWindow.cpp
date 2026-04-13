@@ -19,9 +19,9 @@ void CommentsWindow::draw()
 {
     center();
 
-    bool* isVisible = getIsVisible();
+    bool* pIsVisible = isVisible();
 
-    ImGui::Begin("Comments##CommentsWindow", isVisible, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
+    ImGui::Begin("Comments##CommentsWindow", pIsVisible, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
 
     ImGui::TextUnformatted(m_displayText);
 
@@ -34,7 +34,7 @@ void CommentsWindow::draw()
 
         if (ImGui::Button("Send##CommentsWindowButtonSend", m_buttonSize))
         {
-            setIsVisible(false);
+            setVisible(false);
         }
 
         ImGui::TableSetColumnIndex(1);
@@ -45,7 +45,7 @@ void CommentsWindow::draw()
 
         if (ImGui::Button("Cancel##CommentsWindowButtonCancel", m_buttonSize))
         {
-            setIsVisible(false);
+            setVisible(false);
         }
 
         ImGui::EndTable();

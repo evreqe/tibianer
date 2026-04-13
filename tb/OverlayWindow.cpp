@@ -7,7 +7,7 @@ namespace tb
 
 OverlayWindow::OverlayWindow()
 {
-    setIsVisible(true);
+    setVisible(true);
 }
 
 OverlayWindow::~OverlayWindow()
@@ -35,9 +35,9 @@ void OverlayWindow::draw()
     ImGui::SetNextWindowPos(ImVec2(1.0f, g_MenuBar.getHeight() + 1.0f), ImGuiCond_Always);
     ImGui::SetNextWindowBgAlpha(m_windowBackgroundAlpha);
 
-    bool* isVisible = getIsVisible();
+    bool* pIsVisible = isVisible();
 
-    ImGui::Begin("##OverlayWindow", isVisible, m_windowFlags);
+    ImGui::Begin("##OverlayWindow", pIsVisible, m_windowFlags);
 
     for (auto& text : m_textList)
     {

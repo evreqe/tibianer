@@ -2,9 +2,10 @@
 
 #include "common.h"
 
-#include "tb/SfmlGuiWindow.h"
+#include "tb/SFMLGUIWindow.h"
 
 #include "tb/Constants.h"
+#include "tb/Resources.h"
 #include "tb/Utility.h"
 #include "tb/Log.h"
 
@@ -22,7 +23,7 @@
 namespace tb
 {
 
-class SkillsWindow : public SfmlGuiWindow
+class SkillsWindow : public SFMLGUIWindow
 {
 
 public:
@@ -71,9 +72,9 @@ private:
 
     const std::string m_skillNamesText = "FIST FIGHTING:\nCLUB FIGHTING:\nSWORD FIGHTING:\nAXE FIGHTING:\nDISTANCE FIGHTING:\nSHIELDING:\nFISHING:\n";
 
-    sf::Vector2f m_viewSize = sf::Vector2f(tb::Constants::GuiRightLayoutWidthAsFloat, tb::Constants::GuiRightLayoutWidthAsFloat);
+    sf::Vector2f m_viewSize = sf::Vector2f(tb::Constants::GUIRightLayoutWidthAsFloat, tb::Constants::GUIRightLayoutWidthAsFloat);
 
-    sf::Vector2i m_windowRenderTextureSize = sf::Vector2i(tb::Constants::GuiRightLayoutWidthAsInt, tb::Constants::GuiRightLayoutWidthAsInt);
+    sf::Vector2i m_windowRenderTextureSize = sf::Vector2i(tb::Constants::GUIRightLayoutWidthAsInt, tb::Constants::GUIRightLayoutWidthAsInt);
 
 };
 

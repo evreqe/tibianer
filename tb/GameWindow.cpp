@@ -20,12 +20,12 @@ GameWindow::GameWindow() :
 
     if (m_windowLayerRenderTexture.resize(windowRenderTextureSize2u) == false)
     {
-        g_Log.write("ERROR: Failed to resize RenderTexture\n");
+        g_Log.write("ERROR: failed to resize RenderTexture\n");
     }
 
     if (m_lightLayerRenderTexture.resize(windowRenderTextureSize2u) == false)
     {
-        g_Log.write("ERROR: Failed to resize RenderTexture\n");
+        g_Log.write("ERROR: failed to resize RenderTexture\n");
     }
 
     // this makes the lighting look like old tibia
@@ -42,7 +42,7 @@ GameWindow::~GameWindow()
     //
 }
 
-GameWindow::Properties_t* GameWindow::getProperties()
+GameWindow::Properties* GameWindow::getProperties()
 {
     return &m_properties;
 }
@@ -75,33 +75,9 @@ void GameWindow::handleEventMouseButtonReleased(const sf::Event::MouseButtonRele
 
 sf::FloatRect GameWindow::getLayoutRect()
 {
-/*
-    sf::RenderWindow* renderWindow = g_RenderWindow.getWindow();
+    sf::FloatRect GUILeftLayoutRect = g_GUI.getLeftLayoutRect();
 
-    sf::Vector2f renderWindowSize = static_cast<sf::Vector2f>(renderWindow->getSize());
-
-    float menuBarHeight = g_MenuBar.getHeight();
-    float statusBarHeight = g_StatusBar.getHeight();
-
-    sf::FloatRect miniMapWindowRect = g_MiniMapWindow.getRect();
-
-    float miniMapWindowRightPadding = tb::Constants::PaddingRenderWindow;
-
-    float leftPadding = tb::Constants::PaddingRenderWindow;
-    float topPadding = tb::Constants::PaddingRenderWindow;
-    float rightPadding = ((tb::Constants::PaddingWoodBorder + tb::Constants::PaddingBlackRectangle) * 2.0f) + 4.0f;
-    float bottomPadding = tb::Constants::PaddingRenderWindow; // TODO
-
-    sf::FloatRect layoutRect;
-    layoutRect.left = leftPadding;
-    layoutRect.top = menuBarHeight + topPadding;
-    layoutRect.width = renderWindowSize.x - miniMapWindowRect.width - miniMapWindowRightPadding - (leftPadding + rightPadding);
-    layoutRect.height = renderWindowSize.y - menuBarHeight - topPadding - statusBarHeight - bottomPadding; // TODO
-*/
-
-    sf::FloatRect guiLeftLayoutRect = g_Game.getGuiLeftLayoutRect();
-
-    return guiLeftLayoutRect;
+    return GUILeftLayoutRect;
 }
 
 void GameWindow::setPositionInLayout()
@@ -175,26 +151,26 @@ void GameWindow::draw()
         windowRenderTexture->clear(sf::Color::Black);
     }
 
-    tb::ZAxis playerZ = player->getZ();
+    tb::AxisZ playerAxisZ = player->getAxisZ();
 
-    tb::ZAxisVisible zAxisVisibleOfPlayer = g_Game.getZAxisVisibleOfPlayer();
+    tb::AxisZVisibility playerAxisZVisibility = g_Game.getPlayerAxisZVisibility();
 
-    sf::IntRect tileRect = getTileRect();
+    tb::TileRect tileRect = getTileRect();
 
     //g_Log.write("Tile Rect Debug: x{},y{},w{},h{}\n", tileRect.position.x, tileRect.position.y, tileRect.size.x, tileRect.size.y);
 
-    for (tb::ZAxis z = zAxisVisibleOfPlayer.Begin; z < zAxisVisibleOfPlayer.End; z++)
+    for (tb::AxisZ axisZ = playerAxisZVisibility.Begin; axisZ < playerAxisZVisibility.End; axisZ++)
     {
         // check for ceilings and rooftops above the player
-        if (z < tb::Constants::NumZAxis && z > playerZ)
+        if (axisZ < tb::Constants::NumAxisZ && axisZ > playerAxisZ)
         {
-            if (g_Game.findCeilingAbovePlayerAtZ(z) == true)
+            if (g_Game.doesCeilingExistAbovePlayerAtAxisZ(axisZ) == true)
             {
                 break;
             }
         }
 
-        tb::TileMap::Ptr tileMap = g_Map.getTileMapOfTilesAtZ(z);
+        tb::TileMap::Ptr tileMap = g_Map.getTileMapOfTilesAtAxisZ(axisZ);
 
         if (tileMap == nullptr)
         {
@@ -205,7 +181,7 @@ void GameWindow::draw()
 
         if (tileMapIsVisible == true)
         {
-            drawMapLayerAtZ(z);
+            drawMapLayerAtAxisZ(axisZ);
         }
     }
 
@@ -214,13 +190,13 @@ void GameWindow::draw()
     drawToRenderWindow();
 }
 
-void GameWindow::drawMapLayerAtZ(tb::ZAxis z)
+void GameWindow::drawMapLayerAtAxisZ(tb::AxisZ axisZ)
 {
-    sf::IntRect tileRect = getTileRect();
+    tb::TileRect tileRect = getTileRect();
 
     //g_Log.write("Tile Rect Debug: x{},y{},w{},h{}\n", tileRect.position.x, tileRect.position.y, tileRect.size.x, tileRect.size.y);
 
-    sf::IntRect tileRectIncreased = tileRect;
+    tb::TileRect tileRectIncreased = tileRect;
 
     float zoomScale = getZoomScale();
 
@@ -251,25 +227,25 @@ void GameWindow::drawMapLayerAtZ(tb::ZAxis z)
 
     sf::Vector2f spritePosition = view->getCenter();
 
-    tb::TileMap::Ptr tileMapTiles = g_Map.getTileMapOfTilesAtZ(z);
+    tb::TileMap::Ptr tileMapTiles = g_Map.getTileMapOfTilesAtAxisZ(axisZ);
 
     if (tileMapTiles == nullptr)
     {
-        g_Log.write("ERROR: tileMapTiles == nullptr at z: {}\n", z);
+        g_Log.write("ERROR: tileMapTiles == nullptr at axis Z: {}\n", axisZ);
         return;
     }
 
-    tb::ZAxis playerZ = g_Game.getPlayer()->getZ();
+    tb::AxisZ playerAxisZ = g_Game.getPlayer()->getAxisZ();
 
     // only animate water for the default z-axis and while the player is aboveground
-    if (playerZ >= tb::Constants::ZAxisDefault && z == tb::Constants::ZAxisDefault)
+    if (playerAxisZ >= tb::Constants::AxisZDefault && axisZ == tb::Constants::AxisZDefault)
     {
         sf::Time animatedWaterTimeElapsed = m_animatedWaterClock.getElapsedTime();
         if (animatedWaterTimeElapsed >= m_animatedWaterTime)
         {
             if (tileMapTiles->doAnimatedWater(tileRectIncreased) == false)
             {
-                g_Log.write("ERROR: Failed to animate water at z: {}\n", z);
+                g_Log.write("ERROR: failed to animate water at axis Z: {}\n", axisZ);
             }
 
             m_animatedWaterClock.restart();
@@ -281,7 +257,7 @@ void GameWindow::drawMapLayerAtZ(tb::ZAxis z)
     {
         if (tileMapTiles->doAnimatedObjects(tileRectIncreased) == false)
         {
-            g_Log.write("ERROR: Failed to animate objects at z: {}\n", z);
+            g_Log.write("ERROR: failed to animate objects at axis Z: {}\n", axisZ);
         }
 
         m_animatedObjectsClock.restart();
@@ -292,7 +268,7 @@ void GameWindow::drawMapLayerAtZ(tb::ZAxis z)
 
     tileMapTiles->drawTiles(tileRect, m_windowLayerRenderTexture);
 
-    tb::TileMap::Ptr tileMapTileEdges = g_Map.getTileMapOfTileEdgesAtZ(z);
+    tb::TileMap::Ptr tileMapTileEdges = g_Map.getTileMapOfTileEdgesAtAxisZ(axisZ);
 
     if (tileMapTileEdges != nullptr)
     {
@@ -326,7 +302,7 @@ void GameWindow::drawMapLayerAtZ(tb::ZAxis z)
 
     if (m_properties.ShowTileHighlight == true)
     {
-        if (tb::LibImGui::isActive() == false)
+        if (tb::LibIMGUI::isActive() == false)
         {
             drawTileHighlight();
         }
@@ -357,7 +333,7 @@ void GameWindow::drawMapLayerAtZ(tb::ZAxis z)
 
 void GameWindow::drawTileHighlight()
 {
-    sf::Vector2f mousePixelCoords = getMousePixelCoords();
+    tb::PixelCoords mousePixelCoords = getMousePixelCoords();
 
     if (isZoomed() == false)
     {
@@ -377,12 +353,11 @@ void GameWindow::drawTileHighlight()
     }
 }
 
-sf::IntRect GameWindow::getTileRect()
+tb::TileRect GameWindow::getTileRect()
 {
     tb::Creature::Ptr player = g_Game.getPlayer();
 
-    std::int32_t tileX = player->getTileX();
-    std::int32_t tileY = player->getTileY();
+    tb::TileCoords tileCoords = player->getTileCoords();
 
     sf::Vector2i viewPositionOffset = static_cast<sf::Vector2i>(getViewPositionOffset());
 
@@ -396,16 +371,16 @@ sf::IntRect GameWindow::getTileRect()
         viewPositionOffset.y /= tb::Constants::TileSize;
     }
 
-    tileX += viewPositionOffset.x;
-    tileY += viewPositionOffset.y;
+    tileCoords.x += viewPositionOffset.x;
+    tileCoords.y += viewPositionOffset.y;
 
-    tileX -= (m_numTilesFromCenterX + m_numTilesToDrawOffscreen);
-    tileY -= (m_numTilesFromCenterY + m_numTilesToDrawOffscreen);
+    tileCoords.x -= (m_numTilesFromCenterX + m_numTilesToDrawOffscreen);
+    tileCoords.y -= (m_numTilesFromCenterY + m_numTilesToDrawOffscreen);
 
     std::int32_t tileWidth  = m_numTilesX + (m_numTilesToDrawOffscreen * 2);
     std::int32_t tileHeight = m_numTilesY + (m_numTilesToDrawOffscreen * 2);
 
-    return sf::IntRect(sf::Vector2i(tileX, tileY), sf::Vector2i(tileWidth, tileHeight));
+    return tb::TileRect(tileCoords, sf::Vector2i(tileWidth, tileHeight));
 }
 
 void GameWindow::setLightBrightness(tb::LightBrightness lightBrightness)

@@ -2,7 +2,6 @@
 
 #include "common.h"
 
-#include "tb/Constants.h"
 #include "tb/Log.h"
 
 namespace tb
@@ -31,7 +30,7 @@ private:
 
 public:
 
-    struct Properties_t
+    struct Properties
     {
         bool IsEnabled = true;
 
@@ -39,22 +38,22 @@ public:
         bool WriteToFile = true;
     };
 
-    struct FormatString_t
+    struct FormatString
     {
         fmt::string_view logText;
         std::source_location sourceLocation;
 
-        FormatString_t
+        FormatString
         (
             const char* logText,
             const std::source_location& sourceLocation = std::source_location::current()
         ) : logText(logText), sourceLocation(sourceLocation) {}
     };
 
-    void vwrite(const FormatString_t& formatString, fmt::format_args args);
+    void vwrite(const FormatString& formatString, fmt::format_args args);
 
     template <typename... Args>
-    void write(const FormatString_t& formatString, Args&&... args)
+    void write(const FormatString& formatString, Args&&... args)
     {
         if (m_properties.IsEnabled == false)
         {
@@ -64,20 +63,20 @@ public:
         vwrite(formatString, fmt::make_format_args(args...));
     }
 
-    Properties_t* getProperties();
+    Properties* getProperties();
 
     void open();
     void close();
     void deleteFileContents();
 
     bool isEnabled();
-    void setIsEnabled(bool b);
+    void setEnabled(bool b);
 
     std::string getText();
 
 private:
 
-    Properties_t m_properties;
+    Properties m_properties;
 
     const std::string m_fileName = "log.txt";
 
@@ -91,9 +90,6 @@ private:
 
     std::string m_logText;
     std::size_t m_logTextReserveSize = 256;
-
-    //spdlog
-    //std::shared_ptr<spdlog::logger> m_logger;
 
 };
 

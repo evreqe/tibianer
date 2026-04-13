@@ -29,11 +29,11 @@ bool BitmapFontTextBatch::addBitmapFontText(tb::BitmapFontText* bitmapFontText)
     if (bitmapFont != m_bitmapFont)
     {
         g_Log.write("ERROR: bitmapFont != m_bitmapFont\n");
-        g_Log.write("ERROR: BitmapFont of added text must match one set by batch\n");
+        g_Log.write("ERROR: BitmapFont belonging to BitmapFontText must be equal to BitmapFont belonging to BitmapFontTextBatch\n");
         return false;
     }
 
-    std::vector<sf::Vertex>* vertexList = bitmapFontText->getVertexList();
+    tb::VertexList* vertexList = bitmapFontText->getVertexList();
 
     if (vertexList == nullptr)
     {
@@ -64,6 +64,7 @@ bool BitmapFontTextBatch::addBitmapFontText(tb::BitmapFontText* bitmapFontText)
 void BitmapFontTextBatch::clear()
 {
     m_vertexList.clear();
+    m_vertexList.reserve(m_maxVertices);
 
     m_numBitmapFontText = 0;
 }

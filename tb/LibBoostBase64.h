@@ -9,7 +9,10 @@
 #include <boost/archive/iterators/transform_width.hpp>
 #include <boost/archive/iterators/ostream_iterator.hpp>
 
-static std::string boost_base64_encode(const std::string& subject)
+namespace tb::LibBoost::Base64
+{
+
+static std::string encodeString(const std::string& subject)
 {
     namespace bai = boost::archive::iterators;
 
@@ -31,7 +34,7 @@ static std::string boost_base64_encode(const std::string& subject)
     return os.str();
 }
 
-static std::string boost_base64_decode(const std::string& subject)
+static std::string decodeString(const std::string& subject)
 {
     namespace bai = boost::archive::iterators;
 
@@ -64,4 +67,4 @@ static std::string boost_base64_decode(const std::string& subject)
     return os.str();
 }
 
-
+}

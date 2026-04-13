@@ -4,10 +4,7 @@
 
 #include "toml.hpp"
 
-namespace tb
-{
-
-namespace LibToml
+namespace tb::LibTOML
 {
 
 struct LoadFileResult
@@ -17,7 +14,5 @@ struct LoadFileResult
 };
 
 LoadFileResult loadFile(toml::table& table, const std::string& fileName);
-
-}
 
 }

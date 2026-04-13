@@ -2,7 +2,7 @@
 
 #include "common.h"
 
-#include "tb/SfmlGuiWindow.h"
+#include "tb/SFMLGUIWindow.h"
 
 #include "tb/Constants.h"
 #include "tb/Utility.h"
@@ -18,7 +18,7 @@
 namespace tb
 {
 
-class MiniMapWindow : public SfmlGuiWindow
+class MiniMapWindow : public SFMLGUIWindow
 {
 
 public:
@@ -48,10 +48,10 @@ public:
     void setPositionInLayout();
 
     void draw();
-    void drawTileMap(const sf::IntRect& tileRect, tb::TileMap::Ptr tileMap);
+    void drawTileMap(const tb::TileRect& tileRect, tb::TileMap::Ptr tileMap);
     void drawTileHighlight();
 
-    std::vector<sf::Vertex> getCrosshairVertexList();
+    tb::VertexList createCrosshairVertexList();
 
 private:
 
@@ -59,9 +59,9 @@ private:
 
     const sf::Vector2f m_viewSize = sf::Vector2f(416.0f, 416.0f);
 
-    const sf::Vector2i m_windowRenderTextureSize = sf::Vector2i(tb::Constants::GuiRightLayoutWidthAsInt, tb::Constants::GuiRightLayoutWidthAsInt);
+    const sf::Vector2i m_windowRenderTextureSize = sf::Vector2i(tb::Constants::GUIRightLayoutWidthAsInt, tb::Constants::GUIRightLayoutWidthAsInt);
 
-    std::vector<sf::Vertex> m_vertexList;
+    tb::VertexList m_vertexList;
 
     static const std::uint32_t m_numVertexPerTile = 6;
 

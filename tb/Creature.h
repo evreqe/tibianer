@@ -3,6 +3,7 @@
 #include "common.h"
 
 #include "tb/Constants.h"
+#include "tb/Resources.h"
 #include "tb/Utility.h"
 
 #include "tb/OutfitSpritesData.h"
@@ -21,7 +22,7 @@ public:
 
     Creature();
     ~Creature();
-    Creature(const sf::Vector2i& tileCoords, tb::ZAxis z);
+    Creature(const tb::TileCoords& tileCoords, tb::AxisZ axisZ);
 
     using Ptr = std::shared_ptr<tb::Creature>;
     using List = std::vector<tb::Creature::Ptr>;
@@ -29,7 +30,7 @@ public:
     using OutfitSpriteIDArray = std::array<tb::SpriteIDList, tb::Constants::NumOutfitSpriteIndex>;
     using OutfitSpriteList = std::array<tb::Sprite::List, tb::Constants::NumOutfitSpriteIndex>;
 
-    struct Properties_t
+    struct Properties
     {
         bool IsPlayer = false;
         bool IsDead = false;
@@ -38,7 +39,7 @@ public:
         bool HasOutfit = false;
     };
 
-    struct Skills_t
+    struct Skills
     {
         std::uint32_t FistFighting        = tb::Constants::SkillLevelDefault;
         std::uint32_t ClubFighting        = tb::Constants::SkillLevelDefault;
@@ -49,7 +50,7 @@ public:
         std::uint32_t Fishing             = tb::Constants::SkillLevelDefault;
     };
 
-    struct Outfit_t
+    struct Outfit
     {
         std::uint8_t Head = 0;
         std::uint8_t Body = 0;
@@ -57,9 +58,9 @@ public:
         std::uint8_t Feet = 0;
     };
 
-    Properties_t* getProperties();
-    Skills_t* getSkills();
-    Outfit_t* getOutfit();
+    Properties* getProperties();
+    Skills* getSkills();
+    Outfit* getOutfit();
 
     void update();
 
@@ -68,10 +69,10 @@ public:
     std::uint8_t getTileOffset();
     void setTileOffset(std::uint8_t tileOffset);
 
-    std::string getName();
+    std::string* getName();
     void setName(const std::string& name);
 
-    std::string getDescription();
+    std::string* getDescription();
     void setDescription(const std::string& description);
 
     tb::Direction getDirection();
@@ -103,9 +104,9 @@ public:
 
 private:
 
-    Properties_t m_properties;
-    Skills_t m_skills;
-    Outfit_t m_outfit;
+    Properties m_properties;
+    Skills m_skills;
+    Outfit m_outfit;
 
     std::uint8_t m_tileOffset = 0;
     std::uint8_t m_tileWidth = 1;

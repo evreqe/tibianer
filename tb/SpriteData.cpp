@@ -17,7 +17,7 @@ SpriteData::~SpriteData()
 
 bool SpriteData::load()
 {
-    tb::LibToml::LoadFileResult loadFileResult = tb::LibToml::loadFile(m_table, m_fileName);
+    tb::LibTOML::LoadFileResult loadFileResult = tb::LibTOML::loadFile(m_table, m_fileName);
 
     g_Log.write("{}", loadFileResult.Text);
 
@@ -84,7 +84,7 @@ bool SpriteData::load()
 
     if (m_dataList.size() != m_numToLoad + 1)
     {
-        g_Log.write("ERROR: Loaded data has the wrong size, {} instead of {}\n", m_dataList.size(), m_numToLoad);
+        g_Log.write("ERROR: loaded data has the wrong size, {} instead of {}\n", m_dataList.size(), m_numToLoad);
         return false;
     }
 
@@ -103,7 +103,7 @@ bool SpriteData::save()
 {
     if (m_dataList.size() == 0)
     {
-        g_Log.write("ERROR: Cannot save data because it is empty\n");
+        g_Log.write("ERROR: cannot save data because it is empty\n");
         return false;
     }
 
@@ -112,7 +112,7 @@ bool SpriteData::save()
 
     if (file.is_open() == false)
     {
-        g_Log.write("Cannot open file: {}\n", m_fileName);
+        g_Log.write("ERROR: cannot open file: {}\n", m_fileName);
         return false;
     }
 

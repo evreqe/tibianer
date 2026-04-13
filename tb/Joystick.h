@@ -16,7 +16,7 @@ public:
     Joystick();
     ~Joystick();
 
-    struct Properties_t
+    struct Properties
     {
         std::string Name;
         unsigned int VendorID = 0;
@@ -25,7 +25,7 @@ public:
         unsigned int ButtonCount = 0;
     };
 
-    struct State_t
+    struct State
     {
         bool Button[sf::Joystick::ButtonCount];
         
@@ -39,8 +39,8 @@ public:
         float AxisPOVY = 0.0f;
     };
 
-    Properties_t* getProperties();
-    State_t* getState();
+    Properties* getProperties();
+    State* getState();
 
     bool isConnected();
     bool isButtonPressed(unsigned int button);
@@ -56,8 +56,8 @@ public:
 
 private:
 
-    Properties_t m_properties;
-    State_t m_state;
+    Properties m_properties;
+    State m_state;
 
     unsigned int m_index = 0;
 

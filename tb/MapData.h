@@ -2,8 +2,6 @@
 
 #include "common.h"
 
-#include "tb/LibPugiXml.h"
-
 #include "tb/Constants.h"
 #include "tb/Utility.h"
 #include "tb/Log.h"

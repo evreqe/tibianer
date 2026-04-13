@@ -2,14 +2,14 @@
 
 #include "common.h"
 
-#include "tb/ImGuiWindow.h"
+#include "tb/IMGUIWindow.h"
 
 #include "tb/MessageOfTheDayData.h"
 
 namespace tb
 {
 
-class MessageOfTheDayWindow : public tb::ImGuiWindow
+class MessageOfTheDayWindow : public tb::IMGUIWindow
 {
 
 public:

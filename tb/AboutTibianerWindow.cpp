@@ -19,9 +19,9 @@ void AboutTibianerWindow::draw()
 {
     center();
 
-    bool* isVisible = getIsVisible();
+    bool* pIsVisible = isVisible();
 
-    ImGui::Begin("About Tibianer...##AboutTibianerWindow", isVisible, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
+    ImGui::Begin("About Tibianer...##AboutTibianerWindow", pIsVisible, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
 
     if (ImGui::BeginTable("##AboutTibianerWindowTable", 3, ImGuiTableFlags_SizingStretchProp))
     {
@@ -62,7 +62,7 @@ void AboutTibianerWindow::draw()
 
     if (ImGui::Button("OK##AboutTibianerWindowButtonOK", m_buttonSize))
     {
-        setIsVisible(false);
+        setVisible(false);
     }
 
     ImGui::End();

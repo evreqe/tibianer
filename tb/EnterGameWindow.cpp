@@ -36,9 +36,9 @@ void EnterGameWindow::draw()
 
     center();
 
-    bool* isVisible = getIsVisible();
+    bool* pIsVisible = isVisible();
 
-    ImGui::Begin("Enter Game##EnterGameWindow", isVisible, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
+    ImGui::Begin("Enter Game##EnterGameWindow", pIsVisible, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
 
     if (ImGui::BeginTable("##EnterGameWindowTable", 2, ImGuiTableFlags_BordersInnerV | ImGuiTableFlags_SizingStretchProp))
     {
@@ -72,17 +72,17 @@ void EnterGameWindow::draw()
 
                 onClose();
 
-                setIsVisible(false);
+                setVisible(false);
 
                 g_Game.setGameState(tb::GameState::MapSelect);
 
-                g_MapSelectWindow.setIsVisible(true);
+                g_MapSelectWindow.setVisible(true);
             }
         }
 
         if (ImGui::Button("Cancel##EnterGameWindowButtonCancel", m_buttonSize))
         {
-            setIsVisible(false);
+            setVisible(false);
         }
 
         ImGui::EndTable();

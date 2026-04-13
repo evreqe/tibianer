@@ -48,14 +48,14 @@ void StatusWindow::handleEventMouseButtonReleased(const sf::Event::MouseButtonRe
 
 void StatusWindow::setPositionInLayout()
 {
-    sf::FloatRect guiRightLayoutRect = g_Game.getGuiRightLayoutRect();
+    sf::FloatRect GUIRightLayoutRect = g_GUI.getRightLayoutRect();
 
-    setPosition(guiRightLayoutRect.position);
+    setPosition(GUIRightLayoutRect.position);
 }
 
 void StatusWindow::predraw()
 {
-    m_statusWindowSprite.setTextureRect(tb::Resources::GuiRects::StatusWindow);
+    m_statusWindowSprite.setTextureRect(tb::Resources::TextureRects::GUI::StatusWindow);
 }
 
 void StatusWindow::draw()

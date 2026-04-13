@@ -2,7 +2,7 @@
 
 #include "common.h"
 
-#include "tb/ImGuiWindow.h"
+#include "tb/IMGUIWindow.h"
 
 #include "tb/Constants.h"
 
@@ -24,13 +24,16 @@
 #include "tb/MapGeneratorWindow.h"
 
 #include "tb/RenderWindow.h"
+
+#include "tb/GUI.h"
 #include "tb/Game.h"
 #include "tb/Joystick.h"
+#include "tb/JoystickManager.h"
 
 namespace tb
 {
 
-class MenuBar : public tb::ImGuiWindow
+class MenuBar : public tb::IMGUIWindow
 {
 
 public:

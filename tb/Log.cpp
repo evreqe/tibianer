@@ -15,7 +15,7 @@ Log::~Log()
     //
 }
 
-void Log::vwrite(const FormatString_t& formatString, fmt::format_args args)
+void Log::vwrite(const FormatString& formatString, fmt::format_args args)
 {
     const auto& sourceLocation = formatString.sourceLocation;
 
@@ -47,7 +47,7 @@ void Log::vwrite(const FormatString_t& formatString, fmt::format_args args)
     }
 }
 
-Log::Properties_t* Log::getProperties()
+Log::Properties* Log::getProperties()
 {
     return &m_properties;
 }
@@ -87,7 +87,7 @@ bool Log::isEnabled()
     return m_properties.IsEnabled;
 }
 
-void Log::setIsEnabled(bool b)
+void Log::setEnabled(bool b)
 {
     m_properties.IsEnabled = b;
 }

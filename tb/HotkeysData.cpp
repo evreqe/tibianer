@@ -17,7 +17,7 @@ HotkeysData::~HotkeysData()
 
 bool HotkeysData::load()
 {
-    tb::LibToml::LoadFileResult loadFileResult = tb::LibToml::loadFile(m_table, m_fileName);
+    tb::LibTOML::LoadFileResult loadFileResult = tb::LibTOML::loadFile(m_table, m_fileName);
 
     g_Log.write("{}", loadFileResult.Text);
 
@@ -84,7 +84,7 @@ bool HotkeysData::save()
 
     if (file.is_open() == false)
     {
-        g_Log.write("ERROR: Cannot open file: {}\n", m_fileName);
+        g_Log.write("ERROR: cannot open file: {}\n", m_fileName);
         return false;
     }
 

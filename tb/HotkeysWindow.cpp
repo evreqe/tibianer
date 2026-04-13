@@ -48,9 +48,9 @@ void HotkeysWindow::draw()
 
     center();
 
-    bool* isVisible = getIsVisible();
+    bool* pIsVisible = isVisible();
 
-    ImGui::Begin("Hotkeys##HotkeysWindow", isVisible, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
+    ImGui::Begin("Hotkeys##HotkeysWindow", pIsVisible, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
 
     ImGui::TextUnformatted("F1: ");
     ImGui::SameLine();
@@ -108,7 +108,7 @@ void HotkeysWindow::draw()
 
         onClose();
 
-        setIsVisible(false);
+        setVisible(false);
     }
 
     ImGui::SameLine();
@@ -117,7 +117,7 @@ void HotkeysWindow::draw()
     {
         onClose();
 
-        setIsVisible(false);
+        setVisible(false);
     }
 
     ImGui::End();

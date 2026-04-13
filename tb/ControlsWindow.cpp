@@ -19,9 +19,9 @@ void ControlsWindow::draw()
 {
     center();
 
-    bool* isVisible = getIsVisible();
+    bool* pIsVisible = isVisible();
 
-    ImGui::Begin("How to control your character##ControlsWindow", isVisible, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
+    ImGui::Begin("How to control your character##ControlsWindow", pIsVisible, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
 
     ImGui::TextUnformatted(m_displayText);
 
@@ -31,7 +31,7 @@ void ControlsWindow::draw()
 
     if (ImGui::Button("OK##ControlsWindowButtonOK", m_buttonSize))
     {
-        setIsVisible(false);
+        setVisible(false);
     }
 
     ImGui::End();

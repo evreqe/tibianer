@@ -2,7 +2,9 @@
 
 #include "common.h"
 
-#include "tb/ImGuiWindow.h"
+#include "tb/IMGUIWindow.h"
+
+#include "tb/Resources.h"
 
 #include "tb/SpriteData.h"
 #include "tb/Sprite.h"
@@ -10,7 +12,7 @@
 namespace tb
 {
 
-class AboutTibiaWindow : public tb::ImGuiWindow
+class AboutTibiaWindow : public tb::IMGUIWindow
 {
 
 public:

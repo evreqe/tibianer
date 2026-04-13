@@ -55,7 +55,7 @@ sf::IntRect Sprite::getTextureRectByID(tb::SpriteID spriteID, std::uint8_t tileW
 
     if (spriteSheetTextureSize.x == 0 || spriteSheetTextureSize.y == 0)
     {
-        throw std::runtime_error("ERROR: Invalid texture size for sprites is going to cause divide by zero");
+        throw std::runtime_error("ERROR: invalid texture size for sprites is going to cause divide by zero");
     }
     
     std::int32_t tileU = (spriteID % (spriteSheetTextureSize.x / tileSize)) * tileSize;

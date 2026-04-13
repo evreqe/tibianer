@@ -17,7 +17,7 @@ OutfitSpritesData::~OutfitSpritesData()
 
 bool OutfitSpritesData::load()
 {
-    tb::LibToml::LoadFileResult loadFileResult = tb::LibToml::loadFile(m_table, m_fileName);
+    tb::LibTOML::LoadFileResult loadFileResult = tb::LibTOML::loadFile(m_table, m_fileName);
 
     g_Log.write("{}", loadFileResult.Text);
 
@@ -115,7 +115,7 @@ bool OutfitSpritesData::load()
 
     if (m_dataList.size() != tb::Constants::NumOutfitSpriteIndex)
     {
-        g_Log.write("ERROR: Loaded data has the wrong size, {} instead of {}\n", m_dataList.size(), tb::Constants::NumOutfitSpriteIndex);
+        g_Log.write("ERROR: loaded data has the wrong size, {} instead of {}\n", m_dataList.size(), tb::Constants::NumOutfitSpriteIndex);
         return false;
     }
 

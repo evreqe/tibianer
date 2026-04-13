@@ -19,9 +19,9 @@ namespace tb
     {
         center();
 
-        bool* isVisible = getIsVisible();
+        bool* pIsVisible = isVisible();
 
-        ImGui::Begin("How to get a connection##ConnectionWindow", isVisible, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
+        ImGui::Begin("How to get a connection##ConnectionWindow", pIsVisible, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
 
         ImGui::TextUnformatted(m_displayText);
 
@@ -31,7 +31,7 @@ namespace tb
 
         if (ImGui::Button("OK##ConnectionWindowButtonOK", m_buttonSize))
         {
-            setIsVisible(false);
+            setVisible(false);
         }
 
         ImGui::End();

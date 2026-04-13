@@ -47,9 +47,9 @@ void MiniMapWindow::handleEventMouseButtonReleased(const sf::Event::MouseButtonR
 
 void MiniMapWindow::setPositionInLayout()
 {
-    sf::FloatRect guiRightLayoutRect = g_Game.getGuiRightLayoutRect();
+    sf::FloatRect GUIRightLayoutRect = g_GUI.getRightLayoutRect();
 
-    setPosition(guiRightLayoutRect.position);
+    setPosition(GUIRightLayoutRect.position);
 }
 
 void MiniMapWindow::draw()
@@ -89,15 +89,15 @@ void MiniMapWindow::draw()
 
     windowRenderTexture->clear(sf::Color::Black);
 
-    tb::TileMap::Ptr tileMapTiles = g_Map.getTileMapOfTilesAtZ(player->getZ());
+    tb::TileMap::Ptr tileMapTiles = g_Map.getTileMapOfTilesAtAxisZ(player->getAxisZ());
 
     if (tileMapTiles != nullptr)
     {
-        sf::IntRect tileRect = g_GameWindow.getTileRect();
+        tb::TileRect tileRect = g_GameWindow.getTileRect();
 
         if (isZoomed() == true)
         {
-            // only use X and not Y because the minimap is a square with 1:1 ratio
+            // can use either X or Y because the minimap is a square with equal width and height
             std::uint32_t numTilesFromCenterX = g_GameWindow.getNumTilesFromCenterX();
 
             float zoomScale = getZoomScale();
@@ -125,7 +125,7 @@ void MiniMapWindow::draw()
 
     if (isDebugModeEnabled == true)
     {
-        if (tb::LibImGui::isActive() == false)
+        if (tb::LibIMGUI::isActive() == false)
         {
             drawTileHighlight();
         }
@@ -136,7 +136,7 @@ void MiniMapWindow::draw()
     drawToRenderWindow();
 }
 
-void MiniMapWindow::drawTileMap(const sf::IntRect& tileRect, tb::TileMap::Ptr tileMap)
+void MiniMapWindow::drawTileMap(const tb::TileRect& tileRect, tb::TileMap::Ptr tileMap)
 {
     tb::Tile::List tileList = tileMap->getTileListWithinTileRect(tileRect);
 
@@ -230,7 +230,7 @@ void MiniMapWindow::drawTileMap(const sf::IntRect& tileRect, tb::TileMap::Ptr ti
         m_vertexList.push_back(vertex[5]);
     }
 
-    std::vector<sf::Vertex> crosshairVertexList = getCrosshairVertexList();
+    tb::VertexList crosshairVertexList = createCrosshairVertexList();
 
     m_vertexList.insert(m_vertexList.end(), crosshairVertexList.begin(), crosshairVertexList.end());
 
@@ -243,7 +243,7 @@ void MiniMapWindow::drawTileMap(const sf::IntRect& tileRect, tb::TileMap::Ptr ti
 
 void MiniMapWindow::drawTileHighlight()
 {
-    sf::Vector2f mousePixelCoords = getMousePixelCoords();
+    tb::PixelCoords mousePixelCoords = getMousePixelCoords();
 
     sf::RectangleShape rectangleShape;
     rectangleShape.setSize(sf::Vector2f(tb::Constants::TileSizeAsFloat, tb::Constants::TileSizeAsFloat));
@@ -255,55 +255,55 @@ void MiniMapWindow::drawTileHighlight()
     windowRenderTexture->draw(rectangleShape);
 }
 
-std::vector<sf::Vertex> MiniMapWindow::getCrosshairVertexList()
+tb::VertexList MiniMapWindow::createCrosshairVertexList()
 {
     tb::Creature::Ptr player = g_Game.getPlayer();
 
-    sf::Vector2f playerCoords = player->getPixelCoords();
+    tb::PixelCoords playerPixelCoords = player->getPixelCoords();
 
     const float tileSize = tb::Constants::TileSizeAsFloat;
 
-    std::vector<sf::Vector2f> tileCoordsList;
-    tileCoordsList.reserve(m_numCrosshairTiles);
+    std::vector<tb::PixelCoords> pixelCoordsList;
+    pixelCoordsList.reserve(m_numCrosshairTiles);
 
-    tileCoordsList.push_back(playerCoords);
+    pixelCoordsList.push_back(playerPixelCoords);
 
     if (isZoomed() == true)
     {
-        sf::Vector2f northCoords = playerCoords;
-        sf::Vector2f southCoords = playerCoords;
-        sf::Vector2f westCoords = playerCoords;
-        sf::Vector2f eastCoords = playerCoords;
+        tb::PixelCoords northPixelCoords = playerPixelCoords;
+        tb::PixelCoords southPixelCoords = playerPixelCoords;
+        tb::PixelCoords westPixelCoords = playerPixelCoords;
+        tb::PixelCoords eastPixelCoords = playerPixelCoords;
 
-        northCoords.y -= tileSize;
-        southCoords.y += tileSize;
-        westCoords.x -= tileSize;
-        eastCoords.x += tileSize;
+        northPixelCoords.y -= tileSize;
+        southPixelCoords.y += tileSize;
+        westPixelCoords.x -= tileSize;
+        eastPixelCoords.x += tileSize;
 
-        tileCoordsList.push_back(northCoords);
-        tileCoordsList.push_back(southCoords);
-        tileCoordsList.push_back(westCoords);
-        tileCoordsList.push_back(eastCoords);
+        pixelCoordsList.push_back(northPixelCoords);
+        pixelCoordsList.push_back(southPixelCoords);
+        pixelCoordsList.push_back(westPixelCoords);
+        pixelCoordsList.push_back(eastPixelCoords);
     }
 
     const std::uint32_t numVertices = static_cast<std::uint32_t>(m_numCrosshairTiles * m_numVertexPerTile);
 
-    std::vector<sf::Vertex> vertexList;
+    tb::VertexList vertexList;
     vertexList.reserve(numVertices);
 
-    for (auto& tileCoords : tileCoordsList)
+    for (auto& pixelCoords : pixelCoordsList)
     {
         sf::Vertex vertex[m_numVertexPerTile];
 
         // first triangle
-        vertex[0].position = sf::Vector2f(tileCoords.x,            tileCoords.y);            // top left
-        vertex[1].position = sf::Vector2f(tileCoords.x + tileSize, tileCoords.y);            // top right
-        vertex[2].position = sf::Vector2f(tileCoords.x,            tileCoords.y + tileSize); // bottom left
+        vertex[0].position = sf::Vector2f(pixelCoords.x,            pixelCoords.y);            // top left
+        vertex[1].position = sf::Vector2f(pixelCoords.x + tileSize, pixelCoords.y);            // top right
+        vertex[2].position = sf::Vector2f(pixelCoords.x,            pixelCoords.y + tileSize); // bottom left
 
         // second triangle
-        vertex[3].position = sf::Vector2f(tileCoords.x,            tileCoords.y + tileSize); // bottom left
-        vertex[4].position = sf::Vector2f(tileCoords.x + tileSize, tileCoords.y);            // top right
-        vertex[5].position = sf::Vector2f(tileCoords.x + tileSize, tileCoords.y + tileSize); // bottom right
+        vertex[3].position = sf::Vector2f(pixelCoords.x,            pixelCoords.y + tileSize); // bottom left
+        vertex[4].position = sf::Vector2f(pixelCoords.x + tileSize, pixelCoords.y);            // top right
+        vertex[5].position = sf::Vector2f(pixelCoords.x + tileSize, pixelCoords.y + tileSize); // bottom right
 
         sf::Color color;
         color.r = 255;

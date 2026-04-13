@@ -3,13 +3,13 @@
 #include "common.h"
 
 #include "tb/Constants.h"
-#include "tb/Utility.h"
-#include "tb/Log.h"
+
+#include "tb/TileBase.h"
 
 namespace tb
 {
 
-class Thing
+class Thing : public tb::TileBase
 {
 
 public:
@@ -20,7 +20,7 @@ public:
     using Ptr = std::shared_ptr<tb::Thing>;
     using List = std::vector<tb::Thing::Ptr>;
 
-    struct SortByTileIndex_t
+    struct SortByTileIndex
     {
         bool operator()(tb::Thing::Ptr a, tb::Thing::Ptr b) const
         {
@@ -28,7 +28,7 @@ public:
         }
     };
 
-    struct SortByTileCoords_t
+    struct SortByTileCoords
     {
         bool operator()(tb::Thing::Ptr a, tb::Thing::Ptr b) const
         {
@@ -48,36 +48,15 @@ public:
         }
     };
 
-    struct ThingProperties_t
+    struct Properties
     {
-        bool Erase = false;
+        bool ShouldErase = false;
     };
 
-    ThingProperties_t* getThingProperties();
+    Properties* getProperties();
 
-    std::uint32_t getTileIndex();
-    void setTileIndex(std::uint32_t tileIndex);
-
-    sf::Vector2i getTileCoords();
-    void setTileCoords(const sf::Vector2i& tileCoords);
-
-    std::int32_t getTileX();
-    void setTileX(std::int32_t tileX);
-
-    std::int32_t getTileY();
-    void setTileY(std::int32_t tileY);
-
-    sf::Vector2f getPixelCoords();
-    void setPixelCoords(const sf::Vector2f& pixelCoords);
-
-    float getPixelX();
-    void setPixelX(float pixelX);
-
-    float getPixelY();
-    void setPixelY(float pixelY);
-
-    tb::ZAxis getZ();
-    void setZ(tb::ZAxis z);
+    std::uint64_t getUniqueID();
+    void setUniqueID(std::uint64_t uniqueID);
 
     tb::ThingType getThingType();
     void setThingType(tb::ThingType thingType);
@@ -90,16 +69,9 @@ public:
 
 private:
 
-    ThingProperties_t m_thingProperties;
+    Properties m_properties;
 
-    std::uint32_t m_uniqueID = 0;
-
-    std::uint32_t m_tileIndex = 0;
-
-    sf::Vector2i m_tileCoords;
-    sf::Vector2f m_pixelCoords;
-
-    tb::ZAxis m_z = 0;
+    std::uint64_t m_uniqueID = 0;
 
     tb::ThingType m_thingType = tb::ThingType::Null;
 

@@ -48,9 +48,9 @@ void OptionsWindow::draw()
 
     center();
 
-    bool* isVisible = getIsVisible();
+    bool* pIsVisible = isVisible();
 
-    ImGui::Begin("Options##OptionsWindow", isVisible, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
+    ImGui::Begin("Options##OptionsWindow", pIsVisible, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
 
     if (ImGui::BeginTabBar("##OptionsWindowTabBar", ImGuiTabBarFlags_NoCloseWithMiddleMouseButton))
     {
@@ -78,7 +78,7 @@ void OptionsWindow::draw()
             ImGui::Checkbox("Vertical Sync##OptionsWindowCheckboxWindowVerticalSync", &m_optionsData.WindowVerticalSync);
 
             ImGui::TextUnformatted("Frame Rate Limit:");
-            ImGui::InputScalar("##OptionsWindowInputWindowFrameRateLimit", ImGuiDataType_U32, &m_optionsData.WindowFrameRateLimit, &tb::LibImGui::InputScalarU32Step1);
+            ImGui::InputScalar("##OptionsWindowInputWindowFrameRateLimit", ImGuiDataType_U32, &m_optionsData.WindowFrameRateLimit, &tb::LibIMGUI::InputScalarU32Step1);
 
             ImGui::EndChild();
 
@@ -136,10 +136,10 @@ void OptionsWindow::draw()
             ImGui::Checkbox("Music##OptionsWindowCheckboxAudioMusic", &m_optionsData.AudioMusic);
 
             ImGui::TextUnformatted("Sound Volume:");
-            ImGui::InputScalar("##OptionsWindowInputAudioSoundVolume", ImGuiDataType_U8, &m_optionsData.AudioSoundVolume, &tb::LibImGui::InputScalarU8Step1);
+            ImGui::InputScalar("##OptionsWindowInputAudioSoundVolume", ImGuiDataType_U8, &m_optionsData.AudioSoundVolume, &tb::LibIMGUI::InputScalarU8Step1);
 
             ImGui::TextUnformatted("Music Volume:");
-            ImGui::InputScalar("##OptionsWindowInputAudioMusicVolume", ImGuiDataType_U8, &m_optionsData.AudioMusicVolume, &tb::LibImGui::InputScalarU8Step1);
+            ImGui::InputScalar("##OptionsWindowInputAudioMusicVolume", ImGuiDataType_U8, &m_optionsData.AudioMusicVolume, &tb::LibIMGUI::InputScalarU8Step1);
 
             ImGui::Separator();
 
@@ -174,7 +174,7 @@ void OptionsWindow::draw()
 
         onClose();
 
-        setIsVisible(false);
+        setVisible(false);
     }
 
     ImGui::SameLine();
@@ -183,7 +183,7 @@ void OptionsWindow::draw()
     {
         onClose();
 
-        setIsVisible(false);
+        setVisible(false);
     }
 
     ImGui::End();

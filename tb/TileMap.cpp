@@ -15,29 +15,29 @@ TileMap::~TileMap()
     //
 }
 
-bool TileMap::load(std::uint32_t tileWidth, std::uint32_t tileHeight, const tb::SpriteIDList& tileSpriteIDList, const std::string& name, tb::TileMapType tileMapType, tb::ZAxis z)
+bool TileMap::load(std::uint32_t tileWidth, std::uint32_t tileHeight, const tb::SpriteIDList& tileSpriteIDList, const std::string& name, tb::TileMapType tileMapType, tb::AxisZ axisZ)
 {
     if (g_SpriteData.isLoaded() == false)
     {
-        g_Log.write("ERROR: Sprite data is not loaded\n");
+        g_Log.write("ERROR: sprite data is not loaded\n");
         return false;
     }
 
     if (tileWidth == 0 || tileHeight == 0)
     {
-        g_Log.write("ERROR: Tile width or tile height is zero\n");
+        g_Log.write("ERROR: tile width or tile height is zero\n");
         return false;
     }
 
     if (tileSpriteIDList.size() == 0)
     {
-        g_Log.write("ERROR: Tile sprite ID list is empty\n");
+        g_Log.write("ERROR: tile sprite ID list is empty\n");
         return false;
     }
 
     if (name.size() == 0)
     {
-        g_Log.write("ERROR: Name is empty\n");
+        g_Log.write("ERROR: name is empty\n");
         return false;
     }
 
@@ -50,7 +50,7 @@ bool TileMap::load(std::uint32_t tileWidth, std::uint32_t tileHeight, const tb::
 
     m_numTiles = m_tileWidth * m_tileHeight;
 
-    m_z = z;
+    m_axisZ = axisZ;
 
     m_waterAnimationFrame = 1; // start the animation at index 1 because the applied water pattern starts at index 0
 
@@ -61,13 +61,13 @@ bool TileMap::load(std::uint32_t tileWidth, std::uint32_t tileHeight, const tb::
     m_tileSpriteIDList.reserve(m_numTiles);
     m_tileSpriteIDList = tileSpriteIDList;
 
-    g_Log.write("Tile Map Z: {}\n", z);
+    g_Log.write("Tile Map Axis Z: {}\n", axisZ);
     g_Log.write("Tile Map Name: {}\n", m_name);
     g_Log.write("Tile Map Width and Height: {}x{}\n", m_tileWidth, m_tileHeight);
     g_Log.write("Tile Map Sprite ID List Size: {}\n", m_tileSpriteIDList.size());
     g_Log.write("Tile Map Type: {}\n", magic_enum::enum_name(m_tileMapType));
 
-    for (std::uint32_t tileIndex = 0; tb::SpriteID& tileSpriteID : m_tileSpriteIDList)
+    for (tb::TileIndex tileIndex = 0; tb::SpriteID& tileSpriteID : m_tileSpriteIDList)
     {
         //g_Log.write("tileIndex: {}\n", tileIndex);
 
@@ -96,7 +96,7 @@ bool TileMap::load(std::uint32_t tileWidth, std::uint32_t tileHeight, const tb::
         tile->setSpriteID(tileSpriteID);
         tile->setSpriteFlags(*tileSpriteFlags);
         tile->setTileCoords(sf::Vector2i(tileX, tileY));
-        tile->setZ(z);
+        tile->setAxisZ(axisZ);
         m_tileList.push_back(tile);
 
         tileIndex++;
@@ -109,7 +109,7 @@ bool TileMap::load(std::uint32_t tileWidth, std::uint32_t tileHeight, const tb::
         g_Log.write("Applying tile patterns to tile map...\n");
         if (applyTilePatterns() == false)
         {
-            g_Log.write("ERROR: Failed to apply tile patterns to tile map\n");
+            g_Log.write("ERROR: failed to apply tile patterns to tile map\n");
             return false;
         }
 
@@ -121,7 +121,7 @@ bool TileMap::load(std::uint32_t tileWidth, std::uint32_t tileHeight, const tb::
     return true;
 }
 
-bool TileMap::isTileIndexOutOfBounds(std::uint32_t tileIndex)
+bool TileMap::isTileIndexOutOfBounds(tb::TileIndex tileIndex)
 {
     if (tileIndex > (m_numTiles - 1))
     {
@@ -131,13 +131,10 @@ bool TileMap::isTileIndexOutOfBounds(std::uint32_t tileIndex)
     return false;
 }
 
-void TileMap::updateTileSpriteID(tb::Tile::Ptr tile, tb::SpriteID spriteID)
+void TileMap::updateTileUsingSpriteID(tb::Tile::Ptr tile, tb::SpriteID spriteID)
 {
     tile->setSpriteID(spriteID);
-}
 
-void TileMap::updateTileSpriteFlags(tb::Tile::Ptr tile, tb::SpriteID spriteID)
-{
     tb::SpriteFlags* tileSpriteFlags = &g_SpriteData.getDataList()->at(spriteID).SpriteFlags;
 
     if (tileSpriteFlags != nullptr)
@@ -156,7 +153,7 @@ tb::Tile::List* TileMap::getTileList()
     return &m_tileList;
 }
 
-tb::Tile::List TileMap::getTileListWithinTileRect(const sf::IntRect& tileRect)
+tb::Tile::List TileMap::getTileListWithinTileRect(const tb::TileRect& tileRect)
 {
     tb::Tile::List tileList;
 
@@ -165,23 +162,23 @@ tb::Tile::List TileMap::getTileListWithinTileRect(const sf::IntRect& tileRect)
         return tileList;
     }
 
-    std::int32_t x1 = tileRect.position.x;
-    std::int32_t y1 = tileRect.position.y;
+    tb::TileCoord tileBeginX = tileRect.position.x;
+    tb::TileCoord tileBeginY = tileRect.position.y;
 
-    std::int32_t x2 = x1 + tileRect.size.x;
-    std::int32_t y2 = y1 + tileRect.size.y;
+    tb::TileCoord tileEndX = tileBeginX + tileRect.size.x;
+    tb::TileCoord tileEndY = tileBeginY + tileRect.size.y;
 
-    for (std::int32_t tileX = x1; tileX < x2; tileX++)
+    for (tb::TileCoord tileX = tileBeginX; tileX < tileEndX; tileX++)
     {
-        for (std::int32_t tileY = y1; tileY < y2; tileY++)
+        for (tb::TileCoord tileY = tileBeginY; tileY < tileEndY; tileY++)
         {
             if (tileX < 0) continue;
             if (tileY < 0) continue;
 
-            if ((std::uint32_t)tileX > m_tileWidth  - 1) continue;
-            if ((std::uint32_t)tileY > m_tileHeight - 1) continue;
+            if (static_cast<std::uint32_t>(tileX) > m_tileWidth  - 1) continue;
+            if (static_cast<std::uint32_t>(tileY) > m_tileHeight - 1) continue;
 
-            std::uint32_t tileIndex = tileX + tileY * m_tileWidth;
+            tb::TileIndex tileIndex = tileX + tileY * m_tileWidth;
 
             if (isTileIndexOutOfBounds(tileIndex) == true)
             {
@@ -204,7 +201,7 @@ tb::Tile::List TileMap::getTileListWithinTileRect(const sf::IntRect& tileRect)
     return tileList;
 }
 
-bool TileMap::doAnimatedWater(const sf::IntRect& tileRect)
+bool TileMap::doAnimatedWater(const tb::TileRect& tileRect)
 {
     auto waterSpriteIDList_List = g_WaterAnimationData.getSpriteIDList_List();
     if (waterSpriteIDList_List == nullptr)
@@ -261,7 +258,7 @@ bool TileMap::doAnimatedWater(const sf::IntRect& tileRect)
 
         if (spriteIndex < waterSpriteIDList->size())
         {
-            updateTileSpriteID(tile, waterSpriteIDList->at(spriteIndex));
+            tile->setSpriteID(waterSpriteIDList->at(spriteIndex));
         }
     }
 
@@ -270,7 +267,7 @@ bool TileMap::doAnimatedWater(const sf::IntRect& tileRect)
     return true;
 }
 
-bool TileMap::doAnimatedObjects(const sf::IntRect& tileRect)
+bool TileMap::doAnimatedObjects(const tb::TileRect& tileRect)
 {
     tb::Tile::List tileList = getTileListWithinTileRect(tileRect);
 
@@ -341,7 +338,7 @@ bool TileMap::applyTilePatterns()
 
             if (spriteIndex < patternData.SpriteIDList.size())
             {
-                updateTileSpriteID(tile, patternData.SpriteIDList.at(spriteIndex));
+                tile->setSpriteID(patternData.SpriteIDList.at(spriteIndex));
             }
         }
     }
@@ -379,7 +376,7 @@ bool TileMap::applyTileObjectPatterns()
                     {
                         std::int32_t objectTileX = object->getTileX();
 
-                        if (m_z & 1)
+                        if (m_axisZ & 1)
                         {
                             if (objectTileX & 1)
                             {
@@ -406,7 +403,7 @@ bool TileMap::applyTileObjectPatterns()
                     {
                         std::int32_t objectTileY = object->getTileY();
 
-                        if (m_z & 1)
+                        if (m_axisZ & 1)
                         {
                             if (objectTileY & 1)
                             {
@@ -462,17 +459,17 @@ void TileMap::setTileMapType(tb::TileMapType tileMapType)
     m_tileMapType = tileMapType;
 }
 
-tb::ZAxis TileMap::getZ()
+tb::AxisZ TileMap::getAxisZ()
 {
-    return m_z;
+    return m_axisZ;
 }
 
-void TileMap::setZ(tb::ZAxis z)
+void TileMap::setAxisZ(tb::AxisZ axisZ)
 {
-    m_z = z;
+    m_axisZ = axisZ;
 }
 
-bool TileMap::isVisibleWithinTileRect(const sf::IntRect& tileRect)
+bool TileMap::isVisibleWithinTileRect(const tb::TileRect& tileRect)
 {
     // checks to see if any of the tiles of this tile map are visible within a rectangle
     // used to skip drawing of a tile map if the player cannot see it
@@ -482,23 +479,23 @@ bool TileMap::isVisibleWithinTileRect(const sf::IntRect& tileRect)
         return false;
     }
 
-    std::int32_t x1 = tileRect.position.x;
-    std::int32_t y1 = tileRect.position.y;
+    tb::TileCoord tileBeginX = tileRect.position.x;
+    tb::TileCoord tileBeginY = tileRect.position.y;
 
-    std::int32_t x2 = x1 + tileRect.size.x;
-    std::int32_t y2 = y1 + tileRect.size.y;
+    tb::TileCoord tileEndX = tileBeginX + tileRect.size.x;
+    tb::TileCoord tileEndY = tileBeginY + tileRect.size.y;
 
-    for (std::int32_t tileX = x1; tileX < x2; tileX++)
+    for (tb::TileCoord tileX = tileBeginX; tileX < tileEndX; tileX++)
     {
-        for (std::int32_t tileY = y1; tileY < y2; tileY++)
+        for (tb::TileCoord tileY = tileBeginY; tileY < tileEndY; tileY++)
         {
             if (tileX < 0) continue;
             if (tileY < 0) continue;
 
-            if ((std::uint32_t)tileX > m_tileWidth - 1) continue;
-            if ((std::uint32_t)tileY > m_tileHeight - 1) continue;
+            if (static_cast<std::uint32_t>(tileX) > m_tileWidth  - 1) continue;
+            if (static_cast<std::uint32_t>(tileY) > m_tileHeight - 1) continue;
 
-            std::uint32_t tileIndex = tileX + tileY * m_tileWidth;
+            tb::TileIndex tileIndex = tileX + tileY * m_tileWidth;
 
             if (isTileIndexOutOfBounds(tileIndex) == true)
             {
@@ -521,7 +518,7 @@ bool TileMap::isVisibleWithinTileRect(const sf::IntRect& tileRect)
     return false;
 }
 
-void TileMap::drawTiles(const sf::IntRect& tileRect, sf::RenderTarget& renderTarget)
+void TileMap::drawTiles(const tb::TileRect& tileRect, sf::RenderTarget& renderTarget)
 {
     tb::Tile::List tileList = getTileListWithinTileRect(tileRect);
 
@@ -550,8 +547,8 @@ void TileMap::drawTiles(const sf::IntRect& tileRect, sf::RenderTarget& renderTar
             continue;
         }
 
-        std::int32_t tileX = tile->getTileX();
-        std::int32_t tileY = tile->getTileY();
+        tb::TileCoord tileX = tile->getTileX();
+        tb::TileCoord tileY = tile->getTileY();
 
         std::uint32_t tileU = (tileSpriteID - 1) % (spriteSheetTextureSize.x / tileSize);
         std::uint32_t tileV = (tileSpriteID - 1) / (spriteSheetTextureSize.y / tileSize);
@@ -603,7 +600,7 @@ void TileMap::drawTiles(const sf::IntRect& tileRect, sf::RenderTarget& renderTar
     }
 }
 
-void TileMap::drawThings(const sf::IntRect& tileRect, sf::RenderTarget& renderTarget)
+void TileMap::drawThings(const tb::TileRect& tileRect, sf::RenderTarget& renderTarget)
 {
     tb::Tile::List tileList = getTileListWithinTileRect(tileRect);
 
@@ -612,7 +609,7 @@ void TileMap::drawThings(const sf::IntRect& tileRect, sf::RenderTarget& renderTa
         return;
     }
 
-    tb::SpriteBatch spriteBatch;
+    m_spriteBatch.clear();
 
     for (auto& tile : tileList)
     {
@@ -627,20 +624,22 @@ void TileMap::drawThings(const sf::IntRect& tileRect, sf::RenderTarget& renderTa
                 continue;
             }
 
-            spriteBatch.addSprite(tileEdgeObjectSprite, false);
+            m_spriteBatch.addSprite(tileEdgeObjectSprite, false);
         }
 
         tb::Thing::List thingList = tile->createThingList();
 
         for (auto& thing : thingList)
         {
+            tb::Thing::Properties* thingProperties = thing->getProperties();
+
             if (thing->getThingType() == tb::ThingType::Object)
             {
                 tb::Object::Ptr object = std::static_pointer_cast<tb::Object>(thing);
 
                 object->update();
 
-                if (object->getThingProperties()->Erase == true)
+                if (thingProperties->ShouldErase == true)
                 {
                     tile->removeObject(object);
                     continue;
@@ -653,7 +652,7 @@ void TileMap::drawThings(const sf::IntRect& tileRect, sf::RenderTarget& renderTa
                     continue;
                 }
 
-                spriteBatch.addSprite(objectSprite, true);
+                m_spriteBatch.addSprite(objectSprite, true);
             }
             else if (thing->getThingType() == tb::ThingType::Creature)
             {
@@ -661,7 +660,7 @@ void TileMap::drawThings(const sf::IntRect& tileRect, sf::RenderTarget& renderTa
 
                 creature->update();
 
-                if (creature->getThingProperties()->Erase == true)
+                if (thingProperties->ShouldErase == true)
                 {
                     tile->removeCreature(creature);
                     continue;
@@ -676,7 +675,7 @@ void TileMap::drawThings(const sf::IntRect& tileRect, sf::RenderTarget& renderTa
                         continue;
                     }
 
-                    spriteBatch.addSprite(creatureSprite, false);
+                    m_spriteBatch.addSprite(creatureSprite, false);
                 }
             }
             else if (thing->getThingType() == tb::ThingType::Animation)
@@ -685,7 +684,7 @@ void TileMap::drawThings(const sf::IntRect& tileRect, sf::RenderTarget& renderTa
 
                 animation->update();
 
-                if (animation->getThingProperties()->Erase == true)
+                if (thingProperties->ShouldErase == true)
                 {
                     tile->removeAnimation(animation);
                     continue;
@@ -698,21 +697,21 @@ void TileMap::drawThings(const sf::IntRect& tileRect, sf::RenderTarget& renderTa
                     continue;
                 }
 
-                spriteBatch.addSprite(animationSprite, false);
+                m_spriteBatch.addSprite(animationSprite, false);
             }
         }
     }
 
-    if (spriteBatch.getNumSprites() != 0)
+    if (m_spriteBatch.getNumSprites() != 0)
     {
         sf::RenderStates renderStates;
         renderStates.texture = &tb::Resources::Textures::SpriteSheet;
 
-        spriteBatch.draw(renderTarget, renderStates);
+        m_spriteBatch.draw(renderTarget, renderStates);
     }
 }
 
-void TileMap::drawLights(const sf::IntRect& tileRect, sf::RenderTarget& renderTarget, tb::LightBrightness lightBrightness)
+void TileMap::drawLights(const tb::TileRect& tileRect, sf::RenderTarget& renderTarget, tb::LightBrightness lightBrightness)
 {
     tb::Tile::List tileList = getTileListWithinTileRect(tileRect);
 
@@ -721,11 +720,11 @@ void TileMap::drawLights(const sf::IntRect& tileRect, sf::RenderTarget& renderTa
         return;
     }
 
-    tb::LightBatch lightBatch;
+    m_lightBatch.clear();
 
     for (auto& tile1 : tileList)
     {
-        sf::Vector2f tile1Position = tile1->getPixelCoords();
+        tb::PixelCoords tile1Position = tile1->getPixelCoords();
 
         tb::Thing::List thingList = tile1->createThingList();
 
@@ -778,11 +777,11 @@ void TileMap::drawLights(const sf::IntRect& tileRect, sf::RenderTarget& renderTa
 
             for (auto& tile2 : tileList)
             {
-                sf::Vector2f tile2Position = tile2->getPixelCoords();
+                tb::PixelCoords tile2Position = tile2->getPixelCoords();
 
-                float distance = -1.0f;
+                float distance = 0.0f;
 
-                if (tb::LibSfml::isPositionInsideCircle(tile2Position, tile1Position, lightRadius, distance) == false)
+                if (tb::LibSFML::isPositionInsideCircle(tile2Position, tile1Position, lightRadius, distance) == false)
                 {
                     continue;
                 }
@@ -793,14 +792,14 @@ void TileMap::drawLights(const sf::IntRect& tileRect, sf::RenderTarget& renderTa
 
                 sf::Color lightColor = sf::Color(rgb, rgb, rgb, 255);
 
-                lightBatch.addLight(tile2Position, lightColor);
+                m_lightBatch.addLight(tile2Position, lightColor);
             }
         }
     }
 
-    if (lightBatch.getNumLights() != 0)
+    if (m_lightBatch.getNumLights() != 0)
     {
-        lightBatch.draw(renderTarget, sf::BlendAdd);
+        m_lightBatch.draw(renderTarget, sf::BlendAdd);
     }
 }
 

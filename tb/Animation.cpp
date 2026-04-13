@@ -16,26 +16,26 @@ Animation::~Animation()
     //
 }
 
-Animation::Animation(const sf::Vector2i& tileCoords, tb::ZAxis z, std::uint32_t index) :
+Animation::Animation(const tb::TileCoords& tileCoords, tb::AxisZ axisZ, std::uint32_t index) :
     m_sprite(tb::Resources::Textures::SpriteSheet)
 {
     setThingType(tb::ThingType::Animation);
 
     setTileCoords(tileCoords);
-    setZ(z);
+    setAxisZ(axisZ);
 
     m_animationData = g_AnimationData.getDataByIndex(index);
 
     initalize();
 }
 
-Animation::Animation(const sf::Vector2i& tileCoords, tb::ZAxis z, const std::string& name) :
+Animation::Animation(const tb::TileCoords& tileCoords, tb::AxisZ axisZ, const std::string& name) :
     m_sprite(tb::Resources::Textures::SpriteSheet)
 {
     setThingType(tb::ThingType::Animation);
 
     setTileCoords(tileCoords);
-    setZ(z);
+    setAxisZ(axisZ);
 
     m_animationData = g_AnimationData.getDataByName(name);
 
@@ -72,7 +72,7 @@ void Animation::initalize()
 
 void Animation::update()
 {
-    sf::Vector2f pixelCoords = getPixelCoords();
+    tb::PixelCoords pixelCoords = getPixelCoords();
 
     m_sprite.setPosition(pixelCoords);
 
@@ -81,9 +81,9 @@ void Animation::update()
 
 void Animation::advanceFrame()
 {
-    tb::Thing::ThingProperties_t* thingProperties = getThingProperties();
+    tb::Thing::Properties* thingProperties = this->Thing::getProperties();
 
-    if (thingProperties->Erase == true)
+    if (thingProperties->ShouldErase == true)
     {
         return;
     }
@@ -104,7 +104,7 @@ void Animation::advanceFrame()
             }
             else
             {
-                thingProperties->Erase = true;
+                thingProperties->ShouldErase = true;
                 return;
             }
         }
@@ -124,17 +124,18 @@ tb::Sprite* Animation::getSprite()
 
 tb::SpriteID Animation::getSpriteID()
 {
-    return m_sprite.getID();
-}
 
-tb::AnimationData::Data* Animation::getData()
-{
-    return m_animationData;
+    return m_sprite.getID();
 }
 
 tb::SpriteIDList* Animation::getSpriteIDList()
 {
     return m_spriteIDList;
+}
+
+tb::AnimationData::Data* Animation::getData()
+{
+    return m_animationData;
 }
 
 sf::Clock* Animation::getClock()

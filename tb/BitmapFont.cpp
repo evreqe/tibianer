@@ -19,17 +19,17 @@ bool BitmapFont::load(const std::string& fileName, const sf::Vector2u& glyphSize
 {
     if (std::filesystem::exists(fileName) == false)
     {
-        g_Log.write("ERROR: File does not exist: {}\n", fileName);
+        g_Log.write("ERROR: file does not exist: {}\n", fileName);
         return false;
     }
 
     if (m_texture.loadFromFile(fileName) == false)
     {
-        g_Log.write("ERROR: Failed to load texture file: {}\n", fileName);
+        g_Log.write("ERROR: failed to load texture file: {}\n", fileName);
         return false;
     }
 
-    const std::uint32_t numGlyphs = tb::Constants::BitmapFonts::NumGlyphs;
+    const std::uint32_t numGlyphs = tb::Constants::NumGlyphsForBitmapFont;
 
     m_vertexArray.clear();
     m_vertexArray.resize(numGlyphs * m_numVertexPerGlyph);
@@ -47,7 +47,7 @@ bool BitmapFont::load(const std::string& fileName, const sf::Vector2u& glyphSize
 
     if (textureSizeX == 0 || textureSizeY == 0)
     {
-        g_Log.write("ERROR: Texture width or height is zero\n");
+        g_Log.write("ERROR: texture width or height is zero\n");
         return false;
     }
 
@@ -56,7 +56,7 @@ bool BitmapFont::load(const std::string& fileName, const sf::Vector2u& glyphSize
 
     if (glyphSizeX == 0 || glyphSizeY == 0)
     {
-        g_Log.write("ERROR: Glyph width or height is zero\n");
+        g_Log.write("ERROR: glyph width or height is zero\n");
         return false;
     }
 

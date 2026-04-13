@@ -37,7 +37,7 @@ bool BitmapFontText::setText(tb::BitmapFont* bitmapFont, const std::string& text
     m_textLineList.clear();
     m_textLineList.reserve(m_numTextLinesToReserve);
 
-    const std::uint32_t numGlyphs = tb::Constants::BitmapFonts::NumGlyphs;
+    const std::uint32_t numGlyphs = tb::Constants::NumGlyphsForBitmapFont;
 
     const std::uint32_t textureSizeX = bitmapFont->getTexture()->getSize().x;
 
@@ -57,7 +57,7 @@ bool BitmapFontText::setText(tb::BitmapFont* bitmapFont, const std::string& text
 
     std::uint32_t lineIndex = 0;
     std::string lineText = "";
-    std::vector<sf::Vertex*> lineVertexPointerList;
+    tb::VertexPointerList lineVertexPointerList;
     lineVertexPointerList.reserve(text.size() * m_numTextLinesToReserve);
 
     for (std::size_t i = 0; i < text.size(); i++)
@@ -67,7 +67,7 @@ bool BitmapFontText::setText(tb::BitmapFont* bitmapFont, const std::string& text
         // new line
         if (character == '\n')
         {
-            tb::BitmapFontText::TextLine_t textLine;
+            tb::BitmapFontText::TextLine textLine;
             textLine.Index = lineIndex;
             textLine.Text = lineText;
             textLine.Rect.position.x = 0.0f;
@@ -190,7 +190,7 @@ tb::BitmapFont* BitmapFontText::getBitmapFont()
     return m_bitmapFont;
 }
 
-std::vector<sf::Vertex>* BitmapFontText::getVertexList()
+tb::VertexList* BitmapFontText::getVertexList()
 {
     return &m_vertexList;
 }

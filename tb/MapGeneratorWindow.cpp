@@ -17,7 +17,7 @@ MapGeneratorWindow::~MapGeneratorWindow()
 
 void MapGeneratorWindow::onLoad()
 {
-   // TODO
+    // TODO
 
     m_isLoaded = true;
 }
@@ -31,89 +31,117 @@ void MapGeneratorWindow::draw()
 
     center();
 
-    bool* isVisible = getIsVisible();
+    bool* pIsVisible = isVisible();
 
-    ImGui::Begin("Map Generator##MapGeneratorWindow", isVisible, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
-
-    ImGui::TextUnformatted("Image:");
-    if (ImGui::BeginListBox("##MapGeneratorWindowListBoxData", ImVec2(m_listBoxWidth, 10.0f * ImGui::GetTextLineHeightWithSpacing())))
+    if (ImGui::Begin("Map Generator##MapGeneratorWindow", pIsVisible, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings))
     {
-        std::uint32_t fileIndex = 0;
-
-        for (const auto& directoryEntry : std::filesystem::directory_iterator(m_imageFolder))
+        if (ImGui::BeginTable("##MapGeneratorWindowTable", 2, ImGuiTableFlags_BordersInnerV | ImGuiTableFlags_SizingStretchProp))
         {
-            if (directoryEntry.is_regular_file() == true)
+            ImGui::TableNextRow();
+
+            ImGui::TableSetColumnIndex(0);
+
+            ImGui::TextUnformatted("Image:");
+
+            if (ImGui::BeginListBox("##MapGeneratorWindowListBoxData", ImVec2(m_listBoxWidth, 10.0f * ImGui::GetTextLineHeightWithSpacing())))
             {
-                if (directoryEntry.path().extension().string() == m_imageFileNameExtension)
+                std::uint32_t fileIndex = 0;
+
+                for (const auto& directoryEntry : std::filesystem::directory_iterator(m_imageFolder))
                 {
-                    std::string fileName = directoryEntry.path().filename().string();
-
-                    const bool isSelected = (m_selectedListBoxIndex == fileIndex);
-
-                    std::string listText = std::format("{}##MapGeneratorWindowSelectable{}", fileName, fileIndex);
-
-                    if (ImGui::Selectable(listText.c_str(), isSelected))
+                    if (directoryEntry.is_regular_file() == true)
                     {
-                        m_selectedListBoxIndex = fileIndex;
+                        if (directoryEntry.path().extension().string() == m_imageFileNameExtension)
+                        {
+                            std::string fileName = directoryEntry.path().filename().string();
+
+                            const bool isSelected = (m_selectedListBoxIndex == fileIndex);
+
+                            std::string listText = std::format("{}##MapGeneratorWindowSelectable{}", fileName, fileIndex);
+
+                            if (ImGui::Selectable(listText.c_str(), isSelected))
+                            {
+                                m_selectedListBoxIndex = fileIndex;
+                            }
+
+                            if (isSelected == true)
+                            {
+                                ImGui::SetItemDefaultFocus();
+
+                                m_selectedImageFileName = fileName;
+
+                                m_selectedImageFilePath = m_imageFolder + fileName;
+
+                                m_isSelectedImageTextureLoaded = m_selectedImageTexture.loadFromFile(m_selectedImageFilePath);
+                            }
+
+                            fileIndex++;
+                        }
                     }
+                }
 
-                    if (isSelected == true)
-                    {
-                        ImGui::SetItemDefaultFocus();
+                ImGui::EndListBox();
+            }
 
-                        m_selectedImageFileName = fileName;
-                    }
+            ImGui::TextUnformatted("Name:");
+            ImGui::SetNextItemWidth(m_inputTextWidth);
+            ImGui::InputText("##MapGeneratorWindowInputMapName", &m_map.Name);
 
-                    fileIndex++;
+            ImGui::TextUnformatted("Description:");
+            ImGui::SetNextItemWidth(m_inputTextWidth);
+            ImGui::InputText("##MapGeneratorWindowInputMapDescription", &m_map.Description);
+
+            ImGui::TextUnformatted("Author:");
+            ImGui::SetNextItemWidth(m_inputTextWidth);
+            ImGui::InputText("##MapGeneratorWindowInputMapAuthor", &m_map.Author);
+
+            ImGui::TextUnformatted("Player Start X:");
+            ImGui::InputInt("##MapGeneratorWindowInputMapPlayerStartX", (int*)&m_map.PlayerStartX, 1, tb::Constants::TileSize);
+
+            ImGui::TextUnformatted("Player Start Y:");
+            ImGui::InputInt("##MapGeneratorWindowInputMapPlayerStartY", (int*)&m_map.PlayerStartY, 1, tb::Constants::TileSize);
+
+            ImGui::TextUnformatted("Player Start Z:");
+            ImGui::SliderInt("##MapGeneratorWindowInputMapPlayerStartZ", (int*)&m_map.PlayerStartZ, tb::Constants::AxisZMin, tb::Constants::AxisZMax);
+
+            if (ImGui::Button("Generate##MapGeneratorWindowButtonGenerate", m_buttonSize))
+            {
+                if (m_map.Name.size() != 0)
+                {
+                    std::string outputFileName = m_selectedImageFileName;
+                    outputFileName = tb::Utility::String::replaceAll(outputFileName, ".png", ".tmx");
+
+                    g_MapGenerator.generateMapFromImageFile(m_map, m_selectedImageFilePath, outputFileName);
                 }
             }
+
+            if (m_isSelectedImageTextureLoaded == true)
+            {
+                ImGui::TableSetColumnIndex(1);
+
+                ImGui::TextUnformatted("Image Preview:");
+
+                sf::Sprite imageSprite(m_selectedImageTexture);
+
+                ImGui::Image(imageSprite, m_selectedImageSize, sf::Color::White, sf::Color::Black);
+            }
+
+            ImGui::EndTable();
         }
 
-        ImGui::EndListBox();
-    }
+        ImGui::Separator();
 
-    ImGui::TextUnformatted("Name:");
-    ImGui::SetNextItemWidth(m_inputTextWidth);
-    ImGui::InputText("##MapGeneratorWindowInputMapName", &m_map.Name);
+        float windowWidth = ImGui::GetWindowSize().x;
 
-    ImGui::TextUnformatted("Description:");
-    ImGui::SetNextItemWidth(m_inputTextWidth);
-    ImGui::InputText("##MapGeneratorWindowInputMapDescription", &m_map.Description);
+        ImGui::SetCursorPosX(ImGui::GetCursorPos().x + (windowWidth / 2.0f) - (m_buttonSize.x / 2.0f));
 
-    ImGui::TextUnformatted("Author:");
-    ImGui::SetNextItemWidth(m_inputTextWidth);
-    ImGui::InputText("##MapGeneratorWindowInputMapAuthor", &m_map.Author);
-
-    ImGui::TextUnformatted("Player Start X:");
-    ImGui::InputInt("##MapGeneratorWindowInputMapPlayerStartX", (int*)&m_map.PlayerStartX, 1, tb::Constants::TileSize);
-
-    ImGui::TextUnformatted("Player Start Y:");
-    ImGui::InputInt("##MapGeneratorWindowInputMapPlayerStartY", (int*)&m_map.PlayerStartY, 1, tb::Constants::TileSize);
-
-    ImGui::TextUnformatted("Player Start Z:");
-    ImGui::SliderInt("##MapGeneratorWindowInputMapPlayerStartZ", (int*)&m_map.PlayerStartZ, tb::Constants::ZAxisMin, tb::Constants::ZAxisMax);
-
-    if (ImGui::Button("Generate##MapGeneratorWindowButtonGenerate", m_buttonSize))
-    {
-        if (m_map.Name.size() != 0)
+        if (ImGui::Button("OK##MapGeneratorWindowButtonOK", m_buttonSize))
         {
-            std::string outputFileName = m_selectedImageFileName;
-            outputFileName = tb::Utility::String::replaceAll(outputFileName, ".png", ".tmx");
-
-            g_MapGenerator.generateMapFromImageFile(m_map, m_selectedImageFileName, outputFileName);
+            setVisible(false);
         }
+
+        ImGui::End();
     }
-
-    float windowWidth = ImGui::GetWindowSize().x;
-
-    ImGui::SetCursorPosX(ImGui::GetCursorPos().x + (windowWidth / 2.0f) - (m_buttonSize.x / 2.0f));
-
-    if (ImGui::Button("OK##MapGeneratorWindowButtonOK", m_buttonSize))
-    {
-        setIsVisible(false);
-    }
-
-    ImGui::End();
 }
 
 }

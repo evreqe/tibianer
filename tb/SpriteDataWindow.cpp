@@ -21,9 +21,9 @@ void SpriteDataWindow::draw()
 
     ImGui::SetNextWindowSize(m_windowSize, ImGuiCond_FirstUseEver);
 
-    bool* isVisible = getIsVisible();
+    bool* pIsVisible = isVisible();
 
-    ImGui::Begin("Sprite Data##SpriteDataWindow", isVisible, ImGuiWindowFlags_NoScrollbar);
+    ImGui::Begin("Sprite Data##SpriteDataWindow", pIsVisible, ImGuiWindowFlags_NoScrollbar);
 
     if (ImGui::BeginChild("##SpriteDataWindowChildData", ImVec2(0, 0), ImGuiChildFlags_Border, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_AlwaysVerticalScrollbar))
     {

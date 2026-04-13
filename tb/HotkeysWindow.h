@@ -2,14 +2,14 @@
 
 #include "common.h"
 
-#include "tb/ImGuiWindow.h"
+#include "tb/IMGUIWindow.h"
 
 #include "tb/HotkeysData.h"
 
 namespace tb
 {
 
-class HotkeysWindow : public tb::ImGuiWindow
+class HotkeysWindow : public tb::IMGUIWindow
 {
 
 public:

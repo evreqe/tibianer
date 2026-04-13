@@ -21,9 +21,9 @@ void LogWindow::draw()
 
     ImGui::SetNextWindowSize(m_windowSize, ImGuiCond_FirstUseEver);
 
-    bool* isVisible = getIsVisible();
+    bool* pIsVisible = isVisible();
 
-    ImGui::Begin("Log##LogWindow", isVisible, ImGuiWindowFlags_NoScrollbar);
+    ImGui::Begin("Log##LogWindow", pIsVisible, ImGuiWindowFlags_NoScrollbar);
 
     ImGui::BeginChild("##LogWindowChildText", ImVec2(0, 0), ImGuiChildFlags_Border, ImGuiWindowFlags_HorizontalScrollbar);
 
@@ -31,7 +31,7 @@ void LogWindow::draw()
 
     ImGui::TextUnformatted(logText.c_str());
 
-    tb::LibImGui::scrollWindowWithMiddleMouseButton();
+    tb::LibIMGUI::scrollWindowWithMiddleMouseButton();
 
     ImGui::EndChild();
 

@@ -19,9 +19,9 @@ void MapSelectWindow::draw()
 {
     center();
 
-    bool* isVisible = getIsVisible();
+    bool* pIsVisible = isVisible();
 
-    if (ImGui::Begin("Map Select##MapSelectWindow", isVisible, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings))
+    if (ImGui::Begin("Map Select##MapSelectWindow", pIsVisible, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings))
     {
         if (ImGui::BeginTable("##MapSelectWindowTable", 2, ImGuiTableFlags_BordersInnerV | ImGuiTableFlags_SizingStretchProp))
         {
@@ -73,7 +73,7 @@ void MapSelectWindow::draw()
             {
                 if (m_selectedMapData != nullptr)
                 {
-                    setIsVisible(false);
+                    setVisible(false);
 
                     g_Game.loadMapUsingThread(m_selectedMapData->FileName);
 
@@ -83,7 +83,7 @@ void MapSelectWindow::draw()
 
             if (ImGui::Button("Cancel##MapSelectWindowButtonCancel", m_buttonSize))
             {
-                setIsVisible(false);
+                setVisible(false);
 
                 g_Game.setGameState(tb::GameState::EnterGame);
             }

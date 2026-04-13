@@ -7,7 +7,7 @@ namespace tb
 
 StatusBar::StatusBar()
 {
-    setIsVisible(true);
+    setVisible(true);
 }
 
 StatusBar::~StatusBar()
@@ -29,9 +29,9 @@ void StatusBar::draw()
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 2.0f));
 
-    bool* isVisible = getIsVisible();
+    bool* pIsVisible = isVisible();
 
-    ImGui::Begin("##StatusBarWindow", isVisible, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize);
+    ImGui::Begin("##StatusBarWindow", pIsVisible, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize);
 
     ImGui::PopStyleVar(2);
 
@@ -58,7 +58,9 @@ void StatusBar::draw()
 
 float StatusBar::getHeight()
 {
-    if (*getIsVisible() == false)
+    bool* pIsVisible = isVisible();
+
+    if (*pIsVisible == false)
     {
         return 0.0f;
     }

@@ -17,7 +17,7 @@ PatternData::~PatternData()
 
 bool PatternData::load()
 {
-    tb::LibToml::LoadFileResult loadFileResult = tb::LibToml::loadFile(m_table, m_fileName);
+    tb::LibTOML::LoadFileResult loadFileResult = tb::LibTOML::loadFile(m_table, m_fileName);
 
     g_Log.write("{}", loadFileResult.Text);
 
@@ -141,7 +141,7 @@ bool PatternData::load()
 
     if (foundError == true)
     {
-        g_Log.write("ERROR: Cannot load data because an error was found\n");
+        g_Log.write("ERROR: cannot load data because an error was found\n");
         return false;
     }
 
@@ -149,7 +149,7 @@ bool PatternData::load()
 
     if (m_dataList.size() == 0)
     {
-        g_Log.write("ERROR: Loaded data is empty\n");
+        g_Log.write("ERROR: loaded data is empty\n");
         return false;
     }
 
@@ -168,7 +168,7 @@ bool PatternData::save()
 {
     if (m_dataList.size() == 0)
     {
-        g_Log.write("ERROR: Cannot save data because it is empty\n");
+        g_Log.write("ERROR: cannot save data because it is empty\n");
         return false;
     }
 
@@ -177,7 +177,7 @@ bool PatternData::save()
 
     if (file.is_open() == false)
     {
-        g_Log.write("ERROR: Cannot open file: {}\n", m_fileName);
+        g_Log.write("ERROR: cannot open file: {}\n", m_fileName);
         return false;
     }
 

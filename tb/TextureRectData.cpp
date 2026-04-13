@@ -1,23 +1,23 @@
 #include "common.h"
 
-#include "tb/ClickRectData.h"
+#include "tb/TextureRectData.h"
 
 namespace tb
 {
 
-ClickRectData::ClickRectData()
+TextureRectData::TextureRectData()
 {
     //
 }
 
-ClickRectData::~ClickRectData()
+TextureRectData::~TextureRectData()
 {
     //
 }
 
-bool ClickRectData::load()
+bool TextureRectData::load()
 {
-    tb::LibToml::LoadFileResult loadFileResult = tb::LibToml::loadFile(m_table, m_fileName);
+    tb::LibTOML::LoadFileResult loadFileResult = tb::LibTOML::loadFile(m_table, m_fileName);
 
     g_Log.write("{}", loadFileResult.Text);
 
@@ -29,7 +29,7 @@ bool ClickRectData::load()
     m_dataList.clear();
     m_dataList.reserve(m_numToReserve);
 
-    auto arrayOf = m_table["ClickRect"].as_array();
+    auto arrayOf = m_table["TextureRect"].as_array();
 
     std::uint32_t arrayIndex = 0;
 
@@ -39,11 +39,15 @@ bool ClickRectData::load()
     (
         [this, &arrayIndex, &foundError](toml::table& arrayTable)
         {
-            tb::ClickRectData::Data data;
+            tb::TextureRectData::Data data;
 
             data.Index = arrayIndex;
 
             g_Log.write("Index: {}\n", arrayIndex);
+
+            data.TextureName = arrayTable["TextureName"].value_or("");
+
+            g_Log.write("TextureName: {}\n", data.TextureName);
 
             data.Name = arrayTable["Name"].value_or("");
 
@@ -85,7 +89,7 @@ bool ClickRectData::load()
 
     if (foundError == true)
     {
-        g_Log.write("ERROR: Cannot load data because an error was found\n");
+        g_Log.write("ERROR: cannot load data because an error was found\n");
         return false;
     }
 
@@ -93,14 +97,14 @@ bool ClickRectData::load()
 
     if (m_dataList.size() == 0)
     {
-        g_Log.write("ERROR: Loaded data is empty\n");
+        g_Log.write("ERROR: loaded data is empty\n");
         return false;
     }
 
     return true;
 }
 
-bool ClickRectData::isLoaded()
+bool TextureRectData::isLoaded()
 {
     if (m_table.size() == 0) return false;
     if (m_dataList.size() == 0) return false;
@@ -108,35 +112,40 @@ bool ClickRectData::isLoaded()
     return true;
 }
 
-tb::ClickRectData::DataList* ClickRectData::getDataList()
+tb::TextureRectData::Data* TextureRectData::getDataByIndex(std::uint32_t index)
+{
+    return &m_dataList.at(index);
+}
+
+tb::TextureRectData::Data* TextureRectData::getDataByName(const std::string& name)
+{
+    for (auto& data : m_dataList)
+    {
+        if (data.Name == name)
+        {
+            return &data;
+        }
+    }
+
+    return nullptr;
+}
+
+tb::TextureRectData::Data* TextureRectData::getDataByNameSV(std::string_view name)
+{
+    for (auto& data : m_dataList)
+    {
+        if (data.Name == name)
+        {
+            return &data;
+        }
+    }
+
+    return nullptr;
+}
+
+tb::TextureRectData::DataList* TextureRectData::getDataList()
 {
     return &m_dataList;
-}
-
-tb::ClickRectData::Data* ClickRectData::getDataByName(const std::string& name)
-{
-    for (auto& data : m_dataList)
-    {
-        if (data.Name == name)
-        {
-            return &data;
-        }
-    }
-
-    return nullptr;
-}
-
-tb::ClickRectData::Data* ClickRectData::getDataByNameSV(std::string_view name)
-{
-    for (auto& data : m_dataList)
-    {
-        if (data.Name == name)
-        {
-            return &data;
-        }
-    }
-
-    return nullptr;
 }
 
 }

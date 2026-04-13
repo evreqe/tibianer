@@ -17,7 +17,7 @@ WaterAnimationData::~WaterAnimationData()
 
 bool WaterAnimationData::load()
 {
-    tb::LibToml::LoadFileResult loadFileResult = tb::LibToml::loadFile(m_table, m_fileName);
+    tb::LibTOML::LoadFileResult loadFileResult = tb::LibTOML::loadFile(m_table, m_fileName);
 
     g_Log.write("{}", loadFileResult.Text);
 
@@ -89,7 +89,7 @@ bool WaterAnimationData::load()
 
     if (m_spriteIDList_List.size() != tb::Constants::NumWaterAnimationFrames)
     {
-        g_Log.write("ERROR: Loaded data has the wrong size, size is {} instead of {}\n", m_spriteIDList_List.size(), tb::Constants::NumWaterAnimationFrames);
+        g_Log.write("ERROR: loaded data has the wrong size, size is {} instead of {}\n", m_spriteIDList_List.size(), tb::Constants::NumWaterAnimationFrames);
         return false;
     }
 

@@ -4,7 +4,7 @@
 
 #include "tb/Utility.h"
 
-#include "tb/ImGuiWindow.h"
+#include "tb/IMGUIWindow.h"
 
 #include "tb/MenuBar.h"
 #include "tb/StatusBar.h"
@@ -16,7 +16,7 @@
 namespace tb
 {
 
-class SpriteEditorWindow : public tb::ImGuiWindow
+class SpriteEditorWindow : public tb::IMGUIWindow
 {
 
 public:

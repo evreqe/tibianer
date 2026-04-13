@@ -5,17 +5,17 @@
 namespace tb
 {
 
-class ImGuiWindow
+class IMGUIWindow
 {
 
 public:
 
-    ImGuiWindow();
-    ~ImGuiWindow();
+    IMGUIWindow();
+    ~IMGUIWindow();
 
-    bool* getIsVisible();
-    void setIsVisible(bool b);
-    void toggleIsVisible();
+    bool* isVisible();
+    void setVisible(bool b);
+    void toggleVisible();
 
     void center();
     void centerOnAppearing();

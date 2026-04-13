@@ -60,9 +60,9 @@ void SpriteEditorWindow::draw()
     ImGui::SetNextWindowPos(windowPosition);
     ImGui::SetNextWindowSize(windowSize);
 
-    bool* isVisible = getIsVisible();
+    bool* pIsVisible = isVisible();
 
-    ImGui::Begin("Sprite Editor##SpriteEditorWindow", isVisible, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoScrollbar);
+    ImGui::Begin("Sprite Editor##SpriteEditorWindow", pIsVisible, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoScrollbar);
 
     if (ImGui::BeginTable("##SpriteEditorWindowTable", 3, ImGuiTableFlags_BordersOuter | ImGuiTableFlags_Resizable))
     {
@@ -108,14 +108,14 @@ void SpriteEditorWindow::draw()
 
                 if (i == m_selectedSpriteID)
                 {
-                    tb::LibImGui::drawRectangleAtCurrentItem(ImColor(255, 0, 255));
+                    tb::LibIMGUI::drawRectangleAtCurrentItem(ImColor(255, 0, 255));
                 }
 
                 tb::SpriteFlags* spriteFlags = &m_spriteDataList->at(i).SpriteFlags;
 
                 if (spriteFlags->hasFlag(m_highlightSpriteFlag) == true)
                 {
-                    tb::LibImGui::drawRectangleAtCurrentItem(ImColor(255, 0, 0));
+                    tb::LibIMGUI::drawRectangleAtCurrentItem(ImColor(255, 0, 0));
                 }
 
                 if (i % 64 != 0)
@@ -124,7 +124,7 @@ void SpriteEditorWindow::draw()
                 }
             }
 
-            tb::LibImGui::scrollWindowWithMiddleMouseButton();
+            tb::LibIMGUI::scrollWindowWithMiddleMouseButton();
 
             ImGui::EndChild();
         }
@@ -206,8 +206,8 @@ void SpriteEditorWindow::draw()
 
             ImGui::InputText("Animation Name##SpriteEditorWindowInputAnimationName", &m_spriteData->AnimationName);
 
-            ImGui::InputScalar("Tile Width##SpriteEditorWindowInputTileWidth", ImGuiDataType_U8, &m_spriteData->TileWidth, &tb::LibImGui::InputScalarU8Step1);
-            ImGui::InputScalar("Tile Height##SpriteEditorWindowInputTileHeight", ImGuiDataType_U8, &m_spriteData->TileHeight, &tb::LibImGui::InputScalarU8Step1);
+            ImGui::InputScalar("Tile Width##SpriteEditorWindowInputTileWidth", ImGuiDataType_U8, &m_spriteData->TileWidth, &tb::LibIMGUI::InputScalarU8Step1);
+            ImGui::InputScalar("Tile Height##SpriteEditorWindowInputTileHeight", ImGuiDataType_U8, &m_spriteData->TileHeight, &tb::LibIMGUI::InputScalarU8Step1);
 
             ImGui::InputFloat("Weight##SpriteEditorWindowInputWeight", &m_spriteData->Weight, 1.0f, 10.0f, "%.2f");
             ImGui::InputFloat("Light Radius##SpriteEditorWindowInputLightRadius", &m_spriteData->LightRadius, 1.0f, 10.0f, "%.2f");

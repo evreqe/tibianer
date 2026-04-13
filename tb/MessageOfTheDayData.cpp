@@ -19,7 +19,7 @@ bool MessageOfTheDayData::load()
 {
     if (std::filesystem::exists(m_fileName) == false)
     {
-        g_Log.write("ERROR: File does not exist: {}\n", m_fileName);
+        g_Log.write("ERROR: file does not exist: {}\n", m_fileName);
         return false;
     }
 
@@ -27,7 +27,7 @@ bool MessageOfTheDayData::load()
 
     if (m_file.is_open() == false)
     {
-        g_Log.write("ERROR: Failed to load data from file: {}\n", m_fileName);
+        g_Log.write("ERROR: failed to load data from file: {}\n", m_fileName);
         return false;
     }
 

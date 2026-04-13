@@ -3,6 +3,7 @@
 #include "common.h"
 
 #include "tb/Constants.h"
+#include "tb/Resources.h"
 #include "tb/Utility.h"
 #include "tb/Log.h"
 
@@ -33,23 +34,22 @@ public:
 
     using Ptr = std::shared_ptr<tb::TileMap>;
     using List = std::vector<tb::TileMap::Ptr>;
-    using Array = std::array<tb::TileMap, tb::Constants::NumZAxis>;
+    using Array = std::array<tb::TileMap, tb::Constants::NumAxisZ>;
 
-    bool load(std::uint32_t tileWidth, std::uint32_t tileHeight, const tb::SpriteIDList& tileSpriteIDList, const std::string& name, tb::TileMapType tileMapType, tb::ZAxis z);
+    bool load(std::uint32_t tileWidth, std::uint32_t tileHeight, const tb::SpriteIDList& tileSpriteIDList, const std::string& name, tb::TileMapType tileMapType, tb::AxisZ axisZ);
 
-    bool isTileIndexOutOfBounds(std::uint32_t tileIndex);
+    bool isTileIndexOutOfBounds(tb::TileIndex tileIndex);
 
-    void updateTileSpriteID(tb::Tile::Ptr tile, tb::SpriteID spriteID);
-    void updateTileSpriteFlags(tb::Tile::Ptr tile, tb::SpriteID spriteID);
+    void updateTileUsingSpriteID(tb::Tile::Ptr tile, tb::SpriteID spriteID);
 
     tb::SpriteIDList* getTileSpriteIDList();
 
     tb::Tile::List* getTileList();
 
-    tb::Tile::List getTileListWithinTileRect(const sf::IntRect& tileRect);
+    tb::Tile::List getTileListWithinTileRect(const tb::TileRect& tileRect);
 
-    bool doAnimatedWater(const sf::IntRect& tileRect);
-    bool doAnimatedObjects(const sf::IntRect& tileRect);
+    bool doAnimatedWater(const tb::TileRect& tileRect);
+    bool doAnimatedObjects(const tb::TileRect& tileRect);
 
     bool applyTilePatterns();
     bool applyTileObjectPatterns();
@@ -62,14 +62,14 @@ public:
     tb::TileMapType getTileMapType();
     void setTileMapType(tb::TileMapType tileMapType);
 
-    tb::ZAxis getZ();
-    void setZ(tb::ZAxis z);
+    tb::AxisZ getAxisZ();
+    void setAxisZ(tb::AxisZ axisZ);
 
-    bool isVisibleWithinTileRect(const sf::IntRect& tileRect);
+    bool isVisibleWithinTileRect(const tb::TileRect& tileRect);
 
-    void drawTiles(const sf::IntRect& tileRect, sf::RenderTarget& renderTarget);
-    void drawThings(const sf::IntRect& tileRect, sf::RenderTarget& renderTarget);
-    void drawLights(const sf::IntRect& tileRect, sf::RenderTarget& renderTarget, tb::LightBrightness lightBrightness);
+    void drawTiles(const tb::TileRect& tileRect, sf::RenderTarget& renderTarget);
+    void drawThings(const tb::TileRect& tileRect, sf::RenderTarget& renderTarget);
+    void drawLights(const tb::TileRect& tileRect, sf::RenderTarget& renderTarget, tb::LightBrightness lightBrightness);
 
 private:
 
@@ -84,7 +84,7 @@ private:
 
     std::uint32_t m_numTiles = 0;
 
-    tb::ZAxis m_z = tb::Constants::ZAxisDefault;
+    tb::AxisZ m_axisZ = tb::Constants::AxisZDefault;
 
     tb::SpriteIDList m_tileSpriteIDList;
 
@@ -92,9 +92,12 @@ private:
 
     std::uint32_t m_waterAnimationFrame = 0;
 
-    std::vector<sf::Vertex> m_tileVertexList;
+    tb::VertexList m_tileVertexList;
 
     static const std::uint32_t m_numVertexPerTile = 6;
+
+    tb::SpriteBatch m_spriteBatch;
+    tb::LightBatch m_lightBatch;
 
 };
 

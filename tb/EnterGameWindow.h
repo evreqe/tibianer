@@ -2,7 +2,7 @@
 
 #include "common.h"
 
-#include "tb/ImGuiWindow.h"
+#include "tb/IMGUIWindow.h"
 
 #include "tb/Log.h"
 
@@ -13,7 +13,7 @@
 namespace tb
 {
 
-class EnterGameWindow : public tb::ImGuiWindow
+class EnterGameWindow : public tb::IMGUIWindow
 {
 
 public:

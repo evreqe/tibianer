@@ -2,7 +2,7 @@
 
 #include "common.h"
 
-#include "tb/ImGuiWindow.h"
+#include "tb/IMGUIWindow.h"
 
 #include "tb/Constants.h"
 
@@ -11,7 +11,7 @@
 namespace tb
 {
 
-class OverlayWindow : public tb::ImGuiWindow
+class OverlayWindow : public tb::IMGUIWindow
 {
 
 public:

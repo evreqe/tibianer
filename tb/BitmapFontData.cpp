@@ -17,7 +17,7 @@ BitmapFontData::~BitmapFontData()
 
 bool BitmapFontData::load()
 {
-    tb::LibToml::LoadFileResult loadFileResult = tb::LibToml::loadFile(m_table, m_fileName);
+    tb::LibTOML::LoadFileResult loadFileResult = tb::LibTOML::loadFile(m_table, m_fileName);
 
     g_Log.write("{}", loadFileResult.Text);
 
@@ -29,7 +29,7 @@ bool BitmapFontData::load()
     m_dataList.clear();
     m_dataList.reserve(m_numToReserve);
 
-    const std::uint32_t numGlyphs = tb::Constants::BitmapFonts::NumGlyphs;
+    const std::uint32_t numGlyphs = tb::Constants::NumGlyphsForBitmapFont;
 
     auto arrayOf = m_table["BitmapFont"].as_array();
 
@@ -144,7 +144,7 @@ bool BitmapFontData::load()
 
     if (foundError == true)
     {
-        g_Log.write("ERROR: Cannot load data because an error was found\n");
+        g_Log.write("ERROR: cannot load data because an error was found\n");
         return false;
     }
 
@@ -152,7 +152,7 @@ bool BitmapFontData::load()
 
     if (m_dataList.size() == 0)
     {
-        g_Log.write("ERROR: Loaded data is empty\n");
+        g_Log.write("ERROR: loaded data is empty\n");
         return false;
     }
 

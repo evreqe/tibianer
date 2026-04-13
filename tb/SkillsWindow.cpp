@@ -52,17 +52,17 @@ void SkillsWindow::handleEventResized(const sf::Event::Resized* eventResized)
 
 void SkillsWindow::setSizeInLayout()
 {
-    sf::FloatRect guiRightLayoutRect = g_Game.getGuiRightLayoutRect();
+    sf::FloatRect GUIRightLayoutRect = g_GUI.getRightLayoutRect();
 
-    float guiRightLayoutRectBottomLeftY = guiRightLayoutRect.position.y + guiRightLayoutRect.size.y;
+    float GUIRightLayoutRectBottomLeftY = GUIRightLayoutRect.position.y + GUIRightLayoutRect.size.y;
 
     sf::Vector2f windowPosition = getPosition();
 
     float windowSizeScale = getSizeScale();
 
     // this is width and height
-    m_viewSize.x = tb::Constants::GuiRightLayoutWidthAsFloat;
-    m_viewSize.y = guiRightLayoutRectBottomLeftY - windowPosition.y;
+    m_viewSize.x = tb::Constants::GUIRightLayoutWidthAsFloat;
+    m_viewSize.y = GUIRightLayoutRectBottomLeftY - windowPosition.y;
 
     sf::View resetView = sf::View(sf::FloatRect(sf::Vector2f(0.0f, 0.0f), sf::Vector2f(m_viewSize.x, m_viewSize.y / windowSizeScale)));
     setView(resetView);
@@ -80,37 +80,37 @@ void SkillsWindow::setSizeInLayout()
 
     if (resizeResult == false)
     {
-        g_Log.write("ERROR: Failed to resize RenderTexture\n");
+        g_Log.write("ERROR: failed to resize windowRenderTexture\n");
     }
 }
 
 void SkillsWindow::setPositionInLayout()
 {
-    sf::FloatRect guiRightLayoutRect = g_Game.getGuiRightLayoutRect();
+    sf::FloatRect GUIRightLayoutRect = g_GUI.getRightLayoutRect();
 
     sf::FloatRect tabButtonsWindowRect = g_TabButtonsWindow.getRect();
 
-    float padding = tb::Constants::PaddingRenderWindow;
+    float paddingRenderWindow = tb::Constants::GUIPaddingRenderWindow;
 
     sf::Vector2f windowPosition;
-    windowPosition.x = guiRightLayoutRect.position.x - 1.0f;
-    windowPosition.y = tabButtonsWindowRect.position.y + tabButtonsWindowRect.size.y + padding;
+    windowPosition.x = GUIRightLayoutRect.position.x - 1.0f;
+    windowPosition.y = tabButtonsWindowRect.position.y + tabButtonsWindowRect.size.y + paddingRenderWindow;
 
     setPosition(windowPosition);
 }
 
 void SkillsWindow::updateSkillsText()
 {
-    tb::BitmapFont* tinyBitmapFont = g_Game.getTinyBitmapFont();
+    m_skillsBitmapFontTextBatch.clear();
+
+    tb::BitmapFont* tinyBitmapFont = &tb::Resources::BitmapFonts::TinyBitmapFont;
 
     m_skillsBitmapFontTextBatch.setBitmapFont(tinyBitmapFont);
     m_skillsBitmapFontTextBatch.setPosition(sf::Vector2f(3.0f, 3.0f));
 
-    sf::Color textColor = sf::Color::White;
-
     m_skillNamesBitmapFontText.setPaddingY(3);
     m_skillNamesBitmapFontText.setTextJustifyType(tb::TextJustifyType::Left);
-    m_skillNamesBitmapFontText.setText(tinyBitmapFont, m_skillNamesText, textColor);
+    m_skillNamesBitmapFontText.setText(tinyBitmapFont, m_skillNamesText, sf::Color::White);
 
     m_skillsBitmapFontTextBatch.addBitmapFontText(&m_skillNamesBitmapFontText);
 }

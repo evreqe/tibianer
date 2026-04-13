@@ -19,9 +19,9 @@ void TipsAndTricksWindow::draw()
 {
     center();
 
-    bool* isVisible = getIsVisible();
+    bool* pIsVisible = isVisible();
 
-    ImGui::Begin("Tips & Tricks##TipsAndTricksWindow", isVisible, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
+    ImGui::Begin("Tips & Tricks##TipsAndTricksWindow", pIsVisible, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
 
     ImGui::TextUnformatted(m_displayText);
 
@@ -31,7 +31,7 @@ void TipsAndTricksWindow::draw()
 
     if (ImGui::Button("OK##TipsAndTricksWindowButtonOK", m_buttonSize))
     {
-        setIsVisible(false);
+        setVisible(false);
     }
 
     ImGui::End();

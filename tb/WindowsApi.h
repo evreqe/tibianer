@@ -2,10 +2,7 @@
 
 #include <SFML/Window.hpp>
 
-namespace tb
-{
-
-namespace WindowsApi
+namespace tb::WindowsAPI
 {
 
 void ShowWindow(sf::WindowHandle windowHandle);
@@ -17,7 +14,5 @@ void RestoreWindow(sf::WindowHandle windowHandle);
 
 bool IsWindowMinimized(sf::WindowHandle windowHandle);
 bool IsWindowMaximized(sf::WindowHandle windowHandle);
-
-}
 
 }
